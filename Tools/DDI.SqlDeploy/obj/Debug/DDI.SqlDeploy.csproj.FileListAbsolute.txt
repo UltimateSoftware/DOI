@@ -1,0 +1,15 @@
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\TaxHub.SqlDeploy.XML
+c:\Projects\ddi\Tools\DDI.SqlDeploy\obj\Debug\DDI.SqlDeploy.csproj.CoreCompileInputs.cache
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\Database\Scripts\DropAndReCreateDatabase.sql
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\Database\Scripts\EnsureChangeLogExists.sql
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\Database\Scripts\EnsureDatabaseExists.sql
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\Database\Scripts\findAppliedScriptsFooter.sql
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\Database\Scripts\findAppliedScriptsHeader.sql
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\TaxHub.SqlDeploy.exe.config
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\TaxHub.SqlDeploy.exe
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\TaxHub.SqlDeploy.pdb
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\CommandLine.xml
+c:\Projects\ddi\Tools\DDI.SqlDeploy\bin\Debug\Newtonsoft.Json.xml
+c:\Projects\ddi\Tools\DDI.SqlDeploy\obj\Debug\DDI.SqlDeploy.csproj.CopyComplete
+c:\Projects\ddi\Tools\DDI.SqlDeploy\obj\Debug\TaxHub.SqlDeploy.exe
+c:\Projects\ddi\Tools\DDI.SqlDeploy\obj\Debug\TaxHub.SqlDeploy.pdb

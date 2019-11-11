@@ -1,0 +1,245 @@
+USE DDI
+GO
+
+DROP TABLE IF EXISTS DDI.CheckConstraints
+GO
+
+CREATE TABLE DDI.CheckConstraints(
+    DatabaseName                NVARCHAR(128) NOT NULL,
+	SchemaName					NVARCHAR(128) NOT NULL,
+	TableName					NVARCHAR(128) NOT NULL,
+	ColumnName					NVARCHAR(128) NULL,
+	CheckDefinition				NVARCHAR(MAX) NOT NULL,
+	IsDisabled					BIT NOT NULL,
+	CheckConstraintName			NVARCHAR(128) NOT NULL
+	CONSTRAINT PK_CheckConstraints
+		PRIMARY KEY NONCLUSTERED(DatabaseName, SchemaName, TableName, CheckConstraintName),
+    CONSTRAINT FK_CheckConstraints_Tables
+        FOREIGN KEY (DatabaseName, SchemaName, TableName)
+            REFERENCES DDI.Tables(DatabaseName, SchemaName, TableName))
+    WITH (MEMORY_OPTIMIZED = ON)
+GO
+
+DROP TABLE IF EXISTS DDI.DefaultConstraints
+GO
+
+--default constraints
+CREATE TABLE DDI.DefaultConstraints(
+    DatabaseName                NVARCHAR(128) NOT NULL,
+	SchemaName					NVARCHAR(128) NOT NULL,
+	TableName					NVARCHAR(128) NOT NULL,
+	ColumnName					NVARCHAR(128) NOT NULL,
+	DefaultDefinition			NVARCHAR(MAX) NOT NULL,
+	DefaultConstraintName       NVARCHAR(128) NULL
+	CONSTRAINT PK_DefaultConstraints
+		PRIMARY KEY NONCLUSTERED(DatabaseName, SchemaName, TableName, ColumnName),
+    CONSTRAINT FK_DefaultConstraints_Tables
+        FOREIGN KEY (DatabaseName, SchemaName, TableName)
+            REFERENCES DDI.Tables(DatabaseName, SchemaName, TableName))
+    WITH (MEMORY_OPTIMIZED = ON)
+
+GO
+
+CREATE OR ALTER PROCEDURE DDI.spRefreshMetadata_DefaultConstraints
+AS
+
+INSERT DDI.[DefaultConstraints]	(DatabaseName        , [SchemaName]	, [TableName]								, [ColumnName]								, [DefaultDefinition]) 
+VALUES
+								('PaymentReporting'  ,N'DataMart'	, N'GarnishmentTypeDim'						, N'GarnishmentTypeCode'					, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'Bai2BankTransactions'					, N'TransactionSysUtcDt'					, N'(''1900-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'BankTransactions'						, N'GarnishmentId'							, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'BankTransactions'						, N'TenantId'								, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'        , N'BankTransactions'                       , N'IsNetType'                              , N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'Company_Tax'							, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'Company_Tax'							, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'Company_Tax'							, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'Company_Tax'							, N'LegacyCompanyStartDate'					, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'TaxScheduleGUID'						, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'NextTaxScheduleGUID'					, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'StartDate'								, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'NextTaxScheduleEffectiveDate'			, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'NextTaxRateEffectiveDate'				, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'InputDate'								, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency'						, N'ReceivedPOA'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency_Audit'					, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyTaxAgency_Audit'					, N'Aedt'									, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyProduct'							, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyProduct'							, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'CompanyProduct'							, N'Version'								, N'((1))')
+								,('PaymentReporting' ,N'dbo'		, N'CustomerBankAccounts'					, N'AccountActiveDateTime'					, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'DBDefragLog'							, N'RunDateTime'							, N'(getdate())')
+								,('PaymentReporting' ,N'dbo'		, N'EFilingAcknowledgments'					, N'ErrorCount'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'EFilingAcknowledgments'					, N'IsAccepted'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'EFilingAcknowledgments'					, N'IsValid'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'EFilingAcknowledgments'					, N'WarningCount'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'GarnishmentLiabilities'					, N'GarnishmentLiabilityStatusKey'			, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'GarnishmentLiabilities'					, N'GarnishmentLiabilityTypeKey'			, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'GarnishmentLiabilities'					, N'PayrollInstanceId'						, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'GarnishmentLiabilities'					, N'TotalCount'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'Aedt'									, N'(getdate())')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'Aesn'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'ClearedByBank'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'ClearedByBankUtcDateTime'				, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'CreatedUtcDt'							, N'(getdate())')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'DocumentNumber'							, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'GLSegment'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'ProductCode'							, N'((-1))')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'TenantAlias'							, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'UpdatedUtcDt'							, N'(getdate())')
+								,('PaymentReporting' ,N'dbo'		, N'JournalEntries'							, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'Liabilities'							, N'PositiveLiabilityId'					, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'Liabilities'							, N'RunNumber'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'Liabilities'							, N'SourceCreatedByUserId'					, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'Liabilities'							, N'SourceCreatedByUserName'				, N'(''system'')')
+								,('PaymentReporting' ,N'dbo'		, N'Liabilities'							, N'SourceCreatedUtcDt'						, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'Liabilities'							, N'SourceModifiedByUserId'					, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'Liabilities'							, N'SourceModifiedByUserName'				, N'(''system'')')
+								,('PaymentReporting' ,N'dbo'		, N'Liabilities'							, N'SourceModifiedUtcDt'					, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollections'					, N'TimeStamp'								, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollections'					, N'UserId'									, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollections'					, N'NettedCollectionId'						, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollectionComments'			, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollectionComments'			, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollectionComments'			, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollectionConfirmationInfos'	, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollectionConfirmationInfos'	, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'LiabilityCollectionConfirmationInfos'	, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollections'						, N'UnderlyingCollectionIds'				, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollections'						, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollections'						, N'Status'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollections'						, N'TenantId'								, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollections'						, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollections'						, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollectionsLiabilityCollections'	, N'CollectionId'							, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollectionsLiabilityCollections'	, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollectionsLiabilityCollections'	, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'NettedCollectionsLiabilityCollections'	, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayActions'								, N'FromState'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayActions'								, N'IsUndo'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayActions'								, N'Portion'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayActions'								, N'ToState'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishmentActions'					, N'PaymentLiabilityId'						, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishmentExceptions'				, N'DateCleared'							, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishmentLiabilities'				, N'ActionId'								, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishmentLiabilities'				, N'Refunded'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishmentLiabilities'				, N'Removed'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishments'						, N'GarnishmentActionReasonKey'				, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishments'						, N'GarnishmentExceptionList'				, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishments'						, N'GarnishmentLiabilityId'					, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishments'						, N'GarnishmentPaymentLiabilityId'			, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishments'						, N'GarnishmentRecollectLiabilityId'		, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishments'						, N'GarnishmentRefundLiabilityId'			, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayGarnishments'						, N'HasBeenPaid'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayLiabilities'							, N'ActionId'								, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayLiabilities'							, N'IsActive'								, N'((1))')
+								,('PaymentReporting' ,N'dbo'		, N'PayLiabilities'							, N'IsRefund'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'PayrollInstances'						, N'EndProcessAfterCloseUtcDt'				, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayrollInstances'						, N'PayrollTypeKey'							, N'(''0'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayrollInstances'						, N'StartProcessAfterCloseUtcDt'			, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'Pays'									, N'PayUtcDate'								, N'(''1900-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'PayTaxes'								, N'DuplicatedLineNumber'					, N'((1))')
+								,('PaymentReporting' ,N'dbo'		, N'PayTaxes'								, N'PayUtcDate'								, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportFileInformation'					, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportFileInformation'					, N'FileLength'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportFileInformation'					, N'ReportOutputType'						, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportFileInformation'					, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportFileInformation'					, N'UserFileName'							, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportFileInformation'					, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportFileInformation'					, N'WasGenerated'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportObjectStoreInfo'					, N'ContainerName'							, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportObjectStoreInfo'					, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportObjectStoreInfo'					, N'ExpirationUtcDateTime'					, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportObjectStoreInfo'					, N'IsCompressed'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportObjectStoreInfo'					, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportObjectStoreInfo'					, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportParameters'						, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportParameters'						, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportParameters'						, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportRequests'							, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportRequests'							, N'ReportRequestorType'					, N'((1))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportRequests'							, N'Status'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportRequests'							, N'TenantId'								, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportRequests'							, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportRequests'							, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportStatistics'						, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportStatistics'						, N'FileUploadTime'							, N'(''00:00:00.0000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportStatistics'						, N'QueryTime'								, N'(''00:00:00.0000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportStatistics'						, N'RenderTime'								, N'(''00:00:00.0000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportStatistics'						, N'RowCount'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'ReportStatistics'						, N'TotalTime'								, N'(''00:00:00.0000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'ReportStatistics'						, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'ReportStatistics'						, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'        , N'ReportStatistics'						, N'ColumnInfoTime'							, N'(''00:00:00.0000000'')')
+								,('PaymentReporting' ,N'dbo'        , N'ReportStatistics'						, N'DataTableLoadTime'						, N'(''00:00:00.0000000'')')
+								,('PaymentReporting' ,N'dbo'        , N'ReportStatistics'						, N'ExecuteReaderTime'						, N'(''00:00:00.0000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgency'								, N'Aedt'									, N'(getdate())')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgency'								, N'Aesn'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgency'								, N'ReportingSortId'						, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgency_Audit'	  					, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgency_Audit'	  					, N'Aedt'									, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactionAmounts'			, N'IsTax'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactionAmounts'			, N'PayeeId'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactionAmounts'			, N'TaxCode'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactionAmounts'			, N'TaxCodeUltiPro'							, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactionAmounts'			, N'TaxId'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactions'					, N'PaymentType'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactions'					, N'FileRequestId'							, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactions'					, N'TransactionInitiatedUtcDateTime'		, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAgencyTransactions'					, N'WireId'									, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxAmounts'								, N'PayUtcDate'								, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'ActiveStatus'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'AuthorityLevel'							, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'IsTax'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'LocalCode'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'SortId'									, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'StateCode'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'SupplementalCode'						, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'TaxAgencyCode'							, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'TaxAgencyId'							, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'TaxAgencyParentCode'					, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'TaxGUID'								, N'(CONVERT([uniqueidentifier],CONVERT([binary],(0))))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxCodes'								, N'UltiproTaxCodeList'						, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxLiabilities'							, N'CollectionId'							, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxLiabilities'							, N'TaxLiabilityOriginTypeKey'				, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxPaymentCredits'						, N'CheckDate'								, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxPayrolls'							, N'PayrollId'								, N'(''00000000-0000-0000-0000-000000000000'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxPayrolls'							, N'PayrollType'							, N'(''REGULAR'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxPayrolls'							, N'PayUtcDate'								, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'TaxPayrolls'							, N'PostPayrollGUID'						, N'(CONVERT([uniqueidentifier],CONVERT([binary],(0))))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxPayrolls'							, N'PostPayrollId'							, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TaxSchedules'							, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'TaxSchedules'							, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'TaxSchedules'							, N'Version'								, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'TenantProduct'							, N'CreatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'TenantProduct'							, N'UpdatedUtcDt'							, N'(sysdatetime())')
+								,('PaymentReporting' ,N'dbo'		, N'TenantProduct'							, N'Version'								, N'((1))')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'CustomerBankAccountId'					, N'(CONVERT([uniqueidentifier],CONVERT([binary],(0))))')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'CustomerGarnishmentsBankAccountId'		, N'(CONVERT([uniqueidentifier],CONVERT([binary],(0))))')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'CustomerTaxBankAccountId'				, N'(CONVERT([uniqueidentifier],CONVERT([binary],(0))))')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'DcEnvironmentName'						, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'HasNewHireReporting'					, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'MarketType'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'NetPayDraftDays'						, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'PodId'									, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'Tenants'								, N'SiteDbServerName'						, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'UltiProTaxCodeMapping'					, N'Aedt'									, N'(''0001-01-01'')')
+								,('PaymentReporting' ,N'dbo'		, N'UltiProTaxCodeMapping'					, N'Aesn'									, N'((0))')
+								,('PaymentReporting' ,N'dbo'		, N'UltiProTaxCodeMapping'					, N'CreatedUtcDt'							, N'(getdate())')
+								,('PaymentReporting' ,N'dbo'		, N'UltiProTaxCodeMapping'					, N'UpdatedUtcDt'							, N'(getdate())')
+								,('PaymentReporting' ,N'dbo'		, N'UltiProTaxCodeMapping'					, N'Version'								, N'((1))')
+								,('PaymentReporting' ,N'dbo'		, N'YEProcessing'							, N'ClientId'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'YEProcessingFiles'						, N'Agency'									, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'YEProcessingFiles'						, N'FileName'								, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'YEProcessingFiles'						, N'UltiProAgency'							, N'('''')')
+								,('PaymentReporting' ,N'dbo'		, N'YEProcessingFiles'						, N'YEIngestionTypeKey'						, N'((0))')
+
+UPDATE DDI.DefaultConstraints
+SET DefaultConstraintName = 'Def_' + TableName + '_' + ColumnName 
+
+GO
+
+EXEC DDI.spRefreshMetadata_DefaultConstraints
+GO

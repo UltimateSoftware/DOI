@@ -1,0 +1,17 @@
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\Database\Scripts\DropAndReCreateDatabase.sql
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\Database\Scripts\EnsureChangeLogExists.sql
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\Database\Scripts\EnsureDatabaseExists.sql
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\Database\Scripts\findAppliedScriptsFooter.sql
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\Database\Scripts\findAppliedScriptsHeader.sql
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\TaxHub.SqlDeploy.exe.config
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\TaxHub.SqlDeploy.XML
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\TaxHub.SqlDeploy.exe
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\TaxHub.SqlDeploy.pdb
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\CommandLine.dll
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\Newtonsoft.Json.dll
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\CommandLine.xml
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\bin\Debug\Newtonsoft.Json.xml
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\obj\x64\Debug\TaxHub.SqlDeploy.csproj.CoreCompileInputs.cache
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\obj\x64\Debug\TaxHub.SqlDeploy.csproj.CopyComplete
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\obj\x64\Debug\TaxHub.SqlDeploy.exe
+C:\Projects\tax-management-core\Tools\TaxHub.SqlDeploy\obj\x64\Debug\TaxHub.SqlDeploy.pdb
