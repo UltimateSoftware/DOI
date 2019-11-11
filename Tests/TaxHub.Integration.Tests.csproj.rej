@@ -1,0 +1,638 @@
+diff a/Tests/TaxHub.Integration.Tests/TaxHub.Integration.Tests.csproj b/Tests/TaxHub.Integration.Tests/TaxHub.Integration.Tests.csproj	(rejected hunks)
+@@ -1,318 +1,318 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+-  <PropertyGroup>
+-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+-    <ProjectGuid>{217268F4-04C6-452B-A070-EBB578B73CAD}</ProjectGuid>
+-    <OutputType>Library</OutputType>
+-    <AppDesignerFolder>Properties</AppDesignerFolder>
+-    <RootNamespace>TaxHub.Integration.Tests</RootNamespace>
+-    <AssemblyName>TaxHub.Integration.Tests</AssemblyName>
+-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+-    <FileAlignment>512</FileAlignment>
+-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+-    <TargetFrameworkProfile />
+-    <NuGetPackageImportStamp>
+-    </NuGetPackageImportStamp>
+-  </PropertyGroup>
+-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+-    <DebugSymbols>true</DebugSymbols>
+-    <DebugType>full</DebugType>
+-    <Optimize>false</Optimize>
+-    <OutputPath>bin\Debug\</OutputPath>
+-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+-    <ErrorReport>prompt</ErrorReport>
+-    <WarningLevel>4</WarningLevel>
+-    <DocumentationFile>
+-    </DocumentationFile>
+-    <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
+-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+-  </PropertyGroup>
+-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+-    <DebugType>pdbonly</DebugType>
+-    <Optimize>true</Optimize>
+-    <OutputPath>bin\Release\</OutputPath>
+-    <DefineConstants>TRACE</DefineConstants>
+-    <ErrorReport>prompt</ErrorReport>
+-    <WarningLevel>4</WarningLevel>
+-    <DocumentationFile>
+-    </DocumentationFile>
+-    <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
+-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+-  </PropertyGroup>
+-  <ItemGroup>
+-    <Reference Include="Correlator, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ad71b95c30d52163, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\WebApiCorrelator.1.1.0.0\lib\net452\Correlator.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+-      <SpecificVersion>False</SpecificVersion>
+-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+-    </Reference>
+-    <Reference Include="EntityFramework.SqlServer">
+-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+-    </Reference>
+-    <Reference Include="FakeItEasy">
+-      <HintPath>..\..\packages\FakeItEasy.2.3.1\lib\net40\FakeItEasy.dll</HintPath>
+-    </Reference>
+-    <Reference Include="FluentAssertions, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="FluentAssertions.Core, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.Core.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+-      <Private>False</Private>
+-    </Reference>
+-    <Reference Include="MongoDB.Bson, Version=2.3.0.157, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MongoDB.Bson.2.3.0\lib\net45\MongoDB.Bson.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="MongoDB.Driver, Version=2.3.0.157, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MongoDB.Driver.2.3.0\lib\net45\MongoDB.Driver.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="MongoDB.Driver.Core, Version=2.3.0.157, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MongoDB.Driver.Core.2.3.0\lib\net45\MongoDB.Driver.Core.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Newtonsoft.Json">
+-      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+-    </Reference>
+-    <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\NUnit.3.4.1\lib\net45\nunit.framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Ploeh.AutoFixture, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\AutoFixture.3.50.2\lib\net40\Ploeh.AutoFixture.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Ploeh.AutoFixture.AutoFakeItEasy, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\AutoFixture.AutoFakeItEasy.3.50.2\lib\net40\Ploeh.AutoFixture.AutoFakeItEasy.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Ploeh.AutoFixture.Idioms, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\AutoFixture.Idioms.3.50.2\lib\net40\Ploeh.AutoFixture.Idioms.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="Ploeh.AutoFixture.NUnit3, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\AutoFixture.NUnit3.3.50.2\lib\net40\Ploeh.AutoFixture.NUnit3.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="RabbitMQ.Client, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
+-      <SpecificVersion>False</SpecificVersion>
+-      <HintPath>..\..\packages\RabbitMQ.Client.4.1.0\lib\net451\RabbitMQ.Client.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\Remotion.Linq.2.1.1\lib\net45\Remotion.Linq.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System" />
+-    <Reference Include="System.ComponentModel.DataAnnotations" />
+-    <Reference Include="System.Configuration" />
+-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System.Interactive.Async, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\System.Interactive.Async.3.0.0\lib\net45\System.Interactive.Async.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\System.Net.Http.4.3.0\lib\net46\System.Net.Http.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System.Transactions" />
+-    <Reference Include="System.Web" />
+-    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="System.Xml.Linq" />
+-    <Reference Include="Microsoft.CSharp" />
+-    <Reference Include="System.Data" />
+-    <Reference Include="System.Xml" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <Compile Include="CoreServices\Acl\Payment\PayServiceAdapterIntegrationTests.cs" />
+-    <Compile Include="CoreServices\Application\EntityServiceBaseIntegrationTests.cs" />
+-    <Compile Include="CoreServices\Application\PeriodicTaxProcessingServiceIntegrationTests.cs" />
+-    <Compile Include="CoreServices\Controller\ClientControllerTest.cs" />
+-    <Compile Include="CoreServices\Application\QuarterlyTaxProcessingServiceIntegrationTests.cs" />
+-    <Compile Include="CoreServices\Application\TaxProcessingIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\MongoDbStore\MongoDbRepositoryIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\SqlDbStore\ClientRepositoryIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\SqlDbStore\MappedTaxItemRepositoryIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\SqlDbStore\PeriodicTaxInstanceRepositoryIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\SqlDbStore\PtmRepositoryIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\SqlDbStore\QuarterlyTaxInstanceRepositoryIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\SqlDbStore\UteImportClientRepositoryIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\SqlDbStore\TenantRepositoryIntegrationTests.cs" />
+-    <Compile Include="CoreServices\DataAccess\UltiproTaxCodeMappingCacheIntegrationTests.cs" />
+-    <Compile Include="Legacy\PTMBAL\ImportPayrollTest.cs" />
+-    <Compile Include="Legacy\PTMIntegration\Audit\AuditCaptureIntegrationTests.cs" />
+-    <Compile Include="Legacy\PTMIntegration\Audit\AuditConnectionIntegrationTests.cs" />
+-    <Compile Include="Legacy\PTMIntegration\Audit\AuditIntegrationTestBase.cs" />
+-    <Compile Include="Legacy\PTMIntegration\Audit\AuditProcessingIntegrationTests.cs" />
+-    <Compile Include="Legacy\PTMIntegration\Audit\AuditSetupIntegrationTests.cs" />
+-    <Compile Include="Legacy\PTMIntegration\SessionCleanup\SessionLockTableCleanupTests.cs" />
+-    <Compile Include="Legacy\PTMCommon\ClientServiceAdapterIntegrationTest.cs" />
+-    <Compile Include="MasterTaxMigration\UteImportClientRepositoryIntegrationTests.cs" />
+-    <Compile Include="Messaging\MessageHubIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\FederalTaxIntegrationTest.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\LocalIntegrationTest.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\PeriodicTaxIntegrationBaseSetup.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Quarterly\LocalPeriodicThenQuarterlyIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\EmployeeCount\PeriodicLocalEmployeeCountTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Quarterly\QuarterlyTaxIntegrationBaseSetup.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Quarterly\FederalPeriodicThenQuarterlyIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Quarterly\FederalQuarterlyIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Quarterly\StatePeriodicThenQuarterlyIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Quarterly\StateSupplementalQuarterlyIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Quarterly\StateQuarterlyIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateSitAndSitWagesIntegrationTest.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateSitIntegrationTest.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateEmployeeWageIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateFutaWagesIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateSupplTaxAndWagesIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateTaxQuarterlyIntegrationTests.cs" />
+-    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateSuitAndSuitWagesIntegrationTests.cs" />
+-    <Compile Include="ObjectStore\ObjectStoreServiceClientApiTest.cs" />
+-    <Compile Include="Properties\AssemblyInfo.cs" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <ProjectReference Include="..\..\Legacy\PTMBAL\PTMBAL.csproj">
+-      <Project>{2E5D465F-25BA-4697-8D15-4CD9DF1F2F38}</Project>
+-      <Name>PTMBAL</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Legacy\PTMCommon\PTMCommon.csproj">
+-      <Project>{9E8FFAFF-5279-448E-8799-DFD193920382}</Project>
+-      <Name>PTMCommon</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\Migration.CoreService\Migration.CoreService.csproj">
+-      <Project>{4d371058-8a3f-4c03-8da2-25c5eacbb307}</Project>
+-      <Name>Migration.CoreService</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\TaxHub.Common.Logging\TaxHub.Common.Logging.csproj">
+-      <Project>{47BB4EE0-385D-4115-8918-30F4F568E7FC}</Project>
+-      <Name>TaxHub.Common.Logging</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\TaxHub.Common\TaxHub.Common.csproj">
+-      <Project>{E7928680-3FE2-452C-8420-1F339898C473}</Project>
+-      <Name>TaxHub.Common</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\TaxHub.Configuration\TaxHub.Configuration.csproj">
+-      <Project>{c383a44d-4260-4031-9349-7543ad810329}</Project>
+-      <Name>TaxHub.Configuration</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\TaxHub.CoreServices\TaxHub.CoreServices.csproj">
+-      <Project>{ef99edc2-8fa0-4e76-a24b-4e48673e328c}</Project>
+-      <Name>TaxHub.CoreServices</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\TaxHub.Hosting\TaxHub.Hosting.csproj">
+-      <Project>{e7928680-3fe2-452c-8420-1f339898c583}</Project>
+-      <Name>TaxHub.Hosting</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\TaxHub.Messaging\TaxHub.Messaging.csproj">
+-      <Project>{10ab01b9-ae01-479e-8504-b5331df4325f}</Project>
+-      <Name>TaxHub.Messaging</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\TaxHub.Models\TaxHub.Models.csproj">
+-      <Project>{16e5a7cd-59c9-451e-918c-77a86bf04001}</Project>
+-      <Name>TaxHub.Models</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\..\Source\TaxHub.ObjectStorage.Integration\TaxHub.ObjectStorage.Integration.csproj">
+-      <Project>{13337094-2cda-4541-ba15-e96db46710bc}</Project>
+-      <Name>TaxHub.ObjectStorage.Integration</Name>
+-    </ProjectReference>
+-    <ProjectReference Include="..\TaxHub.TestHelpers\TaxHub.TestHelpers.csproj">
+-      <Project>{8e3fa9ea-2e3a-4ba5-af2d-425990d1f910}</Project>
+-      <Name>TaxHub.TestHelpers</Name>
+-    </ProjectReference>
+-  </ItemGroup>
+-  <ItemGroup>
+-    <None Include="..\..\stylecop.json">
+-      <Link>stylecop.json</Link>
+-    </None>
+-    <None Include="..\config.yml">
+-      <Link>config.yml</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </None>
+-    <None Include="app.config">
+-      <SubType>Designer</SubType>
+-    </None>
+-    <None Include="packages.config">
+-      <SubType>Designer</SubType>
+-    </None>
+-  </ItemGroup>
+-  <ItemGroup>
+-    <EmbeddedResource Include="Resources\01. PTM_Load_Client.sql" />
+-    <Content Include="Resources\ImportPayrollTest_QE.txt">
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="Resources\ImportPayrollTest.txt">
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <EmbeddedResource Include="Resources\PTM_DailyProcess_TearDown.sql" />
+-    <Content Include="Scripts\jquery.ajax.correlator.min.js" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <Folder Include="CoreServices\Controller\" />
+-  </ItemGroup>
+-  <ItemGroup />
+-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+-  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+-    <PropertyGroup>
+-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+-    </PropertyGroup>
+-    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+-  </Target>
+-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+-       Other similar extension points exist, see Microsoft.Common.targets.
+-  <Target Name="BeforeBuild">
+-  </Target>
+-  <Target Name="AfterBuild">
+-  </Target>
+-  -->
+-</Project>
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
++  <PropertyGroup>
++    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
++    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
++    <ProjectGuid>{217268F4-04C6-452B-A070-EBB578B73CAD}</ProjectGuid>
++    <OutputType>Library</OutputType>
++    <AppDesignerFolder>Properties</AppDesignerFolder>
++    <RootNamespace>TaxHub.Integration.Tests</RootNamespace>
++    <AssemblyName>TaxHub.Integration.Tests</AssemblyName>
++    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
++    <FileAlignment>512</FileAlignment>
++    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
++    <TargetFrameworkProfile />
++    <NuGetPackageImportStamp>
++    </NuGetPackageImportStamp>
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
++    <DebugSymbols>true</DebugSymbols>
++    <DebugType>full</DebugType>
++    <Optimize>false</Optimize>
++    <OutputPath>bin\Debug\</OutputPath>
++    <DefineConstants>DEBUG;TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>4</WarningLevel>
++    <DocumentationFile>
++    </DocumentationFile>
++    <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
++    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
++    <DebugType>pdbonly</DebugType>
++    <Optimize>true</Optimize>
++    <OutputPath>bin\Release\</OutputPath>
++    <DefineConstants>TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>4</WarningLevel>
++    <DocumentationFile>
++    </DocumentationFile>
++    <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
++    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
++  </PropertyGroup>
++  <ItemGroup>
++    <Reference Include="Correlator, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ad71b95c30d52163, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\WebApiCorrelator.1.1.0.0\lib\net452\Correlator.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
++      <SpecificVersion>False</SpecificVersion>
++      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
++    </Reference>
++    <Reference Include="EntityFramework.SqlServer">
++      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
++    </Reference>
++    <Reference Include="FakeItEasy">
++      <HintPath>..\..\packages\FakeItEasy.2.3.1\lib\net40\FakeItEasy.dll</HintPath>
++    </Reference>
++    <Reference Include="FluentAssertions, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="FluentAssertions.Core, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.Core.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Microsoft.Practices.Unity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.Configuration.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Microsoft.Practices.Unity.RegistrationByConvention, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6d32ff45e0ccc69f, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\Unity.4.0.1\lib\net45\Microsoft.Practices.Unity.RegistrationByConvention.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
++      <Private>False</Private>
++    </Reference>
++    <Reference Include="MongoDB.Bson, Version=2.3.0.157, Culture=neutral, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\MongoDB.Bson.2.3.0\lib\net45\MongoDB.Bson.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="MongoDB.Driver, Version=2.3.0.157, Culture=neutral, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\MongoDB.Driver.2.3.0\lib\net45\MongoDB.Driver.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="MongoDB.Driver.Core, Version=2.3.0.157, Culture=neutral, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\MongoDB.Driver.Core.2.3.0\lib\net45\MongoDB.Driver.Core.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Newtonsoft.Json">
++      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
++    </Reference>
++    <Reference Include="nunit.framework, Version=3.4.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\NUnit.3.4.1\lib\net45\nunit.framework.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Ploeh.AutoFixture, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\AutoFixture.3.50.2\lib\net40\Ploeh.AutoFixture.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Ploeh.AutoFixture.AutoFakeItEasy, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\AutoFixture.AutoFakeItEasy.3.50.2\lib\net40\Ploeh.AutoFixture.AutoFakeItEasy.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Ploeh.AutoFixture.Idioms, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\AutoFixture.Idioms.3.50.2\lib\net40\Ploeh.AutoFixture.Idioms.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="Ploeh.AutoFixture.NUnit3, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\AutoFixture.NUnit3.3.50.2\lib\net40\Ploeh.AutoFixture.NUnit3.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="RabbitMQ.Client, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89e7d7c5feba84ce, processorArchitecture=MSIL">
++      <SpecificVersion>False</SpecificVersion>
++      <HintPath>..\..\packages\RabbitMQ.Client.4.1.0\lib\net451\RabbitMQ.Client.dll</HintPath>
++    </Reference>
++    <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\Remotion.Linq.2.1.1\lib\net45\Remotion.Linq.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System" />
++    <Reference Include="System.ComponentModel.DataAnnotations" />
++    <Reference Include="System.Configuration" />
++    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.4.3.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System.Interactive.Async, Version=3.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\System.Interactive.Async.3.0.0\lib\net45\System.Interactive.Async.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System.Net.Http, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\System.Net.Http.4.3.0\lib\net46\System.Net.Http.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net461\System.Security.Cryptography.X509Certificates.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System.Transactions" />
++    <Reference Include="System.Web" />
++    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
++      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
++      <Private>True</Private>
++    </Reference>
++    <Reference Include="System.Xml.Linq" />
++    <Reference Include="Microsoft.CSharp" />
++    <Reference Include="System.Data" />
++    <Reference Include="System.Xml" />
++  </ItemGroup>
++  <ItemGroup>
++    <Compile Include="CoreServices\Acl\Payment\PayServiceAdapterIntegrationTests.cs" />
++    <Compile Include="CoreServices\Application\EntityServiceBaseIntegrationTests.cs" />
++    <Compile Include="CoreServices\Application\PeriodicTaxProcessingServiceIntegrationTests.cs" />
++    <Compile Include="CoreServices\Controller\ClientControllerTest.cs" />
++    <Compile Include="CoreServices\Application\QuarterlyTaxProcessingServiceIntegrationTests.cs" />
++    <Compile Include="CoreServices\Application\TaxProcessingIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\MongoDbStore\MongoDbRepositoryIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\SqlDbStore\ClientRepositoryIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\SqlDbStore\MappedTaxItemRepositoryIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\SqlDbStore\PeriodicTaxInstanceRepositoryIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\SqlDbStore\PtmRepositoryIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\SqlDbStore\QuarterlyTaxInstanceRepositoryIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\SqlDbStore\UteImportClientRepositoryIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\SqlDbStore\TenantRepositoryIntegrationTests.cs" />
++    <Compile Include="CoreServices\DataAccess\UltiproTaxCodeMappingCacheIntegrationTests.cs" />
++    <Compile Include="Legacy\PTMBAL\ImportPayrollTest.cs" />
++    <Compile Include="Legacy\PTMIntegration\Audit\AuditCaptureIntegrationTests.cs" />
++    <Compile Include="Legacy\PTMIntegration\Audit\AuditConnectionIntegrationTests.cs" />
++    <Compile Include="Legacy\PTMIntegration\Audit\AuditIntegrationTestBase.cs" />
++    <Compile Include="Legacy\PTMIntegration\Audit\AuditProcessingIntegrationTests.cs" />
++    <Compile Include="Legacy\PTMIntegration\Audit\AuditSetupIntegrationTests.cs" />
++    <Compile Include="Legacy\PTMIntegration\SessionCleanup\SessionLockTableCleanupTests.cs" />
++    <Compile Include="Legacy\PTMCommon\ClientServiceAdapterIntegrationTest.cs" />
++    <Compile Include="MasterTaxMigration\UteImportClientRepositoryIntegrationTests.cs" />
++    <Compile Include="Messaging\MessageHubIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\FederalTaxIntegrationTest.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\LocalIntegrationTest.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\PeriodicTaxIntegrationBaseSetup.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Quarterly\LocalPeriodicThenQuarterlyIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\EmployeeCount\PeriodicLocalEmployeeCountTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Quarterly\QuarterlyTaxIntegrationBaseSetup.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Quarterly\FederalPeriodicThenQuarterlyIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Quarterly\FederalQuarterlyIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Quarterly\StatePeriodicThenQuarterlyIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Quarterly\StateSupplementalQuarterlyIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Quarterly\StateQuarterlyIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateSitAndSitWagesIntegrationTest.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateSitIntegrationTest.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateEmployeeWageIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateFutaWagesIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateSupplTaxAndWagesIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateTaxQuarterlyIntegrationTests.cs" />
++    <Compile Include="Models\TaxItemsMappingRules\Periodic\StateSuitAndSuitWagesIntegrationTests.cs" />
++    <Compile Include="ObjectStore\ObjectStoreServiceClientApiTest.cs" />
++    <Compile Include="Properties\AssemblyInfo.cs" />
++  </ItemGroup>
++  <ItemGroup>
++    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
++    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
++    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
++  </ItemGroup>
++  <ItemGroup>
++    <ProjectReference Include="..\..\Legacy\PTMBAL\PTMBAL.csproj">
++      <Project>{2E5D465F-25BA-4697-8D15-4CD9DF1F2F38}</Project>
++      <Name>PTMBAL</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Legacy\PTMCommon\PTMCommon.csproj">
++      <Project>{9E8FFAFF-5279-448E-8799-DFD193920382}</Project>
++      <Name>PTMCommon</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\Migration.CoreService\Migration.CoreService.csproj">
++      <Project>{4d371058-8a3f-4c03-8da2-25c5eacbb307}</Project>
++      <Name>Migration.CoreService</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\TaxHub.Common.Logging\TaxHub.Common.Logging.csproj">
++      <Project>{47BB4EE0-385D-4115-8918-30F4F568E7FC}</Project>
++      <Name>TaxHub.Common.Logging</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\TaxHub.Common\TaxHub.Common.csproj">
++      <Project>{E7928680-3FE2-452C-8420-1F339898C473}</Project>
++      <Name>TaxHub.Common</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\TaxHub.Configuration\TaxHub.Configuration.csproj">
++      <Project>{c383a44d-4260-4031-9349-7543ad810329}</Project>
++      <Name>TaxHub.Configuration</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\TaxHub.CoreServices\TaxHub.CoreServices.csproj">
++      <Project>{ef99edc2-8fa0-4e76-a24b-4e48673e328c}</Project>
++      <Name>TaxHub.CoreServices</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\TaxHub.Hosting\TaxHub.Hosting.csproj">
++      <Project>{e7928680-3fe2-452c-8420-1f339898c583}</Project>
++      <Name>TaxHub.Hosting</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\TaxHub.Messaging\TaxHub.Messaging.csproj">
++      <Project>{10ab01b9-ae01-479e-8504-b5331df4325f}</Project>
++      <Name>TaxHub.Messaging</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\TaxHub.Models\TaxHub.Models.csproj">
++      <Project>{16e5a7cd-59c9-451e-918c-77a86bf04001}</Project>
++      <Name>TaxHub.Models</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\..\Source\TaxHub.ObjectStorage.Integration\TaxHub.ObjectStorage.Integration.csproj">
++      <Project>{13337094-2cda-4541-ba15-e96db46710bc}</Project>
++      <Name>TaxHub.ObjectStorage.Integration</Name>
++    </ProjectReference>
++    <ProjectReference Include="..\TaxHub.TestHelpers\TaxHub.TestHelpers.csproj">
++      <Project>{8e3fa9ea-2e3a-4ba5-af2d-425990d1f910}</Project>
++      <Name>TaxHub.TestHelpers</Name>
++    </ProjectReference>
++  </ItemGroup>
++  <ItemGroup>
++    <None Include="..\..\stylecop.json">
++      <Link>stylecop.json</Link>
++    </None>
++    <None Include="..\config.yml">
++      <Link>config.yml</Link>
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </None>
++    <None Include="app.config">
++      <SubType>Designer</SubType>
++    </None>
++    <None Include="packages.config">
++      <SubType>Designer</SubType>
++    </None>
++  </ItemGroup>
++  <ItemGroup>
++    <EmbeddedResource Include="Resources\01. PTM_Load_Client.sql" />
++    <Content Include="Resources\ImportPayrollTest_QE.txt">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </Content>
++    <Content Include="Resources\ImportPayrollTest.txt">
++      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
++    </Content>
++    <EmbeddedResource Include="Resources\PTM_DailyProcess_TearDown.sql" />
++    <Content Include="Scripts\jquery.ajax.correlator.min.js" />
++  </ItemGroup>
++  <ItemGroup>
++    <Folder Include="CoreServices\Controller\" />
++  </ItemGroup>
++  <ItemGroup />
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
++  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
++  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
++    <PropertyGroup>
++      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
++    </PropertyGroup>
++    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
++  </Target>
++  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
++       Other similar extension points exist, see Microsoft.Common.targets.
++  <Target Name="BeforeBuild">
++  </Target>
++  <Target Name="AfterBuild">
++  </Target>
++  -->
++</Project>

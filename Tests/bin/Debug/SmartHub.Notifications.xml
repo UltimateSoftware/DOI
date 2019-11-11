@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SmartHub.Notifications</name>
+    </assembly>
+    <members>
+        <member name="T:SmartHub.Notifications.INotificationsConfigurationSettings">
+            <summary>
+            Notifications service client configuration settings
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.INotificationsConfigurationSettings.Audience">
+            <summary>
+            Gets the audience.
+            </summary>
+            <value>
+            The audience.
+            </value>
+        </member>
+        <member name="P:SmartHub.Notifications.INotificationsConfigurationSettings.BaseUrl">
+            <summary>
+            Gets the base URL.
+            </summary>
+            <value>
+            The base URL.
+            </value>
+        </member>
+        <member name="P:SmartHub.Notifications.INotificationsConfigurationSettings.ClientId">
+            <summary>
+            Gets the client identifier.
+            </summary>
+            <value>
+            The client identifier.
+            </value>
+        </member>
+        <member name="P:SmartHub.Notifications.INotificationsConfigurationSettings.EmailFromAddress">
+            <summary>
+            Gets the email from address.
+            </summary>
+            <value>
+            The email from address.
+            </value>
+        </member>
+        <member name="P:SmartHub.Notifications.INotificationsConfigurationSettings.EmailToAddress">
+            <summary>
+            Gets the email to address.
+            </summary>
+            <value>
+            The email to address.
+            </value>
+        </member>
+        <member name="T:SmartHub.Notifications.INotificationsServiceClient">
+            <summary>
+            Notifications service client interface
+            </summary>
+        </member>
+        <member name="M:SmartHub.Notifications.INotificationsServiceClient.PrepareEmail(System.String,System.String,System.String)">
+            <summary>
+            Prepares the email notification.
+            </summary>
+            <param name="subject">The subject line.</param>
+            <param name="bodyContentType">The content-type of the body.</param>
+            <param name="bodyData">The body.</param>
+            <returns>
+            The email.
+            </returns>
+        </member>
+        <member name="M:SmartHub.Notifications.INotificationsServiceClient.SendEmail(SmartHub.Notifications.Types.NotificationEmail,System.Guid)">
+            <summary>
+            Sends the email notification.
+            </summary>
+            <param name="email">The email.</param>
+            <param name="correlationId">The correlation id.</param>
+            <returns>
+            The Notifications API response message.
+            </returns>
+        </member>
+        <member name="T:SmartHub.Notifications.IX509JwtCertProvider">
+            <summary>
+            This interface must be implemented by each app.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Notifications.IX509JwtCertProvider.GetCertificate">
+            <summary>
+            Gets the X.509 certificate.
+            </summary>
+            <returns>
+            The X.509 certificate.
+            </returns>
+        </member>
+        <member name="T:SmartHub.Notifications.NotificationsConfigurationSettings">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Notifications.NotificationsConfigurationSettings.Audience">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Notifications.NotificationsConfigurationSettings.BaseUrl">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Notifications.NotificationsConfigurationSettings.ClientId">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Notifications.NotificationsConfigurationSettings.EmailFromAddress">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Notifications.NotificationsConfigurationSettings.EmailToAddress">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Notifications.NotificationsConfigurationSettings.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:SmartHub.Notifications.NotificationsServiceClient">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Notifications.NotificationsServiceClient.#ctor(SmartHub.Notifications.INotificationsConfigurationSettings,SmartHub.Notifications.IX509JwtEncryptionManager)">
+            <summary>
+            NotificationsServiceClient constructor
+            </summary>
+            <param name="config">The config.</param>
+            <param name="encryptionManager">The encryption manager.</param>
+        </member>
+        <member name="M:SmartHub.Notifications.NotificationsServiceClient.PrepareEmail(System.String,System.String,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Notifications.NotificationsServiceClient.SendEmail(SmartHub.Notifications.Types.NotificationEmail,System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartHub.Notifications.Types.NotificationEmail">
+            <summary>
+            Notifications API V2 Email
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.Types.NotificationEmail.To">
+            <summary>
+            To email address
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.Types.NotificationEmail.From">
+            <summary>
+            From email address
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.Types.NotificationEmail.Subject">
+            <summary>
+            Subject line
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.Types.NotificationEmail.ClientId">
+            <summary>
+            Notifications API client identifier
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.Types.NotificationEmail.Body">
+            <summary>
+            Email body
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.Types.NotificationEmail.ReplyTo">
+            <summary>
+            Reply-to email address
+            </summary>
+        </member>
+        <member name="T:SmartHub.Notifications.Types.NotificationEmailBody">
+            <summary>
+            Notifications API V2 Email Body
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.Types.NotificationEmailBody.ContentType">
+            <summary>
+            Content type [text/plain or text/html]
+            </summary>
+        </member>
+        <member name="P:SmartHub.Notifications.Types.NotificationEmailBody.Data">
+            <summary>
+            Body message data
+            </summary>
+        </member>
+        <member name="T:SmartHub.Notifications.IX509JwtEncryptionManager">
+            <summary>
+            The X509JWT encryption manager
+            </summary>
+        </member>
+        <member name="M:SmartHub.Notifications.IX509JwtEncryptionManager.LoadKeys">
+            <summary>
+            Loads the public/private key pair
+            </summary>
+            <returns>
+            A task representing the asynchronous operation.
+            </returns>
+        </member>
+        <member name="M:SmartHub.Notifications.IX509JwtEncryptionManager.GetPublicKey">
+            <summary>
+            Gets the public key in PEM string format
+            </summary>
+            <returns>
+            A task representing the asynchronous operation.
+            </returns>
+        </member>
+        <member name="M:SmartHub.Notifications.IX509JwtEncryptionManager.Sign(System.String)">
+            <summary>
+            Signs the data using RSA private key
+            </summary>
+            <param name="data">The data.</param>
+            <returns>
+            A task representing the asynchronous operation.
+            </returns>
+        </member>
+        <member name="T:SmartHub.Notifications.X509JwtEncryptionManager">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Notifications.X509JwtEncryptionManager.#ctor(SmartHub.Notifications.IX509JwtCertProvider)">
+            <summary>
+            Cobstructor
+            </summary>
+            <param name="certProvider">The certificate provider.</param>
+        </member>
+        <member name="M:SmartHub.Notifications.X509JwtEncryptionManager.LoadKeys">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Notifications.X509JwtEncryptionManager.GetPublicKey">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Notifications.X509JwtEncryptionManager.Sign(System.String)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

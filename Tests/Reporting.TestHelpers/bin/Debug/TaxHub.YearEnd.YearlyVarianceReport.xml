@@ -1,0 +1,944 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.YearEnd.YearlyVarianceReport</name>
+    </assembly>
+    <members>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.ILegacyDocumentFolderServiceAdapter.GetFolderPath(System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Gets the folder path for a given folder name and guid.
+            </summary>
+            <param name="folderName">Folder Name</param>
+            <param name="correlationId">Correlation Id</param>
+            <param name="cancellationToken">The cancellation token</param>
+            <returns>folder path.</returns>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Acl.LegacyDocumentFolderServiceAdapter">
+            <summary>
+            LegacyDocumentFolderServiceAdapter
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.LegacyDocumentFolderServiceAdapter.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Common.Runtime.IHttpServiceClientFactory)">
+            <summary>
+            Initializes an instance of the <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Acl.LegacyDocumentFolderServiceAdapter"/>
+            </summary>
+            <param name="logger">The application Logger.</param>
+            <param name="httpClientFactory">The HTTP Client Factory.</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.LegacyDocumentFolderServiceAdapter.GetApiVersionUriPart">
+            <summary>
+            Returns the version number related part for the urls constructed using this class (For tax adapters the version will not be in the config so we need to provide it.)
+            </summary>
+            <returns>The version number related part for the url</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.LegacyDocumentFolderServiceAdapter.InitializeClient(System.Guid)">
+            <summary>
+            Initializes client.
+            </summary>
+            <param name="correlationId">The correlationId associated with the process.</param>
+            <returns>The Http Client</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.LegacyDocumentFolderServiceAdapter.GetFolderPath(System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Gets the folder path using the folder name.
+            </summary>
+            <param name="folderName">The folder name</param>
+            <param name="correlationId">The correlation ID</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The document folder path</returns>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.TenantServiceAdapter">
+            <summary>
+            Tenant service API adapter implementation.
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.TenantServiceAdapter.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Common.Runtime.IHttpServiceClientFactory)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="logger">The application logger.</param>
+            <param name="httpClientFactory">The HttpClient factory.</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.TenantServiceAdapter.InitializeClient(System.Guid)">
+            <summary>
+            Initializes client.
+            </summary>
+            <param name="correlationId">The correlationId associated with the process.</param>
+            <returns>The Http Client</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.TenantServiceAdapter.FindOne(System.String,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.TenantView">
+            <summary>
+            A view for the Client aggregate
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.TenantView.Id">
+            <summary>
+            The Id for the Tenant instance
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.TenantView.ARNumber">
+            <summary>
+            Account Receivable Number
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.ITenantServiceAdapter">
+            <summary>
+            An instance of the Tenant service API
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.ITenantServiceAdapter.FindOne(System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Finds a Client aggregate instance by ClientId
+            </summary>
+            <param name="tenantId">The clientId to find</param>
+            <param name="correlationId">A correlation Id</param>
+            <param name="cancellationToken">A cancellationToken</param>
+            <returns>A view of the Client aggregate</returns>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.ClientView">
+            <summary>
+            A view for the Client aggregate
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.ClientView.ClientId">
+            <summary>
+            The Id for the Client instance
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.ClientView.LegalName">
+            <summary>
+            The Legal Name for the clientInstance
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.ClientView.TenantId">
+            <summary>
+            The TenantId to which this client instance belongs to.
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.IClientServiceAdapter">
+            <summary>
+            An instance of the Client service API
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.IClientServiceAdapter.FindOne(System.String,System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Finds a Client aggregate instance by ClientId
+            </summary>
+            <param name="tenantId">A tenant Id.</param>
+            <param name="clientId">The clientId to find</param>
+            <param name="correlationId">A correlation Id</param>
+            <param name="cancellationToken">A cancellationToken</param>
+            <returns>A view of the Client aggregate</returns>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.ClientServiceAdapter">
+            <summary>
+            Client service API adapter implementation.
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.ClientServiceAdapter.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Common.Runtime.IHttpServiceClientFactory)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="logger">The application logger.</param>
+            <param name="httpClientFactory">The HttpClient factory.</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.ClientServiceAdapter.InitializeClient(System.Guid)">
+            <summary>
+            Initializes client.
+            </summary>
+            <param name="correlationId">The correlationId associated with the process.</param>
+            <returns>The Http Client</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.ClientServiceAdapter.FindOne(System.String,System.String,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService">
+            <summary>
+            The Yearly Variance Report (YVR) service
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService.Generate(System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Update status of a YVR report.
+            </summary>
+            <param name="id">Event data aggregate Id</param>
+            <param name="eventDataParams">The event data parameters.</param>
+            <param name="cancellationToken">The cancellation token</param>
+            <returns>The operation result.</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService.Create(TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Inserts a new record in the YvrRequest Table.
+            </summary>
+            <param name="command">The yearly variance report request command.</param>
+            <param name="eventDataParams">The event parameters</param>
+            <param name="cancellationToken">The cancellation token;</param>
+            <returns>CreateAggregateResult</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService.FindYvrByRemoteIdentifier(System.Guid,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Find By Remote Identifier
+            </summary>
+            <param name="remoteIdentifier">remote ID</param>
+            <param name="remoteContainer">remote container</param>
+            <param name="cancellationToken">The CancellationToken</param>
+            <returns>YearlyVarianceReportRequest</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService.CompleteRequest(System.Guid,System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Find By Remote Identifier
+            </summary>
+            <param name="id">entity ID</param>
+            /// <param name="fileId">File ID</param>
+            <param name="eventDataParams">remote ID</param>
+            <param name="cancellationToken">The CancellationToken</param>
+            <returns>bool</returns>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService">
+            <inheritdoc cref="T:TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService"/>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.EventInstanceCreated">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.EventInstanceDeleted">
+            <inheritdoc />
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YvrReportPageCountMetricName">
+            <summary>
+            yvr_page_count_histogram
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YvrReportMetricName">
+            <summary>
+            yvr_report_time_per_client
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YvrReportCounterMetricName">
+            <summary>
+            yearly_variance_report_count
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YvrSSRSMetricName">
+            <summary>
+            yvr_each_client_ssrs_process_timer
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.#ctor(TaxHub.YearEnd.YearlyVarianceReport.DataAccess.IYearlyVarianceReportRepository,TaxHub.Messaging.IMessageHub,TaxHub.Common.Logging.IAppLogger,SmartHub.Metrics.IAppMetricsFactory,TaxHub.Pdf.Abstractions.IPdfOperations,TaxHub.YearEnd.YearlyVarianceReport.Acl.ILegacyDocumentFolderServiceAdapter,TaxHub.YearEnd.YearlyVarianceReport.Acl.Client.IClientServiceAdapter,TaxHub.YearEnd.YearlyVarianceReport.Acl.Tenant.ITenantServiceAdapter,TaxHub.ObjectStorage.Integration.IObjectStoreServiceClient,TaxHub.CommonServices.FileManagement.Configuration.IFileServiceConfiguration,TaxHub.Hosting.Runtime.IHashProvider,TaxHub.CommonServices.SqlReportingServices.Application.ISsrsReportProvider)">
+            <summary>
+            Inistializes the service
+            </summary>
+            <param name="repository">The repo.</param>
+            <param name="imetricsFactory">The metrics.</param>
+            <param name="logger">The logger.</param>
+            <param name="ipdfOperations">The pdfOperations service</param>
+            <param name="messageHub">A message hub</param>
+            <param name="legacyDocumentFolderServiceAdapter">A legacyDocumentFolderServiceAdapter</param>
+            <param name="clientService">The Client Service.</param>
+            <param name="tenantService">The tenant service</param>
+            <param name="objectStoreServiceClient">The object store service client</param>
+            <param name="fileServiceConfiguration">Instance of file service config</param>
+            <param name="hashProvider">The hash provider</param>
+            <param name="ssrsReportProvider">The SSRS Report Provider</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.InitializeMetrics">
+            <summary>
+            Initialize Metrics
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.InitializeNew(TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.Generate(System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.GenerateReportPdf(TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest,System.Guid,TaxHub.Common.Logging.IAppLogger,System.Threading.CancellationToken)">
+            <summary>
+            Generate Report Pdf
+            </summary>
+            <param name="instance">YearlyVarianceReportRequest</param>
+            <param name="correlationId">The corellationId</param>
+            <param name="cLogger">IAppLogger</param>
+            <param name="cancellationToken">The cancellationToken</param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.Create(TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.CompleteRequest(System.Guid,System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.FindYvrByRemoteIdentifier(System.Guid,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YearlyVarianceReportPersistedData.FileName">
+            <summary>
+            File name
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YearlyVarianceReportPersistedData.FilePath">
+            <summary>
+            File path
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YearlyVarianceReportPersistedData.Size">
+            <summary>
+            File size
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YearlyVarianceReportPersistedData.Hash">
+            <summary>
+            File hash
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YearlyVarianceReportPersistedData.ExpirationDate">
+            <summary>
+            File expiration date. Defaults to DateTime.Max, this should be overriden.
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand">
+            <summary>
+            Command to create a Yearly Variance Report
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand.Id">
+            <summary>
+            The request Id.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand.ClientId">
+            <summary>
+            The ClientId.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand.Year">
+            <summary>
+            The Year
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand.Quarter">
+            <summary>
+            The Quarter
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand.InputUser">
+            <summary>
+            The User
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand.ProcessorId">
+            <summary>
+            The Processor Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand.TimeZoneName">
+            <summary>
+            The tenant TimeZoneName
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand.TimeZoneUtcOffset">
+            <summary>
+            The tenant TimeZone Utc Offset in minutes
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Controller.YearlyVarianceReportController">
+            <summary>
+            The controller providing YVR related service end points
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Controller.YearlyVarianceReportController.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService)">
+            <summary>
+            Initializes a new instance of <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Controller.YearlyVarianceReportController"/>
+            </summary>
+            <param name="logger">The application logger.</param>
+            <param name="yearlyVarianceReportService">The Yearly Variance Report domain Service.</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Controller.YearlyVarianceReportController.CreateYearlyVarianceReportRequest(TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand,System.Threading.CancellationToken)">
+            <summary>
+            Initializes a new YearlyVarianceReportRequest
+            </summary>
+            <param name="yearlyVarianceReportCreateCommand">The yearly variance report command.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The HTTP response.</returns>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.IYearlyVarianceReportRepository">
+            <summary>
+            IYearlyVarianceReportRepository
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.IYearlyVarianceReportRepository.GetAggregateSet(System.Data.Entity.DbContext)">
+            <summary>
+            GetAggregateSet
+            </summary>
+            <param name="dbContext">The dbContext</param>
+            <returns>YearlyVarianceReportRequest</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.IYearlyVarianceReportRepository.FindAllByClientId(System.String,System.Int16,System.Int16,System.Threading.CancellationToken)">
+            <summary>
+            FindAll By ClientId, quarter, year
+            </summary>
+            <param name="clientId">clientId</param>
+            <param name="quarter">The quarter</param>
+            <param name="year">The year</param>
+            <param name="token">The CancellationToken</param>
+            <returns>Client data</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.IYearlyVarianceReportRepository.FindOneByExpression(System.String,System.Int16,System.Int16,System.Threading.CancellationToken)">
+            <summary>
+            FindOne By ClientId, quarter, year
+            </summary>
+            <param name="clientId">clientId</param>
+            <param name="quarter">The quarter</param>
+            <param name="year">The year</param>
+            <param name="token">The CancellationToken</param>
+            <returns>Client data</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.IYearlyVarianceReportRepository.Insert(TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest,System.Threading.CancellationToken)">
+            <summary>
+            Insert into Requests table
+            </summary>
+            <param name="item">model</param>
+            <param name="cancellationToken">The CancellationToken</param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.IYearlyVarianceReportRepository.Contains(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            FindOne
+            </summary>
+            <param name="guid">model</param>
+            <param name="token">The CancellationToken</param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.IYearlyVarianceReportRepository.FindByRemoteIdentifier(System.Guid,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Find By Remote Identifier
+            </summary>
+            <param name="remoteIdentifier">remote ID</param>
+            <param name="remoteContainer">remote container</param>
+            <param name="cancellationToken">The CancellationToken</param>
+            <returns>YearlyVarianceReportRequest</returns>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.IYearlyVarianceReportRequestDbContextFactory.Recreate">
+            <summary>
+            Gets or sets a value indicating whether recreate database
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext"/> class.
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext.#ctor(System.String,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext"/> class.
+            </summary>
+            <param name="connectionString">connection string</param>
+            <param name="recreate">recreate the database</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext.OnModelCreating(System.Data.Entity.DbModelBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext.YearlyVarianceReportRequestDbContextFactory">
+            <summary>
+            DepositScheduleDbContextFactory factory
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext.YearlyVarianceReportRequestDbContextFactory.#ctor(TaxHub.Common.DataAccess.IDatabaseConnectivityProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext"/> class.
+            </summary>
+            <param name="databaseConnectivityProvider">DatabaseConnectivityProvider</param>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext.YearlyVarianceReportRequestDbContextFactory.Recreate">
+            <summary>
+            Gets or sets a value indicating whether recreate database
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.YearlyVarianceReportRequestDbContext.YearlyVarianceReportRequestDbContextFactory.Create">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.EntityMappings.YearlyVarianceReportRequestMap">
+            <summary>
+            This class represents Requests table mappings
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.EntityMappings.YearlyVarianceReportRequestMap.#ctor">
+            <summary>
+            The Default Constructor
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.#ctor(TaxHub.YearEnd.YearlyVarianceReport.DataAccess.SqlDbStore.DbContexts.IYearlyVarianceReportRequestDbContextFactory,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository" /> class.
+            </summary>
+            <param name="contextFactory">The yearly variance context factory</param>
+            <param name="logger">The logger</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.GetAggregateSet(System.Data.Entity.DbContext)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.FindAllByClientId(System.String,System.Int16,System.Int16,System.Threading.CancellationToken)">
+            <summary>
+            FindAll By ClientId, quarter, year
+            </summary>
+            <param name="clientId">clientId</param>
+            <param name="quarter">The quarter</param>
+            <param name="year">The year</param>
+            <param name="token">The CancellationToken</param>
+            <returns>Client data</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.FindOneByExpression(System.String,System.Int16,System.Int16,System.Threading.CancellationToken)">
+            <summary>
+            FindOne By ClientId, quarter, year
+            </summary>
+            <param name="clientId">clientId</param>
+            <param name="quarter">The quarter</param>
+            <param name="year">The year</param>
+            <param name="token">The CancellationToken</param>
+            <returns>Client data</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.Insert(TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest,System.Threading.CancellationToken)">
+            <summary>
+            Insert into Requests table
+            </summary>
+            <param name="item">model</param>
+            <param name="token">The CancellationToken</param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.UpdateStatus(TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest,System.Threading.CancellationToken)">
+            <summary>
+            Update status
+            </summary>
+            <param name="item">model</param>
+            <param name="token">The CancellationToken</param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.FindOne(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            FindOne
+            </summary>
+            <param name="id">ID</param>
+            <param name="token">The CancellationToken</param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.Contains(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            FindOne
+            </summary>
+            <param name="guid">ID</param>
+            <param name="token">The CancellationToken</param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.DataAccess.YearlyVarianceReportRepository.FindByRemoteIdentifier(System.Guid,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Enums.DOC_NAME">
+            <summary>
+            Copied from PTMCommon
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus">
+            <summary>
+            An enum denoting the current status of the YVR package.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus.Unknown">
+            <summary>
+            The default value, unspecified. Should never be used.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus.Ready">
+            <summary>
+            Indicates a package has not yet been requested.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus.Requested">
+            <summary>
+            Indicates a package has been requested by a user.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus.InProgress">
+            <summary>
+            Indicates a package is currently being generated.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus.Completed">
+            <summary>
+            Indicates a package has been successfully generated.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus.Failed">
+            <summary>
+            Indicates a package failed to generate.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus.Persisted">
+            <summary>
+            Indicates a package persisted.
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent">
+            <summary>
+            Occurs when the <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest"/> aggregate instance <see cref="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.Status"/> is changed to <see cref="F:TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus.Persisted"/>.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent"/> class.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.RemoteIdentifier">
+            <summary>
+            The remote identifier used in object storage for the generated package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.RemoteContainer">
+            <summary>
+            The remote container used in object storage.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.FileName">
+            <summary>
+            The name of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.Hash">
+            <summary>
+            The Hash of the file contents
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.DocumentType">
+            <summary>
+            The type of Document
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.Size">
+            <summary>
+            The size of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.FilePath">
+            <summary>
+            The virtual path of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestPersistedEvent.FileExpiration">
+            <summary>
+            Expiration date of file stored in Object Storage
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestUpdatedEvent">
+            <summary>
+            The tax.year-end-variance-report.updated event details.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestUpdatedEvent.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestUpdatedEvent.Status">
+            <summary>
+            The Status of the aggregate.
+            </summary>
+            <value>
+            The Client Id.
+            </value>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestUpdatedEvent.FileInfoId">
+            <summary>
+            The FileInfoId
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestUpdatedEvent.ClientId">
+            <summary>
+            The Client ID.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Events.YearlyVarianceReportRequestUpdatedEvent.Year">
+            <summary>
+            The Tax Year.
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportGeneratedMessageSubscriber">
+            <summary>
+            Message subscriber for tax.year-end-variance-report.generated events.
+            This subscriber listens for all files created and determines if the file is one that was generated as a result of a <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest"/>.
+            It then changes the status of the package generation request to completed or failed.
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportGeneratedMessageSubscriber.EventName">
+            <summary>Event name indicating package request started subscriber listens to.</summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportGeneratedMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService)">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportGeneratedMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="yearlyVarianceReportService">The Yearly variance report service.</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportGeneratedMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportInitiatedMessageSubscriber">
+            <summary>
+            Tax Yearly Variance Report request exported message subscriber
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportInitiatedMessageSubscriber.EventName">
+            <summary>
+            event name 
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportInitiatedMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportInitiatedMessageSubscriber.CreateCommand(System.Collections.Generic.IDictionary{System.String,System.Object},TaxHub.Common.EventStore.DomainEventData)">
+            <summary>
+            Create a <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand" /> instance from the Dictionary with the event payload.
+            </summary>
+            <param name="detailsObject">The event payload as Dictionary</param>
+            <param name="eventData">The event date</param>
+            <returns>A <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Commands.YearlyVarianceReportCreateCommand" /> instance</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportInitiatedMessageSubscriber.ValidateEventInfo(System.Collections.Generic.IDictionary{System.String,System.Object},System.Guid)">
+            <summary>
+            Validates the input of the event payload as Dictioary.
+            </summary>
+            <param name="detailsObject">The event payload as Dictionary</param>
+            <param name="correlationId">The correlation Id</param>
+            <returns>True if all validations pass, False if there is at least one failure</returns>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportRequestedMessageSubscriber">
+            <summary>
+            Tax Yearly Variance Report request exported message subscriber
+            </summary>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportRequestedMessageSubscriber.EventName">
+            <summary>
+            event name 
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportRequestedMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.YearEnd.YearlyVarianceReport.Application.IYearlyVarianceReportService)">
+            <summary>
+            The subscriber constructor.
+            </summary>
+            <param name="logger">Application Logger.</param>
+            <param name="yvrReportService">The YVR service.</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Messaging.TaxYearlyVarianceReportRequestedMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest">
+            <summary>
+            A YVR instance
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.InitializeNew(TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest)">
+            <summary>
+            Initializes default values for the <see cref="T:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest"/>
+            </summary>
+            <param name="varianceReportRequest">The yearly variance report model</param>
+            <returns>The new model.</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.IsCompleted">
+            <summary>
+            check if status is completed
+            </summary>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.IsFailed">
+            <summary>
+            check if status is failed
+            </summary>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.IsRequested">
+            <summary>
+            check if status is completed
+            </summary>
+            <returns>bool</returns>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.MarkFailed">
+            <summary>
+            Sets the status to failed.
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.MarkPersisted(TaxHub.YearEnd.YearlyVarianceReport.Application.YearlyVarianceReportService.YearlyVarianceReportPersistedData)">
+            <summary>
+            Sets the status to completed.
+            </summary>
+            <param name="yearlyVarianceReportPersistedData">YVr Persist info Data.</param>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.MarkInProgress">
+            <summary>
+            Sets the status to in progress.
+            </summary>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.SetStatus(TaxHub.YearEnd.YearlyVarianceReport.Enums.YearlyVarianceReportStatus)">
+            <summary>
+            Sets the status to the <paramref name="newStatus"/>
+            </summary>
+            <param name="newStatus">The new status.</param>
+        </member>
+        <member name="F:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.ClientId">
+            <summary>
+            The ClientId.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.Year">
+            <summary>
+            The Year
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.Quarter">
+            <summary>
+            The Quarter
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.InputUser">
+            <summary>
+            The User
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.Status">
+            <summary>
+            The YVR status
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.FileInfoId">
+            <summary>
+            The FileInfoId
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.ProcessorId">
+            <summary>
+            The Processor ID
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.TimeZoneName">
+            <summary>
+            The user's TimeZoneName
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.TimeZoneUtcOffset">
+            <summary>
+            The user's TimeZone Utc Offset in minutes
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.RemoteContainer">
+            <summary>
+            The name of the remote container for the file.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.YearlyVarianceReportRequest.RemoteIdentifier">
+            <summary>
+            The Remote identifier for the generated package.
+            </summary>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.Models.SsrsConfiguration">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.SsrsConfiguration.SsrsServiceUri">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.SsrsConfiguration.ReportPath">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.Models.SsrsConfiguration.IsLocalReportServer">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportDepStartup">
+            <summary>
+            Class provides an integration point between the Api services and its TaxHub AppHost.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportDepStartup.Description">
+            <inheritdoc/>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportDepStartup.ConfigurationFileName">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportDepStartup.GetApiEndpointsScope">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportDepStartup.InitializeMessageSubscribers(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportApiStartup">
+            <summary>
+            Class provides an integration point between the Api services and its TaxHub AppHost.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportApiStartup.Description">
+            <inheritdoc/>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportApiStartup.ConfigurationFileName">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportApiStartup.GetApiEndpointsScope">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase">
+            <summary>
+            Class provides integration between  Package Generation and app host.
+            </summary>
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.ConfigurationFileName">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.InitializeMessageSubscribers(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.StartInternalServices(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.StartInternalServicesAsync(Microsoft.Practices.Unity.IUnityContainer,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.GetApiEndpointsScope">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.StopApplication(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.ResolveUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.InitializeUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.InitializeEventStoreUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.YearEnd.YearlyVarianceReport.YearlyVarianceReportStartupBase.InitializeContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Initializes registrations and configurations in the container
+            </summary>
+            <param name="container">The Container.</param>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,91 @@
+---
+system:
+    httpClientTimeoutSec:   30
+    maxNumberOfMessageDeliveryAttempts:   5
+    maxMessageConsumerRetryTimeSec:    36000
+    allowedDomains:
+    - localhost
+    - mia.ucloud.int
+    isProductionMode:   false
+
+---
+httpService:
+    objectStoreService:   https://ucobsmia01.ulti.io/v1/AUTH_taxmgmt-dev/
+    udesService:    http://udesserviceurl
+    paymentApiService:     http://taxsysint-app-iis-1.mia.ucloud.int:9090/payment/v1/
+    taxCoreApiService:     http://localhost:9080/tax-core/v1/
+    dedApiAtlService:     http://dedapiatlserviceurl
+    dedApiMiaService:     http://dedapimiaserviceurl
+    dedApiPhxService:     http://dedapiphxserviceurl
+    swiftStackAuthService:   https://ucobsmia01.ulti.io/auth/v1.0/
+    tenantAliasMappingApiService: http://localhost:9080/tax-core/v1/
+---
+security:
+    identity:
+        logoutRedirectUri:   http://localhost:58166/IdentityLogin/Login.aspx
+        redirectUri: http://localhost:58166/IdentityLogin/Redirect.aspx
+        scope:    openid profile sps txm
+        entitlementsEndpoint:    https://entitlements.apps.mia.ulti.io/api
+        isJwtServerSideEnabled:    true
+        accountEndpoint:      https://accounts.apps.mia.ulti.io/api/tenants/sps/accounts    #not used, syncing with website.yml
+        tenantEndpoint:    https://accounts.apps.mia.ulti.io/api/tenants
+        defaultIdentityDiscoveryBaseUrl: https://login-dev.ultipro.com/t/sps
+        defaultIdentityV2DiscoveryBaseUrl: https://login-dev.ultipro.com/v2/oauth2/t/sps
+        oAuthCacheTimeoutInSeconds:     900
+        oAuthClaimsTimeoutInSeconds:    300
+        identityKeyCacheTimeoutInSeconds:    3600
+        identityUserTenantAlias: sps
+        identityV2UserTenantAlias: sps
+    debug:    0
+    swiftStackAuthExpirationTimeInMinutes:     720
+    enableCredentialsFromKeyServer: true
+    x509JwtCertFileName: x509jwt-cert.p12
+---
+featureToggle:
+    isAuthenticationEnabled:   false #needed to be true for Identity works
+    isIdentityVersionV2Enabled: false  #needed to be true for V2 works default v1
+    areEntitlementsEnabled:     true
+    taxCollections:   false
+    transmitToUdes:   false
+---
+eventReplay:
+    rateLimitSeconds: 900
+---
+reportingIngestion:
+    observedEvents:
+    - tax.taxcode.observed
+    observedArchivedEvents:
+    - payment.pay.observed
+    ignoredEvents:
+    - payment.system.echo
+    - payment.scheduler-service.datasync-audit-process-scheduled
+    - payment.scheduler-service.download-receivable-manager-file-scheduled
+    - payment.datasync-pay-processor.ultipro-pay-batch-observed
+    - tax.company-service.companies-sync-completed
+    - tax.employee-sync-service.employee-initial-sync-requested
+    - tax.employee-sync-service.employee-resync-requested
+    - tax.migrateagency-service.import-requested
+    - tax.migratebank-service.import-requested
+    - tax.migratelegal-service.import-requested
+    - tax.service.smarthub-rawevents-to-report-archive-requested
+    - tax.service.taxhub-rawevents-to-report-archive-requested
+    - tax.service.garnishment-information-for-publication
+    - tax.statinfo-service.statinfo-initial-sync-requested
+    - tax.statinfo-service.statinfo-resync-requested
+    - tax.mapped-tax-instance.
+    - -forwarded
+---
+ReportService:
+    legacyPtmSsrs:    http://localhost/ReportServer
+    localReportServer:    true
+    ssrsReportPath:    /PTMClientReports/
+---
+metrics:
+    uri: http://metrics-api.mia.ulti.io:8086/
+    database: UTE
+    enabled: true
+    reportingEnabled: false
+    defaultContextLabel: reportingingestion
+    environmentType: dev
+    reportingIntervalSec: 10
+...

@@ -1,0 +1,314 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.TokenParser.Core</name>
+    </assembly>
+    <members>
+        <member name="M:TaxHub.TokenParser.Core.Parser.Parser.BuildStaticMethodCallExpression``1(System.Type,System.String)">
+            <summary>
+                Builds an expression for a given type and method taking a single string parameter.
+            </summary>
+            <returns>An expression.</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Parser.Parser.ConcatStringsExpression">
+            <summary>
+                Builds an expression for <see cref="M:System.String.Concat(System.Object[])" />
+            </summary>
+            <returns>An expression.</returns>
+        </member>
+        <member name="F:TaxHub.TokenParser.Core.Tokens.ConditionEvaluator.SupportedOperators">
+            <summary>
+            The Operators supported by the ConditionEvaluator
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.ConditionEvaluator.Evaluate(System.String,System.Collections.Generic.IDictionary{System.String,TaxHub.TokenParser.Core.Tokens.IToken},System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.IConditionEvaluator">
+            <summary>
+            Evaluates a condition based on a raw string. The condition must be given as a string
+            that represents a snippet of C# code that will be evaluated on the fly
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.IConditionEvaluator.Evaluate(System.String,System.Collections.Generic.IDictionary{System.String,TaxHub.TokenParser.Core.Tokens.IToken},System.Guid)">
+            <summary>
+            Method that evaluates the condition, which is, a C# snippet
+            of code
+            </summary>
+            <param name="condition">Condition that will be evaluated</param>
+            <param name="tokens">The token dictionary</param>
+            <param name="correlationId">The correlation id</param>
+            <returns>A bool indicating the outcome of the evaluation</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.IFileGenerator`1">
+            <summary>
+            Generates document contents for file
+            </summary>
+            <typeparam name="T">Document type. i.e. string for txt, XML derivative for xml, etc.</typeparam>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.IFileGenerator`1.TokenModels">
+            <summary>
+            Collection of Token models to be used in header, middle, footer of document to be generated
+            <see cref="T:TaxHub.TokenParser.Core.Tokens.ITokenModel"/>
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.IFileGenerator`1.FileSections">
+            <summary>
+            Sections of the document, i.e. Header, Middle, Footer
+            <see cref="T:TaxHub.TokenParser.Core.Tokens.ITxtFileSection"/>
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.IFileGenerator`1.GenerateDocument">
+            <summary>
+            Generates document contents for file
+            </summary>
+            <returns>document contents for file</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator">
+            <summary>
+            The definition of the RecordInterpolator
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator.ReplaceTokens(System.String,System.Collections.Generic.Dictionary{System.String,TaxHub.TokenParser.Core.Tokens.IToken})">
+            <summary>
+            Replaces the tokens in the template using a dictionary that maps the TokenName to a func that gets the value of the token
+            The token format is as follows: ${[TokenName]:[Length][PaddingDirection]:[PaddingValue]}
+            [TokenName]
+            [Length] - how long the value will be that is replacing the token
+            [Padding direction] - 'R' or 'L' - which side the padding character should be on
+            [PaddingValue] - what character should be used to pad
+            </summary>
+            <param name="template">The template contains the tokens that need replacing.</param>
+            <param name="replacements">Dictionary that maps the TokenName to a func that gets the value of the token</param>
+            <returns>value a string</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator.FindFunctionTokens(System.String,System.Collections.Generic.List{TaxHub.TokenParser.Core.Tokens.ITokenFunction},System.String)">
+            <summary>
+            In a template, Find all the function tokens
+            </summary>
+            <param name="template">The template containing aggregate functions.</param>
+            <param name="tokenFunctions">The function token to search for Eg: SumFunction, CountFunction</param>
+            <param name="section">The section that will be searched</param>
+            <returns>a list of all aggregate tokens</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator.FindFunctionTokens(System.String,System.String)">
+            <summary>
+            In a template, Find all the default aggregation function tokens, SUM and COUNT
+            </summary>
+            <param name="template">The template containing aggregate functions.</param>
+            <param name="section">The section that will be searched</param>
+            <returns>a list of all aggregate tokens</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator.GetFunctionToken(TaxHub.TokenParser.Core.Tokens.ITokenFunction)">
+            <summary>
+            Given a token function it returns a described token
+            </summary>
+            <param name="tokenFunction">The token function</param>
+            <returns>A string,token keypair value</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.ITokenModel">
+            <summary>
+            Model maps values from another model, then defines literal string tokens in dictionary
+            that can be used by in conjunction with IRecordInterpolator <see cref="T:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator"/> class to resolve model's values
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.ITokenModel.DefineTokens">
+            <summary>
+            Defines tokens to be used by a IRecordInterpolator class
+            </summary>
+            <returns>Dictionary of Tokens that reference values this model is mapping</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.ITxtFileSection">
+            <summary>
+            Generates document contents for file
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.ITxtFileSection.TokenModels">
+            <summary>
+            Collection of Token models to be used in substituting tokens with values in the provided format
+            <see cref="T:TaxHub.TokenParser.Core.Tokens.ITokenModel"/>
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.ITxtFileSection.Format">
+            <summary>
+            String that defines the format of the document. If string has any tokens that are referenced,
+            IRecordInterpolator should replace tokens with referenced values.
+            If Format is left empty, header of document will not be added.
+            In addition, TokenModels (if provided) will be iterated over creating an entry per item.
+            So this Format variable defines all the potential rows in the for this sectionf of the document.
+            If TokenModels is empty, and format is specified, lines will be rendered once for
+            this section.
+            <see cref="T:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator"/>
+            <see cref="P:TaxHub.TokenParser.Core.Tokens.ITxtFileSection.TokenModels"/>
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenExtensions.TryGetTokenValue``1(System.Collections.Generic.Dictionary{System.String,TaxHub.TokenParser.Core.Tokens.IToken},System.String,``0)">
+            <summary>
+            Try to get a token's Value from a token dictionary.
+            Tokens whose value can't be cast to T will be treated as missing.
+            Supports Nullable T, and will cast Token's type as Nullable T as long as token's type is castable to T.
+            </summary>
+            <typeparam name="T">The expected return type for the Token's value.</typeparam>
+            <param name="tokenDictionary">The IToken Dictionary</param>
+            <param name="tokenName">The name of the token to get value from.</param>
+            <param name="defaultValue">The default value to use if token is not found.</param>
+            <returns>The value of the token if it exist, default(T) otherwise.</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator">
+            <summary>
+            Token Interpolator
+            </summary>
+            <seealso cref="T:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator" />
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.ReplaceTokens(System.String,System.Collections.Generic.Dictionary{System.String,TaxHub.TokenParser.Core.Tokens.IToken})">
+            <summary>
+            Replaces the tokens in the template using a dictionary that maps the TokenName to a func that gets the value of the token
+            The token format is as follows: ${[TokenName]:[Length][PaddingDirection]:[PaddingValue]}
+            [TokenName]
+            [Length] - how long the value will be that is replacing the token
+            [Padding direction] - 'R' or 'L' - which side the padding character should be on
+            [PaddingValue] - what character should be used to pad
+            </summary>
+            <param name="template">The template contains the tokens that need replacing.</param>
+            <param name="replacements">Dictionary that maps the TokenName to a func that gets the value of the token</param>
+            <returns>
+            value a string
+            </returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.FindFunctionTokens(System.String,System.Collections.Generic.List{TaxHub.TokenParser.Core.Tokens.ITokenFunction},System.String)">
+            <summary>
+            This function finds tokens within the passed in template and returns a collection of Token functions
+            </summary>
+            <param name="template"></param>
+            <param name="tokenFunctions">This value should only have one of each type of Token Function. Having duplicate Token Functions will result in duplicate tokens being returned</param>
+            <param name="section"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.FindFunctionTokens(System.String,System.String)">
+            <summary>
+            In a template, Find all the default aggregation function tokens, SUM and COUNT
+            </summary>
+            <param name="template"></param>
+            <param name="section"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.GetFunctionToken(TaxHub.TokenParser.Core.Tokens.ITokenFunction)">
+            <summary>
+            Given a token function it returns a described token
+            </summary>
+            <param name="function"></param>
+            <returns>A string,token keypair value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.FormatTokenValue(System.DateTime,TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token)">
+            <summary>
+            Formats datetime value as specified in Token
+            <see cref="T:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token" />
+            Reference following resources for how to format DateTime
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+            </summary>
+            <param name="value">Original literal DateTime value to be formatted as string</param>
+            <param name="token">Token object holding format</param>
+            <returns>Formatted DateTime value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.FormatTokenValue(System.Decimal,TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token)">
+            <summary>
+            Formats decimal value as specified in Token
+            <see cref="T:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token" />
+            Reference following resources for how to format numerics
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+            </summary>
+            <param name="value">Original literal decimal value to be formatted as string</param>
+            <param name="token">Token object holding format</param>
+            <returns>Formatted decimal value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.FormatTokenValue(System.Int32,TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token)">
+            <summary>
+            Formats integer value as specified in Token
+            <see cref="T:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token" />
+            Reference following resources for how to format numerics
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+            </summary>
+            <param name="value">Original literal integer value to be formatted as string</param>
+            <param name="token">Token object holding format</param>
+            <returns>Formatted integer value</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token">
+            <summary>
+            Token describes a literal string key that needs to be replaced, how to format it xor pad it
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.Key">
+            <summary>
+            Literal string key that needs to be replaced
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaddingLength">
+            <summary>
+            Amount of times padding character should be repeated after key has been replaced
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.Format">
+            <summary>
+            Custom format
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaddingCharacter">
+            <summary>
+            Character to pad left or the right of the value to replace the key with
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaddDirection">
+            <summary>
+            Describes left or right. See <see cref="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaddDirection" />
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.#ctor">
+            <summary>
+            Constructor w/ default token options w/ space character as padding character, and padding direction set to be left.
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.DateUtils.ToJulianDate(System.DateTime)">
+            <summary>
+            Returns Julian Date
+            </summary>
+            <param name="date">Date to be converted to Julian format</param>
+            <returns>Returns Julian Date as string</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.DateUtils.ToJulianDay(System.DateTime)">
+            <summary>
+            Returns Julian day
+            </summary>
+            <param name="date">Date to be converted to Julian Day</param>
+            <returns>Returns Julian Day for given date</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.TxtFileGenerator">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TxtFileGenerator.FileSections">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TxtFileGenerator.TokenModels">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TxtFileGenerator.GenerateDocument">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TxtFileGenerator.BuildDictionary(System.Collections.Generic.IEnumerable{TaxHub.TokenParser.Core.Tokens.ITokenModel})">
+            <summary>
+            Will build a single dictionary of all tokens by calling defineTokens for each token model.
+            </summary>
+            <param name="tokenModels">List of token Models</param>
+            <returns>tokens dictionary</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Core.Tokens.TxtFileSection">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TxtFileSection.TokenModels">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TxtFileSection.Format">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

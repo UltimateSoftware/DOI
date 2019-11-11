@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.Pdf.ITextSharp</name>
+    </assembly>
+    <members>
+        <member name="T:TaxHub.Pdf.ITextSharp.PdfITextSharp">
+            <inheritdoc />
+            <summary>
+            Implement operations using iTexSharp library
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.#ctor(TaxHub.Pdf.Abstractions.Configuration.IOptions{TaxHub.Pdf.ITextSharp.PdfITextSharpOptions})">
+            <summary>
+            Initializes and configure  instance of PDF iTexSharp class.
+            </summary>
+            <param name="options">Configuration options.</param>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.Fill(System.String,TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <inheritdoc cref="M:TaxHub.Pdf.Abstractions.IPdfOperations.Fill(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)"/>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.CombineMultiplePDFs(System.String[],System.String)">
+            <summary>
+            Merge pdf files without changing orientation
+            </summary>
+            <param name="fileNames"></param>
+            <param name="outFile"></param>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.Merge(System.Collections.Generic.IEnumerable{System.String},System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <inheritdoc cref="M:TaxHub.Pdf.Abstractions.IPdfOperations.Merge(System.Collections.Generic.IEnumerable{System.String},System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext)"/>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.MergeFiles(System.String[],System.String)">
+            <summary>
+            merges files and changes the orientation
+            </summary>
+            <param name="sourceFiles"></param>
+            <param name="destinationFile"></param>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.Fill(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <inheritdoc cref="M:TaxHub.Pdf.Abstractions.IPdfOperations.Fill(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)"/>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.FillAndSave(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <inheritdoc cref="M:TaxHub.Pdf.Abstractions.IPdfOperations.FillAndSave(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)"/>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.GetPageCount(System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.GetPageCount(System.IO.Stream)">
+            <summary>
+            Get page count from memory stream
+            </summary>
+            <param name="stream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.FillAsync(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:TaxHub.Pdf.Abstractions.IPdfOperations.FillAsync(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.MergeAsync(System.Collections.Generic.IEnumerable{System.String},System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.MergeAsync(System.Collections.Generic.IEnumerable{TaxHub.Pdf.Abstractions.PdfOperation},TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfITextSharp.FillAndSaveAsync(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
+            <inheritdoc cref="M:TaxHub.Pdf.Abstractions.IPdfOperations.FillAndSaveAsync(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)"/>
+        </member>
+        <member name="T:TaxHub.Pdf.ITextSharp.PdfItextSharpOperationOptions">
+            <summary>
+            Options for PDF merge operation.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.ITextSharp.PdfItextSharpOperationOptions.#ctor(System.Func{System.Uri,System.Threading.Tasks.Task{System.String}})">
+            <summary>
+            Initializes a new instance.
+            </summary>
+            <param name="remoteFileDownloader">The remote downloader.</param>
+        </member>
+        <member name="P:TaxHub.Pdf.ITextSharp.PdfItextSharpOperationOptions.RemoteFileDownloader">
+            <summary>
+            A func to handle remote PDF file downloads and save them locally
+            when working with implementations that do not support remote files.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Pdf.ITextSharp.PdfITextSharpOptions">
+            <summary>
+            General options for PDF iTexSharp implementation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Pdf.ITextSharp.PdfITextSharpOptions.FileDeleteAction">
+            <summary>
+            An action to delete intermediary files generated by the system.
+            </summary>
+        </member>
+    </members>
+</doc>

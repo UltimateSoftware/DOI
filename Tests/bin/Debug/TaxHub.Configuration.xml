@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.Configuration</name>
+    </assembly>
+    <members>
+        <member name="T:TaxHub.Configuration.Client.IConfigClient">
+            <summary>
+            configuration service client
+            </summary>
+        </member>
+        <member name="M:TaxHub.Configuration.Client.IConfigClient.GetStringResource(System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Method retrieves config service resource as a string.
+            </summary>
+            <param name="configName">Config name.</param>
+            <param name="correlationId">Correlation Id.</param>
+            <param name="cancellationToken">Cancelaltion token.</param>
+            <returns>Returns string resource.</returns>
+        </member>
+        <member name="T:TaxHub.Configuration.Client.ConfigFileClient">
+            <summary>
+            Class creates new instances of Http Client connecting to config service.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Configuration.Client.ConfigFileClient.FileExists">
+            <summary>
+            true if the file exists else false
+            </summary>
+            <param name="filePath">file path</param>
+            <returns>true if the file exists else false</returns>
+        </member>
+        <member name="T:TaxHub.Configuration.Client.ConfigFileClient.FileReadAllText">
+            <summary>
+            read all the text in the file
+            </summary>
+            <param name="filePath">file path</param>
+            <returns>the content of the file</returns>
+        </member>
+        <member name="P:TaxHub.Configuration.Client.ConfigFileClient.ConfigFolderPath">
+            <summary>
+            config folder path
+            </summary>
+        </member>
+        <member name="M:TaxHub.Configuration.Client.ConfigFileClient.#ctor(System.String,TaxHub.Configuration.Client.ConfigFileClient.FileExists,TaxHub.Configuration.Client.ConfigFileClient.FileReadAllText)">
+            <summary>
+            Creates a new instance of config file client 
+            </summary>
+            <param name="configFolderPath">Base folder</param>
+            <param name="fileExists">file exists</param>
+            <param name="fileReadAllText">file read all text</param>
+            Throws <exception cref="T:System.ArgumentNullException">if configFolderPath is missing</exception>
+        </member>
+        <member name="T:TaxHub.Configuration.Client.ConfigServiceClient">
+            <summary>
+            Class creates new instances of Http Client connecting to config service.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Configuration.Client.ConfigServiceClient.ConfigServerUri">
+            <summary>
+            config server uri
+            </summary>
+        </member>
+        <member name="M:TaxHub.Configuration.Client.ConfigServiceClient.#ctor(System.Uri,TaxHub.Hosting.Runtime.ISimpleHttpClientFactory,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Default constructor.
+            </summary>
+            <param name="configServerUrl">Config server URL.</param>
+            <param name="simpleHttpClientFactory">simple htto client factory</param>
+            <param name="appLogger">instance of app logger</param>
+        </member>
+        <member name="M:TaxHub.Configuration.Client.ConfigServiceClient.GetStringResource(System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Method retrieves config service resource as a string.
+            </summary>
+            <param name="configName">Config name.</param>
+            <param name="correlationId">Correlation Id.</param>
+            <param name="cancellationToken">Cancelaltion token.</param>
+            <returns>Returns string resource.</returns>
+        </member>
+        <member name="T:TaxHub.Configuration.Client.IConfigClientFactory">
+            <summary>
+            configuration service client factory interface
+            </summary>
+        </member>
+        <member name="M:TaxHub.Configuration.Client.IConfigClientFactory.Create">
+            <summary>
+            Factory method that creates instances of IConfigClient
+            </summary>
+            <returns>An instance of IConfig Client</returns>
+        </member>
+        <member name="T:TaxHub.Configuration.Client.ConfigClientFactory">
+            <summary>
+            configuration service client factory
+            </summary>
+        </member>
+        <member name="T:TaxHub.Configuration.Client.ConfigClientFactory.GetConfigServerUrl">
+            <summary>
+            get config server url delegate
+            </summary>
+            <returns>the config service url</returns>
+        </member>
+        <member name="M:TaxHub.Configuration.Client.ConfigClientFactory.#ctor(TaxHub.Configuration.Client.ConfigClientFactory.GetConfigServerUrl,TaxHub.Hosting.Runtime.ISimpleHttpClientFactory,TaxHub.Configuration.Client.ConfigFileClient.FileExists,TaxHub.Configuration.Client.ConfigFileClient.FileReadAllText,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            get config server url
+            </summary>
+            <param name="getConfigServerUrl">delegate to get the config server url</param>
+            <param name="simpleHttpClientFactory">simple http client factory</param>
+            <param name="fileExists">file exists delegate</param>
+            <param name="fileReadAllText">file read all text delegate</param>
+            <param name="appLogger">instance of logger</param>
+        </member>
+        <member name="T:TaxHub.Configuration.ConfigProvider">
+            <summary>
+            Class provides configuration information as config sections. 
+            </summary>
+        </member>
+        <member name="M:TaxHub.Configuration.ConfigProvider.#ctor(TaxHub.Configuration.Client.IConfigClientFactory,TaxHub.Common.Logging.IAppLogger,Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Class constructor.
+            </summary>
+            <param name="clientFactory">Factory to create config clients</param>
+            <param name="logger">Application logger</param>
+            <param name="container">Dependency resolver. To be used by the Refresh to refresh all configured dependencies</param>
+        </member>
+        <member name="M:TaxHub.Configuration.ConfigProvider.Require(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Method registers and retrieves required config file from config service/server.
+            </summary>
+            <param name="configFileName">Config file name, including extension.</param>
+            <param name="cancellationToken">Cancellation token, optional.</param>
+            <returns>Returns a <see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:TaxHub.Configuration.ConfigProvider.ReadConfigSection``1">
+            <summary>
+            Method reads configuration section as configuration type object. 
+            Configuration object must declare the interface <see cref="T:TaxHub.Configuration.IConfigSection"/>.
+            </summary>
+            <typeparam name="T">Configuration type.</typeparam>
+            <returns>Returns configuration object.</returns>
+        </member>
+        <member name="M:TaxHub.Configuration.ConfigProvider.Refresh(System.Threading.CancellationToken)">
+            <summary>
+            Method refreshes all required configuration from config service/server.
+            </summary>
+            <param name="cancellationToken">Cancellation token, optionsl.</param>
+            <returns>Returns a <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:TaxHub.Configuration.ConfigProvider.ReadConfigSection``1(``0)">
+            <summary>
+            Helper method used to infer the type of a dynamic object and 
+            call the ReadConfigSection to deserialize a section of that type
+            This technique is to avoid getting the method name dynamically
+            by name and making it generic
+            </summary>
+            <param name="obj">Dynamic object to infer the type</param>
+            <typeparam name="T">Type</typeparam>
+            <returns>The call to ReadConfigSection</returns>
+        </member>
+        <member name="T:TaxHub.Configuration.IConfigProvider">
+            <summary>
+            Interface implemented by a class providing configuration to an application utilizing config service or file(s).
+            </summary>
+            <remarks>Provider requires CONFIGSERVER_URL environment variable pointing to the root configuration URL or file PATH.</remarks>
+        </member>
+        <member name="M:TaxHub.Configuration.IConfigProvider.Require(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Method registers and retrieves required config file from config service/server.
+            </summary>
+            <param name="configFileName">Config file name, including extension.</param>
+            <param name="cancellationToken">Cancellation token, optional.</param>
+            <returns>Returns a <see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:TaxHub.Configuration.IConfigProvider.Refresh(System.Threading.CancellationToken)">
+            <summary>
+            Method refreshes all required configuration from config service/server.
+            </summary>
+            <param name="cancellationToken">Cancellation token, optionsl.</param>
+            <returns>Returns a <see cref="T:System.Threading.Tasks.Task"/> representing the asynchronous operation.</returns>
+        </member>
+        <member name="M:TaxHub.Configuration.IConfigProvider.ReadConfigSection``1">
+            <summary>
+            Method reads configuration section as configuration type object. 
+            Configuration object must declare the interface <see cref="T:TaxHub.Configuration.IConfigSection"/>.
+            </summary>
+            <typeparam name="T">Configuration type.</typeparam>
+            <returns>Returns configuration object.</returns>
+        </member>
+        <member name="T:TaxHub.Configuration.IConfigSection">
+            <summary>
+            Configuration interface
+            </summary>
+        </member>
+        <member name="M:TaxHub.Configuration.IConfigSection.ConfigurationRefreshed(TaxHub.Configuration.IConfigSection)">
+            <summary>
+            This method is called when the configuration changes.
+            </summary>
+            <param name="section">Config Section containing the new values.</param>
+        </member>
+    </members>
+</doc>

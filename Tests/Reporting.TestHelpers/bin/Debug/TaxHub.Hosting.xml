@@ -1,0 +1,2258 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.Hosting</name>
+    </assembly>
+    <members>
+        <member name="T:TaxHub.Hosting.Caching.ICache`1">
+            <summary>
+            Cache service.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Caching.ICache`1.Get(System.String)">
+            <summary>
+            Gets the cached data based upon a key index.
+            </summary>
+            <param name="key">The key.</param>
+            <returns>The cached item, or <c>null</c> if no item matches the key.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Caching.ICache`1.Set(System.String,`0)">
+            <summary>
+            Caches the data based upon a key
+            </summary>
+            <param name="key">The key.</param>
+            <param name="item">The item.</param>
+        </member>
+        <member name="T:TaxHub.Hosting.Convention">
+            <summary>
+            Provides methods for checking method arguments for validity and throwing localizable exceptions for invalid
+            arguments or argument combinations.
+            </summary>
+            <remarks>The alternative names for this class were: Validator, Pact, Deal.</remarks>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNull(System.Object,System.String,System.String)">
+            <summary>
+            Checks the specified parameter to ensure it is not null and if so, throws an <see cref="T:ArgumentNullException"/>.
+            </summary>
+            <param name="value">The parameter value to compare with null.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="message">The message to pass to the exception.</param>
+            <exception cref="T:ArgumentNullException">The parameter is null.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNullOrEmpty(System.String,System.String,System.String)">
+            <summary>
+            Checks the specified string to ensure it is not null or empty and if so, throws an <see cref="T:ArgumentNullException"/>.
+            </summary>
+            <param name="value">The parameter value to check.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="message">The message to pass to the exception.</param>
+            <exception cref="T:ArgumentNullException">The parameter is null.</exception>
+            <exception cref="T:ArgumentException">The parameter is an empty string or a string consisting of only whitespace.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNullOrWhitespace(System.String,System.String)">
+            <summary>
+            Checks the specified string to ensure it is not null, empty, or consists solely of whitespace and if so, throws an <see cref="T:ArgumentNullException"/>.
+            </summary>
+            <param name="value">The parameter value to check.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <exception cref="T:ArgumentNullException">The parameter is null.</exception>
+            <exception cref="T:ArgumentException">The parameter is an empty string or a string consisting of only whitespace.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNullOrEmpty(System.Array,System.String)">
+            <summary>
+            Checks the specified array to ensure it is not null or empty and if so, throws an <see cref="T:ArgumentNullException"/>.
+            </summary>
+            <param name="array">The parameter value to check.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <exception cref="T:ArgumentNullException">The parameter is null.</exception>
+            <exception cref="T:ArgumentException">The parameter is an empty array.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNullOrEmpty(System.Collections.IList,System.String)">
+            <summary>
+            Checks the specified IList to ensure it is not null or empty and if so, throws an <see cref="T:ArgumentNullException"/>.
+            </summary>
+            <param name="list">The parameter value to check.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <exception cref="T:ArgumentNullException">The parameter is null.</exception>
+            <exception cref="T:ArgumentException">The parameter is an empty array.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfEmpty(System.Guid,System.String,System.String)">
+            <summary>
+            Checks the specified guid to ensure it is not empty and if so, throws an <see cref="T:ArgumentException"/>.
+            </summary>
+            <param name="guid">The parameter value to check.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="message">Optional custom error message.</param>
+            <exception cref="T:ArgumentException">The parameter is an empty guid.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNullOrEmpty(System.Nullable{System.Guid},System.String,System.String)">
+            <summary>
+            Throws if the specified guid is null or empty.
+            </summary>
+            <param name="guid">The unique identifier.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNullElement(System.Array,System.String)">
+            <summary>
+            Checks the specified array to ensure it does not contain any null references and if so,
+            throws an <see cref="T:ArgumentException"/>.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="array"/> parameter is itself null, no check
+            is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
+            additional validation is needed.
+            </remarks>
+            <param name="array">The array to check. Only the first dimension is checked.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <exception cref="T:ArgumentException">The array contains at least one null reference.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNullElement(System.Collections.IEnumerable,System.String)">
+            <summary>
+            Checks the specified collection to ensure it does not contain any null references and if so,
+            throws an <see cref="T:ArgumentException"/>.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="collection"/> parameter is itself null, no check
+            is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
+            additional validation is needed.
+            The collections non-generic enumerator will be used to enumerate the collection, even if the
+            type implements IList.
+            </remarks>
+            <param name="collection">The collection to check.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <exception cref="T:ArgumentException">The collection contains at least one null reference.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfPatternFails(System.String,System.String)">
+            <summary>
+            Matches the specified <paramref name="value"/> against a regular expression, <paramref name="regex"/>,
+            and throws an <see cref="T:ArgumentException"/> if the pattern does not match.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="value"/> parameter is itself null, no check
+            is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
+            additional validation is needed.
+            </remarks>
+            <param name="value">The parameter, which is not checked if it's null.</param>
+            <param name="regex">The regular expression pattern to match.</param>
+            <exception cref="T:ArgumentException"><paramref name="value"/> does not match the regular expression.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfPatternFails(System.String,System.String,System.String)">
+            <summary>
+            Matches the specified <paramref name="value"/> against a regular expression, <paramref name="regex"/>,
+            and throws an <see cref="T:ArgumentException"/> if the pattern does not match.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="value"/> parameter is itself null, no check
+            is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
+            additional validation is needed.
+            </remarks>
+            <param name="value">The parameter, which is not checked if it's null.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="regex">The regular expression pattern to match.</param>
+            <exception cref="T:ArgumentException"><paramref name="value"/> does not match the regular expression.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfPatternFails(System.String,System.Text.RegularExpressions.Regex)">
+            <summary>
+            Matches the specified <paramref name="value"/> against a regular expression, <paramref name="regex"/>,
+            and throws an <see cref="T:ArgumentException"/> if the pattern does not match.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="value"/> parameter is itself null, no check
+            is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
+            additional validation is needed.
+            </remarks>
+            <param name="value">The parameter, which is not checked if it's null.</param>
+            <param name="regex">The regular expression pattern to match.</param>
+            <exception cref="T:ArgumentException"><paramref name="value"/> does not match the regular expression.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfPatternFails(System.String,System.String,System.Text.RegularExpressions.Regex)">
+            <summary>
+            Matches the specified <paramref name="value"/> against a regular expression, <paramref name="regex"/>,
+            and throws an <see cref="T:ArgumentException"/> if the pattern does not match.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="value"/> parameter is itself null, no check
+            is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
+            additional validation is needed.
+            </remarks>
+            <param name="value">The parameter, which is not checked if it's null.</param>
+            <param name="parameterName">Name of the parameter.</param>
+            <param name="regex">The regular expression pattern to match.</param>
+            <exception cref="T:ArgumentException"><paramref name="value"/> does not match the regular expression.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfOutOfRange(System.Enum,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is not
+            a valid value within the specified range.
+            </summary>
+            <param name="value">The enum value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not a valid enum value.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfOutOfRange(System.Int32,System.String,System.Int32,System.Int32)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is not
+            a valid value within the specified range.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <param name="min">The minimum allowable value (inclusive).</param>
+            <param name="max">The maximum allowable value (inclusive).</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not within the inclusive range.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfOutOfRange(System.Int64,System.String,System.Int64,System.Int64)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is not
+            a valid value within the specified range.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <param name="min">The minimum allowable value (inclusive).</param>
+            <param name="max">The maximum allowable value (inclusive).</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not within the inclusive range.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfOutOfRange(System.Decimal,System.String,System.Decimal,System.Decimal)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is not
+            a valid value within the specified range.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <param name="min">The minimum allowable value (inclusive).</param>
+            <param name="max">The maximum allowable value (inclusive).</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not within the inclusive range.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfOutOfRange(System.Double,System.String,System.Double,System.Double)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is not
+            a valid value within the specified range.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <param name="min">The minimum allowable value (inclusive).</param>
+            <param name="max">The maximum allowable value (inclusive).</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not within the inclusive range.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfOutOfRange``1(``0,``0,``0)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is not
+            a valid value within the specified range.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="value"/> parameter is a null reference, the check will not
+            be performed. Use <see cref="M:ThrowIfNull"/> if additional validation is needed.
+            </remarks>
+            <param name="value">The parameter value to validate. If this value is null, no check is performed.</param>
+            <param name="min">The minimum allowable value (inclusive).</param>
+            <param name="max">The maximum allowable value (inclusive).</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not within the inclusive range.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfOutOfRange``1(``0,System.String,``0,``0)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is not
+            a valid value within the specified range.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="value"/> parameter is a null reference, the check will not
+            be performed. Use <see cref="M:ThrowIfNull"/> if additional validation is needed.
+            </remarks>
+            <param name="value">The parameter value to validate. If this value is null, no check is performed.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <param name="min">The minimum allowable value (inclusive).</param>
+            <param name="max">The maximum allowable value (inclusive).</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not within the inclusive range.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegative(System.Int32,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than zero.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegative(System.Int64,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than zero.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegative(System.Decimal,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than zero.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegative(System.Double,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than zero.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegative(System.TimeSpan,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than zero.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is negative.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegativeOrZero(System.Int32,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than one.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not greater than zero.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegativeOrZero(System.Int64,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than one.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not greater than zero.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegativeOrZero(System.Decimal,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than one.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not greater than zero.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegativeOrZero(System.Double,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than or equal to zero.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not greater than zero.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfNegativeOrZero(System.TimeSpan,System.String)">
+            <summary>
+            Throws an <see cref="T:System.ArgumentOutOfRangeException"/> exception of the specified <paramref name="value"/> is less
+            than or equal to zero.
+            </summary>
+            <param name="value">The parameter value to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not greater than zero.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfInvalidFileName(System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentException"/> if the specified <paramref name="fileName"/> contains
+            characters that are invalid in a file name such as directory separators or other reserved characters.
+            Throws a <see cref="T:PathTooLongException"/> if the file name is too long.
+            </summary>
+            <remarks>
+            If the <paramref name="fileName"/> parameter is null, no checks will be performed. Use the
+            <see cref="M:ThrowIfNull"/> if additional checks are necessary.
+            </remarks>
+            <param name="fileName">The file name to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:PathTooLongException">The file name contains too many characters.</exception>
+            <exception cref="T:ArgumentException">The file name contains invalid characters.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfInvalidPath(System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:ArgumentException"/> if the specified <paramref name="path"/> contains
+            characters that are invalid in a path name such as directory separators or other reserved characters.
+            Throws a <see cref="T:PathTooLongException"/> if the path is too long.
+            </summary>
+            <remarks>
+            If the <paramref name="path"/> parameter is null, no checks will be performed. Use the
+            <see cref="M:ThrowIfNull"/> if additional checks are necessary.
+            </remarks>
+            <param name="path">The path to validate.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:PathTooLongException">The path contains too many characters.</exception>
+            <exception cref="T:ArgumentException">The path contains invalid characters.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfFileNotFound(System.String,System.String)">
+            <summary>
+            Throws a <see cref="T:FileNotFoundException"/> if the specified file does not exist on disk.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="fileName"/> parameter is itself null, no check
+            is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
+            additional validation is needed.
+            </remarks>
+            <param name="fileName">The path and file name to check the existence of.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:FileNotFoundException">The <paramref name="fileName"/> specified does not exist.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowIfDirectoryNotFound(System.String,System.String)">
+            <summary>
+            Throws a <see cref="T:DirectoryNotFoundException"/> if the specified file does not exist on disk.
+            </summary>
+            <remarks>
+            If the value specified in the <paramref name="directory"/> parameter is itself null, no check
+            is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
+            additional validation is needed.
+            </remarks>
+            <param name="directory">The directory path to check the existence of.</param>
+            <param name="parameterName">The name of the parameter.</param>
+            <exception cref="T:DirectoryNotFoundException">The <paramref name="directory"/> specified does not exist.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.ThrowArgumentOutOfRangeException(System.String,System.Object,System.String)">
+            <summary>
+            Throws a <see cref="T:ArgumentOutOfRangeException"/>
+            </summary>
+            <param name="paramName">The name of the parameter that caused the exception.</param>
+            <param name="actualValue">The value of the argument that causes this exception.</param>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.Require(System.Func{System.Boolean},System.String)">
+            <summary>
+            Asserts condition and throws an exception if the condition fails.
+            </summary>
+            <param name="condition">The condition to validate.</param>
+            <param name="message">The exception message.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.Require(System.Func{System.Boolean},System.String,System.Object[])">
+            <summary>
+            Asserts condition and throws an exception if the condition fails.
+            </summary>
+            <param name="condition">The condition to validate.</param>
+            <param name="format">The exception message template (format).</param>
+            <param name="args">The exception message template arguments.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.Require(System.Boolean,System.String)">
+            <summary>
+            Asserts condition and throws an exception if the condition fails.
+            </summary>
+            <param name="condition">The condition to validate.</param>
+            <param name="message">The exception message.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.Require(System.Boolean,System.String,System.Object[])">
+            <summary>
+            Asserts condition and throws an exception if the condition fails.
+            </summary>
+            <param name="condition">The condition to validate.</param>
+            <param name="format">The exception message template (format).</param>
+            <param name="args">The exception message template arguments.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.RequireAuthorization(System.Boolean,System.String)">
+            <summary>
+            Asserts condition and throws a Authorization exception if the condition fails.
+            </summary>
+            <param name="condition">The condition to validate.</param>
+            <param name="message">The exception message.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Convention.RequireBusinessRule(System.Boolean,System.String)">
+            <summary>
+            Asserts condition and throws a BusinessRule exception if the condition fails.
+            </summary>
+            <param name="condition">The condition to validate.</param>
+            <param name="message">The exception message.</param>
+        </member>
+        <member name="T:TaxHub.Hosting.DataAccess.DeadlockException">
+            <summary>
+            Class represents the duplicated key or unique index error in the application.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToEndOfNextMonth(System.DateTime)">
+            <summary>
+            Method converts the DateTime instance to the end of the following month.
+            </summary>
+            <param name="dt">An instance to convert.</param>
+            <returns>DateTime instance</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToEndOfMonth2(System.DateTime)">
+            <summary>
+            Method converts the DateTime instance to the end of the month.
+            </summary>
+            <param name="dt">An instance to convert.</param>
+            <returns>DateTime instance</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.IsMinDateTime(System.DateTime)">
+            <summary>
+            Determines whether datetime is within DateTime.MinValue and DateTime.MinValue plus 1 day.
+            </summary>
+            <param name="dt">The dt.</param>
+            <returns>
+              <c>true</c> if [is minimum date time] [the specified dt]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ParsePerControl(System.String)">
+            <summary>
+            Parses the per control.
+            </summary>
+            <param name="perControl">The per control.</param>
+            <returns>The Date represented by the percontrol value</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToPerControl(System.DateTime,System.String)">
+            <summary>
+            Turns a date into a percontrol
+            </summary>
+            <param name="date">The date.</param>
+            <param name="runNumber">The run number (default is 1).</param>
+            <returns>the percontrol represented by the date value</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToQuarter(System.DateTime)">
+            <summary>
+            Extract quarter from date.
+            </summary>
+            <param name="dt">The date.</param>
+            <returns>The quarter</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToQuarterStart(System.DateTime)">
+            <summary>
+            Extract the start of the quarter from date.
+            </summary>
+            <param name="date">The date.</param>
+            <returns>The quarter start date.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToQuarterEnd(System.DateTime)">
+            <summary>
+            Extract the end of the quarter from date.
+            </summary>
+            <param name="date">The date.</param>
+            <returns>The quarter end date.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.IsLastDayOfYear(System.DateTime)">
+            <summary>
+            Extract the end of the quarter from date.
+            </summary>
+            <param name="date">The date.</param>
+            <returns>true if last day of year.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.WithoutMilliseconds(System.DateTime)">
+            <summary>
+            Creates the date without the milliseconds
+            </summary>
+            <param name="self">The datetime reference to change</param>
+            <returns>The datetime without milliseconds</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToLastDayOfMonth(System.DateTime)">
+            <summary>
+            ToLastDayOfMonth
+            </summary>
+            <param name="dt">Date</param>
+            <returns>Last Day Of the Month</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.NextWeekDay(System.DateTime)">
+            <summary>
+            ToLastDayOfMonth
+            </summary>
+            <param name="dt">Date</param>
+            <returns>Next Week Day</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.EnsureDateIsDayOfWeekThatMatches(System.DateTime,System.DayOfWeek[])">
+            <summary>
+            Returns the date if the DayOfWeek matches one of the allowed days, else adds a day until it matches one of the allowed days.
+            </summary>
+            <param name="dt">Date</param>
+            <param name="days">Allowed days</param>
+            <returns>Returns the date if the DayOfWeek matches one of the allowed days, else adds a day until it matches one of the allowed days.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToJulianDate(System.DateTime)">
+            <summary>
+            Returns Julian Date
+            </summary>
+            <param name="date">Date to be converted to Julian format</param>
+            <returns>Returns Julian Date as string</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.ToJulianDay(System.DateTime)">
+            <summary>
+            Returns Julian day
+            </summary>
+            <param name="date">Date to be converted to Julian Day</param>
+            <returns>Returns Julian Day for given date</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.DateTimeExtensions.TaxYear(System.DateTime)">
+            <summary>
+            Returns the tax year for a date.
+            </summary>
+            <param name="date">Date value</param>
+            <returns>Current tax year. Cut off is 8/1.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.ExpandoObjectExtensions.PropertyExists(System.Dynamic.ExpandoObject,System.String)">
+            <summary>
+            Checks if property exists in ExpandoObject.
+            </summary>
+            <param name="dynamicObject">The <see cref="T:System.Dynamic.ExpandoObject"/></param>
+            <param name="propertyName">The name of the property to be checked./></param>
+            <returns>Returns instance of type T</returns>
+        </member>
+        <member name="F:TaxHub.Hosting.Extensions.OverwriteAlgorithm.Quick">
+            <summary>
+            1 pass.
+            This method will simply overwrite a file with zeros before deleting it.
+            It is not secure and should only be used for unimportant files and for quick free space locks.
+            </summary>
+        </member>
+        <member name="F:TaxHub.Hosting.Extensions.OverwriteAlgorithm.Random">
+            <summary>
+            1 pass.
+            This method will simply overwrite a file one time with random data before deleting it.
+            It is not secure and should only be used for unimportant files.
+            </summary>
+        </member>
+        <member name="F:TaxHub.Hosting.Extensions.OverwriteAlgorithm.DoD3">
+            <summary>
+            3 passes.
+            This method is based on the U.S. Department of Defense's standard 'National Industrial Security Program Operating Manual' (DoD 5220.22-M E).
+            It will overwrite a file 3 times.  This method offers medium security, use it only on files that do not contain sensitive information.
+            </summary>
+        </member>
+        <member name="F:TaxHub.Hosting.Extensions.OverwriteAlgorithm.DoD7">
+            <summary>
+            7 passes.
+            This method is based on the U.S. Department of Defense's standard 'National Industrial Security Program Operating Manual' (US DoD 5220.22-M ECE).
+            It will overwrite a file 7 times.  This method incorporates the DoD-3 method.  It is secure and should be used for general files.
+            </summary>
+        </member>
+        <member name="F:TaxHub.Hosting.Extensions.OverwriteAlgorithm.Gutmann">
+            <summary>
+            35 passes.
+            This method is based on Peter Gutmann's article 'Secure Deletion of Data From Magnetic and Solid-State Memory.'
+            The data will be overwritten 35 times using the patterns and methods described in the article.
+            While this method takes the longest amount of time, it is the most secure method available and should be used for all files that contain sensitive information.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.FileSecureEraseExtensions.EraseAsync(System.IO.DirectoryInfo,TaxHub.Hosting.Extensions.OverwriteAlgorithm)">
+            <summary>
+            Method deletes directory, subdirectories and all the files under this directory previously overriding files data with dummy data.
+            </summary>
+            <param name="directory">The DirectoryInfo.</param>
+            <param name="overwriteAlgorithm">Overwrite algorithm.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.FileSecureEraseExtensions.EraseAsync(System.IO.FileInfo,TaxHub.Hosting.Extensions.OverwriteAlgorithm)">
+            <summary>
+            Method erases file data previously overriding it with dummy data.
+            </summary>
+            <param name="file">The FileInfo.</param>
+            <param name="overwriteAlgorithm">Overwrite algorithm.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.FileSecureEraseExtensions.OverwriteFileQuick(System.IO.FileInfo)">
+            <summary>
+            Overwrite the file with zero bytes.
+            </summary>
+            <param name="file">The file.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.FileSecureEraseExtensions.OverwriteFileRandom(System.IO.FileInfo)">
+            <summary>
+            Overwrite the file with random data.
+            </summary>
+            <param name="file">The file.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.FileSecureEraseExtensions.OverwriteFileDoD3(System.IO.FileInfo)">
+            <summary>
+            Overwrite the file based on the U.S. Department of Defense's standard 'National Industrial Security Program Operating Manual' (DoD 5220.22-M E).
+            </summary>
+            <param name="file">The file.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.FileSecureEraseExtensions.OverwriteFileDoD7(System.IO.FileInfo)">
+            <summary>
+            Overwrite the file based on the U.S. Department of Defense's standard 'National Industrial Security Program Operating Manual' (US DoD 5220.22-M ECE).
+            </summary>
+            <param name="file">The file.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.FileSecureEraseExtensions.OverwriteFileGutmann(System.IO.FileInfo)">
+            <summary>
+            Overwrite the file based on the Peter Gutmann's algorithm.
+            </summary>
+            <param name="file">The file.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.HttpClientExtensions.EnsureCorrelationId(System.Net.Http.HttpContent,System.Guid,System.String)">
+            <summary>
+            Ensures provided correlation ID being added to the an <see cref="T:System.Net.Http.HttpContent"/> message..
+            </summary>
+            <remarks>An empty correlation ID will be ignored.</remarks>
+            <param name="httpContent">HttpContent object.</param>
+            <param name="correlationId">The correlation ID.</param>
+            <param name="format">The format should be used to output the correlation ID.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.HttpResponseMessageExtensions.AddCreatedLocation(System.Net.Http.HttpResponseMessage,System.Int32)">
+            <summary>
+            Method adds the Location header to the HTTP response that is required when new entity created (201 HTTP status).
+            </summary>
+            <param name="response">The HTTP response message object.</param>
+            <param name="newId">The ID of the new entity.</param>
+            <returns>Returns the HTTP response itself.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.HttpResponseMessageExtensions.GetIdFromLocation(System.Net.Http.HttpResponseMessage)">
+            <summary>
+            Gets the Id from the end of the Location URI header.
+            </summary>
+            <param name="response">The response.</param>
+            <returns>
+            Guid as Id
+            </returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ThrowIfMissing(System.String,System.String)">
+            <summary>
+            Throws ArgumentNullException if string is null or whitespace. 
+            </summary>
+            <param name="value">string to check for</param>
+            <param name="paramName">Name of the parameter, OPTIONAL</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ReplaceIfNullOrWhiteSpace(System.String,System.String)">
+            <summary>
+            If string is null or white space, returns specified alternate string.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="alternateString">The alternate value.</param>
+            <returns>The same string if not null or white space, otherwise specified alternate string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.Join(System.Collections.Generic.IEnumerable{System.String},System.String)">
+            <summary>
+            Joins the string collection with a specified separator.
+            </summary>
+            <param name="enumerable">The enumerable.</param>
+            <param name="separator">The separator.</param>
+            <returns>joined string collection.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.Join(System.Collections.Generic.IEnumerable{System.Int32},System.String)">
+            <summary>
+            Joins the int collection with a specified separator.
+            </summary>
+            <param name="enumerable">The enumerable.</param>
+            <param name="separator">The separator.</param>
+            <returns>joined string collection.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ToBoolean(System.String)">
+            <summary>
+            Converts Yes and No strings to appropriate boolean
+            </summary>
+            <param name="value">string to convert</param>
+            <returns>Boolean conversion of string</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ToMaskedNumber(System.String)">
+            <summary>
+            Provides masked account number for display purposes. 
+            </summary>
+            <param name="value">string to convert</param>
+            <returns>Returns string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ConvertToYesNo(System.Boolean)">
+            <summary>
+            Converts Boolean Values to appropriate Yes and No Strings.
+            </summary>
+            <param name="value">Boolean Value to convert</param>
+            <returns>String Conversion of Boolean Value</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ToAlphaNumeric(System.String,System.Char[])">
+            <summary>
+            Strips all non-alphanumeric characters from the string.
+            </summary>
+            <param name="str">The Source string.</param>
+            <param name="exceptions">Characters to unconditionally include in output string.</param>
+            <returns>An empty string or one with only alphanumeric characters.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ReplaceNonAlphaNumericWith(System.String,System.Char,System.Char[])">
+            <summary>
+            Strips all non-alphanumeric characters from the string and replaces them with <paramref name="replacementChar"/>
+            </summary>
+            <param name="str">The Source string.</param>
+            <param name="replacementChar">The char to replace stripped ones with</param>
+            <param name="exceptions">Characters to unconditionally include in output string.</param>
+            <returns>An empty string or one with only alphanumeric characters.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ToAlphaNumericSpace(System.String,System.Char[])">
+            <summary>
+             Returns only alphanumeric characters and spaces from a string
+            </summary>
+            <param name="str">The source string.</param>
+            <param name="exceptions">Characters to unconditionally include in output string, other than alpha numeric space.</param>
+            <returns>An empty string or one with only alphanumeric and space characters.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.TrimAndPad(System.String,System.Int32,System.Char,System.Boolean)">
+            <summary>
+            Generates a string that is a fixed length and padded with a specific character according to a specified justification.
+            Will convert null strings to strings of the padding char with specified lengths. 
+            Will truncate strings if they are larger than the input length.
+            </summary>
+            <param name="str">Source string</param>
+            <param name="length">Total Length of output string</param>
+            <param name="padChar">Char used in padding. Space is default.</param>
+            <param name="leftJustify">Justification used. Left justified if true, right justified otherwise.</param>
+            <returns>A trimmed string of the specified length padded with the specified character and justification.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.GetOnlyNumbers(System.String)">
+            <summary>
+            Returns only numeric characters from a string
+            </summary>
+            <param name="str">The string</param>
+            <returns>A string with only numbers.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.OmitPunctuation(System.String,System.String)">
+            <summary>
+            Return that string with just alpha numeric characters. Non-matching characters are replaced with a substitute char.
+            </summary>
+            <param name="str">The source string</param>
+            <param name="substituteString">The string to replace punctuation with</param>
+            <returns>An empty string or one with only alphanumeric and substituteChar characters.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.RemoveExcessSpaces(System.String,System.Int32)">
+            <summary>
+            Remove spaces from strings such that at most 1 space separates non-space characters.
+            The amount of space chars allowed between non-space chars can be adjusted with optional param.
+            </summary>
+            <param name="str">The source string.</param>
+            <param name="allowAdditional">The amount of additional space chars to allow over 1.</param>
+            <returns>A string with at most (1 + allowAdditional) space chars between non-space chars.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.RemoveSpecialChars(System.String,System.Char[])">
+            <summary>
+            Remove special characters. Forward slashes are replaced with spaces.
+            Default Special Chars: '.', ',', '+', '!', '%', ':', '/', '\'', '-'
+            </summary>
+            <param name="str">The source string.</param>
+            <param name="specialChars">Custom special character definitions.</param>
+            <returns>A string with none of the special characters.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.SafeSubString(System.String,System.Int32,System.Int32)">
+            <summary>
+            Returns a substring of the source string.
+            Protects against:
+            1) NULL strings
+            2) Starting Index outside the length of the string.
+            3) Starting Index + length longer than string.
+            </summary>
+            <param name="source">source to get the substring from</param>
+            <param name="startingIndex">index to start substring</param>
+            <param name="length">number of characters to take staring at startingIndex</param>
+            <returns>the substring starting at staringIndex with length number of characters.  If the string was null or startingIndex 
+            was outside of the string, returns string.Empty.  If startingIndex+length is greater than string length, substring ends at string length</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.SafeSubString(System.String,System.Int32)">
+            <summary>
+            Returns a substring of the source string.
+            Protects against:
+            1) NULL strings
+            2) Starting Index outside the length of the string.
+            </summary>
+            <param name="source">source to get the substring from</param>
+            <param name="startingIndex">index to start substring</param>
+            <returns>the substring starting at staringIndex.  If the string was null or startingIndex was outside of the string, returns string.Empty</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.CommaQuote(System.String)">
+            <summary>
+            If the parameter (str) has comma (,), it will be returned with in the quotation
+            example: Input: PTM,Form
+            Output: 'PTM,Form'
+            </summary>
+            <param name="str">source string</param>
+            <returns>return string</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.IsMissing(System.String)">
+            <summary>
+            Returns true if a value is missing.
+            </summary>
+            <param name="str">value</param>
+            <returns>true if a value is null or whitespace</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.IsPresent(System.String)">
+            <summary>
+            Returns true if a value is present.
+            </summary>
+            <param name="str">value</param>
+            <returns>true if a value is not null and not whitespace</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.EncodeToAscii(System.String)">
+            <summary>
+            Converts a string to ASCII encoding by replacing input characters which cannot be converted with whitespace.
+            </summary>
+            <param name="inputString">The non-ascii string.</param>
+            <returns>An ASCII encoded string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.GetZipDeliveryAreaPart(System.String)">
+            <summary>
+            Returns the zip code received as parameter, or the initial 5 digits if length is greater than 5.
+            </summary>
+            <param name="zip">The zip code</param>
+            <returns>A section of the zip code received as parameter, or Empty if zip is null. </returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.GetZipExtension(System.String)">
+            <summary>
+            Returns the 4 digits after the zip code. If present, any dash is removed.
+            </summary>
+            <param name="zip">The zip code</param>
+            <returns>The 4 chars zip extension or Empty if zip param is null or less than 6 chars.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.HasZipExtension(System.String)">
+            <summary>
+            not IsNullOrWhiteSpace(zip) and zip.Length > 5
+            </summary>
+            <param name="zip">The zip</param>
+            <returns>Has extension</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.Repeat(System.String,System.Int32)">
+            <summary>
+            Repeate return a string composed of a target string repeated serveral times.
+            </summary>
+            <param name="s">The Target String</param>
+            <param name="n">Times to repeat target string.</param>
+            <returns>A string composed of target string repeated n times.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.Replace(System.String,System.String,System.String,System.StringComparison)">
+            <summary>
+            Returns a new string in which all occurrences of a specified string in the current instance are replaced with another 
+            specified string according the type of search to use for the specified string.
+            </summary>
+            <param name="str">The string performing the replace method.</param>
+            <param name="oldValue">The string to be replaced.</param>
+            <param name="newValue">The string replace all occurrences of <paramref name="oldValue"/>. 
+            If value is equal to <c>null</c>, than all occurrences of <paramref name="oldValue"/> will be removed from the <paramref name="str"/>.</param>
+            <param name="comparisonType">One of the enumeration values that specifies the rules for the search.</param>
+            <returns>A string that is equivalent to the current string except that all instances of <paramref name="oldValue"/> are replaced with <paramref name="newValue"/>. 
+            If <paramref name="oldValue"/> is not found in the current instance, the method returns the current instance unchanged.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.StringExtensions.ParseToIntSubstring(System.String,System.Int32,System.Int32)">
+            <summary>
+            Get a substring and parse it to int. It performs safe substring
+            </summary>
+            <param name="s">The string to substring/parse</param>
+            <param name="startingIndex">The starting index</param>
+            <param name="length">The length of the substring</param>
+            <returns>Substring parsed to int</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.UnityContainerExtensions.RegisterTypeIfNot``1(Microsoft.Practices.Unity.IUnityContainer,Microsoft.Practices.Unity.InjectionMember[])">
+            <summary>
+            Register a type if not already registered.
+            </summary>
+            <typeparam name="TFrom">Type to be registered.</typeparam>
+            <param name="unityContainer">The Unity container.</param>
+            <param name="injectionMembers">Injection configuration objects.</param>
+            <returns>The Unity container.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.UnityContainerExtensions.RegisterTypeIfNot``2(Microsoft.Practices.Unity.IUnityContainer,Microsoft.Practices.Unity.LifetimeManager,Microsoft.Practices.Unity.InjectionMember[])">
+            <summary>
+            Register a type if not already registered.
+            </summary>
+            <typeparam name="TFrom">Type to be registered.</typeparam>
+            <typeparam name="TTo">Registered type's concrete implementation type.</typeparam>
+            <param name="unityContainer">The Unity container.</param>
+            <param name="lifetimeManager">Lifetime manager associated with registered type.</param>
+            <param name="injectionMembers">Injection configuration objects.</param>
+            <returns>The Unity container.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Extensions.UnityContainerExtensions.RegisterInstanceIfNot``1(Microsoft.Practices.Unity.IUnityContainer,System.String,System.Func{``0})">
+            <summary>
+            Register existing instance if not already registered.
+            </summary>
+            <typeparam name="TInstance">Instance's type.</typeparam>
+            <param name="unityContainer">The Unity container.</param>
+            <param name="name">Name associated with registered type.</param>
+            <param name="instanceFunc">A func that is only called if the instance needs to be registered.</param>
+            <returns>The Unity container.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Filters.UnityFilterProvider">
+            <summary>
+            Unity aware ActionDescriptionFilterProvider
+            </summary>
+        </member>
+        <member name="T:TaxHub.Hosting.Filters.ValidateModelAttribute">
+            <summary>
+            This class provides an API controller method attribute that enables model validation as pre-requisite for the method.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Hosting.ISmartApplication">
+            <summary>
+            The interface that must be implemented by a class providing an integration point between a service and its host.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.ISmartApplication.InitializeEventStoreUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Provides a hook for the application to override the default event store container initalization
+            </summary>
+            <param name="container">The unity container</param>
+        </member>
+        <member name="M:TaxHub.Hosting.ISmartApplication.StartInternalServices(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Called by App Host to start internal services for the application.
+            </summary>
+            <remarks>Only StartInternalServices or StartInternalServicesAsync method should actually do the work, not both.</remarks>
+            <param name="container">The Unity Container</param>
+        </member>
+        <member name="M:TaxHub.Hosting.ISmartApplication.StartInternalServicesAsync(Microsoft.Practices.Unity.IUnityContainer,System.Threading.CancellationToken)">
+            <summary>
+            Called by App Host to asynchronously start internal services for the application.
+            </summary>
+            <remarks>Only StartInternalServices or StartInternalServicesAsync method should actually do the work, not both.</remarks>
+            <param name="container">The Unity Container</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Returns async task.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.ISmartApplication.StopApplication(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Called by App Host to stop the application.
+            </summary>
+            <param name="container">The Unity Container</param>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.BulkCreateResult`1">
+            <summary>
+            Represents the results of a bulk insert.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkCreateResult`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.Hosting.Runtime.BulkCreateResult`1"/> class.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkCreateResult`1.CreatedAggregates">
+            <summary>
+            Gets or sets the inserted records from a bulk insert.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkCreateResult`1.ExistingAggregates">
+            <summary>
+            Gets or sets the list of EmployeePayrolls that could not be inserted because they already exist.
+            </summary>
+            <value>
+            The ignored.
+            </value>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.BulkUpdateResult`1">
+            <summary>
+            Class represents the result of the repository BulkUpdate operation.
+            </summary>
+            <typeparam name="T">The type of the object saved to the Repository.</typeparam>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkUpdateResult`1.Aggregates">
+            <summary>
+            Gets the instances of the updated aggregates.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkUpdateResult`1.Result">
+            <summary>
+            Gets or sets the operation result.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkUpdateResult`1.UpdatedResults">
+            <summary>
+            Gets the updated results from a bulk update.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkUpdateResult`1.Attempts">
+            <summary>
+            Gets or sets the number of update attempts that have been made.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkUpdateResult`1.ErrorMessage">
+            <summary>
+            Gets or sets the error message for the result, if applicable.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpdateResult`1.#ctor">
+            <summary>
+            Constructor.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpdateResult`1.SetSuccess(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Method sets "Success" result and message.
+            </summary>
+            <param name="aggregates">The list of changed aggregates</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpdateResult`1.AddUpdatedResult(`0,TaxHub.Hosting.Runtime.UpdateAggregateResult,System.String)">
+            <summary>
+            Adds the updated result.
+            </summary>
+            <param name="aggregate">The aggregate.</param>
+            <param name="result">The result.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpdateResult`1.SetConflict(System.String)">
+            <summary>
+            Method sets "Conflict" result and message.
+            </summary>
+            <param name="message">The error message</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpdateResult`1.SetPartialFailure(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Method sets "PartialFailure" result and message.
+            </summary>
+            <param name="aggregates">The list of changed aggregates</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpdateResult`1.SetFailure(System.String)">
+            <summary>
+             Method sets "Failure" result and message.
+            </summary>
+            <param name="message"> Sets status to failure and assigns message</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpdateResult`1.GetErrorMessages">
+            <summary>
+            Gets the error messages.
+            </summary>
+            <returns>The error messages</returns>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkUpsertResult`1.CreatedResults">
+            <summary>
+            Gets the created results from a bulk insert.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.BulkUpsertResult`1.UpdatedResults">
+            <summary>
+            Gets the updated results from a bulk upsert.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpsertResult`1.SetFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "Failure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpsertResult`1.AddUpdatedResult(`0,TaxHub.Hosting.Runtime.UpdateAggregateResult,System.String)">
+            <summary>
+            Adds the updated result.
+            </summary>
+            <param name="aggregate">The aggregate.</param>
+            <param name="result">The result.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpsertResult`1.AddCreatedResults(System.Collections.Generic.ICollection{`0},TaxHub.Hosting.Runtime.CreateAggregateResult)">
+            <summary>
+            Adds the created results.
+            </summary>
+            <param name="createdAggregates">The created aggregates.</param>
+            <param name="result">The result.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.BulkUpsertResult`1.GetErrorMessages">
+            <summary>
+            Gets the error messages.
+            </summary>
+            <returns>The error messages</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.IHashProvider">
+            <summary>
+            Interface for a class that provides hash computing functionality.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IHashProvider.ComputeHash(System.String)">
+            <summary>
+            Method computes hash for provided string value. String is assumed to contain UTF8 format.
+            If the assumption is inaccurate, convert string to an array of bytes and use a version of ComputeHash function that accepts byte array.
+            </summary>
+            <param name="value">The string value.</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IHashProvider.ComputeHash(System.Byte[])">
+            <summary>
+            Method computes hash for provided byte array value.
+            </summary>
+            <param name="value">The byte array value.</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IHashProvider.ComputeHash(System.Object[])">
+            <summary>
+            Method computes hash for provided objects. It calls toString on each object and delegates.
+            Default Encoding is assumed to be UTF8 format.
+            </summary>
+            <param name="values">The string value.</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IHashProvider.ComputeMd5FileHash(System.String)">
+            <summary>
+            Method computes MD5 hash for a given file.
+            </summary>
+            <param name="filePath">File path</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IHashProvider.ComputeMd5FileByteHash(System.IO.Stream)">
+            <summary>
+            Method computes MD5 hash for a given file stream.
+            </summary>
+            <param name="stream">The file stream</param>
+            <returns>Returns hash as a byte array.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IHashProvider.ComputeMd5FileHash(System.IO.Stream)">
+            <summary>
+            Method computes MD5 hash for a given file stream.
+            </summary>
+            <param name="stream">File stream</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.HashProvider">
+            <summary>
+            Class provides hash computing functionality.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.HashProvider.ComputeHash(System.String)">
+            <summary>
+            Method computes hash for provided string value. String is assumed to contain UTF8 format.
+            If the assumption is inaccurate, convert string to an array of bytes and use a version of ComputeHash function that accepts byte array.
+            </summary>
+            <param name="value">The string value.</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.HashProvider.ComputeHash(System.Byte[])">
+            <summary>
+            Method computes hash for provided byte array value.
+            </summary>
+            <param name="value">The byte array value.</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.HashProvider.ComputeMd5FileHash(System.String)">
+            <summary>
+            Method computes MD5 hash for a given file.
+            </summary>
+            <param name="filePath">File path</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.HashProvider.ComputeMd5FileByteHash(System.String)">
+            <summary>
+            Method computes MD5 hash for a given file.
+            </summary>
+            <param name="filePath">File path</param>
+            <returns>Returns hash as a byte array.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.HashProvider.ComputeMd5FileHash(System.IO.Stream)">
+            <summary>
+            Method computes MD5 hash for a given file stream.
+            </summary>
+            <param name="stream">The file stream</param>
+            <returns>Returns hash as a string.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.HashProvider.ComputeMd5FileByteHash(System.IO.Stream)">
+            <summary>
+            Method computes MD5 hash for a given file stream.
+            </summary>
+            <param name="stream">The file stream</param>
+            <returns>Returns hash as a byte array.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.HashProvider.ConvertHashToBytes(System.String)">
+            <summary>
+            Method converts string representation of an MD5 hash to a byte array representation.
+            </summary>
+            <param name="hash">The hash to convert.</param>
+            <returns>Returns hash as a byte array.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.ProcessingResult">
+            <summary>
+            Enum results for Processing operation
+            </summary>
+        </member>
+        <member name="F:TaxHub.Hosting.Runtime.ProcessingResult.Success">
+            <summary>
+            It was successful
+            </summary>
+        </member>
+        <member name="F:TaxHub.Hosting.Runtime.ProcessingResult.Failure">
+            <summary>
+            It failed
+            </summary>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.CreateAggregateResult">
+            <summary>
+            Enumeration used to provide feedback from the create entry method.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult">
+            <summary>
+            Class which wraps the CreateAggregateResult with a message. Useful
+            for sending warnings describing the the result.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult.#ctor">
+            <summary>
+            Default constructor with string.empty message.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult.#ctor(TaxHub.Hosting.Runtime.CreateAggregateResult,System.String,System.Object[])">
+            <summary>
+            Constructor
+            </summary>
+            <param name="result">The CreateAggregateResult.</param>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult.SetResult(TaxHub.Hosting.Runtime.CreateAggregateResult,System.String,System.Object[])">
+            <summary>
+            Method sets result and message.
+            </summary>
+            <param name="result">The CreateAggregateResult.</param>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult.SetFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "Failure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult.SetPartialFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "PartialFailure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult.SetSuccess">
+            <summary>
+            Method sets "Success" result.
+            </summary>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult.SetSuccess(System.String,System.Object[])">
+            <summary>
+            Method sets "Success" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult.SetAlreadyExists(System.String,System.Object[])">
+            <summary>
+            Method sets "AlreadyExists" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1">
+            <summary>
+            Class which wraps the CreateAggregateResult with a message. Useful
+            for sending warnings describing the the result.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1.#ctor">
+            <summary>
+            Default constructor with string.empty message.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1.#ctor(TaxHub.Hosting.Runtime.CreateAggregateResult,`0,System.String,System.Object[])">
+            <summary>
+            Constructor
+            </summary>
+            <param name="result">The CreateAggregateResult.</param>
+            <param name="data">The data of type T.</param>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1.SetResult(TaxHub.Hosting.Runtime.CreateAggregateResult,System.String,System.Object[])">
+            <summary>
+            Method sets result and message.
+            </summary>
+            <param name="result">The CreateAggregateResult.</param>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1.SetFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "Failure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1.SetPartialFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "PartialFailure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1.SetSuccess">
+            <summary>
+            Method sets "Success" result.
+            </summary>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1.SetSuccess(System.String,System.Object[])">
+            <summary>
+            Method sets "Success" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateExtendedResult`1.SetAlreadyExists(System.String,System.Object[])">
+            <summary>
+            Method sets "AlreadyExists" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateResultExtensions.AsSuccessResult``1(``0)">
+            <summary>
+            Return aggregate the success code.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="aggregate">The aggregate.</param>
+            <returns>The aggregate with success result.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateResultExtensions.AsCreateAggregateResult``1(``0,TaxHub.Hosting.Runtime.CreateAggregateResult,System.String)">
+            <summary>
+            Return aggregate the failure code.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="aggregate">The aggregate.</param>
+            <param name="result">The result code.</param>
+            <param name="message">The message.</param>
+            <returns>The aggregate with failed result.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateResultExtensions.IsRepoSucceeded(TaxHub.Hosting.Runtime.CreateAggregateResult)">
+            <summary>
+            Return boolean indicator whether repository create portion succeeded. 
+            (Already exists returns false because no new entity was persisted)
+            </summary>
+            <param name="createResult">CreateAggregateResult</param>
+            <returns>True when new Entity was created</returns> 
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateResultExtensions.IsRepoSucceeded``1(TaxHub.Hosting.Runtime.CreateAggregateExtendedResult{``0})">
+            <summary>
+            Returns true when new Aggregate was created in the database for real. 
+            (Already exists returns false because no new entity was persisted)
+            </summary>
+            <param name="createResult">CreateAggregateResult</param>
+            <returns>True when new Entity was created</returns> 
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateResultExtensions.SucceededOrAlreadyExists(TaxHub.Hosting.Runtime.CreateAggregateResult)">
+            <summary>
+            Returns true when new Aggregate was created successfully or already existed. 
+            </summary>
+            <param name="createResult">CreateAggregateResult</param>
+            <returns>True when new Entity was created or already existed</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.CreateAggregateResultExtensions.SucceededOrAlreadyExists``1(TaxHub.Hosting.Runtime.CreateAggregateExtendedResult{``0})">
+            <summary>
+            Returns true when new Aggregate was created successfully or already existed. 
+            </summary>
+            <param name="createResult">CreateAggregateResult</param>
+            <returns>True when new Entity was created or already existed</returns> 
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.DeleteAggregateResult">
+            <summary>
+            Enumeration used to provide feedback from the delete entry method.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.DomainService">
+            <summary>
+            Class implements and/or provides access to domain level services.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.DomainService.#ctor(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Class constructor.
+            </summary>
+            <param name="iocContainer">IoC container.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.DomainService.GetService``1">
+            <summary>
+            Get a service within the scope of the domain.
+            </summary>
+            <returns>Returns an instance of a service This method always guarantees non-null instance if returned without exception.</returns>
+            <exception cref="T:SmartHub.Hosting.Exceptions.ServiceResolutionException">Throws exception if instance cannot be resolved or found, including null-resolution.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.DomainService.GetAllServices``1">
+            <summary>
+            Get all services implementing a given interface.
+            </summary>
+            <returns>Returns an list of instances of a service.</returns>
+            <exception cref="T:SmartHub.Hosting.Exceptions.ServiceResolutionException">Throws exception if instance cannot be resolved or found, including null-resolution.</exception>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.DomainService.GetNamedService``1(System.String)">
+            <summary>
+            Get a service with a given name within the scope of the domain.
+            </summary>
+            <param name="name">name of service</param>
+            <returns>Returns an instance of a service This method always guarantees non-null instance if returned without exception.</returns>
+            <exception cref="T:SmartHub.Hosting.Exceptions.ServiceResolutionException">Throws exception if instance cannot be resolved or found, including null-resolution.</exception>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.HttpClientFactoryBase">
+            <summary>
+            Class creates new instances of Http Client without authorization header.
+            This class is designed to be used for limited purposes, by security services, primarily. Use IHttpClientFactory preferably.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.HttpClientFactoryBase.CreateHttpClient(System.Guid)">
+            <summary>
+            Method creates new instances of Http Client.
+            </summary>
+            <param name="correlationId">The correlation Id to use for all Http Client requests.</param>
+            <returns>Returns HtttpClient object.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.ApiCompletion">
+            <summary>
+            /Class represents the result of HUB API call completion.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ApiCompletion.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ApiCompletion.#ctor(TaxHub.Hosting.Runtime.ApiCompletionStatus)">
+            <summary>
+            Constructor that accepts a completion status.
+            </summary>
+            <param name="status">The completion status.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ApiCompletion.#ctor(System.Exception)">
+            <summary>
+            Constructor that accepts an exception.
+            </summary>
+            <param name="exception">The exception.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ApiCompletion.FromStatus(TaxHub.Hosting.Runtime.ApiCompletionStatus)">
+            <summary>
+            Creates the ApiCompletion object from completion status.
+            </summary>
+            <param name="status">The completion status.</param>
+            <returns>Returns an instance of ApiCompletion.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ApiCompletion.FromError(System.Exception)">
+            <summary>
+            Creates the ApiCompletion object from an exception.
+            </summary>
+            <param name="exception">The exception.</param>
+            <returns>Returns an instance of ApiCompletion.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.ApiCompletionBase">
+            <summary>
+            /Class represents the result of HUB API call completion.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.ApiCompletionBase.Status">
+            <summary>
+            Gets the result status.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.ApiCompletionBase.Exception">
+            <summary>
+            Gets the exception occurred within the call, if any.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.ApiCompletionBase.Message">
+            <summary>
+            Get the message passed by processor
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.ApiCompletionBase.Retries">
+            <summary>
+            Gets the number of retries it took to complete the operation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.ApiCompletionBase.IntroducedDelayMsec">
+            <summary>
+            Gets or sets the total delay introduced by delaying subsequent retries.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.ApiCompletionBase.Duration">
+            <summary>
+            Gets or sets the total number of milliseconds for the API operation.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ApiCompletionExtensions.SetRetries(TaxHub.Hosting.Runtime.ApiCompletion,System.Int32)">
+            <summary>
+            Method sets the number of retries.
+            </summary>
+            <param name="completion">The instance.</param>
+            <param name="retries">The number of retries.</param>
+            <returns>Returns the same instance of ApiCompletion.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ApiCompletionExtensions.SetDuration(TaxHub.Hosting.Runtime.ApiCompletion,System.Int32)">
+            <summary>
+            Method sets the API call duration.
+            </summary>
+            <param name="completion">The instance.</param>
+            <param name="duration">The API call duration.</param>
+            <returns>Returns the same instance of ApiCompletion.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.ApiCompletionStatus">
+            <summary>
+            The HUB API request completion status.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.IDomainService">
+            <summary>
+            Interface of a class that implements and/or provides access to domain level services.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IDomainService.GetService``1">
+            <summary>
+            Get a service within the scope of the domain.
+            </summary>
+            <returns>Returns an instance of a service.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IDomainService.GetAllServices``1">
+            <summary>
+            Get all services implementing a given interface within the scope of the domain.
+            </summary>
+            <returns>Returns an list of instances of a service.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IDomainService.GetNamedService``1(System.String)">
+            <summary>
+            Get a service within the scope of the domain.
+            </summary>
+            <param name="name">name of service</param>
+            <returns>Returns an instance of a service.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.IHttpClientFactory">
+            <summary>
+            Interface implemented by the class that creates new instances of Http Client either with or without authorization header.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.IHttpClientFactory.CreateAuthorizedHttpClient(System.Guid)">
+            <summary>
+            Creates an HttpClient that has the authorization header set.
+            </summary>
+            <param name="correlationId">The correlation Id to use for all Http Client requests.</param>
+            <returns>Returns HttpClient object.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.ISimpleHttpClientFactory">
+            <summary>
+            Interface implemented by the class that creates new instances of Http Client without authorization header. 
+            This interface is designed to be used for limited purposes, by security services, primarily. Use IHttpClientFactory preferably.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ISimpleHttpClientFactory.CreateHttpClient(System.Guid)">
+            <summary>
+            Method creates new instances of Http Client.
+            </summary>
+            <param name="correlationId">The correlation Id to use for all Http Client requests.</param>
+            <returns>Returns HttpClient object.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.ISimpleHttpClientFactory.SetTimeout(System.TimeSpan)">
+            <summary>
+            Modify the defaultTimeout value to be used by CreateHttpClient
+            </summary>
+            <param name="timeout">TimeSpan in Seconds</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetConstantRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy)">
+            <summary>
+            Method sets the "Constant" retry policy that retry 3 times without any delay between those.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetConstantRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.TimeSpan,System.Int32)">
+            <summary>
+            Method sets the "Constant" retry policy that retry specified number of times with provided delay between those.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="delay">The delay between subsequent retries, as a TimeSpan instance.</param>
+            <param name="retryCount">The number of retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetConstantRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.Int32,System.Int32)">
+            <summary>
+            Method sets the "Constant" retry policy that retry specified number of times with provided delay between those.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="delay">The delay between subsequent retries, in milliseconds.</param>
+            <param name="retryCount">The number of retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetExponentialIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy)">
+            <summary>
+            Method sets the "Exponential Increase" retry policy that retry 3 times with exponentially increasing delay between those; delay starts at 15 milliseconds.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetExponentialIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.TimeSpan,System.Int32)">
+            <summary>
+            Method sets the "Exponential Increase" retry policy that retry specified number of times with exponentially increasing delay between those; delay starts at as provided.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="delay">The first delay between retries, as a TimeSpan instance.</param>
+            <param name="retryCount">The number of retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetExponentialIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.Int32,System.Int32)">
+            <summary>
+            Method sets the "Exponential Increase" retry policy that retry specified number of times with exponentially increasing delay between those; delay starts at as provided.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="delay">The first delay between retries, in milliseconds.</param>
+            <param name="retryCount">The number of retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetLinearIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy)">
+            <summary>
+            Method sets the "Linear Increase" retry policy that retry 3 times linearly increasing delay between those; delay starts at and increasing by 5 milliseconds.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetLinearIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.TimeSpan,System.Int32)">
+            <summary>
+            Method sets the "Linear Increase" retry policy that retry specified number of times linearly increasing delay between those; delay starts at and increasing as provided.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="increment">The first delay and increment between retries, as TimeSpan instance.</param>
+            <param name="retryCount">The number of retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetLinearIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.Int32,System.Int32)">
+            <summary>
+            Method sets the "Linear Increase" retry policy that retry specified number of times linearly increasing delay between those; delay starts at and increasing as provided.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="increment">The first delay and increment between retries, in milliseconds.</param>
+            <param name="retryCount">The number of retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetAdaptiveIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy)">
+            <summary>
+            Method sets the "Adaptive Increase" retry policy that combines "Constant" and "Exponential Increase" policies.
+            The policy retry 2 times immediately, and then 3 times with exponentially increasing delay between those, starting at 15 milliseconds.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetAdaptiveIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.Int32,System.TimeSpan,System.Int32)">
+            <summary>
+            Method sets the "Adaptive Increase" retry policy that combines "Constant" and "Exponential Increase" policies.
+            The policy retry specified number (immediateRetryCount) of times immediately, and then (delayedRetryCount) number of times with exponentially increasing delay between those, starting as provided.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="immediateRetryCount">Number of immediate, constant retries.</param>
+            <param name="delay">The first exponential delay between retries, as TimeSpan.</param>
+            <param name="delayedRetryCount">The number of exponential retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetAdaptiveIncreaseRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Method sets the "Adaptive Increase" retry policy that combines "Constant" and "Exponential Increase" policies.
+            The policy retry specified number (immediateRetryCount) of times immediately, and then (delayedRetryCount) number of times with exponentially increasing delay between those, starting as provided.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="immediateRetryCount">Number of immediate, constant retries.</param>
+            <param name="delay">The first exponential delay between retries, in milliseconds.</param>
+            <param name="delayedRetryCount">The number of exponential retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetRandomRetryPolicy(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Method sets the "Random" retry policy that retry with random delay generated between minDelay and maxDelay provided.
+            This policy will retry on any exception.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <param name="minDelay">Minimum delay between retries, in milliseconds.</param>
+            <param name="maxDelay">Maximum delay between retries, in milliseconds.</param>
+            <param name="retryCount">The number of retries.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.RetryOnAnyException(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy)">
+            <summary>
+            Method sets retry policy to retry on any exception type.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicyExtensions.SetRetryOnHttpException(TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy)">
+            <summary>
+            Method sets retry policy to retry on any exception type.
+            </summary>
+            <param name="policy">The policy to apply rules to.</param>
+            <returns>Returns the RetryPolicy.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy">
+            <summary>
+            Class implements re-try policies for the application.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.RethrowOnPolicyFail">
+            <summary>
+            Gets or sets boolean indicator whether to re-throw an exception if policy fails (attempts exhausted or unhandled exception occurred).
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.RetryOn``1">
+            <summary>
+            Method defines an exception for retry policy. If exception of defined type occurs, the policy will re-try.
+            </summary>
+            <typeparam name="T">An exception type.</typeparam>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.RetryOn``1(System.Func{``0,System.Boolean})">
+            <summary>
+            Method defines an exception condition for retry policy. If exception of defined type occurs and condition matches, the policy will re-try.
+            </summary>
+            <typeparam name="T">An exception type.</typeparam>
+            <param name="condition">Condition to retry.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.RetryOn``1(System.Func{``0,System.Boolean},System.Func{``0,System.TimeSpan,System.TimeSpan})">
+            <summary>
+            Method defines an exception condition for retry policy. If exception of defined type occurs and condition matches, the policy will re-try.
+            </summary>
+            <typeparam name="T">An exception type.</typeparam>
+            <param name="condition">Condition to retry.</param>
+            <param name="delayEvaluator">Method evaluates the delay used by the RetryPolicy and allows to override it whether applicable.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.RetryOn``1(System.Func{``0,System.TimeSpan,System.TimeSpan})">
+            <summary>
+            Method defines an exception condition for retry policy. If exception of defined type occurs and condition matches, the policy will re-try.
+            </summary>
+            <typeparam name="T">An exception type.</typeparam>
+            <param name="delayEvaluator">Method evaluates the delay used by the RetryPolicy and allows to override it whether applicable.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.RetryIf(System.Func{System.Object,System.Boolean})">
+            <summary>
+            Method defines a retry condition for return data validation. If policy executed without an exception, this method allows to validate return value to enforce another retry if necessary.
+            </summary>
+            <remarks>This condition applies to function or task that returns an object, so this object can be validated before completing the retry policy.</remarks>
+            <param name="condition">Condition to retry.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.RetryIfNull">
+            <summary>
+            Method adds a retry condition in case the return data is null-value. If policy successfully executed, this method validates return value to ensure retry on null.
+            </summary>
+            <remarks>This condition applies to function or task that returns an object, so this object can be validated before completing the retry policy.</remarks>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.AddAttempt">
+            <summary>
+            Method adds a retry attempt with 0 delay.
+            </summary>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.AddAttempt(System.Int32)">
+            <summary>
+            Method adds a retry attempt with an optional delay.
+            </summary>
+            <param name="delay">Delay from a previous attempt in milliseconds.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.AddAttempts(System.Int32[])">
+            <summary>
+            Method adds multiple retry attempts with an optional delay between each.
+            </summary>
+            <param name="delays">Delays from a previous attempt in milliseconds.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.AddAttempt(System.TimeSpan)">
+            <summary>
+            Method adds a retry attempt with an optional delay.
+            </summary>
+            <param name="delay">Delay from a previous attempt in milliseconds.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.AddAttempts(System.TimeSpan[])">
+            <summary>
+            Method adds multiple retry attempts with an optional delay between each.
+            </summary>
+            <param name="delays">Delays from a previous attempt in milliseconds.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.AddAttempt(SmartHub.Hosting.Runtime.RetryPolicy.IRetryDelay)">
+            <summary>
+            Method adds a retry attempt with an optional delay.
+            </summary>
+            <param name="delay">Delay from a previous attempt.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.AddAttempts(SmartHub.Hosting.Runtime.RetryPolicy.IRetryDelay[])">
+            <summary>
+            Method adds multiple retry attempts with an optional delay between each.
+            </summary>
+            <param name="delays">Delays from a previous attempt.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.SetThrowOnPolicyFail(System.Boolean)">
+            <summary>
+            Method sets boolean indicator whether to re-throw an exception if policy fails (attempts exhausted or unhandled exception occurred).
+            </summary>
+            <param name="throwOnPolicyFail">The boolean value to set.</param>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.Reset">
+            <summary>
+            Method resets the retry policy to its original state allowing to redefine the policy.
+            </summary>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.ClearConditions">
+            <summary>
+            Method clears the retry policy conditions.
+            </summary>
+            <returns>Returns RetryPolicy instance.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.Execute(System.Action,System.Threading.CancellationToken)">
+            <summary>
+            Method executes an action following current retry policy.
+            </summary>
+            <remarks>Method may throw an occurred exception if it's not defined by the policy or number of allowed attempts has been exhausted and ThrowOnPolicyFail property is set to true.
+            All occurred exception will be wrapped into AggregateException object.</remarks>
+            <param name="work">The action to execute.</param>
+            <param name="cancellationToken">Optional cancellation token.</param>
+            <returns>Returns an instance RetryResult if exception is not thrown.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.Execute``1(System.Func{``0},System.Threading.CancellationToken)">
+            <summary>
+            Method executes a function returning TResult following current retry policy.
+            </summary>
+            <remarks>Method may throw an occurred exception if it's not defined by the policy or number of allowed attempts has been exhausted and ThrowOnPolicyFail property is set to true.
+            All occurred exception will be wrapped into AggregateException object.</remarks>
+            <typeparam name="TResult">The result type.</typeparam>
+            <param name="work">The function to execute.</param>
+            <param name="cancellationToken">Optional cancellation token.</param>
+            <returns>Returns an instance RetryResult, containing the returned data if exception is not thrown.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.ExecuteAsync(System.Func{System.Threading.Tasks.Task},System.Threading.CancellationToken)">
+            <summary>
+            Method executes a Task following current retry policy.
+            </summary>
+            <remarks>Method may throw an occurred exception if it's not defined by the policy or number of allowed attempts has been exhausted and ThrowOnPolicyFail property is set to true.
+            All occurred exception will be wrapped into AggregateException object.</remarks>
+            <param name="work">The action to execute.</param>
+            <param name="cancellationToken">Optional cancellation token.</param>
+            <returns>Returns an instance RetryResult if exception is not thrown.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.RetryPolicy.RetryPolicy.ExecuteAsync``1(System.Func{System.Threading.Tasks.Task{``0}},System.Threading.CancellationToken)">
+            <summary>
+            Method executes a Task returning TResult following current retry policy.
+            </summary>
+            <remarks>Method may throw an occurred exception if it's not defined by the policy or number of allowed attempts has been exhausted and ThrowOnPolicyFail property is set to true.
+            All occurred exception will be wrapped into AggregateException object.</remarks>
+            <typeparam name="TResult">The result type.</typeparam>
+            <param name="work">The function to execute.</param>
+            <param name="cancellationToken">Optional cancellation token.</param>
+            <returns>Returns an instance RetryResult containing the returned data if exception is not thrown.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.TemporaryFileHttpResponseMessage">
+            <summary>
+            Class is used to create <see cref="T:System.Net.Http.HttpResponseMessage"/> from <see cref="T:TaxHub.Hosting.Runtime.TemporaryStreamResult"/>.
+            </summary>
+            <remarks>Constructor automatically creates content with all required headers.</remarks>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.TemporaryStreamResult">
+            <summary>
+            Class represents the object store retrieval result.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.TemporaryStreamResult.ObjectStream">
+            <summary>
+            Gets or sets the stream containing the object.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.TemporaryStreamResult.IsFile">
+            <summary>
+            Gets or sets a boolean indicator whether object is saved locally as a temporary file due to its size.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.TemporaryStreamResult.IsDestroyed">
+            <summary>
+            Gets or sets a boolean indicator whether stream and file have been destroyed.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.TemporaryStreamResult.FilePath">
+            <summary>
+            Gets or sets the file path to the temporary file in case it's been used.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.TemporaryStreamResult.OriginalFileName">
+            <summary>
+            The original file name of the stream (does not necessarily have to match the name in the filePath)
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.TemporaryStreamResult.Length">
+            <summary>
+            Gets or sets the length of the file
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.TemporaryStreamResult.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.TemporaryStreamResult.DestroyResources(System.Boolean)">
+            <summary>
+             Closes and disposes the stream, and if it is a file stream then it deletes the file as well
+            </summary>
+            <param name="useSecureErase"> Selectively use secure delete versus regular file delete</param>
+            <returns>Returns a task</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1">
+            <summary>
+            Class which wraps the UpdateAggregateResult with a message. Useful
+            for sending warnings describing the the result.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1.#ctor">
+            <summary>
+            Default constructor with string.empty message.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1.#ctor(TaxHub.Hosting.Runtime.UpdateAggregateResult,`0,System.String,System.Object[])">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="result">The UpdateAggregateResult.</param>
+            <param name="data">The data of type T.</param>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1.SetResult(TaxHub.Hosting.Runtime.UpdateAggregateResult,System.String,System.Object[])">
+            <summary>
+            Method sets result and message.
+            </summary>
+            <param name="result">The UpdateAggregateResult.</param>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1.SetFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "Failure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1.SetPartialFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "PartialFailure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1.SetSuccess">
+            <summary>
+            Method sets "Success" result.
+            </summary>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1.SetSuccess(System.String,System.Object[])">
+            <summary>
+            Method sets "Success" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult`1.SetConflict(System.String,System.Object[])">
+            <summary>
+            Method sets "Conflict" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult">
+            <summary>
+            Class which wraps the UpdateAggregateResult with a message. Useful
+            for sending warnings describing the the result.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult.#ctor">
+            <summary>
+            Default constructor with string.empty message.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult.#ctor(TaxHub.Hosting.Runtime.UpdateAggregateResult,System.String,System.Object[])">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="result">The UpdateAggregateResult.</param>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult.SetResult(TaxHub.Hosting.Runtime.UpdateAggregateResult,System.String,System.Object[])">
+            <summary>
+            Method sets result and message.
+            </summary>
+            <param name="result">The UpdateAggregateResult.</param>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult.SetFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "Failure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult.SetPartialFailure(System.String,System.Object[])">
+            <summary>
+            Method sets "PartialFailure" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult.SetSuccess">
+            <summary>
+            Method sets "Success" result.
+            </summary>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult.SetSuccess(System.String,System.Object[])">
+            <summary>
+            Method sets "Success" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateExtendedResult.SetConflict(System.String,System.Object[])">
+            <summary>
+            Method sets "Conflict" result and message.
+            </summary>
+            <param name="message">The message to include.</param>
+            <param name="messageParams">The optional message parameters.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.UpdateAggregateResult">
+            <summary>
+            Enumeration used to provide feedback from the update entry method.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultExtensions.IsRepoSucceeded(TaxHub.Hosting.Runtime.UpdateAggregateResult)">
+            <summary>
+            Method provides deterministic check whether status can be considered "successful"
+            for the data repository portion. 
+            Particularly Success and PartialFailure are considered to be successful for the data because PartialFailure
+            is used when repository update has succeeded and event store or message queue failed.
+            </summary>
+            <remarks>Use this logic only when update has 2 parts - repository update and event store/message queue publishing.</remarks>
+            <param name="result">The instance of the UpdateAggregateResult to evaluate.</param>
+            <returns>Returns boolean indicator whether repository update portion succeeded.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1">
+            <summary>
+            Class holds an aggregate update result from potentially repeatable operation. 
+            </summary>
+            <typeparam name="T">The aggregate type upon which the update was made.</typeparam>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.Result">
+            <summary>
+            The result of update operation. 
+            <para>Success - successfully updated an aggregate, saved to the repository, and all events successfully sent to the event store and published on the queue.</para>
+            <para>Failure - successfully updated an aggregate, but failed to save to the repository; in this case events won't be sent to the event store and published on the queue.</para>
+            <para>Conflict - Indicates a generic error that has not caused an exception.</para>
+            <para>PartialFailure - successfully updated an aggregate, saved to the repository, but events failed to be sent to the event store or published on the queue.</para>
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.UpdatedAggregate">
+            <summary>
+            An aggregate instance produced as a result of update. 
+            This might be referenced to the same instance passed into the update function or another instance if aggregate was re-retrieved from the repository due to version collision.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.IsPassedIn">
+            <summary>
+            Boolean indicator whether the UpdatedAggregate points to the original aggregate instance passed into the update method.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.Attempts">
+            <summary>
+            Gets or sets the number of update attempts that have been made.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.Message">
+            <summary>
+            Message to be passed to consumer
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.SetResult(TaxHub.Hosting.Runtime.UpdateAggregateResult)">
+            <summary>
+            Method sets result and message.
+            </summary>
+            <param name="result">The UpdateAggregateResult.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.SetFailure">
+            <summary>
+            Method sets "Failure" result and message.
+            </summary>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.SetFailure(System.String)">
+            <summary>
+            Method sets "Failure" result and message.
+            </summary>
+            <param name="message"> Sets status to failure and assigns message </param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.SetAlreadyExists(System.String)">
+            <summary>
+            Method sets "AlreadyExists" result and message.
+            </summary>
+            <param name="message"> Sets status to AlreadyExists and assigns message for a case when the update violated an existing unique index.</param>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.SetPartialFailure">
+            <summary>
+            Method sets "PartialFailure" result and message.
+            </summary>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.SetSuccess">
+            <summary>
+            Method sets "Success" result and message.
+            </summary>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="M:TaxHub.Hosting.Runtime.UpdateAggregateResultState`1.SetConflict">
+            <summary>
+            Method sets "Conflict" result and message.
+            </summary>
+            <returns>Returns the same instance to support fluent interface.</returns>
+        </member>
+        <member name="T:TaxHub.Hosting.WebConstants.MediaTypes">
+            <summary>
+            This class represents a couple of the possible media types used http headers in our application.
+            Add more as needed.
+            </summary>
+        </member>
+    </members>
+</doc>

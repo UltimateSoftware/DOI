@@ -1,0 +1,250 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SmartHub.Reporting.Utilities</name>
+    </assembly>
+    <members>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvDefinition`1">
+            <summary>
+            Class provides customization to CSV serialization process.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvDefinition`1.Header">
+            <summary>
+            Gets or sets custom header. By default the header is formed based on class properties.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvDefinition`1.FieldSeparator">
+            <summary>
+            Gets or sets the field separator. By default the comma (",") is used.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvDefinition`1.TextQualifier">
+            <summary>
+            Gets or sets the text qualifier. By default double quotation mark is used.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvDefinition`1.EndOfLine">
+            <summary>
+            Gets or sets the end of line separator. By default the ("\r\n") is used.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvDefinition`1.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvDestination">
+            <summary>
+            Class represents the destination of CSV formatted data.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvDestination.op_Implicit(System.String)~SmartHub.Reporting.Utilities.Csv.CsvDestination">
+            <summary>
+            Operator assigns file as destination.
+            </summary>
+            <param name="path">The file path.</param>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvDestination.op_Implicit(System.IO.StreamWriter)~SmartHub.Reporting.Utilities.Csv.CsvDestination">
+            <summary>
+            Operator assigns <see cref="F:SmartHub.Reporting.Utilities.Csv.CsvDestination.StreamWriter"/> object as destination.
+            </summary>
+            <param name="streamWriter">The <see cref="F:SmartHub.Reporting.Utilities.Csv.CsvDestination.StreamWriter"/> object.</param>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvDestination.op_Implicit(System.IO.Stream)~SmartHub.Reporting.Utilities.Csv.CsvDestination">
+            <summary>
+            Operator assigns <see cref="T:System.IO.Stream"/> object as destination.
+            </summary>
+            <param name="stream">The <see cref="T:System.IO.Stream"/> object.</param>
+        </member>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvBase`1">
+            <summary>
+            Class provides the base for CSV writer and reader.
+            </summary>
+            <typeparam name="T">The serializable type.</typeparam>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvBase`1.Read(SmartHub.Reporting.Utilities.Csv.CsvSource{`0})">
+            <summary>
+            Method reads CSV data to the enumerable of serializable type.
+            </summary>
+            <param name="csvSource">The CSV data source.</param>
+            <returns>Returns an <see cref="T:System.Collections.Generic.IEnumerable`1"/></returns>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvBase`1.FieldSeparator">
+            <summary>
+            Gets the field separator used by the instance.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvBase`1.TextQualifier">
+            <summary>
+            Gets the text qualifier used by the instance.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvBase`1.Dispose">
+            <summary>
+            Disposes the resources used by the instance.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvWriter`1">
+            <summary>
+            Class provides the CSV serialization functionality.
+            </summary>
+            <typeparam name="T">The serializable type.</typeparam>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvWriter`1.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvWriter`1.#ctor(SmartHub.Reporting.Utilities.Csv.CsvDestination,SmartHub.Reporting.Utilities.Csv.CsvDefinition{`0})">
+            <summary>
+            Class constructor.
+            </summary>
+            <param name="csvDestination">CSV data destination.</param>
+            <param name="csvDefinition">Optional CSV custom definition.</param>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvWriter`1.Append(`0)">
+            <summary>
+            Method appends data record to a processing queue.
+            </summary>
+            <param name="record">The record to append.</param>
+            <returns>Returns <see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvWriter`1.Close">
+            <summary>
+            Method completes serialization process, stops working queues, and closes writing stream.
+            </summary>
+            <returns>Returns <see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvWriter`1.Complete">
+            <summary>
+            Method completes serialization process, stops working queues, but does not close writing stream.
+            </summary>
+            <returns>Returns <see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvWriterLinqExtensions.ToCsv``1(System.Collections.Generic.IEnumerable{``0},SmartHub.Reporting.Utilities.Csv.CsvDestination)">
+            <summary>
+            Method writes data source to the CSV destination.
+            </summary>
+            <typeparam name="T">The type to write.</typeparam>
+            <param name="source">The data source.</param>
+            <param name="csvDestination">CSV destination.</param>
+            <returns>Returns a <see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvWriterLinqExtensions.ToCsv``1(System.Collections.Generic.IEnumerable{``0},SmartHub.Reporting.Utilities.Csv.CsvDestination,SmartHub.Reporting.Utilities.Csv.CsvDefinition{``0})">
+            <summary>
+            Method writes data source to the CSV destination using custom CSV parameters.
+            </summary>
+            <typeparam name="T">The type to write.</typeparam>
+            <param name="source">The data source.</param>
+            <param name="csvDestination">CSV destination.</param>
+            <param name="csvDefinition">Custom CSV parameters.</param>
+            <returns>Returns a <see cref="T:System.Threading.Tasks.Task"/></returns>
+        </member>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvReader`1">
+            <summary>
+            Class provides the CSV deserialization functionality.
+            </summary>
+            <typeparam name="T">The serializable type.</typeparam>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvReader`1.#ctor(SmartHub.Reporting.Utilities.Csv.CsvSource{`0})">
+            <summary>
+            Class constructor.
+            </summary>
+            <param name="csvSource">CSV data source.</param>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvReader`1.#ctor(SmartHub.Reporting.Utilities.Csv.CsvSource{`0},SmartHub.Reporting.Utilities.Csv.CsvDefinition{`0})">
+            <summary>
+            Class constructor.
+            </summary>
+            <param name="csvSource">CSV data source.</param>
+            <param name="csvDefinition">Optional CSV custom definition.</param>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvReader`1.Current">
+            <summary>
+            Gets current data item accessor.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvReader`1.Eof">
+            <summary>
+            Gets boolean indicator of EOF.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvReader`1.MoveNext">
+            <summary>
+            Method moves to next line and reads it.
+            </summary>
+            <returns>Returns boolean indicator whether the line is found.</returns>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvReader`1.Reset">
+            <summary>
+            Method resets the enumerator.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvReader`1.SkipLine">
+            <summary>
+            Method allows to skip the line without parsing data. Can be used to skip the header.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvIgnorePropertyAttribute">
+            <summary>
+            Class provides an attribute that ignores the property when class serializes to CSV.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvPropertyAttribute">
+            <summary>
+            Class provides an attribute that allows to customize class property CSV serialization.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvPropertyAttribute.OrderId">
+            <summary>
+            Gets or sets the field order.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvPropertyAttribute.Title">
+            <summary>
+            Gets or sets the field title.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Reporting.Utilities.Csv.CsvPropertyAttribute.Format">
+            <summary>
+            Gets or sets the field format (only for numeric types).
+            </summary>
+        </member>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvPropertyDefinition`1">
+            <summary>
+            Internal class that CSV file and CSV file reader are using for internal data mapping.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Reporting.Utilities.Csv.CsvSource`1">
+            <summary>
+            Class represents the source of data containing CSV formatted data.
+            </summary>
+            <typeparam name="T">The type of data entity.</typeparam>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvSource`1.op_Implicit(SmartHub.Reporting.Utilities.Csv.CsvBase{`0})~SmartHub.Reporting.Utilities.Csv.CsvSource{`0}">
+            <summary>
+            Operator assigns <see cref="T:SmartHub.Reporting.Utilities.Csv.CsvSource`1"/> object as data source.
+            </summary>
+            <param name="csvReader">The <see cref="T:SmartHub.Reporting.Utilities.Csv.CsvBase`1"/></param>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvSource`1.op_Implicit(System.String)~SmartHub.Reporting.Utilities.Csv.CsvSource{`0}">
+            <summary>
+            Operator assigns CSV file as data source.
+            </summary>
+            <param name="path">The file path.</param>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvSource`1.op_Implicit(System.IO.TextReader)~SmartHub.Reporting.Utilities.Csv.CsvSource{`0}">
+            <summary>
+            Operator assigns <see cref="F:SmartHub.Reporting.Utilities.Csv.CsvSource`1.TextReader"/> object as data source.
+            </summary>
+            <param name="textReader">The <see cref="F:SmartHub.Reporting.Utilities.Csv.CsvSource`1.TextReader"/></param>
+        </member>
+        <member name="M:SmartHub.Reporting.Utilities.Csv.CsvSource`1.op_Implicit(System.IO.Stream)~SmartHub.Reporting.Utilities.Csv.CsvSource{`0}">
+            <summary>
+            Operator assigns <see cref="T:System.IO.Stream"/> object as data source.
+            </summary>
+            <param name="stream">The <see cref="T:System.IO.Stream"/></param>
+        </member>
+    </members>
+</doc>

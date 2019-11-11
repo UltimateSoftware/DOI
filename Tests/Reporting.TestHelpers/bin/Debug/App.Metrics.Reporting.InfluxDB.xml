@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>App.Metrics.Reporting.InfluxDB</name>
+    </assembly>
+    <members>
+        <member name="T:App.Metrics.MetricsInfluxDbReporterBuilder">
+            <summary>
+                Builder for configuring metrics InfluxDB reporting using an
+                <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" />.
+            </summary>
+        </member>
+        <member name="M:App.Metrics.MetricsInfluxDbReporterBuilder.ToInfluxDb(App.Metrics.Builder.IMetricsReportingBuilder,App.Metrics.Reporting.InfluxDB.MetricsReportingInfluxDbOptions)">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.InfluxDB.InfluxDbMetricsReporter" /> allowing metrics to be reported to InfluxDB.
+            </summary>
+            <param name="metricReporterProviderBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <param name="options">The InfluxDB reporting options to use.</param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="M:App.Metrics.MetricsInfluxDbReporterBuilder.ToInfluxDb(App.Metrics.Builder.IMetricsReportingBuilder,System.Action{App.Metrics.Reporting.InfluxDB.MetricsReportingInfluxDbOptions})">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.InfluxDB.InfluxDbMetricsReporter" /> allowing metrics to be reported to InfluxDB.
+            </summary>
+            <param name="metricReporterProviderBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <param name="setupAction">The InfluxDB reporting options to use.</param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="M:App.Metrics.MetricsInfluxDbReporterBuilder.ToInfluxDb(App.Metrics.Builder.IMetricsReportingBuilder,System.String,System.String)">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.InfluxDB.InfluxDbMetricsReporter" /> allowing metrics to be reported to InfluxDB.
+            </summary>
+            <param name="metricReporterProviderBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <param name="url">The base url where InfluxDB is hosted.</param>
+            <param name="database">The InfluxDB where metrics should be flushed.</param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="M:App.Metrics.MetricsInfluxDbReporterBuilder.ToInfluxDb(App.Metrics.Builder.IMetricsReportingBuilder,System.String,System.String,System.TimeSpan)">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.InfluxDB.InfluxDbMetricsReporter" /> allowing metrics to be reported to InfluxDB.
+            </summary>
+            <param name="metricReporterProviderBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <param name="url">The base url where InfluxDB is hosted.</param>
+            <param name="database">The InfluxDB where metrics should be flushed.</param>
+            <param name="flushInterval">
+                The <see cref="T:System.TimeSpan" /> interval used if intended to schedule metrics
+                reporting.
+            </param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbMetricsReporter.Filter">
+            <inheritdoc />
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbMetricsReporter.FlushInterval">
+            <inheritdoc />
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbMetricsReporter.Formatter">
+            <inheritdoc />
+        </member>
+        <member name="M:App.Metrics.Reporting.InfluxDB.InfluxDbMetricsReporter.FlushAsync(App.Metrics.MetricsDataValueSource,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:App.Metrics.Reporting.InfluxDB.InfluxDbOptions">
+            <summary>
+                Provides programmatic configuration for InfluxDB in the App Metrics framework.
+            </summary>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbOptions.Consistenency">
+            <summary>
+                Gets or sets the number of InfluxDB notes that must confirm the write
+            </summary>
+            <value>
+                The InfluxDB node write consistency.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbOptions.Endpoint">
+            <summary>
+                Gets formatted endpoint for writes to InfluxDB
+            </summary>
+            <value>
+                The InfluxDB endpoint for writes.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbOptions.BaseUri">
+            <summary>
+                Gets or sets the base URI of the InfluxDB API.
+            </summary>
+            <value>
+                The base URI of the InfluxDB API where metrics are flushed.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbOptions.Database">
+            <summary>
+                Gets or sets the InfluxDB database name used to report metrics.
+            </summary>
+            <value>
+                The InfluxDB database name where metrics are flushed.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbOptions.Password">
+            <summary>
+                Gets or sets the InfluxDB database password.
+            </summary>
+            <value>
+                The InfluxDB database password.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbOptions.RetensionPolicy">
+            <summary>
+                Gets or sets the InfluxDB database's retention policy to target.
+            </summary>
+            <value>
+                The InfluxDB database's retention policy to target.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbOptions.UserName">
+            <summary>
+                Gets or sets the InfluxDB database username.
+            </summary>
+            <value>
+                The InfluxDB database username.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.InfluxDbOptions.CreateDataBaseIfNotExists">
+            <summary>
+            Gets or sets a value indicating whether or not to attempt to create the specified database if it does not exist
+            </summary>
+            <value>
+             The flag indicating whether or not to create the specifried database if it does not exist
+            </value>
+        </member>
+        <member name="T:App.Metrics.Reporting.InfluxDB.MetricsReportingInfluxDbOptions">
+            <summary>
+                Provides programmatic configuration for InfluxDB Reporting in the App Metrics framework.
+            </summary>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.MetricsReportingInfluxDbOptions.Filter">
+            <summary>
+                Gets or sets the <see cref="T:App.Metrics.Filters.IFilterMetrics" /> to use for just this reporter.
+            </summary>
+            <value>
+                The <see cref="T:App.Metrics.Filters.IFilterMetrics" /> to use for this reporter.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.MetricsReportingInfluxDbOptions.HttpPolicy">
+            <summary>
+                Gets or sets the HTTP policy settings which allows circuit breaker configuration to be adjusted
+            </summary>
+            <value>
+                The HTTP policy.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.MetricsReportingInfluxDbOptions.InfluxDb">
+            <summary>
+                Gets or sets the available options for InfluxDB connectivity.
+            </summary>
+            <value>
+                The <see cref="T:App.Metrics.Reporting.InfluxDB.InfluxDbOptions" />.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.MetricsReportingInfluxDbOptions.MetricsOutputFormatter">
+            <summary>
+                Gets or sets the <see cref="T:App.Metrics.Formatters.IMetricsOutputFormatter" /> used to write metrics.
+            </summary>
+            <value>
+                The <see cref="T:App.Metrics.Formatters.IMetricsOutputFormatter" /> used to write metrics.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.InfluxDB.MetricsReportingInfluxDbOptions.FlushInterval">
+            <summary>
+                Gets or sets the flush metrics interval
+            </summary>
+            <remarks>
+                This <see cref="T:System.TimeSpan" /> will apply to all configured reporters unless overriden by a specific reporters
+                options.
+            </remarks>
+            <value>
+                The <see cref="T:System.TimeSpan" /> to wait between reporting metrics
+            </value>
+        </member>
+    </members>
+</doc>

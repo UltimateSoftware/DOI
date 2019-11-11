@@ -1,0 +1,3 @@
+C:\Projects\DDI\Tests\obj\Debug\Tests.csprojAssemblyReference.cache
+C:\Projects\DDI\Tests\obj\Debug\Reporting.Ingestion.Integration.Tests.dll.config
+C:\Projects\DDI\Tests\obj\Debug\Tests.csproj.CoreCompileInputs.cache

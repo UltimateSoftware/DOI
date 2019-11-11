@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.SetMeUpLib</name>
+    </assembly>
+    <members>
+        <member name="M:TaxHub.SetMeUpLib.CommandFactories.PeriodicTaxInstanceFactory.ResolveStep(System.String)">
+            <summary>
+            To be used later in another place. Don't remove.
+            </summary>
+            <param name="confStep">confSet</param>
+            <returns>Valid step</returns>
+        </member>
+        <member name="M:TaxHub.SetMeUpLib.CommandFactories.InputTaxInstanceFactory.ResolveStep(System.String)">
+            <summary>
+            To be used later in another place. Don't remove.
+            </summary>
+            <param name="confStep">confSet</param>
+            <returns>Valid step</returns>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.AgencyConfig.PayeeId">
+            <summary>
+            The PayeeId must already exist
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.AgencyConfig.CreditApplicationRuleException">
+            <summary>
+            Credit application rule exception applies to payees with combine payee setup
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.AgencyConfig.CreditCarryRuleException">
+            <summary>
+            Credit carry rule exception applies to payees with combine payee setup
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.AgencyConfig.IsCreditCarryAllowed">
+            <summary>
+            Is credit carry allowed
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.PayrollConfig.ImportClient">
+            <summary>
+            Default provided by factory
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.PayrollConfig.CheckDate">
+            <summary>
+            Default current date
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.PayrollConfig.Type">
+            <summary>
+            Regular, QeAdj: default Regular
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.TaxUnitConfig.TaxId">
+            <summary>
+            Default provided by factory
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientAgencyConfig.PayeeId">
+            <summary>
+            PAYEE_ID - this payee must already exist
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientAgencyConfig.ClientTaxId">
+            <summary>
+            Client specific ID for agency
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientAgencyConfig.ScheduleId">
+            <summary>
+            SCHEDULE_ID - this schedule must already exist
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientAgencyConfig.EftRequired">
+            <summary>
+            Whether agency requires EFT for client
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientAgencyConfig.StartDate">
+            <summary>
+            When agency setup for client becomes valid
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientAgencyConfig.Status">
+            <summary>
+            Status of agency setup
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientConfig.ClientId">
+            <summary>
+            CLIENT_ID - this client must already exist
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientConfig.StartDate">
+            <summary>
+            Starting date for client
+            </summary>
+        </member>
+        <member name="P:TaxHub.SetMeUpLib.SeedConfiguration.ClientConfig.Agencies">
+            <summary>
+            Agencies setup for client (beyond IRS and FUTA)
+            </summary>
+        </member>
+        <member name="M:TaxHub.SetMeUpLib.Seeders.IPayrollSeeder.Seed(TaxHub.SetMeUpLib.SeedConfiguration.SetupConfig,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Returns true if payrolls config is empty success seeding.
+            </summary>
+            <param name="setupConfig">The setup config.</param>
+            <param name="eventDataParams">The event data parameters.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Returns true if successful seeding.</returns>
+        </member>
+        <member name="T:TaxHub.SetMeUpLib.DataSetupLibBootstrap">
+            <summary>
+            Initialize unity container.
+            </summary>
+        </member>
+        <member name="M:TaxHub.SetMeUpLib.DataSetupLibBootstrap.InitializeBase(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Base init of unity container.
+            </summary>
+            <param name="container">The unity container.</param>
+        </member>
+        <member name="M:TaxHub.SetMeUpLib.DataSetupLibBootstrap.InitializeApp(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Initalizes the unity container in order to setup the migrator app.
+            </summary>
+            <param name="container">The unity container.</param>
+        </member>
+        <member name="M:TaxHub.SetMeUpLib.DataSetupLibBootstrap.InitializeDataSetupDependencies(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Initalizes the unity container in order to setup the dependencies needed for migrations.
+            </summary>
+            <param name="container">The unity container.</param>
+        </member>
+        <member name="M:TaxHub.SetMeUpLib.DataSetupLibBootstrap.InitializeServicesConfiguration(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Method to load the feature toggle configuration from file.
+            </summary>
+            <param name="container">The unity container</param>
+        </member>
+    </members>
+</doc>

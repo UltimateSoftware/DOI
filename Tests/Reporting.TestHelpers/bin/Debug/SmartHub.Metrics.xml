@@ -1,0 +1,811 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SmartHub.Metrics</name>
+    </assembly>
+    <members>
+        <member name="T:SmartHub.Metrics.IAppMetrics">
+            <summary>
+            A class used for creating metrics.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.Timer(System.String)">
+            <summary>
+            Returns an existing <see cref="T:SmartHub.Metrics.ITimerMetric"/> if it exists with the given name or
+            constructs a new one.
+            </summary>
+            <param name="name">The name of the <see cref="T:SmartHub.Metrics.ITimerMetric"/></param>
+            <returns>Instance of <see cref="T:SmartHub.Metrics.ITimerMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.Timer(SmartHub.Metrics.TimerMetricOptions)">
+            <summary>
+            Returns an existing <see cref="T:SmartHub.Metrics.ITimerMetric"/> if it exists with the given options or
+            constructs a new one.
+            </summary>
+            <param name="options">The timer options.</param>
+            <returns>Instance of <see cref="T:SmartHub.Metrics.ITimerMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.Counter(SmartHub.Metrics.CounterMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.ICounterMetric"/> with the given name.
+            </summary>
+            <param name="options">The options for this counter.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.ICounterMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.Counter(System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.ICounterMetric"/> with the given name.
+            </summary>
+            <param name="name">The name of the counter</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.ICounterMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.Meter(SmartHub.Metrics.MeterMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IMeterMetric"/> with the given options.
+            </summary>
+            <param name="options">The options</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IMeterMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.Meter(System.String,System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IMeterMetric"/> with the given name.
+            </summary>
+            <param name="name">The name of the meter.</param>
+            <param name="unit">The unit of this measurement.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IMeterMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.Histogram(SmartHub.Metrics.HistogramMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IHistogramMetric"/> with the given options.
+            </summary>
+            <param name="options">The options.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IHistogramMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.Histogram(System.String,System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.HistogramMetric"/> with the given options.
+            </summary>
+            <param name="name">The name of the meter.</param>
+            <param name="unit">The unit of this measurement.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.HistogramMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.ValueGauge(SmartHub.Metrics.ValueGaugeMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IValueGaugeMetric"/> with the given options.
+            </summary>
+            <param name="options">The options.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IValueGaugeMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.ValueGauge(System.String,System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IValueGaugeMetric"/> with the given options.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="unit">The unit.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IValueGaugeMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.PercentGauge(SmartHub.Metrics.PercentGaugeMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IPercentGaugeMetric"/> with the given options.
+            </summary>
+            <param name="options">The options.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IPercentGaugeMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.PercentGauge(System.String,System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IPercentGaugeMetric"/> with the given options.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="unit">The unit.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IPercentGaugeMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.HitRatioGauge(SmartHub.Metrics.PercentGaugeMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IHitRatioGaugeMetric"/> with the given options.
+            </summary>
+            <param name="options">The name.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IHitRatioGaugeMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetrics.HitRatioGauge(System.String,System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.IHitRatioGaugeMetric"/> with the given options.
+            </summary>
+            <param name="name">The name.</param>
+            <param name="unit">The unit.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.IHitRatioGaugeMetric"/></returns>
+        </member>
+        <member name="T:SmartHub.Metrics.AppMetrics">
+            <summary>
+            A class used for creating metrics.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.AppMetrics"/> class.
+            </summary>
+            <param name="metricsRoot">The instance of the <see cref="T:App.Metrics.IMetricsRoot"/> used for gathering metrics</param>
+            <param name="tags">Default tags for all metrics created by this instance.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.Timer(System.String)">
+            <summary>
+            Returns an existing <see cref="T:SmartHub.Metrics.TimerMetric"/> if it exists with the given name or
+            constructs a new one.
+            </summary>
+            <param name="name">The name of the <see cref="T:SmartHub.Metrics.TimerMetric"/></param>
+            <returns>Instance of <see cref="T:SmartHub.Metrics.TimerMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.Timer(SmartHub.Metrics.TimerMetricOptions)">
+            <summary>
+            Returns an existing <see cref="T:SmartHub.Metrics.TimerMetric"/> if it exists with the given options or
+            constructs a new one.
+            </summary>
+            <param name="options">The timer options.</param>
+            <returns>Instance of <see cref="T:SmartHub.Metrics.TimerMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.Counter(SmartHub.Metrics.CounterMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.CounterMetric"/> with the given name.
+            </summary>
+            <param name="options">The options for this counter.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.CounterMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.Counter(System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.CounterMetric"/> with the given name.
+            </summary>
+            <param name="name">The name of the counter</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.CounterMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.Meter(SmartHub.Metrics.MeterMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.MeterMetric"/> with the given options.
+            </summary>
+            <param name="options">The options</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.MeterMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.Meter(System.String,System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.MeterMetric"/> with the given name.
+            </summary>
+            <param name="name">The name of the meter.</param>
+            <param name="unit">The unit of this measurement.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.MeterMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.Histogram(SmartHub.Metrics.HistogramMetricOptions)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.HistogramMetric"/> with the given options.
+            </summary>
+            <param name="options">The options.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.HistogramMetric"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetrics.Histogram(System.String,System.String)">
+            <summary>
+            Creates or returns an existing instance of a <see cref="T:SmartHub.Metrics.HistogramMetric"/> with the given options.
+            </summary>
+            <param name="name">The name of the meter.</param>
+            <param name="unit">The unit of this measurement.</param>
+            <returns>An instance of a <see cref="T:SmartHub.Metrics.HistogramMetric"/></returns>
+        </member>
+        <member name="T:SmartHub.Metrics.BaseMetricOptions">
+            <summary>
+            Base metric options
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.BaseMetricOptions.Name">
+            <summary>
+            Gets or sets name of this counter metric
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.BaseMetricOptions.MeasurementUnit">
+            <summary>
+            Gets or sets the measurement unit
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.BaseMetricOptions.Tags">
+            <summary>
+            Gets or sets the tags.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Metrics.ICounterMetric">
+            <summary>
+            A metric used to count.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.ICounterMetric.Increment">
+            <summary>
+            Increments the counter by 1.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.ICounterMetric.Increment(System.Int64)">
+            <summary>
+            Increments the counter by the provided amount.
+            </summary>
+            <param name="amount">The amount to increase the counter by.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ICounterMetric.Increment(SmartHub.Metrics.Tags,System.Int64)">
+            <summary>
+            Increments the counter by the provided amount with the provided tags.
+            </summary>
+            <param name="extraTags">Extra tags for this particular measurement.</param>
+            <param name="amount">The amount to increase the counter by.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ICounterMetric.Increment(SmartHub.Metrics.Tags)">
+            <summary>
+            Increments the counter by 1 with the provided tags.
+            </summary>
+            <param name="extraTags">Extra tags for this particular measurement.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ICounterMetric.Decrement">
+            <summary>
+            Decrements the counter by 1.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.ICounterMetric.Decrement(SmartHub.Metrics.Tags)">
+            <summary>
+            Decrements the counter by 1 with the provided tags.
+            </summary>
+            <param name="extraTags">Extra tags for this particular measurement.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ICounterMetric.Decrement(System.Int64)">
+            <summary>
+            Decrements the counter by the provided amount.
+            </summary>
+            <param name="amount">The amount to decrease the counter by.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ICounterMetric.Decrement(SmartHub.Metrics.Tags,System.Int64)">
+            <summary>
+            Decrements the counter by the provided amount with the provided tags.
+            </summary>
+            <param name="extraTags">Extra tags for this particular measurement.</param>
+            <param name="amount">The amount to decrease the counter by.</param>
+        </member>
+        <member name="T:SmartHub.Metrics.CounterMetric">
+            <summary>
+            A metric used to count.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags,SmartHub.Metrics.CounterMetricOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.CounterMetric"/> class.
+            </summary>
+            <param name="metricsRoot">The metrics root.</param>
+            <param name="tags">The metrics tags.</param>
+            <param name="options">Options for the counter.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.Increment">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.Increment(SmartHub.Metrics.Tags)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.Increment(System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.Increment(SmartHub.Metrics.Tags,System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.Decrement">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.Decrement(SmartHub.Metrics.Tags)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.Decrement(System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetric.Decrement(SmartHub.Metrics.Tags,System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartHub.Metrics.CounterMetricOptions">
+            <summary>
+            Options for the <see cref="T:SmartHub.Metrics.CounterMetric"/>
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.CounterMetricOptions.ResetOnReporting">
+            <summary>
+            Gets or sets a value indicating whether whether or not this counter should reset to 0 upon its value being reported.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.CounterMetricOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.CounterMetricOptions"/> class.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Metrics.Extensions.MetricsHttpRequestMessageExtensions">
+            <summary>
+            Extensions for HttpRequestMessage used for metrics
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.Extensions.MetricsHttpRequestMessageExtensions.GetPathPrefix(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Gets the fist part of the path part of the request URI.
+            </summary>
+            <param name="message">The HttpRequestMessage</param>
+            <returns>The first part of the requestUri path separated by /</returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IHistogramMetric.Update(System.Int64)">
+            <summary>
+            Updates the histogram with a value.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IHistogramMetric.Update(SmartHub.Metrics.Tags,System.Int64)">
+            <summary>
+            Updates the histogram metric with a value an extra tags.
+            </summary>
+            <param name="extraTags">The tags for this specific measurement.</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.HistogramMetric.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags,SmartHub.Metrics.HistogramMetricOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.HistogramMetric"/> class.
+            </summary>
+            <param name="metricsRoot">The metrics root</param>
+            <param name="tags">The tags for this metrics</param>
+            <param name="options">Options for this measurement</param>
+        </member>
+        <member name="M:SmartHub.Metrics.HistogramMetric.Update(System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.HistogramMetric.Update(SmartHub.Metrics.Tags,System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartHub.Metrics.HistogramMetricOptions">
+            <summary>
+            Options for the histogram metric
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.HistogramMetricOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.HistogramMetricOptions"/> class.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.IHitRatioGaugeMetric.Update(SmartHub.Metrics.IMeterMetric,SmartHub.Metrics.IMeterMetric)">
+            <summary>
+            Updates the gauge given two meters
+            </summary>
+            <param name="hitMeter">The meter representing positive hits</param>
+            <param name="totalMeter">The meter representing total hits</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IHitRatioGaugeMetric.Update(SmartHub.Metrics.Tags,SmartHub.Metrics.IMeterMetric,SmartHub.Metrics.IMeterMetric)">
+            <summary>
+            Updates the gauge given two meters
+            </summary>
+            <param name="extraTags">The extra tags for the measurement.</param>
+            <param name="hitMeter">The meter representing positive hits</param>
+            <param name="totalMeter">The meter representing total hits</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IHitRatioGaugeMetric.Update(SmartHub.Metrics.Tags,SmartHub.Metrics.IMeterMetric,SmartHub.Metrics.IMeterMetric,SmartHub.Metrics.MeterRate)">
+            <summary>
+            Updates the gauge given two meters using the provided rate.
+            </summary>
+            <param name="extraTags">The extra tags for the measurement.</param>
+            <param name="hitMeter">The meter representing positive hits.</param>
+            <param name="totalMeter">The meter representing total hits.</param>
+            <param name="rate">The rate of the meter value to use.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.HitRatioGaugeMetric.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags,SmartHub.Metrics.PercentGaugeMetricOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.HitRatioGaugeMetric"/> class.
+            </summary>
+            <param name="metricsRoot">The metrics root</param>
+            <param name="tags">The tags for this metrics</param>
+            <param name="options">Options for this measurement</param>
+        </member>
+        <member name="M:SmartHub.Metrics.HitRatioGaugeMetric.Update(SmartHub.Metrics.IMeterMetric,SmartHub.Metrics.IMeterMetric)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.HitRatioGaugeMetric.Update(SmartHub.Metrics.Tags,SmartHub.Metrics.IMeterMetric,SmartHub.Metrics.IMeterMetric)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.HitRatioGaugeMetric.Update(SmartHub.Metrics.Tags,SmartHub.Metrics.IMeterMetric,SmartHub.Metrics.IMeterMetric,SmartHub.Metrics.MeterRate)">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartHub.Metrics.IMetricsConfigurationSettings">
+            <summary>
+            The configuration settings for where to send metrics.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.IMetricsConfigurationSettings.Uri">
+            <summary>
+            The ingestion point for the metric database
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.IMetricsConfigurationSettings.Database">
+            <summary>
+            The name of the metrics database to report to
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.IMetricsConfigurationSettings.Enabled">
+            <summary>
+            Whether or not metrics should be enabled
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.IMetricsConfigurationSettings.ReportingEnabled">
+            <summary>
+            Whether or not metrics reporting should be enabled
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.IMetricsConfigurationSettings.DefaultContextLabel">
+            <summary>
+            Default context for tagging of all metrics
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.IMetricsConfigurationSettings.EnvironmentType">
+            <summary>
+            The environment type for this source of metrics
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.IMetricsConfigurationSettings.ReportingIntervalSec">
+            <summary>
+            The interval to flush metrics to the reporters.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Metrics.IAppMetricsFactory">
+            <summary>
+            A factory for creating <see cref="T:SmartHub.Metrics.AppMetricsFactory"/>
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetricsFactory.Create">
+            <summary>
+            Creates an instance of the AppMetrics
+            </summary>
+            <returns>Instance of the AppMetrics</returns>
+        </member>
+        <member name="M:SmartHub.Metrics.IAppMetricsFactory.Create(SmartHub.Metrics.Tags)">
+            <summary>
+            Creates an instance of the AppMetrics with a default set of tags.
+            </summary>
+            <param name="tags">The tags</param>
+            <returns>Instance of the AppMetrics</returns>
+        </member>
+        <member name="T:SmartHub.Metrics.AppMetricsFactory">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetricsFactory.#ctor(SmartHub.Metrics.IMetricsConfigurationSettings)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.AppMetricsFactory"/> class.
+            </summary>
+            <param name="config">Settings for the metrics.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetricsFactory.Create">
+            <summary>
+            Creates an instance of the <see cref="T:SmartHub.Metrics.AppMetrics"/> class.
+            </summary>
+            <returns>An instance of <see cref="T:SmartHub.Metrics.AppMetrics"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetricsFactory.Create(SmartHub.Metrics.Tags)">
+            <summary>
+            Creates an instance of the <see cref="T:SmartHub.Metrics.AppMetrics"/> class with some default tags.
+            </summary>
+            <param name="tags">Default tags for all metrics created by the instance of the <see cref="T:SmartHub.Metrics.AppMetrics"/></param>
+            <returns>An instance of <see cref="T:SmartHub.Metrics.AppMetrics"/></returns>
+        </member>
+        <member name="M:SmartHub.Metrics.AppMetricsFactory.SetupScheduler(System.TimeSpan)">
+            <summary>
+            Sets up the sheduler for reporting metrics.
+            </summary>
+            <param name="timeSpan">The time to wait for reporting metrics.</param>
+        </member>
+        <member name="T:SmartHub.Metrics.MeasurementUnit">
+            <summary>
+            Repository of commonly used Units
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.IMeterMetric.Mark">
+            <summary>
+            Marks the meter.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.IMeterMetric.Mark(System.Int64)">
+            <summary>
+            Marks the meter with a given amount.
+            </summary>
+            <param name="amount">The amount to mark the meter.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IMeterMetric.Mark(SmartHub.Metrics.Tags)">
+            <summary>
+            Marks the meter with given tags.
+            </summary>
+            <param name="extraTags">Extra tags for this particular measurement.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IMeterMetric.Mark(SmartHub.Metrics.Tags,System.Int64)">
+            <summary>
+            Marks the meter with given tags.
+            </summary>
+            <param name="extraTags">Extra tags for this particular measurement.</param>
+            <param name="amount">The amount to mark the meter.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IMeterMetric.GetValueOrDefault(SmartHub.Metrics.MeterRate)">
+            <summary>
+            Gets the value of the meter in the given rate (1m, 5m, 15, or mean)
+            </summary>
+            <param name="rate">The desired rate to get the meter</param>
+            <returns>The value of the meter (double)</returns>
+        </member>
+        <member name="T:SmartHub.Metrics.MeterMetric">
+            <summary>
+            A metric used to measure the rate of events in a total count of events.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.MeterMetric.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags,SmartHub.Metrics.MeterMetricOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.MeterMetric"/> class.
+            </summary>
+            <param name="metricsRoot">The metrics root</param>
+            <param name="tags">The tags.</param>
+            <param name="options">The options of the meter.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.MeterMetric.Mark">
+            <inheritdoc /> 
+        </member>
+        <member name="M:SmartHub.Metrics.MeterMetric.Mark(System.Int64)">
+            <inheritdoc /> 
+        </member>
+        <member name="M:SmartHub.Metrics.MeterMetric.Mark(SmartHub.Metrics.Tags)">
+            <inheritdoc /> 
+        </member>
+        <member name="M:SmartHub.Metrics.MeterMetric.Mark(SmartHub.Metrics.Tags,System.Int64)">
+            <inheritdoc /> 
+        </member>
+        <member name="T:SmartHub.Metrics.MeterMetricOptions">
+            <summary>
+            Options for the meter metric.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.MeterMetricOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.MeterMetricOptions"/> class.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Metrics.MetricsConfigurationSettings">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Metrics.MetricsConfigurationSettings.Uri">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Metrics.MetricsConfigurationSettings.Database">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Metrics.MetricsConfigurationSettings.Enabled">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Metrics.MetricsConfigurationSettings.ReportingEnabled">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Metrics.MetricsConfigurationSettings.DefaultContextLabel">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Metrics.MetricsConfigurationSettings.EnvironmentType">
+            <inheritdoc />
+        </member>
+        <member name="P:SmartHub.Metrics.MetricsConfigurationSettings.ReportingIntervalSec">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.MetricsConfigurationSettings.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.MetricsConfigurationSettings"/> class.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Metrics.PercentGaugeMetricOptions">
+            <summary>
+            Options for the percent gauge metric
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.PercentGaugeMetricOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.PercentGaugeMetricOptions"/> class.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.IPercentGaugeMetric.Update(System.Double,System.Double)">
+            <summary>
+            Updates the gauge with a value.
+            </summary>
+            <param name="numerator">The numerator for the percent calculation.</param>
+            <param name="denominator">The denominator for the percent calculation.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IPercentGaugeMetric.Update(SmartHub.Metrics.Tags,System.Double,System.Double)">
+            <summary>
+            Updates the percent gauge metric with two meter values for the given extra tags.
+            </summary>
+            <param name="extraTags">The tags for this specific measurement.</param>
+            <param name="numerator">The numerator for the percent calculation.</param>
+            <param name="denominator">The denominator for the percent calculation.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.PercentGaugeMetric.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags,SmartHub.Metrics.PercentGaugeMetricOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.ValueGaugeMetric"/> class.
+            </summary>
+            <param name="metricsRoot">The metrics root</param>
+            <param name="tags">The tags for this metrics</param>
+            <param name="options">Options for this measurement</param>
+        </member>
+        <member name="M:SmartHub.Metrics.PercentGaugeMetric.Update(System.Double,System.Double)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.PercentGaugeMetric.Update(SmartHub.Metrics.Tags,System.Double,System.Double)">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartHub.Metrics.Tags">
+            <summary>
+            Struct used to represent key/value pairs for tagging metrics.
+            </summary>
+        </member>
+        <member name="P:SmartHub.Metrics.Tags.Empty">
+            <summary>
+            Provides an empty tags object.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.Tags.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.Tags"/> struct.
+            </summary>
+            <param name="key">The key of the tag</param>
+            <param name="value">The value of the tag</param>
+        </member>
+        <member name="M:SmartHub.Metrics.Tags.#ctor(System.String[],System.String[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.Tags"/> struct.
+            </summary>
+            <param name="keys">An array of the keys of the tags.</param>
+            <param name="values">And array of the values of the tags.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ITimerMetric.Time(System.Action)">
+            <summary>
+            Times an action.
+            </summary>
+            <param name="action">The action to time.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ITimerMetric.Time(SmartHub.Metrics.Tags,System.Action)">
+            <summary>
+            Times an action and adds the provided tags.
+            </summary>
+            <param name="extraTags">The extra tags for this measurement</param>
+            <param name="action">The action to time.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ITimerMetric.Time">
+            <summary>
+            Times the duration of the lifetime of the returned TimerMetricContext
+            </summary>
+            <returns>The TimerMetricContext</returns>
+            <remarks>The returned <see cref="T:SmartHub.Metrics.TimerMetricContext"/> must be disposed for the action to be timed.</remarks>
+        </member>
+        <member name="M:SmartHub.Metrics.ITimerMetric.Time(SmartHub.Metrics.Tags)">
+            <summary>
+            Times the duration of the lifetime of the returned TimerMetricContext
+            with extra tags.
+            </summary>
+            <param name="extraTags">The extra tags for this measurement.</param>
+            <returns>The TimerMetricContext</returns>
+            <remarks>The returned <see cref="T:SmartHub.Metrics.TimerMetricContext"/> must be disposed for the action to be timed.</remarks>
+        </member>
+        <member name="M:SmartHub.Metrics.TimerMetric.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags,SmartHub.Metrics.TimerMetricOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.TimerMetric"/> class.
+            </summary>
+            <param name="metricsRoot">The metrics root.</param>
+            <param name="tags">The tags.</param>
+            <param name="options">The timer options</param>
+        </member>
+        <member name="M:SmartHub.Metrics.TimerMetric.Time(System.Action)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.TimerMetric.Time(SmartHub.Metrics.Tags,System.Action)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.TimerMetric.Time">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.TimerMetric.Time(SmartHub.Metrics.Tags)">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartHub.Metrics.TimerMetricContext">
+            <summary>
+            Context used to time.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.TimerMetricContext.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags,App.Metrics.Timer.TimerOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.TimerMetricContext"/> struct.
+            </summary>
+            <param name="metricsRoot">The metrics root.</param>
+            <param name="tags">The metrics tags.</param>
+            <param name="timer">The timer options.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.TimerMetricContext.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartHub.Metrics.TimerMetricOptions">
+            <summary>
+            Options for the timer metric.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.TimerMetricOptions.#ctor">
+            <summary>
+            Creates an instance of the TimerMetricOptions class.
+            </summary>
+        </member>
+        <member name="T:SmartHub.Metrics.Tracking.ActiveRequestCounterMiddleware">
+            <summary>
+            A message handler used for counting active requests.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.Tracking.ActiveRequestCounterMiddleware.#ctor(SmartHub.Metrics.IAppMetricsFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.Tracking.ActiveRequestCounterMiddleware"/> class.
+            </summary>
+            <param name="metricsFactory">An instance of the AppMetricsFactory</param>
+        </member>
+        <member name="T:SmartHub.Metrics.Tracking.ErrorRequestMeterMiddleware">
+            <summary>
+            HTTP Message Handler used for tracking errors.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.Tracking.ErrorRequestMeterMiddleware.#ctor(SmartHub.Metrics.IAppMetricsFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.Tracking.ErrorRequestMeterMiddleware"/> class.
+            </summary>
+            <param name="metricsFactory">An instance of the AppMetricsFactory</param>
+        </member>
+        <member name="T:SmartHub.Metrics.Tracking.RequestSizeMiddleware">
+            <summary>
+            Message handler used for gathering metrics about the size of PUT/POST body sizes via
+            the Content-Length header.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.Tracking.RequestSizeMiddleware.#ctor(SmartHub.Metrics.IAppMetricsFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.Tracking.RequestSizeMiddleware"/> class.
+            </summary>
+            <param name="metricsFactory">An instance of the AppMetricsFactory</param>
+        </member>
+        <member name="T:SmartHub.Metrics.Tracking.RequestTimingMiddleware">
+            <summary>
+            An HttpMessage Handler that is used for timing the duration of HTTP Requests.
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.Tracking.RequestTimingMiddleware.#ctor(SmartHub.Metrics.IAppMetricsFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.Tracking.RequestTimingMiddleware"/> class.
+            </summary>
+            <param name="metricsFactory">An instance of the AppMetricsFactory</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IValueGaugeMetric.Update(System.Double)">
+            <summary>
+            Updates the gauge with a value.
+            </summary>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.IValueGaugeMetric.Update(SmartHub.Metrics.Tags,System.Double)">
+            <summary>
+            Updates the value gauge metric with a value an extra tags.
+            </summary>
+            <param name="extraTags">The tags for this specific measurement.</param>
+            <param name="value">The value.</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ValueGaugeMetric.#ctor(App.Metrics.IMetricsRoot,App.Metrics.MetricTags,SmartHub.Metrics.ValueGaugeMetricOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.ValueGaugeMetric"/> class.
+            </summary>
+            <param name="metricsRoot">The metrics root</param>
+            <param name="tags">The tags for this metrics</param>
+            <param name="options">Options for this measurement</param>
+        </member>
+        <member name="M:SmartHub.Metrics.ValueGaugeMetric.Update(System.Double)">
+            <inheritdoc />
+        </member>
+        <member name="M:SmartHub.Metrics.ValueGaugeMetric.Update(SmartHub.Metrics.Tags,System.Double)">
+            <inheritdoc />
+        </member>
+        <member name="T:SmartHub.Metrics.ValueGaugeMetricOptions">
+            <summary>
+            Options for the value gauge metric
+            </summary>
+        </member>
+        <member name="M:SmartHub.Metrics.ValueGaugeMetricOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:SmartHub.Metrics.ValueGaugeMetricOptions"/> class.
+            </summary>
+        </member>
+    </members>
+</doc>

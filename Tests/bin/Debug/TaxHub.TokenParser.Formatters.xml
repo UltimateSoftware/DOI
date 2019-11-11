@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.TokenParser.Formatters</name>
+    </assembly>
+    <members>
+        <member name="T:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation">
+            <summary>
+            Provided for backward compatibility to facilitate migration from Interpolator format v1 to v2
+            /*
+            * v1
+            * ${token1:yyyyMMdd}
+            *
+            * v2
+            * ${token1 | V1Format yyyMMdd}
+            *
+            *
+            * v1
+            * ${token1:10R:0}
+            *
+            * v2
+            * ${token1 | V1Format 10R:0}
+            */
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.Execute(System.Object,System.String)">
+            <summary>
+            Executes the format operation 
+            </summary>
+            <param name="value">The value to forma</param>
+            <param name="format">The format that will be applied</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.Parsev1Format(System.String)">
+            <summary>
+            Parses a format string into a v1Format class
+            </summary>
+            <param name="format">The format string to parse</param>
+            <returns>A V1Format object</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.FormatDate(System.DateTime,TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format)">
+            <summary>
+            Formats datetime value as specified in Token
+            Reference following resources for how to format DateTime
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+            </summary>
+            <param name="value">Original literal DateTime value to be formatted as string</param>
+            <param name="format">Object holding the format</param>
+            <returns>Formatted DateTime value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.FormatString(System.String,TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format)">
+            <summary>
+            Format a string given a v1Format object 
+            </summary>
+            <param name="value">The value to format</param>
+            <param name="format">The format object to apply</param>
+            <returns>A formatted string</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.FormatDecimal(System.Decimal,TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format)">
+            <summary>
+            Formats decimal value as specified in Token
+            Reference following resources for how to format numerics
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+            </summary>
+            <param name="value">Original literal decimal value to be formatted as string</param>
+            <param name="format">Token format</param>
+            <returns>Formatted decimal value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.FormatInt(System.Int32,TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format)">
+            <summary>
+            Formats integer value as specified in Token
+            Reference following resources for how to format numerics
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+            </summary>
+            <param name="value">Original literal integer value to be formatted as string</param>
+            <param name="format">Token format</param>
+            <returns>Formatted integer value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.ToJulianDay(System.DateTime)">
+            <summary>
+            Returns Julian day
+            </summary>
+            <param name="date">Date to be converted to Julian Day</param>
+            <returns>Returns Julian Day for given date</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.ToJulianDate(System.DateTime)">
+            <summary>
+            Returns Julian Date
+            </summary>
+            <param name="date">Date to be converted to Julian format</param>
+            <returns>Returns Julian Date as string</returns>
+        </member>
+        <member name="T:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format">
+            <summary>
+            Token describes a literal string key that needs to be replaced, how to format it xor pad it
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaddingLength">
+            <summary>
+            Amount of times padding character should be repeated after key has been replaced
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.Format">
+            <summary>
+            Custom format
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaddingCharacter">
+            <summary>
+            Character to pad left or the right of the value to replace the key with
+            </summary>
+        </member>
+        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaddDirection">
+            <summary>
+            Describes left or right. See <see cref="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaddDirection" />
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.#ctor">
+            <summary>
+            Constructor w/ default format options w/ space character as padding character, and padding direction set to be left.
+            </summary>
+        </member>
+        <member name="T:TaxHub.TokenParser.Formatters.Math.UpperRangeOperation">
+            <summary>
+            Returns the minimum between "number" and the "max value" of the [0..maxValue] range.
+            </summary>
+        </member>
+        <member name="T:TaxHub.TokenParser.Formatters.Strings.PaddingDirection">
+            <summary>
+            Indicates the padding direction
+            </summary>
+        </member>
+        <member name="F:TaxHub.TokenParser.Formatters.Strings.PaddingDirection.Left">
+            <summary>
+            Padding Left
+            </summary>
+        </member>
+        <member name="F:TaxHub.TokenParser.Formatters.Strings.PaddingDirection.Right">
+            <summary>
+            Padding right
+            </summary>
+        </member>
+        <member name="T:TaxHub.TokenParser.Formatters.Strings.FormatOperation">
+            <summary>
+            The Format operation class, will format according to a padding direction
+            </summary>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.Execute(System.Object,System.String)">
+            <summary>
+            Executes the formatting operation
+            </summary>
+            <param name="value">The value to format</param>
+            <param name="format">The format to apply</param>
+            <returns>A formatted string</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.Execute(System.Object,System.String,TaxHub.TokenParser.Formatters.Strings.PaddingDirection)">
+            <summary>
+            Executes the formatting operation with padding
+            </summary>
+            <param name="value">The value to format</param>
+            <param name="format">The format to apply</param>
+            <param name="padDirection">The padding direction</param>
+            <returns>A formatted string</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.Execute(System.Object,System.String,TaxHub.TokenParser.Formatters.Strings.PaddingDirection,System.Char)">
+            <summary>
+            Executes the formatting operation with padding
+            </summary>
+            <param name="value">The value to format</param>
+            <param name="format">The format to apply</param>
+            <param name="padDirection">The padding direction</param>
+            <param name="padCharacter">The padding character</param>
+            <returns>A formatted string</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.FormatDate(System.DateTime,System.String)">
+            <summary>
+            Formats datetime value as specified in Token
+            Reference following resources for how to format DateTime
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+            </summary>
+            <param name="value">Original literal DateTime value to be formatted as string</param>
+            <param name="format">The token format</param>
+            <returns>Formatted DateTime value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.FormatDecimal(System.Decimal,System.String)">
+            <summary>
+            Formats decimal value as specified in Token
+            Reference following resources for how to format numerics
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+            </summary>
+            <param name="value">Original literal decimal value to be formatted as string</param>
+            <param name="format">Token format</param>
+            <returns>Formatted decimal value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.FormatDouble(System.Double,System.String)">
+            <summary>
+            Formats double value as specified in Token
+            Reference following resources for how to format numerics
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+            </summary>
+            <param name="value">Original literal double value to be formatted as string</param>
+            <param name="format">Token format</param>
+            <returns>Formatted double value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.FormatInt(System.Int32,System.String)">
+            <summary>
+            Formats integer value as specified in Token
+            Reference following resources for how to format numerics
+            https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings
+            </summary>
+            <param name="value">Original literal integer value to be formatted as string</param>
+            <param name="format">The token format</param>
+            <returns>Formatted integer value</returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.FormatString(System.String,System.String,TaxHub.TokenParser.Formatters.Strings.PaddingDirection,System.Char)">
+            <summary>
+            Custom implementation of formatting string.
+            It treats "#" as mask symbol and everything else as literal.
+             uses value to fill in mask symbols from start or end of the mask
+             example filling from start of the mask
+                value=12345  - mask= ###-##-##  -> result= 123-45
+             example filling from end of the mask
+                value=12345  - mask= ###-##-##  -> result= 1-23-45
+            start of the mask -> ###-##-## - end of the mask
+            </summary>
+            <param name="value">The value to format</param>
+            <param name="format">The token format</param>
+            <param name="padDirection">The padding direction</param>
+            <param name="padCharacter">The padding character</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.PadOperation.Execute(System.Object,System.Int32,TaxHub.TokenParser.Formatters.Strings.PaddingDirection,System.Char)">
+            <summary>
+            Sample: data | pad 9, Left, " "
+            </summary>
+            <param name="input"></param>
+            <param name="length"></param>
+            <param name="direction"></param>
+            <param name="paddingChar"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.PadOperation.Execute(System.Object,System.Int32)">
+            <summary>
+            Sample: data | pad 9, Left, " "
+            </summary>
+            <param name="input"></param>
+            <param name="length"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.PadOperation.Execute(System.Object,System.Int32,TaxHub.TokenParser.Formatters.Strings.PaddingDirection)">
+            <summary>
+            Sample: data | pad 9, Left, " "
+            </summary>
+            <param name="input"></param>
+            <param name="length"></param>
+            <param name="direction"></param>
+            /// <returns></returns>
+        </member>
+    </members>
+</doc>

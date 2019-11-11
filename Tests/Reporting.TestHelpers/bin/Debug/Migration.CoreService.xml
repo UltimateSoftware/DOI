@@ -1,0 +1,489 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Migration.CoreService</name>
+    </assembly>
+    <members>
+        <member name="T:Migration.CoreService.Application.CsvExporterService">
+            <summary>
+            CsvHelper
+            </summary>
+        </member>
+        <member name="F:Migration.CoreService.Application.CsvExporterService.UdesContainerName">
+            <summary>
+            The udes container name
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Application.CsvExporterService.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Common.GlobalServices.IUdesServiceClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Migration.CoreService.Application.CsvExporterService" /> class.
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="udesServiceClient">The udes service client.</param>
+        </member>
+        <member name="M:Migration.CoreService.Application.CsvExporterService.ExportData(System.Data.IDataReader,System.String,System.String,System.Guid,System.Action{System.Collections.Generic.IList{System.Int32}},System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="T:Migration.CoreService.Application.ICsvExporterService">
+            <summary>
+            Interface for CSV exporter.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Application.ICsvExporterService.ExportData(System.Data.IDataReader,System.String,System.String,System.Guid,System.Action{System.Collections.Generic.IList{System.Int32}},System.Int32)">
+            <summary>
+            Exports the data.
+            </summary>
+            <param name="dataReader">The data reader.</param>
+            <param name="fileName">Name of the file.</param>
+            <param name="idFieldName">Name of the identifier field.</param>
+            <param name="correlationId">The correlation identifier.</param>
+            <param name="processBatchAction">The process batch action.</param>
+            <param name="processBatchSize">Size of the process batch.</param>
+            <returns>
+            LastId exported.
+            </returns>
+        </member>
+        <member name="T:Migration.CoreService.Application.IVerificationHungPayrollsService">
+            <summary>
+            Verification Hung Payrolls Service Interface
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Application.IVerificationHungPayrollsService.ExportPayrollsData(System.Guid,Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking)">
+            <summary>
+            Export Payrolls data.
+            </summary>
+            <param name="correlationId">Correlation Id received from message.</param>
+            <param name="trackingData">The tracking data.</param>
+            <returns>
+            Returns nothing.
+            </returns>
+        </member>
+        <member name="M:Migration.CoreService.Application.IVerificationHungPayrollsService.ProcessMessage(System.Guid)">
+            <summary>
+            Processes the message.
+            </summary>
+            <param name="correlationId">The correlation identifier.</param>
+            <returns>Returns nothing.</returns>
+        </member>
+        <member name="M:Migration.CoreService.Application.IVerificationHungPayrollsService.ProcessPeriodicTaxProcessing(System.Guid,System.Collections.Generic.IDictionary{System.String,System.Object},System.Guid)">
+            <summary>
+            Processes the periodic tax processing message.
+            </summary>
+            <param name="correlationId">Correlation Id received from message.</param>
+            <param name="payload">Message Details</param>
+            <param name="aggregateId">The aggregate identifier.</param>
+            <returns>
+            Nothing
+            </returns>
+        </member>
+        <member name="T:Migration.CoreService.Application.VerificationHungPayrollsService">
+            <summary>
+            This is the verification hung payrolls service.
+            </summary>
+        </member>
+        <member name="F:Migration.CoreService.Application.VerificationHungPayrollsService.CurrentExportVersion">
+            <summary>
+            The current export version
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Application.VerificationHungPayrollsService.#ctor(TaxHub.Common.Logging.IAppLogger,Migration.CoreService.DataAccess.IVerificationHungPayrollsRepository,Migration.CoreService.DataAccess.IVerificationHungPayrollsExportTrackingRepository,Migration.CoreService.Application.ICsvExporterService,Migration.CoreService.DataAccess.IVerificationHungPayrollsToExportRepository,Migration.CoreService.DataAccess.IVerificationHungPayrollsExportedRepository)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="verificationHungPayrollsRepository">Verification Hung Payrolls Repository.</param>
+            <param name="trackingDataRepository">Hung payrolls tracking data repository.</param>
+            <param name="csvExporterService">The CSV exporter.</param>
+            <param name="payrollsToExportRepository">The payrolls to export repository.</param>
+            <param name="payrollsExportedRepository">The payrolls exported repository.</param>
+        </member>
+        <member name="M:Migration.CoreService.Application.VerificationHungPayrollsService.ProcessMessage(System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.Application.VerificationHungPayrollsService.ExportPayrollsData(System.Guid,Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking)">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.Application.VerificationHungPayrollsService.ProcessPeriodicTaxProcessing(System.Guid,System.Collections.Generic.IDictionary{System.String,System.Object},System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="T:Migration.CoreService.DataAccess.IVerificationHungPayrollsExportTrackingRepository">
+            <summary>
+            Repository interface for verification hung payrolls export tracking data.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsExportTrackingRepository.GetHungPayrollsExportTrackingData">
+            <summary>
+            Returns a document with the tracking data.
+            </summary>
+            <returns>Returns hung payrolls export tracking data.</returns>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsExportTrackingRepository.SaveHungPayrollsExportTrackingData(Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking)">
+            <summary>
+            Updates a document with the tracking data.
+            </summary>
+            <param name="trackingData">The tracking data.</param>
+            <returns>Nothing</returns>
+        </member>
+        <member name="T:Migration.CoreService.DataAccess.IVerificationHungPayrollsRepository">
+            <summary>
+            Interface for VerificationHungPayrollsRepository
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsRepository.GetInputPayrollsData(System.Int32)">
+            <summary>
+            Returns all payroll entries (not including imports) since last export.
+            </summary>
+            <param name="lastEntryId">Id of last entry exported.</param>
+            <returns>All payroll entries (not including imports) since last export.</returns>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsRepository.GetImportPayrollsData(System.Int32)">
+            <summary>
+            Return all payroll imports since last export.
+            </summary>
+            <param name="lastPayrollId">Id of last import exported.</param>
+            <returns>All imported payrolls since last export.</returns>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsRepository.GetImportPayrollsData(System.Collections.Generic.IEnumerable{Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance},System.Int32)">
+            <summary>
+            Gets the import payrolls data.
+            </summary>
+            <param name="payrollIdsToExport">The payroll ids to export.</param>
+            <param name="lastPayrollId">The last payroll identifier.</param>
+            <returns> Imported payrolls that were skipped </returns>
+        </member>
+        <member name="T:Migration.CoreService.DataAccess.IVerificationHungPayrollsExportedRepository">
+            <summary>
+            Repository interface for verification hung payrolls export tracking data.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsExportedRepository.SaveExportedPayrolls(System.Guid,System.Collections.Generic.IList{System.Int32})">
+            <summary>
+            Adds a payrollId to the collection of payrolls to process.
+            </summary>
+            <param name="correlationId">The correlation identifier.</param>
+            <param name="exportedPayrollIds">The exported payroll ids.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsExportedRepository.DeleteExpiredPayrolls">
+            <summary>
+            Deletes the expired payrolls.
+            </summary>
+            <returns>Task</returns>
+        </member>
+        <member name="T:Migration.CoreService.DataAccess.IVerificationHungPayrollsToExportRepository">
+            <summary>
+            Repository interface for verification hung payrolls export tracking data.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsToExportRepository.SavePayrollId(System.Guid,System.Int32)">
+            <summary>
+            Adds a payrollId to the collection of payrolls to process.
+            </summary>
+            <param name="correlationId">The correlationId (used to log)</param>
+            <param name="payrollId">The payrollId to add.</param>
+            <returns>Nothing</returns>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsToExportRepository.GetPayrollsToExport(System.Int32)">
+            <summary>
+            Gets the payrolls to export.
+            </summary>
+            <param name="lastPayrollId">The last payroll identifier.</param>
+            <returns>
+            Returns the payrolls to export.
+            </returns>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsToExportRepository.DeleteExportedPayrolls(System.Collections.Generic.IList{System.Int32})">
+            <summary>
+            Deletes the exported payrolls.
+            </summary>
+            <param name="exportedPayrollIds">The exported payroll ids.</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.IVerificationHungPayrollsToExportRepository.DeleteExpiredPayrolls">
+            <summary>
+            Deletes the expired payrolls.
+            </summary>
+            <returns>Task</returns>
+        </member>
+        <member name="T:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportTrackingRepository">
+            <summary>
+            Repository for verification hung payrolls export tracking data.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportTrackingRepository.#ctor(TaxHub.Common.DataAccess.IDatabaseConnectivityProvider,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="conProvider">Database connection provider.</param>
+            <param name="logger">The logger.</param>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportTrackingRepository.GetHungPayrollsExportTrackingData">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportTrackingRepository.SaveHungPayrollsExportTrackingData(Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking)">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportTrackingRepository.Delete(Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportedRepository">
+            <summary>
+            Repository for verification hung payrolls export tracking data.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportedRepository.#ctor(TaxHub.Common.DataAccess.IDatabaseConnectivityProvider,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository"/> class.
+            </summary>
+            <param name="conProvider">The con provider.</param>
+            <param name="logger">The logger.</param>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportedRepository.SaveExportedPayrolls(System.Guid,System.Collections.Generic.IList{System.Int32})">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportedRepository.DeleteExpiredPayrolls">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsExportedRepository.Delete(Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository">
+            <summary>
+            Repository for verification hung payrolls export tracking data.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository.#ctor(TaxHub.Common.DataAccess.IDatabaseConnectivityProvider,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository"/> class.
+            </summary>
+            <param name="conProvider">The con provider.</param>
+            <param name="logger">The logger.</param>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository.SavePayrollId(System.Guid,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository.GetPayrollsToExport(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository.DeleteExportedPayrolls(System.Collections.Generic.IList{System.Int32})">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository.DeleteExpiredPayrolls">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.MongoDbStore.VerificationHungPayrollsToExportRepository.Delete(Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:Migration.CoreService.DataAccess.SqlDbStore.VerificationHungPayrollsRepository">
+            <summary>
+            VerificationHungPayrollsRepository
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.SqlDbStore.VerificationHungPayrollsRepository.#ctor(TaxHub.CoreServices.DataAccess.SqlDbStore.DbContexts.IPtmDbContextFactory,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="dbContextFactory">database context factory</param>
+            <param name="logger">logger</param>
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.SqlDbStore.VerificationHungPayrollsRepository.GetInputPayrollsData(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.SqlDbStore.VerificationHungPayrollsRepository.GetImportPayrollsData(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.DataAccess.SqlDbStore.VerificationHungPayrollsRepository.GetImportPayrollsData(System.Collections.Generic.IEnumerable{Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance},System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="T:Migration.CoreService.MasterTaxMigrationMessageStartup">
+            <summary>
+            This class initializes and starts the messages subscibers for the MasterTax Migration.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationMessageStartup.StartInternalServicesAsync(Microsoft.Practices.Unity.IUnityContainer,System.Threading.CancellationToken)">
+            <summary>
+            Called by App Host to asynchronously start internal services for the application.
+            </summary>
+            <remarks>Only StartInternalServices or StartInternalServicesAsync method should actually do the work, not both.</remarks>
+            <param name="container">The Unity Container</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Returns async task.</returns>
+        </member>
+        <member name="T:Migration.CoreService.MasterTaxMigrationServicesApiStartup">
+            <summary>
+            Class provides an integration point between the Api services and its Apphost.
+            </summary>
+            <seealso cref="T:Migration.CoreService.MasterTaxMigrationStartupBase" />
+        </member>
+        <member name="T:Migration.CoreService.MasterTaxMigrationStartupBase">
+            <summary>
+            Base class for migration service startup classes.
+            </summary>
+        </member>
+        <member name="P:Migration.CoreService.MasterTaxMigrationStartupBase.Description">
+            <inheritdoc/>
+        </member>
+        <member name="P:Migration.CoreService.MasterTaxMigrationStartupBase.ConfigurationFileName">
+            <inheritdoc/>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationStartupBase.InitializeUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationStartupBase.InitializeEventStoreUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc />
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationStartupBase.CoreServicesInitializeUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Initialize unity container
+            </summary>
+            <param name="container">The container.</param>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationStartupBase.RegisterMessageSubscribers(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Register Migration Messages
+            </summary>
+            <param name="container">The container.</param>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationStartupBase.RegisterServices(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Registers All Migration Services
+            </summary>
+            <param name="container">UnityContainer</param>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationStartupBase.ResolveUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationStartupBase.GetApiEndpointsScope">
+            <inheritdoc/>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationStartupBase.InitializeMessageSubscribers(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Migration.CoreService.MasterTaxMigrationSetup">
+            <summary>
+            Class performs initialization of Migration Service
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.MasterTaxMigrationSetup.InitializeUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Initializes Unity Container
+            </summary>
+            <param name="container">The unity container</param>
+        </member>
+        <member name="T:Migration.CoreService.Messaging.SystemCommandMigrationSubscriber">
+            <summary>
+            Migration Core Subscriber
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Messaging.SystemCommandMigrationSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Hosting.Runtime.IDomainService)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="logger">The application logger.</param>
+            <param name="domainService">The domain service.</param>
+        </member>
+        <member name="M:Migration.CoreService.Messaging.SystemCommandMigrationSubscriber.ProcessLocalCommands(System.String,TaxHub.Common.EventStore.DomainEventData,System.Boolean@)">
+            <summary>
+            Method processes local commands known to particular service.
+            </summary>
+            <param name="commandName">The command name. This is different from the eventName.</param>
+            <param name="eventData">The event data.</param>
+            <param name="knownCommand">Method must return boolean indicator whether command is known as a local command.</param>
+            <returns>Returns boolean value if event has been successfully consumed (handled).</returns>
+            <remarks>IMPORTANT NOTE: if subscriber is not interested in the event, it returns true to avoid misleading the message queue internal logic.</remarks>
+        </member>
+        <member name="T:Migration.CoreService.Messaging.VerificationHungPayrollsMessageSubscriber">
+            <summary>
+            Verification Hung Payroll Message Subscriber
+            </summary>
+        </member>
+        <member name="F:Migration.CoreService.Messaging.VerificationHungPayrollsMessageSubscriber.HungPayrollsExportRequestedEventName">
+            <summary>
+            The routing key for hung payrolls export requested events.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Messaging.VerificationHungPayrollsMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,Migration.CoreService.Application.IVerificationHungPayrollsService)">
+            <summary>
+            Default Constructor
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="service">The service.</param>
+        </member>
+        <member name="T:Migration.CoreService.Messaging.VerificationHungPayrollsPeriodicTaxInstanceSubscriber">
+            <summary>
+            Verification Hung Payroll Periodic Tax Instance Subscriber
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Messaging.VerificationHungPayrollsPeriodicTaxInstanceSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,Migration.CoreService.Application.IVerificationHungPayrollsService)">
+            <summary>
+            Default Constructor
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="service">The service.</param>
+        </member>
+        <member name="F:Migration.CoreService.Messaging.VerificationHungPayrollsPeriodicTaxInstanceSubscriber.HungPayrollsPeriodicTaxInstanceEventName">
+            <summary>
+            The hung payrolls periodic tax instance event name
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Messaging.VerificationHungPayrollsPeriodicTaxInstanceSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc />
+        </member>
+        <member name="T:Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking">
+            <summary>
+            Model for document for tracking hung payrolls exports.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking.#ctor">
+            <summary>
+            Default constructor.
+            </summary>
+        </member>
+        <member name="P:Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking.Id">
+            <summary>
+            Id for tracking document for hung payrolls.
+            </summary>
+        </member>
+        <member name="P:Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking.LastPayrollId">
+            <summary>
+            Last exported payroll Id
+            </summary>
+        </member>
+        <member name="P:Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking.LastEntryId">
+            <summary>
+            Last exported entry Id
+            </summary>
+        </member>
+        <member name="P:Migration.CoreService.Models.Verification.VerificationHungPayrollsExportTracking.ExportVersion">
+            <summary>
+            Export Version (used to reset lastPayrollId and lastEntryId if the export version has changed.)
+            </summary>
+        </member>
+        <member name="T:Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance">
+            <summary>
+            Document representing Periodic Tax Instances to be exported.
+            </summary>
+        </member>
+        <member name="M:Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance"/> class.
+            </summary>
+            <param name="payrollId">The payroll identifier.</param>
+        </member>
+        <member name="P:Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance.PayrollId">
+            <summary>
+            Gets or sets the payroll identifier.
+            </summary>
+        </member>
+        <member name="P:Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance.InsertedAt">
+            <summary>
+            Gets or sets the datetime the value was inserted.
+            </summary>
+        </member>
+        <member name="P:Migration.CoreService.Models.Verification.VerificationHungPayrollsPeriodicTaxInstance.ExpiresAt">
+            <summary>
+            Gets or sets the expiration date time.
+            </summary>
+        </member>
+    </members>
+</doc>

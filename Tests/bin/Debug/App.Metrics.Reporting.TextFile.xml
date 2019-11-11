@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>App.Metrics.Reporting.TextFile</name>
+    </assembly>
+    <members>
+        <member name="T:App.Metrics.MetricsTextFileReporterBuilder">
+            <summary>
+                Builder for configuring metrics text file reporting using an
+                <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" />.
+            </summary>
+        </member>
+        <member name="M:App.Metrics.MetricsTextFileReporterBuilder.ToTextFile(App.Metrics.Builder.IMetricsReportingBuilder,App.Metrics.Reporting.TextFile.MetricsReportingTextFileOptions)">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.TextFile.TextFileMetricsReporter" /> allowing metrics to be reported to text file. Default output
+                ./metrics.txt
+            </summary>
+            <param name="reportingBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <param name="options">The text file reporting options to use.</param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="M:App.Metrics.MetricsTextFileReporterBuilder.ToTextFile(App.Metrics.Builder.IMetricsReportingBuilder,System.Action{App.Metrics.Reporting.TextFile.MetricsReportingTextFileOptions})">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.TextFile.TextFileMetricsReporter" /> allowing metrics to be reported to text file. Default output
+                ./metrics.txt
+            </summary>
+            <param name="reportingBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <param name="setupAction">The text file reporting options to use.</param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="M:App.Metrics.MetricsTextFileReporterBuilder.ToTextFile(App.Metrics.Builder.IMetricsReportingBuilder)">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.TextFile.TextFileMetricsReporter" /> allowing metrics to be reported to text file. Default output
+                ./metrics.txt
+            </summary>
+            <param name="reportingBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="M:App.Metrics.MetricsTextFileReporterBuilder.ToTextFile(App.Metrics.Builder.IMetricsReportingBuilder,System.String,System.TimeSpan)">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.TextFile.TextFileMetricsReporter" /> allowing metrics to be reported to text file. Default output
+                ./metrics.txt
+            </summary>
+            <param name="reportingBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <param name="output">The absolute directory and file name of the file where metric values are written.</param>
+            <param name="flushInterval">
+                The <see cref="T:System.TimeSpan" /> interval used if intended to schedule metrics
+                reporting.
+            </param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="M:App.Metrics.MetricsTextFileReporterBuilder.ToTextFile(App.Metrics.Builder.IMetricsReportingBuilder,System.String)">
+            <summary>
+                Add the <see cref="T:App.Metrics.Reporting.TextFile.TextFileMetricsReporter" /> allowing metrics to be reported to text file. Default output
+                ./metrics.txt
+            </summary>
+            <param name="reportingBuilder">
+                The <see cref="T:App.Metrics.Builder.IMetricsReportingBuilder" /> used to configure metrics reporters.
+            </param>
+            <param name="output">The absolute directory and file name of the file where metric values are written.</param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="T:App.Metrics.Reporting.TextFile.MetricsReportingTextFileOptions">
+            <summary>
+                Provides programmatic configuration of Text File Reporting in the App Metrics framework.
+            </summary>
+        </member>
+        <member name="P:App.Metrics.Reporting.TextFile.MetricsReportingTextFileOptions.AppendMetricsToTextFile">
+            <summary>
+                Gets or sets a value indicating whether or not to [append metrics when writing to file].
+            </summary>
+            <value>
+                <c>true</c> if [append metrics]; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.TextFile.MetricsReportingTextFileOptions.Filter">
+            <summary>
+                Gets or sets the <see cref="T:App.Metrics.Filters.IFilterMetrics" /> to use for just this reporter.
+            </summary>
+            <value>
+                The <see cref="T:App.Metrics.Filters.IFilterMetrics" /> to use for this reporter.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.TextFile.MetricsReportingTextFileOptions.MetricsOutputFormatter">
+            <summary>
+                Gets or sets the <see cref="T:App.Metrics.Formatters.IMetricsOutputFormatter" /> used to write metrics.
+            </summary>
+            <value>
+                The <see cref="T:App.Metrics.Formatters.IMetricsOutputFormatter" /> used to write metrics.
+            </value>
+        </member>
+        <member name="P:App.Metrics.Reporting.TextFile.MetricsReportingTextFileOptions.OutputPathAndFileName">
+            <summary>
+                Gets or sets the directory and filename where metrics are written.
+            </summary>
+            <remarks>If not sets writes metrics.txt to the application's running directory.</remarks>
+        </member>
+        <member name="P:App.Metrics.Reporting.TextFile.MetricsReportingTextFileOptions.FlushInterval">
+            <summary>
+                Gets or sets the interval between flushing metrics.
+            </summary>
+        </member>
+        <member name="P:App.Metrics.Reporting.TextFile.TextFileMetricsReporter.Filter">
+            <inheritdoc />
+        </member>
+        <member name="P:App.Metrics.Reporting.TextFile.TextFileMetricsReporter.FlushInterval">
+            <inheritdoc />
+        </member>
+        <member name="P:App.Metrics.Reporting.TextFile.TextFileMetricsReporter.Formatter">
+            <inheritdoc />
+        </member>
+        <member name="M:App.Metrics.Reporting.TextFile.TextFileMetricsReporter.FlushAsync(App.Metrics.MetricsDataValueSource,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AutoFixture.SeedExtensions</name>
+    </assembly>
+    <members>
+        <member name="T:AutoFixture.CreateSeedExtensions">
+            <summary>
+            Creates anonymous variables from <see cref="T:AutoFixture.Kernel.ISpecimenContext"/> or <see cref="T:AutoFixture.Kernel.ISpecimenBuilder"/> instances
+            using the passed seed instance.
+            </summary>
+        </member>
+        <member name="M:AutoFixture.CreateSeedExtensions.CreateAnonymous``1(AutoFixture.Kernel.ISpecimenContext,``0)">
+            <summary>
+            Creates an anonymous object, potentially using the supplied seed as additional
+            information when creating the object.
+            </summary>
+            <typeparam name="T">The type of object to create.</typeparam>
+            <param name="seed">
+            Any data that adds additional information when creating the anonymous object.
+            </param>
+            <param name="context">The context used to resolve the type request.</param>
+            <returns>An anonymous object.</returns>
+            <remarks>Obsolete: Please move over to using <see cref="M:AutoFixture.SpecimenFactory.Create``1(AutoFixture.Kernel.ISpecimenContext)">Create{T}()</see> as this method will be removed in the next release.</remarks>
+        </member>
+        <member name="M:AutoFixture.CreateSeedExtensions.CreateMany``1(AutoFixture.Kernel.ISpecimenBuilder,``0)">
+            <summary>Creates many anonymous objects.</summary>
+            <typeparam name="T">The type of objects to create.</typeparam>
+            <param name="builder">
+            The builder used to resolve the type request.
+            </param>
+            <param name="seed">
+            An initial value that may or may not be used as input for the
+            algorithm creating the return value.
+            </param>
+            <returns>
+            A sequence of anonymous object of type <typeparamref name="T"/>.
+            </returns>
+            <remarks>
+            <para>
+            The CreateMany implementation always returns a new instance of
+            <see cref="T:System.Collections.Generic.IEnumerable`1" />. Even if IEnumerable&lt;T&gt; is
+            Frozen by the <see cref="M:AutoFixture.FixtureFreezer.Freeze``1(AutoFixture.IFixture)" /> method
+            or explicitly assigned with the
+            <see cref="M:AutoFixture.FixtureRegistrar.Inject``1(AutoFixture.IFixture,``0)" /> method, the
+            CreateMany method returns a new, independent instance of
+            IEnumerable&lt;T&gt;.
+            </para>
+            <para>
+            However, you can change this behavior, for example by applying the
+            <see cref="T:AutoFixture.MapCreateManyToEnumerable" /> customization.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:AutoFixture.CreateSeedExtensions.CreateMany``1(AutoFixture.Kernel.ISpecimenContext,``0)">
+            <summary>
+            Creates many anonymous objects.
+            </summary>
+            <typeparam name="T">The type of objects to create.</typeparam>
+            <param name="context">The context used to resolve the type request.</param>
+            <param name="seed">
+            An initial value that may or may not be used as input for the algorithm creating the
+            return value.
+            </param>
+            <returns>A sequence of anonymous object of type <typeparamref name="T"/>.</returns>
+            <remarks>
+            <para>
+            The CreateMany implementation always returns a new instance of
+            <see cref="T:System.Collections.Generic.IEnumerable`1" />. Even if IEnumerable&lt;T&gt; is
+            Frozen by the <see cref="M:AutoFixture.FixtureFreezer.Freeze``1(AutoFixture.IFixture)" /> method
+            or explicitly assigned with the
+            <see cref="M:AutoFixture.FixtureRegistrar.Inject``1(AutoFixture.IFixture,``0)" /> method, the
+            CreateMany method returns a new, independent instance of
+            IEnumerable&lt;T&gt;.
+            </para>
+            <para>
+            However, you can change this behavior, for example by applying the
+            <see cref="T:AutoFixture.MapCreateManyToEnumerable" /> customization.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:AutoFixture.CreateSeedExtensions.CreateMany``1(AutoFixture.Kernel.ISpecimenBuilder,``0,System.Int32)">
+            <summary>Creates many anonymous objects.</summary>
+            <typeparam name="T">The type of objects to create.</typeparam>
+            <param name="builder">
+            The builder used to resolve the type request.
+            </param>
+            <param name="seed">
+            An initial value that may or may not be used as input for the
+            algorithm creating the return value.
+            </param>
+            <param name="count">The number of objects to create.</param>
+            <returns>
+            A sequence of anonymous objects of type <typeparamref name="T"/>.
+            </returns>
+            <remarks>
+            <para>
+            The CreateMany implementation always returns a new instance of
+            <see cref="T:System.Collections.Generic.IEnumerable`1" />. Even if IEnumerable&lt;T&gt; is
+            Frozen by the <see cref="M:AutoFixture.FixtureFreezer.Freeze``1(AutoFixture.IFixture)" /> method
+            or explicitly assigned with the
+            <see cref="M:AutoFixture.FixtureRegistrar.Inject``1(AutoFixture.IFixture,``0)" /> method, the
+            CreateMany method returns a new, independent instance of
+            IEnumerable&lt;T&gt;.
+            </para>
+            <para>
+            However, you can change this behavior, for example by applying the
+            <see cref="T:AutoFixture.MapCreateManyToEnumerable" /> customization.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:AutoFixture.CreateSeedExtensions.CreateMany``1(AutoFixture.Kernel.ISpecimenContext,``0,System.Int32)">
+            <summary>
+            Creates many anonymous objects.
+            </summary>
+            <typeparam name="T">The type of objects to create.</typeparam>
+            <param name="context">The context used to resolve the type request.</param>
+            <param name="seed">
+            An initial value that may or may not be used as input for the algorithm creating the
+            return value.
+            </param>
+            <param name="count">The number of objects to create.</param>
+            <returns>A sequence of anonymous objects of type <typeparamref name="T"/>.</returns>
+            <remarks>
+            <para>
+            The CreateMany implementation always returns a new instance of
+            <see cref="T:System.Collections.Generic.IEnumerable`1" />. Even if IEnumerable&lt;T&gt; is
+            Frozen by the <see cref="M:AutoFixture.FixtureFreezer.Freeze``1(AutoFixture.IFixture)" /> method
+            or explicitly assigned with the
+            <see cref="M:AutoFixture.FixtureRegistrar.Inject``1(AutoFixture.IFixture,``0)" /> method, the
+            CreateMany method returns a new, independent instance of
+            IEnumerable&lt;T&gt;.
+            </para>
+            <para>
+            However, you can change this behavior, for example by applying the
+            <see cref="T:AutoFixture.MapCreateManyToEnumerable" /> customization.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:AutoFixture.CreateSeedExtensions.Create``1(AutoFixture.Kernel.ISpecimenBuilder,``0)">
+            <summary>
+            Creates an anonymous object, potentially using the supplied seed as
+            additional information when creating the object.
+            </summary>
+            <typeparam name="T">The type of object to create.</typeparam>
+            <param name="builder">
+            The builder used to resolve the type request.
+            </param>
+            <param name="seed">
+            Any data that adds additional information when creating the
+            anonymous object.
+            </param>
+            <returns>An anonymous object.</returns>
+        </member>
+        <member name="M:AutoFixture.CreateSeedExtensions.Create``1(AutoFixture.Kernel.ISpecimenContext,``0)">
+            <summary>
+            Creates an anonymous object, potentially using the supplied seed as additional
+            information when creating the object.
+            </summary>
+            <typeparam name="T">The type of object to create.</typeparam>
+            <param name="seed">
+            Any data that adds additional information when creating the anonymous object.
+            </param>
+            <param name="context">The context used to resolve the type request.</param>
+            <returns>An anonymous object.</returns>
+        </member>
+        <member name="T:AutoFixture.FreezeSeedExtensions">
+            <summary>
+            Contains extension methods for freezing specimens in <see cref="T:AutoFixture.IFixture"/> instances with a specified seed.
+            </summary>
+        </member>
+        <member name="M:AutoFixture.FreezeSeedExtensions.Freeze``1(AutoFixture.IFixture,``0)">
+            <summary>
+            Freezes the type to a single value.
+            </summary>
+            <typeparam name="T">The type to freeze.</typeparam>
+            <param name="fixture">The fixture.</param>
+            <param name="seed">
+            Any data that adds additional information when creating the
+            anonymous object. Hypothetically, this value might be the value
+            being frozen, but this is not likely.
+            </param>
+            <returns>
+            The value that will subsequently always be created for <typeparamref name="T"/>.
+            </returns>
+            <remarks>
+            <para>
+            The <see cref="M:AutoFixture.FreezeSeedExtensions.Freeze``1(AutoFixture.IFixture,``0)"/> method freezes the type to always return the
+            same instance whenever an instance of the type is requested either directly, or
+            indirectly as a nested value of other types.
+            </para>
+            <para>
+            Please notice that the <paramref name="seed" /> isn't likely to be
+            used as the frozen value, unless you've customized
+            <paramref name="fixture" /> to do this. If you wish to inject a
+            specific value into the Fixture, you should use the
+            <see cref="M:AutoFixture.FixtureRegistrar.Inject``1(AutoFixture.IFixture,``0)" /> method instead.
+            </para>
+            </remarks>
+            <seealso cref="M:AutoFixture.FixtureFreezer.Freeze``1(AutoFixture.IFixture)"/>
+            <seealso cref="M:AutoFixture.FixtureFreezer.Freeze``1(AutoFixture.IFixture,System.Func{AutoFixture.Dsl.ICustomizationComposer{``0},AutoFixture.Kernel.ISpecimenBuilder})"/>
+            <seealso cref="M:AutoFixture.FixtureRegistrar.Inject``1(AutoFixture.IFixture,``0)" />
+        </member>
+    </members>
+</doc>

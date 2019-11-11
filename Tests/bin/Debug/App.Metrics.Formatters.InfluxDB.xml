@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>App.Metrics.Formatters.InfluxDB</name>
+    </assembly>
+    <members>
+        <member name="M:App.Metrics.MetricsInfluxDbLineProtocolFormatterBuilder.AsInfluxDbLineProtocol(App.Metrics.IMetricsOutputFormattingBuilder,System.Action{App.Metrics.Formatters.InfluxDB.MetricsInfluxDbLineProtocolOptions})">
+            <summary>
+                Add the <see cref="T:App.Metrics.Formatters.InfluxDB.MetricsInfluxDbLineProtocolOutputFormatter" /> allowing metrics to optionally be reported to
+                InfluxDB using the LineProtocol.
+            </summary>
+            <param name="metricFormattingBuilder">s
+                The <see cref="T:App.Metrics.IMetricsOutputFormattingBuilder" /> used to configure InfluxDB Lineprotocol formatting
+                options.
+            </param>
+            <param name="setupAction">The InfluxDB LineProtocol formatting options to use.</param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="M:App.Metrics.MetricsInfluxDbLineProtocolFormatterBuilder.AsInfluxDbLineProtocol(App.Metrics.IMetricsOutputFormattingBuilder)">
+            <summary>
+                Add the <see cref="T:App.Metrics.Formatters.InfluxDB.MetricsInfluxDbLineProtocolOutputFormatter" /> allowing metrics to optionally be reported to
+                InfluxDB using the LineProtocol.
+            </summary>
+            <param name="metricFormattingBuilder">s
+                The <see cref="T:App.Metrics.IMetricsOutputFormattingBuilder" /> used to configure InfluxDB Lineprotocol formatting
+                options.
+            </param>
+            <returns>
+                An <see cref="T:App.Metrics.IMetricsBuilder" /> that can be used to further configure App Metrics.
+            </returns>
+        </member>
+        <member name="T:App.Metrics.Formatters.InfluxDB.MetricsInfluxDbLineProtocolOptions">
+            <summary>
+                Provides programmatic configuration for InfluxDB's LineProtocole format in the App Metrics framework.
+            </summary>
+        </member>
+        <member name="P:App.Metrics.Formatters.InfluxDB.MetricsInfluxDbLineProtocolOutputFormatter.MediaType">
+            <inheritdoc/>
+        </member>
+        <member name="M:App.Metrics.Formatters.InfluxDB.MetricsInfluxDbLineProtocolOutputFormatter.WriteAsync(System.IO.Stream,App.Metrics.MetricsDataValueSource,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="P:App.Metrics.Formatters.InfluxDB.MetricSnapshotInfluxDbLineProtocolWriter.MetricNameMapping">
+            <inheritdoc />
+        </member>
+        <member name="M:App.Metrics.Formatters.InfluxDB.MetricSnapshotInfluxDbLineProtocolWriter.Write(System.String,System.String,System.Object,App.Metrics.MetricTags,System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="M:App.Metrics.Formatters.InfluxDB.MetricSnapshotInfluxDbLineProtocolWriter.Write(System.String,System.String,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.Object},App.Metrics.MetricTags,System.DateTime)">
+            <inheritdoc />
+        </member>
+        <member name="M:App.Metrics.Formatters.InfluxDB.MetricSnapshotInfluxDbLineProtocolWriter.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:App.Metrics.Formatters.InfluxDB.MetricSnapshotInfluxDbLineProtocolWriter.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources.
+            </summary>
+            <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        </member>
+    </members>
+</doc>

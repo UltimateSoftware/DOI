@@ -1,0 +1,1908 @@
+{
+  'id': '89cef310-2a75-4778-a3c8-0457239d8a30',
+  'tenantId': 'd7eccced-26e9-4f2f-a2fb-b745a51a7aed',
+  'timestamp': '2017-10-05T21:44:12.549-04:00',
+  'effectiveDatetime': '2017-10-05T21:44:12.549-04:00',
+  'aggregateId': '15274119-e059-4d25-8900-82fdfd23d38d',
+  'sequenceNumber': 1,
+  'type': 'payment.payrollunit.created',
+  'schemaVersion': '1.1',
+  'userId': '00000000-0000-0000-0000-000000000000',
+  'body': {
+    'schedule': [
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-02T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2016-12-30T15:12:18-05:00',
+        'payOpenedUtcDateTime': '2016-12-30T15:01:11-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-03T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-02T14:38:21-05:00',
+        'payOpenedUtcDateTime': '2017-01-02T13:24:07-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-04T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-03T14:28:16-05:00',
+        'payOpenedUtcDateTime': '2017-01-03T14:06:26-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-05T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-04T14:27:48-05:00',
+        'payOpenedUtcDateTime': '2017-01-04T13:44:14-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-06T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-05T14:21:14-05:00',
+        'payOpenedUtcDateTime': '2017-01-05T13:50:44-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-09T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-06T10:40:54-05:00',
+        'payOpenedUtcDateTime': '2017-01-06T10:28:07-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-01-09T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-06T14:28:20-05:00',
+        'payOpenedUtcDateTime': '2017-01-06T13:29:25-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 4,
+        'payUtcDate': '2017-01-09T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-09T15:45:19-05:00',
+        'payOpenedUtcDateTime': '2017-01-09T14:52:18-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-10T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-09T14:31:18-05:00',
+        'payOpenedUtcDateTime': '2017-01-09T14:14:52-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-11T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-10T14:07:58-05:00',
+        'payOpenedUtcDateTime': '2017-01-10T13:36:37-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-12T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-11T14:08:51-05:00',
+        'payOpenedUtcDateTime': '2017-01-11T13:35:50-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-13T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-12T14:38:13-05:00',
+        'payOpenedUtcDateTime': '2017-01-12T13:52:46-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-16T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-13T14:09:51-05:00',
+        'payOpenedUtcDateTime': '2017-01-13T13:09:37-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-17T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-16T14:17:18-05:00',
+        'payOpenedUtcDateTime': '2017-01-16T13:23:21-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-18T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-17T13:59:24-05:00',
+        'payOpenedUtcDateTime': '2017-01-17T13:37:35-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-19T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-18T14:31:33-05:00',
+        'payOpenedUtcDateTime': '2017-01-18T13:23:50-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-20T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-19T14:08:45-05:00',
+        'payOpenedUtcDateTime': '2017-01-19T13:17:18-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-23T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-20T14:20:19-05:00',
+        'payOpenedUtcDateTime': '2017-01-20T12:50:28-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-24T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-23T14:19:44-05:00',
+        'payOpenedUtcDateTime': '2017-01-23T13:29:14-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-25T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-24T14:33:01-05:00',
+        'payOpenedUtcDateTime': '2017-01-24T13:28:57-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-26T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-25T13:55:03-05:00',
+        'payOpenedUtcDateTime': '2017-01-25T13:26:18-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-27T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-26T14:24:10-05:00',
+        'payOpenedUtcDateTime': '2017-01-26T13:41:18-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-30T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-27T14:44:57-05:00',
+        'payOpenedUtcDateTime': '2017-01-27T13:04:35-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-01-31T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-30T14:12:06-05:00',
+        'payOpenedUtcDateTime': '2017-01-30T13:29:01-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-01T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-01-31T14:12:14-05:00',
+        'payOpenedUtcDateTime': '2017-01-31T13:29:12-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-02T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-01T13:57:56-05:00',
+        'payOpenedUtcDateTime': '2017-02-01T13:36:24-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-03T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-02T15:30:37-05:00',
+        'payOpenedUtcDateTime': '2017-02-02T15:12:04-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-06T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-03T14:48:36-05:00',
+        'payOpenedUtcDateTime': '2017-02-03T14:35:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-07T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-06T14:45:03-05:00',
+        'payOpenedUtcDateTime': '2017-02-06T13:59:12-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-08T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-07T14:55:35-05:00',
+        'payOpenedUtcDateTime': '2017-02-07T14:14:54-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-09T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-08T14:23:27-05:00',
+        'payOpenedUtcDateTime': '2017-02-08T13:26:29-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-10T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-09T10:47:59-05:00',
+        'payOpenedUtcDateTime': '2017-02-09T10:37:51-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-02-10T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-09T14:34:18-05:00',
+        'payOpenedUtcDateTime': '2017-02-09T14:04:47-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-13T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-10T14:36:27-05:00',
+        'payOpenedUtcDateTime': '2017-02-10T13:34:42-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-14T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-13T14:16:31-05:00',
+        'payOpenedUtcDateTime': '2017-02-13T13:52:17-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-15T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-14T14:25:32-05:00',
+        'payOpenedUtcDateTime': '2017-02-14T13:44:57-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-16T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-15T13:04:53-05:00',
+        'payOpenedUtcDateTime': '2017-02-15T12:36:06-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-17T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-16T14:06:38-05:00',
+        'payOpenedUtcDateTime': '2017-02-16T13:26:56-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-02-17T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-17T10:07:07-05:00',
+        'payOpenedUtcDateTime': '2017-02-17T09:59:20-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 4,
+        'payUtcDate': '2017-02-17T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-17T10:16:37-05:00',
+        'payOpenedUtcDateTime': '2017-02-17T10:12:46-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 5,
+        'payUtcDate': '2017-02-17T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-17T10:24:49-05:00',
+        'payOpenedUtcDateTime': '2017-02-17T10:21:30-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-20T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-17T12:54:45-05:00',
+        'payOpenedUtcDateTime': '2017-02-17T12:05:20-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-21T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-20T14:16:57-05:00',
+        'payOpenedUtcDateTime': '2017-02-20T13:54:26-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-22T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-21T13:21:58-05:00',
+        'payOpenedUtcDateTime': '2017-02-21T12:29:14-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-23T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-22T14:25:16-05:00',
+        'payOpenedUtcDateTime': '2017-02-22T13:48:15-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-24T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-23T14:38:09-05:00',
+        'payOpenedUtcDateTime': '2017-02-23T13:22:42-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-27T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-24T12:24:42-05:00',
+        'payOpenedUtcDateTime': '2017-02-24T12:18:40-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-02-27T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-24T13:52:10-05:00',
+        'payOpenedUtcDateTime': '2017-02-24T12:40:25-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-02-28T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-27T14:35:04-05:00',
+        'payOpenedUtcDateTime': '2017-02-27T14:02:27-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-01T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-02-28T14:24:19-05:00',
+        'payOpenedUtcDateTime': '2017-02-28T14:04:49-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-02T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-01T14:16:23-05:00',
+        'payOpenedUtcDateTime': '2017-03-01T13:25:45-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-03T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-02T14:39:08-05:00',
+        'payOpenedUtcDateTime': '2017-03-02T14:13:16-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-06T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-03T14:20:27-05:00',
+        'payOpenedUtcDateTime': '2017-03-03T13:44:37-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-07T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-06T14:04:17-05:00',
+        'payOpenedUtcDateTime': '2017-03-06T13:21:29-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-08T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-07T14:10:47-05:00',
+        'payOpenedUtcDateTime': '2017-03-07T13:48:54-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-09T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-08T15:18:41-05:00',
+        'payOpenedUtcDateTime': '2017-03-08T13:57:35-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-10T00:00:00-05:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-09T13:59:02-05:00',
+        'payOpenedUtcDateTime': '2017-03-09T13:14:11-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-13T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-10T14:58:15-05:00',
+        'payOpenedUtcDateTime': '2017-03-10T13:45:08-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-14T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-13T13:21:52-04:00',
+        'payOpenedUtcDateTime': '2017-03-13T13:14:28-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-03-14T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-13T14:49:32-04:00',
+        'payOpenedUtcDateTime': '2017-03-13T13:31:35-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-15T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-14T14:20:26-04:00',
+        'payOpenedUtcDateTime': '2017-03-14T13:22:34-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-16T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-15T14:38:39-04:00',
+        'payOpenedUtcDateTime': '2017-03-15T14:14:21-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-17T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-16T14:05:24-04:00',
+        'payOpenedUtcDateTime': '2017-03-16T13:29:35-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-20T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-17T14:38:04-04:00',
+        'payOpenedUtcDateTime': '2017-03-17T13:21:10-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-03-20T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-17T15:03:25-04:00',
+        'payOpenedUtcDateTime': '2017-03-17T14:59:04-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-21T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-20T14:35:32-04:00',
+        'payOpenedUtcDateTime': '2017-03-20T13:55:56-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-03-21T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-21T14:50:00-04:00',
+        'payOpenedUtcDateTime': '2017-03-21T13:20:03-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-23T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-22T14:32:42-04:00',
+        'payOpenedUtcDateTime': '2017-03-22T13:45:56-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-24T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-23T14:11:18-04:00',
+        'payOpenedUtcDateTime': '2017-03-23T13:44:35-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-27T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-24T14:49:13-04:00',
+        'payOpenedUtcDateTime': '2017-03-24T13:57:42-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-04T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-03T14:55:42-04:00',
+        'payOpenedUtcDateTime': '2017-08-03T14:18:52-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-07T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-04T15:43:37-04:00',
+        'payOpenedUtcDateTime': '2017-08-04T13:39:24-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-08T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-07T14:05:35-04:00',
+        'payOpenedUtcDateTime': '2017-08-07T13:33:43-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-09T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-08T14:49:25-04:00',
+        'payOpenedUtcDateTime': '2017-08-08T13:28:38-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-10T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-09T14:04:14-04:00',
+        'payOpenedUtcDateTime': '2017-08-09T13:42:49-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-11T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-10T13:48:24-04:00',
+        'payOpenedUtcDateTime': '2017-08-10T13:27:53-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-14T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-11T15:01:13-04:00',
+        'payOpenedUtcDateTime': '2017-08-11T14:01:57-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-15T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-14T14:30:20-04:00',
+        'payOpenedUtcDateTime': '2017-08-14T14:01:45-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-16T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-15T14:54:41-04:00',
+        'payOpenedUtcDateTime': '2017-08-15T13:47:13-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-17T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-16T14:25:28-04:00',
+        'payOpenedUtcDateTime': '2017-08-16T13:36:55-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-18T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-17T14:04:23-04:00',
+        'payOpenedUtcDateTime': '2017-08-17T13:40:40-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-21T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-18T14:50:43-04:00',
+        'payOpenedUtcDateTime': '2017-08-18T13:38:45-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-22T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-21T14:22:55-04:00',
+        'payOpenedUtcDateTime': '2017-08-21T13:32:48-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-23T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-22T13:55:54-04:00',
+        'payOpenedUtcDateTime': '2017-08-22T13:23:28-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-24T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-23T13:51:43-04:00',
+        'payOpenedUtcDateTime': '2017-08-23T13:29:36-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-25T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-24T14:18:41-04:00',
+        'payOpenedUtcDateTime': '2017-08-24T13:50:47-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-28T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-25T14:10:01-04:00',
+        'payOpenedUtcDateTime': '2017-08-25T13:50:18-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-29T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-28T14:09:04-04:00',
+        'payOpenedUtcDateTime': '2017-08-28T13:45:43-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-30T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-29T14:16:30-04:00',
+        'payOpenedUtcDateTime': '2017-08-29T13:36:16-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-31T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-30T14:40:14-04:00',
+        'payOpenedUtcDateTime': '2017-08-30T13:37:48-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-01T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-31T13:57:34-04:00',
+        'payOpenedUtcDateTime': '2017-08-31T13:37:29-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-04T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-01T14:27:41-04:00',
+        'payOpenedUtcDateTime': '2017-09-01T13:52:20-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-06T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-05T13:46:42-04:00',
+        'payOpenedUtcDateTime': '2017-09-05T13:26:02-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-07T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-06T14:26:28-04:00',
+        'payOpenedUtcDateTime': '2017-09-06T13:34:05-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-08T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-07T14:47:07-04:00',
+        'payOpenedUtcDateTime': '2017-09-07T14:03:24-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-11T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-08T14:56:08-04:00',
+        'payOpenedUtcDateTime': '2017-09-08T14:30:02-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-12T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-11T14:52:45-04:00',
+        'payOpenedUtcDateTime': '2017-09-11T13:34:25-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-13T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-12T14:32:56-04:00',
+        'payOpenedUtcDateTime': '2017-09-12T13:27:49-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-14T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-13T14:25:12-04:00',
+        'payOpenedUtcDateTime': '2017-09-13T14:06:18-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-28T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-27T13:58:50-04:00',
+        'payOpenedUtcDateTime': '2017-03-27T13:27:19-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-29T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-28T14:48:04-04:00',
+        'payOpenedUtcDateTime': '2017-03-28T13:46:46-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-03-29T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-28T14:59:29-04:00',
+        'payOpenedUtcDateTime': '2017-03-28T14:55:38-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-30T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-29T15:09:19-04:00',
+        'payOpenedUtcDateTime': '2017-03-29T14:19:22-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-03-31T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-30T10:02:18-04:00',
+        'payOpenedUtcDateTime': '2017-03-30T09:58:02-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-03-31T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-30T14:17:11-04:00',
+        'payOpenedUtcDateTime': '2017-03-30T13:24:32-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-03T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-03-31T13:38:32-04:00',
+        'payOpenedUtcDateTime': '2017-03-31T12:54:51-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-04T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-03T14:01:38-04:00',
+        'payOpenedUtcDateTime': '2017-04-03T13:34:58-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-05T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-04T15:24:14-04:00',
+        'payOpenedUtcDateTime': '2017-04-04T15:23:31-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-04-05T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-04T15:39:38-04:00',
+        'payOpenedUtcDateTime': '2017-04-04T15:27:53-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-06T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-05T14:13:59-04:00',
+        'payOpenedUtcDateTime': '2017-04-05T14:02:07-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-07T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-06T14:24:05-04:00',
+        'payOpenedUtcDateTime': '2017-04-06T14:10:22-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-10T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-07T13:06:51-04:00',
+        'payOpenedUtcDateTime': '2017-04-07T12:35:41-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-11T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-10T13:58:46-04:00',
+        'payOpenedUtcDateTime': '2017-04-10T13:20:42-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-12T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-11T13:45:15-04:00',
+        'payOpenedUtcDateTime': '2017-04-11T13:21:44-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-13T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-12T13:59:10-04:00',
+        'payOpenedUtcDateTime': '2017-04-12T13:33:59-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-14T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-13T13:52:17-04:00',
+        'payOpenedUtcDateTime': '2017-04-13T13:26:20-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-17T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-14T14:20:43-04:00',
+        'payOpenedUtcDateTime': '2017-04-14T13:11:08-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-18T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-17T14:18:25-04:00',
+        'payOpenedUtcDateTime': '2017-04-17T13:28:13-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-19T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-18T14:40:22-04:00',
+        'payOpenedUtcDateTime': '2017-04-18T13:46:24-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-20T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-19T14:15:52-04:00',
+        'payOpenedUtcDateTime': '2017-04-19T14:04:13-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-21T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-20T14:41:04-04:00',
+        'payOpenedUtcDateTime': '2017-04-20T13:50:40-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-24T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-21T13:58:48-04:00',
+        'payOpenedUtcDateTime': '2017-04-21T12:43:42-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-25T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-24T14:09:08-04:00',
+        'payOpenedUtcDateTime': '2017-04-24T13:55:41-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-26T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-25T14:25:08-04:00',
+        'payOpenedUtcDateTime': '2017-04-25T13:30:43-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-27T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-26T13:12:30-04:00',
+        'payOpenedUtcDateTime': '2017-04-26T12:34:08-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-16T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-15T14:14:45-04:00',
+        'payOpenedUtcDateTime': '2017-06-15T13:52:57-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-19T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-16T09:48:07-04:00',
+        'payOpenedUtcDateTime': '2017-06-16T09:43:52-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-06-19T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-16T14:32:42-04:00',
+        'payOpenedUtcDateTime': '2017-06-16T12:53:28-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-20T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-19T14:30:26-04:00',
+        'payOpenedUtcDateTime': '2017-06-19T13:28:34-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-21T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-20T13:55:27-04:00',
+        'payOpenedUtcDateTime': '2017-06-20T13:20:59-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-22T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-21T13:53:12-04:00',
+        'payOpenedUtcDateTime': '2017-06-21T13:17:30-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-23T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-22T14:59:53-04:00',
+        'payOpenedUtcDateTime': '2017-06-22T14:48:07-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-06-23T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-23T17:48:57-04:00',
+        'payOpenedUtcDateTime': '2017-06-23T17:45:35-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-26T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-23T15:15:01-04:00',
+        'payOpenedUtcDateTime': '2017-06-23T13:47:37-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-27T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-26T14:14:24-04:00',
+        'payOpenedUtcDateTime': '2017-06-26T13:38:00-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-28T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-27T14:09:52-04:00',
+        'payOpenedUtcDateTime': '2017-06-27T13:24:00-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-29T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-28T14:50:55-04:00',
+        'payOpenedUtcDateTime': '2017-06-28T13:26:14-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-30T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-29T13:46:05-04:00',
+        'payOpenedUtcDateTime': '2017-06-29T13:34:08-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-06-30T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-29T17:30:54-04:00',
+        'payOpenedUtcDateTime': '2017-06-29T17:28:21-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 4,
+        'payUtcDate': '2017-06-30T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-30T09:38:41-04:00',
+        'payOpenedUtcDateTime': '2017-06-30T09:32:32-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 5,
+        'payUtcDate': '2017-06-30T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-30T11:07:33-04:00',
+        'payOpenedUtcDateTime': '2017-06-30T11:06:05-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 6,
+        'payUtcDate': '2017-06-30T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-30T11:22:55-04:00',
+        'payOpenedUtcDateTime': '2017-06-30T11:16:01-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-03T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-30T15:24:53-04:00',
+        'payOpenedUtcDateTime': '2017-06-30T14:34:54-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-04T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-03T14:43:08-04:00',
+        'payOpenedUtcDateTime': '2017-07-03T14:10:32-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-06T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-05T14:31:44-04:00',
+        'payOpenedUtcDateTime': '2017-07-05T13:19:37-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-07-07T00:00:00-04:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '2017-06-22T14:05:20-04:00',
+        'payOpenedUtcDateTime': '2017-06-22T13:30:19-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-07T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-06T15:00:09-04:00',
+        'payOpenedUtcDateTime': '2017-07-06T14:23:13-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-07-07T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-07T11:17:29-04:00',
+        'payOpenedUtcDateTime': '2017-07-07T11:05:46-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 4,
+        'payUtcDate': '2017-07-10T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-07T14:41:25-04:00',
+        'payOpenedUtcDateTime': '2017-07-07T12:29:07-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-11T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-10T13:47:23-04:00',
+        'payOpenedUtcDateTime': '2017-07-10T13:21:21-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-12T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-11T15:26:39-04:00',
+        'payOpenedUtcDateTime': '2017-07-11T13:22:38-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-13T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-12T13:41:05-04:00',
+        'payOpenedUtcDateTime': '2017-07-12T13:25:30-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-14T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-13T14:54:20-04:00',
+        'payOpenedUtcDateTime': '2017-07-13T13:22:21-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-17T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-14T14:42:51-04:00',
+        'payOpenedUtcDateTime': '2017-07-14T13:49:01-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-18T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-17T14:23:07-04:00',
+        'payOpenedUtcDateTime': '2017-07-17T13:44:14-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-19T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-18T14:46:46-04:00',
+        'payOpenedUtcDateTime': '2017-07-18T13:58:47-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-20T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-19T15:08:45-04:00',
+        'payOpenedUtcDateTime': '2017-07-19T14:21:48-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-07-20T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-20T11:29:36-04:00',
+        'payOpenedUtcDateTime': '2017-07-20T11:23:09-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-21T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-20T13:59:58-04:00',
+        'payOpenedUtcDateTime': '2017-07-20T13:21:28-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-24T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-21T15:12:10-04:00',
+        'payOpenedUtcDateTime': '2017-07-21T14:01:13-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-25T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-24T14:42:35-04:00',
+        'payOpenedUtcDateTime': '2017-07-24T14:25:33-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-28T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-27T14:06:45-04:00',
+        'payOpenedUtcDateTime': '2017-07-27T13:44:07-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-31T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-28T14:46:22-04:00',
+        'payOpenedUtcDateTime': '2017-07-28T13:36:37-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-01T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-31T14:23:51-04:00',
+        'payOpenedUtcDateTime': '2017-07-31T13:20:45-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-02T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-01T13:56:25-04:00',
+        'payOpenedUtcDateTime': '2017-08-01T13:15:54-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-08-03T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-08-02T14:12:31-04:00',
+        'payOpenedUtcDateTime': '2017-08-02T13:40:33-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-26T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-25T14:13:38-04:00',
+        'payOpenedUtcDateTime': '2017-07-25T13:31:12-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-07-27T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-07-26T14:22:20-04:00',
+        'payOpenedUtcDateTime': '2017-07-26T13:39:42-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-04-28T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-27T13:47:42-04:00',
+        'payOpenedUtcDateTime': '2017-04-27T13:16:23-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-01T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-04-28T14:19:10-04:00',
+        'payOpenedUtcDateTime': '2017-04-28T12:49:26-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-02T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-01T14:49:12-04:00',
+        'payOpenedUtcDateTime': '2017-05-01T13:30:07-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-03T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-02T14:35:37-04:00',
+        'payOpenedUtcDateTime': '2017-05-02T13:58:41-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-04T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-03T14:32:44-04:00',
+        'payOpenedUtcDateTime': '2017-05-03T13:43:34-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-05T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-04T14:41:23-04:00',
+        'payOpenedUtcDateTime': '2017-05-04T14:16:11-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-08T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-05T14:47:52-04:00',
+        'payOpenedUtcDateTime': '2017-05-05T13:43:58-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-09T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-08T14:32:10-04:00',
+        'payOpenedUtcDateTime': '2017-05-08T13:39:06-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-10T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-09T14:47:29-04:00',
+        'payOpenedUtcDateTime': '2017-05-09T14:31:32-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-11T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-10T13:52:57-04:00',
+        'payOpenedUtcDateTime': '2017-05-10T13:23:17-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-05-12T00:00:00-04:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '2017-04-04T14:07:45-04:00',
+        'payOpenedUtcDateTime': '2017-04-04T13:50:31-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-12T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-11T14:22:30-04:00',
+        'payOpenedUtcDateTime': '2017-05-11T13:37:17-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-15T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-12T14:42:49-04:00',
+        'payOpenedUtcDateTime': '2017-05-12T13:42:03-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-16T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-15T13:44:25-04:00',
+        'payOpenedUtcDateTime': '2017-05-15T13:20:11-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-17T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-16T14:02:58-04:00',
+        'payOpenedUtcDateTime': '2017-05-16T13:18:32-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-18T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-17T14:40:13-04:00',
+        'payOpenedUtcDateTime': '2017-05-17T14:25:06-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-19T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-18T14:21:03-04:00',
+        'payOpenedUtcDateTime': '2017-05-18T13:41:59-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-22T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-19T14:53:56-04:00',
+        'payOpenedUtcDateTime': '2017-05-19T14:36:05-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-23T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-22T14:36:06-04:00',
+        'payOpenedUtcDateTime': '2017-05-22T14:09:43-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-24T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-23T14:26:44-04:00',
+        'payOpenedUtcDateTime': '2017-05-23T14:16:29-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-25T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-24T14:42:25-04:00',
+        'payOpenedUtcDateTime': '2017-05-24T13:23:17-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-26T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-25T14:12:26-04:00',
+        'payOpenedUtcDateTime': '2017-05-25T13:18:26-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-29T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-26T13:26:42-04:00',
+        'payOpenedUtcDateTime': '2017-05-26T13:03:26-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-05-31T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-30T13:57:22-04:00',
+        'payOpenedUtcDateTime': '2017-05-30T13:27:14-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-01T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-05-31T14:38:46-04:00',
+        'payOpenedUtcDateTime': '2017-05-31T14:24:16-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-02T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-01T14:52:54-04:00',
+        'payOpenedUtcDateTime': '2017-06-01T13:47:47-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-05T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-02T14:42:59-04:00',
+        'payOpenedUtcDateTime': '2017-06-02T13:45:48-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-06T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-05T14:31:26-04:00',
+        'payOpenedUtcDateTime': '2017-06-05T13:38:32-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-07T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-06T14:45:32-04:00',
+        'payOpenedUtcDateTime': '2017-06-06T13:25:59-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-08T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-07T15:10:57-04:00',
+        'payOpenedUtcDateTime': '2017-06-07T14:45:28-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-09T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-08T14:11:04-04:00',
+        'payOpenedUtcDateTime': '2017-06-08T13:31:18-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-12T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-09T14:37:33-04:00',
+        'payOpenedUtcDateTime': '2017-06-09T13:42:41-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-13T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-12T14:35:46-04:00',
+        'payOpenedUtcDateTime': '2017-06-12T14:00:58-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-14T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-13T14:21:35-04:00',
+        'payOpenedUtcDateTime': '2017-06-13T13:31:21-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-06-15T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-06-14T14:20:59-04:00',
+        'payOpenedUtcDateTime': '2017-06-14T13:22:33-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-12-01T00:00:00-05:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-12-08T00:00:00-05:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-12-15T00:00:00-05:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-12-22T00:00:00-05:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-12-29T00:00:00-05:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-15T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-14T13:56:04-04:00',
+        'payOpenedUtcDateTime': '2017-09-14T13:27:29-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-18T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-15T14:45:10-04:00',
+        'payOpenedUtcDateTime': '2017-09-15T12:35:46-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-09-18T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-15T14:56:16-04:00',
+        'payOpenedUtcDateTime': '2017-09-15T14:51:07-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-19T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-18T14:39:31-04:00',
+        'payOpenedUtcDateTime': '2017-09-18T13:51:39-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-20T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-19T13:50:12-04:00',
+        'payOpenedUtcDateTime': '2017-09-19T13:25:44-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-21T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-20T14:21:34-04:00',
+        'payOpenedUtcDateTime': '2017-09-20T13:42:08-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-22T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-21T13:52:46-04:00',
+        'payOpenedUtcDateTime': '2017-09-21T13:34:35-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-25T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-22T15:04:07-04:00',
+        'payOpenedUtcDateTime': '2017-09-22T14:53:19-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-26T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-25T14:39:48-04:00',
+        'payOpenedUtcDateTime': '2017-09-25T14:18:24-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-27T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-26T14:44:18-04:00',
+        'payOpenedUtcDateTime': '2017-09-26T14:11:15-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-28T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-27T14:00:52-04:00',
+        'payOpenedUtcDateTime': '2017-09-27T13:27:05-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-09-29T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-28T10:49:27-04:00',
+        'payOpenedUtcDateTime': '2017-09-28T10:46:54-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 3,
+        'payUtcDate': '2017-09-29T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-09-28T14:17:37-04:00',
+        'payOpenedUtcDateTime': '2017-09-28T13:33:09-04:00',
+        'isActive': true
+      },
+      {
+        "paySequence": 2,
+        "payUtcDate": "2017-10-02T00:00:00-04:00",
+        "scheduleType": "Supplemental",
+        "payClosedUtcDateTime": "2017-09-29T15:30:20-04:00",
+        "payOpenedUtcDateTime": "2017-09-29T14:57:46-04:00",
+        "isActive": true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-10-03T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-10-02T14:59:55-04:00',
+        'payOpenedUtcDateTime': '2017-10-02T14:08:34-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-10-04T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-10-03T14:18:18-04:00',
+        'payOpenedUtcDateTime': '2017-10-03T13:37:18-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-10-05T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-10-04T15:00:53-04:00',
+        'payOpenedUtcDateTime': '2017-10-04T14:20:15-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 2,
+        'payUtcDate': '2017-10-06T00:00:00-04:00',
+        'scheduleType': 'Supplemental',
+        'payClosedUtcDateTime': '2017-10-05T15:25:19-04:00',
+        'payOpenedUtcDateTime': '2017-10-05T14:59:46-04:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-10-13T00:00:00-04:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-10-20T00:00:00-04:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-10-27T00:00:00-04:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-11-03T00:00:00-04:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-11-10T00:00:00-05:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-11-17T00:00:00-05:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      },
+      {
+        'paySequence': 1,
+        'payUtcDate': '2017-11-27T00:00:00-05:00',
+        'scheduleType': 'Regular',
+        'payClosedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'payOpenedUtcDateTime': '0001-01-01T00:00:00-05:00',
+        'isActive': true
+      }
+    ],
+    'frequency': 6,
+    'synced': true,
+    'sameDayCheckPrinting': false,
+    'checkPrint': {
+      'addressWindowOptions': [],
+      'printPayDda': 100
+    },
+    'legalEntityCompanyId': 'd2b6f2aa-84a5-4cca-b6d8-4e1f56b2fc48',
+    'customerBankAccountId': '00000000-0000-0000-0000-000000000000',
+    'customerTaxBankAccountId': '00000000-0000-0000-0000-000000000000',
+    'customerGarnishmentsBankAccountId': '00000000-0000-0000-0000-000000000000',
+    'productInfos': [],
+    'name': 'Eliot Management Group EMGDAY',
+    'integrationData': {
+      'payrollCode': '003TC2QQDM',
+      'payGroup': 'EMGDAY'
+    },
+    'status': 'Active',
+    'tenantId': 'd7eccced-26e9-4f2f-a2fb-b745a51a7aed',
+    'createdUtcDate': '2017-10-05T21:44:12.538-04:00',
+    'updatedUtcDate': '2017-10-05T21:44:12.538-04:00',
+    'version': 1,
+    'payrollId': '15274119-e059-4d25-8900-82fdfd23d38d'
+  },
+  'metadata': {
+    'aggregateName': 'SmartHub.Models.Core.PayrollUnit',
+    'aggregateVersion': 1
+  },
+  'correlationId': 'c4bdc835-0fd5-879e-0d8f-998d65f43f3e',
+  'user': 'system'
+}

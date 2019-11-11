@@ -1,0 +1,745 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.Validator.Validations</name>
+    </assembly>
+    <members>
+        <member name="T:TaxHub.Validator.Validations.Common.EqualsValidator">
+            <summary>
+            Equals Validator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.EqualsValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Gets the rule violations.
+            </summary>
+            <param name="messageType">Type of the message.</param>
+            <param name="message">The message.</param>
+            <param name="negated">if set to <c>true</c> [negate result].</param>
+            <param name="token1">The First Token.</param>
+            <param name="token2">The Second Token.</param>
+            <returns>validation result object</returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.HasLengthLessThanValidator">
+            <summary>
+            HasLengthLessThanValidator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.HasLengthLessThanValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken,System.Int32)">
+            <summary>
+            Checks whether the token value has length less than the passed in length. 
+            </summary>
+            <param name="resultType">The Type of validation error.</param>
+            <param name="message">The message from the validation.</param>
+            <param name="negated">If Validator is negated.</param>
+            <param name="token">The token to validate.</param>
+            <param name="length">The length that the token value will be compared to.</param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.HasAllSameCharactersValidator">
+            <summary>
+            HasAllSameCharacters Validator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.HasAllSameCharactersValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Checks whether the token value contains all the same character or not, e.g. "AAAAA" or "0000" have all same characters, whereas "0001" does not
+            </summary>
+            <param name="resultType">The type of validation.</param>
+            <param name="message">The message for the validation.</param>
+            <param name="negated">Whether the validator is negated.</param>
+            <param name="token">The Token to validate.</param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.IsItinValidator">
+            <summary>
+            Valid ITIN Validator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsItinValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Gets the rule violations.
+            </summary>
+            <param name="resultType">Type of the result.</param>
+            <param name="message">The message.</param>
+            <param name="negated">if set to <c>true</c>, it would negate the validation and default-message.</param>
+            <param name="token">The token.</param>
+            <returns></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.IsNegativeValidator">
+            <summary>
+            IsNegative Vaildator Class
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsNegativeValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Checks if token value is negative.
+            </summary>
+            <param name="resultType">The type of validation.</param>
+            <param name="message">The message for the validation.</param>
+            <param name="negated">Whether the validator is negated.</param>
+            <param name="token">The Token to validate.</param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.IsNotAlphaValidator">
+            <summary>
+            Validator for IsNotAlphabets
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsNotAlphaValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Checks if token value is not a alphabet.
+            </summary>
+            <param name="resultType">The type of validation.</param>
+            <param name="message">The message for the validation.</param>
+            <param name="negated">Whether the validator is negated.</param>
+            <param name="token">The Token to validate.</param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsNotAlphaValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken,System.Int32,System.Int32)">
+            <summary>
+            Checks if a substring of token value is not a alphabet.
+            </summary>
+            <param name="resultType"></param>
+            <param name="message"></param>
+            <param name="negated"></param>
+            <param name="token"></param>
+            <param name="startIndex"></param>
+            <param name="length"></param>
+            <returns></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.IsNotNumberValidator">
+            <summary>
+            Validator for IsNotNumber
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsNotNumberValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Checks if token value is not a number.
+            </summary>
+            <param name="resultType">The type of validation.</param>
+            <param name="message">The message for the validation.</param>
+            <param name="negated">Whether the validator is negated.</param>
+            <param name="token">The Token to validate.</param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsNotNumberValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken,System.Int32,System.Int32)">
+            <summary>
+            Checks if token value is not a number.
+            </summary>
+            <param name="resultType"></param>
+            <param name="message"></param>
+            <param name="negated"></param>
+            <param name="token"></param>
+            <param name="startIndex"></param>
+            <param name="length"></param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.IsNullOrEmptyValidator">
+            <summary>
+            IsNull or Empty Validator Class
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsNullOrEmptyValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Checks if token value is null of empty.
+            </summary>
+            <param name="resultType">The type of validation.</param>
+            <param name="message">The message for the validation.</param>
+            <param name="negated">Whether the validator is negated.</param>
+            <param name="token">The Token to validate.</param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.LengthEqualsValidator">
+            <summary>
+            LengthEquals Validator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.LengthEqualsValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken,System.Int32)">
+            <summary>
+            Checks if token value is of a certain length.
+            </summary>
+            <param name="resultType">The type of validation.</param>
+            <param name="message">The message for the validation.</param>
+            <param name="negated">Whether the validator is negated.</param>
+            <param name="token">The Token to validate.</param>
+            <param name="length">The length to check token for.</param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.IsDateAfterValidator">
+            <summary>
+            StartsWith Validator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsDateAfterValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken,System.String)">
+            <summary>
+            Gets the rule violations.
+            </summary>
+            <param name="resultType">Type of the result.</param>
+            <param name="message">The message.</param>
+            <param name="negated">if set to <c>true</c>, it would negate the validation and default-message.</param>
+            <param name="token">The token.</param>
+            <param name="compareValue">The compare value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.IsDateAfterValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Gets the rule violations.
+            </summary>
+            <param name="resultType">Type of the result.</param>
+            <param name="message">The message.</param>
+            <param name="negated">if set to <c>true</c> [negated].</param>
+            <param name="token1">The token1.</param>
+            <param name="token2">The token2.</param>
+            <returns></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.InvalidSsnValidator">
+            <summary>
+            Invalid SSN Validator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.InvalidSsnValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Gets the rule violations.
+            </summary>
+            <param name="resultType">Type of the result.</param>
+            <param name="message">The message.</param>
+            <param name="negated">regardless of the value, it will not negate the validation/default-message.</param>
+            <param name="token">The token.</param>
+            <returns></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.StartsWithNumberValidator">
+            <summary>
+            StartsWithNumber Validator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.StartsWithNumberValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken)">
+            <summary>
+            Gets the rule violations.
+            </summary>
+            <param name="resultType">Type of the result.</param>
+            <param name="message">The message.</param>
+            <param name="negated">if set to <c>true</c>, it would negate the validation and default-message.</param>
+            <param name="token">The token.</param>
+            <returns></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Common.StartsWithValidator">
+            <summary>
+            StartsWith Validator
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Common.StartsWithValidator.GetRuleViolations(TaxHub.Validator.Validations.ValidationResultType,System.String,System.Boolean,TaxHub.TokenParser.Core.Tokens.IToken,System.String)">
+            <summary>
+            Checks if token value starts with a certain string.
+            </summary>
+            <param name="resultType">The type of validation.</param>
+            <param name="message">The message for the validation.</param>
+            <param name="negated">Whether the validator is negated.</param>
+            <param name="token">The Token to validate.</param>
+            <param name="startsWithString"></param>
+            <returns><see cref="T:TaxHub.Validator.Validations.ValidatorResult"/></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Conventions.ValidatorConvention">
+            <summary>
+            Provides methods for checking method arguments for validity and throwing e exceptions for invalid
+            arguments or argument combinations.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorConvention.ThrowIfTokensAreOfDifferentType(TaxHub.TokenParser.Core.Tokens.IToken,TaxHub.TokenParser.Core.Tokens.IToken,System.String)">
+            <summary>
+            Throws an <see cref="T:ValidatorException"/> exception if <paramref name="token1"/> and 
+            <paramref name="token2"/> have different types.
+            </summary>
+            <param name="token1">The first token whose value type will be examined</param>
+            <param name="token2">The second token whose value type will be examined</param>
+            <param name="validatorName">The name of the validator invoking convention</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorConvention.Require(System.Func{System.Boolean},System.String,System.String)">
+            <summary>
+            Throws an <see cref="T:ValidatorException"/> exception if condition <paramref name="condition"/> is not met.
+            </summary>
+            <param name="condition">The required condition</param>
+            <param name="message">The message to display.</param>
+            <param name="validatorName">The name of the validator invoking convention</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorConvention.ThrowIfTokenIsNotConvertible(TaxHub.TokenParser.Core.Tokens.IToken,System.Type,System.String)">
+            <summary>
+            Throws an <see cref="T:ValidatorException"/> exception if the the <paramref name="token"/> is not
+            convertible to the expected <pararef name="convertedType"/> type.
+            </summary>
+            <remarks>
+            This method will try to change the type of the <paramref name="token"/> to the expected type <paramref name="convertedType"/>
+            if the operation fails a <see cref="T:ValidatorException"/> will be thrown
+            </remarks>
+            <param name="token">The token whose value type will be examined</param>
+            <param name="convertedType">The expected type afer conversion</param>
+            <param name="validatorName">The name of the validator invoking convention</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorConvention.ThrowIfTokenTypeIsNotSpecifiedType(TaxHub.TokenParser.Core.Tokens.IToken,System.Type,System.String)">
+            <summary>
+            Throws an <see cref="T:ValidatorException"/> exception if the the <paramref name="token"/> is not
+            in the expected <paramref name="expectedType"/> type.
+            </summary>
+            <remarks>
+            </remarks>
+            <param name="token">The token whose value type will be examined</param>
+            <param name="expectedType">The expected type</param>
+            <param name="validatorName">The name of the validator invoking convention</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorConvention.ThrowIfTokenTypeIsNotSupported(TaxHub.TokenParser.Core.Tokens.IToken,System.Collections.Generic.IEnumerable{System.Type},System.String)">
+            <summary>
+            Throws an <see cref="T:ValidatorException"/> exception if the of the <paramref name="token"/> is not
+            in the expected list <paramcref name="expectedTypes"/> of types.
+            </summary>
+            <remarks>
+            The type of the token value will be searched in <paramref name="expectedTypes"/>, if not found an exception will be thrown
+            </remarks>
+            <param name="token">The token whose value type will be examined</param>
+            <param name="expectedTypes">The enumerable of expected or valid types</param>
+            <param name="validatorName">The name of the validator invoking convention</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorConvention.ThrowIfTokenTypesAreNotSupported(System.Collections.Generic.IEnumerable{TaxHub.TokenParser.Core.Tokens.IToken},System.Collections.Generic.IEnumerable{System.Type},System.String)">
+            <summary>
+            Throws an <see cref="T:ValidatorException"/> exception if the of the <paramref name="tokens"/> contains tokens types
+            that are not in the expected list <paramcref name="expectedTypes"/> of types.
+            </summary>
+            <remarks>
+            The types of the tokens' value will be searched in <paramref name="expectedTypes"/>, if not found an exception will be thrown
+            </remarks>
+            <param name="tokens">The tokens whose value types will be examined</param>
+            <param name="expectedTypes">The enumerable of expected or valid types</param>
+            <param name="validatorName">The name of the validator invoking convention</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorConvention.ThrowIfTokenIsNull(TaxHub.TokenParser.Core.Tokens.IToken,System.String)">
+            <summary>
+            Throws an <see cref="T:ValidatorException"/> exception if the of the <paramref name="token"/> is null
+            </summary>
+            <remarks>
+            Will simply be compared against null
+            </remarks>
+            <param name="token">The token whose value will be examined</param>
+            <param name="validatorName">The name of the validator class</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorConvention.ThrowValidatorException(System.String,System.String)">
+            <summary>
+            Throws a <see cref="T:ValidatorException"/>
+            </summary>
+            <remarks>
+            Exception creation helper
+            </remarks>
+            <param name="userFacingMessage">The name of the token that caused the exception.</param>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Conventions.ValidatorException">
+            <summary>
+            Provides a strongly types exception class for the validators
+            </summary>
+            <remarks>
+            The main purpose is to be able to catch these specific exception and handle the
+            user facing messaging accordingly
+            </remarks>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.Conventions.ValidatorException.UserExceptionMessage">
+            <summary>
+            The userfacing message that should be shown to the user when the exception is thrown.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor with user facing message and dev message
+            </summary>
+            <param name="message">The message logged for developers.</param>
+            <param name="userFacingMessage">The message to show the user.</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorException.#ctor(System.String)">
+            <summary>
+            Constructor with default message
+            </summary>
+            <param name="message">The default message</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorException.#ctor(System.String,System.Exception)">
+            <summary>
+            Constructor with a message and an inner exception
+            </summary>
+            <param name="message">The default message</param>
+            <param name="inner">The inner exception</param>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Conventions.ValidatorException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Constructor for a serialized exception
+            </summary>
+            <param name="info">The Serialization Info</param>
+            <param name="context">The streaming context</param>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.DefaultValidatorMessages">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.EqualsValidatorNegative">
+            <summary>
+              Looks up a localized string similar to The token &quot;{0}&quot; is not equal to &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.EqualsValidatorPositive">
+            <summary>
+              Looks up a localized string similar to The token &quot;{0}&quot; is equal to &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.HasAllSameCharactersValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; does not have all the same characters..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.HasAllSameCharactersValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; has all the same characters..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.HasLengthLessThanValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; is not less than {2}..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.HasLengthLessThanValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; is less than {2}..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsDateAfterValidatorConventionRequire">
+            <summary>
+              Looks up a localized string similar to For token &quot;{0}&quot;, configured date value to compare is null/empty for IsDateAfterValidator..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsDateAfterValidatorWithOneTokenNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; has date before &quot;{2}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsDateAfterValidatorWithOneTokenPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; has date after &quot;{2}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsDateAfterValidatorWithTwoTokenNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; has date before Token &quot;{2}&quot; with value &quot;{3}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsDateAfterValidatorWithTwoTokenPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; has date after Token &quot;{2}&quot; with value &quot;{3}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsItinValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; does not appear to be an ITIN..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsItinValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; appears to be an ITIN..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsNegativeValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; has non-negative value &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsNegativeValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; has negative value &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsNotAlphaValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; has only alphabet characters..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsNotAlphaValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; contains non - alphabet characters..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsNotNumberValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; is a number..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsNotNumberValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; is not a number..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsNullOrEmptyValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; is not null or empty..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.IsNullOrEmptyValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; is null or empty..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.LengthEqualsValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Length of token &quot;{0}&quot; with value &quot;{1}&quot; does not equal length {2}..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.LengthEqualsValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Length of token &quot;{0}&quot; with value &quot;{1}&quot; equals length {2}..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.StartsWithNumberValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot;  does not start with a number..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.StartsWithNumberValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; starts with a number..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.StartsWithValidatorNegative">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; does not start with &quot;{2}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.DefaultValidatorMessages.StartsWithValidatorPositive">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; with value &quot;{1}&quot; starts with &quot;{2}&quot;..
+            </summary>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Enums.ValidationOperator">
+            <summary>
+            Operators to link Validations
+            </summary>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Helper.MessageBuilder">
+            <summary>
+            Default Message Builder for validators
+            </summary>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Helper.MessageBuilder.GetDefaultMessage(System.String,System.Boolean,System.Object[])">
+            <summary>
+            Gets default validator message from resource file
+            </summary>
+            <param name="validatorName">Name of validator</param>
+            <param name="negated">Negated flag</param>
+            <param name="args">Arguments for message format like token name, token value, etc.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Helper.MessageBuilder.GetValidatorConventionMessage(System.String,System.Object[])">
+            <summary>
+            Get logging messages for the validator conventions from resource file
+            </summary>
+            <param name="conventionName">The name of the convention</param>
+            <param name="args">Arrguments for message format like token name, value, ect.</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaxHub.Validator.Validations.Helper.MessageBuilder.GetUserFacingValidatorConventionMessage(System.String,System.Object[])">
+            <summary>
+            Get user facing messages for the validator conventions from resource file
+            </summary>
+            <param name="conventionName">The name of the convention</param>
+            <param name="args">Arrguments for message format like token name, value, ect.</param>
+            <returns></returns>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.Validation">
+            <summary>
+            Represents a Validation to be processed during file generation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.Validation.MessageType">
+            <summary>
+            The severity of the Validation, if failed.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.Validation.Message">
+            <summary>
+            A user set message to display if validation fails.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.Validation.ValidationText">
+            <summary>
+            The text containing Validator calls and parameters which represent the validation to execute.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.Validation.IsAggregateValidation">
+            <summary>
+            Gets or sets a value indicating whether this instance is aggregate validation.
+            </summary>
+            <value>
+              <c>true</c> if this instance is aggregate validation; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidationResult.ResultType">
+            <summary>
+            The result after validation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidationResult.Messages">
+            <summary>
+            Messages describing failed validations.
+            </summary>
+        </member>
+        <member name="F:TaxHub.Validator.Validations.ValidationResult.CreatePassingValidation">
+            <summary>
+            Create a Passing ValidationResult object.
+            </summary>
+        </member>
+        <member name="F:TaxHub.Validator.Validations.ValidationResultType.Passed">
+            <summary>
+            Validation Passed
+            </summary>
+        </member>
+        <member name="F:TaxHub.Validator.Validations.ValidationResultType.Warning">
+            <summary>
+            Warning Validation  
+            </summary>
+        </member>
+        <member name="F:TaxHub.Validator.Validations.ValidationResultType.Error">
+            <summary>
+            Error Validation
+            </summary>
+        </member>
+        <member name="F:TaxHub.Validator.Validations.ValidationResultType.Fatal">
+            <summary>
+            Fatal Validation 
+            </summary>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.ValidatorConventionMessages">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenIsNotConvertible">
+            <summary>
+              Looks up a localized string similar to ThrowIfTokenIsNotConvertible Convention Thrown : &quot;{0}&quot; - Token &quot;{1}&quot;({2}) with value ({3})  is not convertible to {4}..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenIsNotConvertible_User">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; can&apos;t be validated because it cannot be converted to a type supported by &quot;{1}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenIsNull">
+            <summary>
+              Looks up a localized string similar to ThrowIfTokenIsNull Convention Thrown : &quot;{0}&quot; - Token &quot;{1}&quot;({2})  is null..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenIsNull_User">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; can&apos;t be validated by &quot;{1}&quot; because its value is null..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokensAreOfDifferentType">
+            <summary>
+              Looks up a localized string similar to ThrowIfTokensAreOfDifferentType Convention Thrown : &quot;{0}&quot; - Types of  &quot;{1}&quot;({2})  and &quot;{3}&quot;({4}) don&apos;t match..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokensAreOfDifferentType_User">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; and &quot;{1}&quot; can&apos;t be validated by &quot;{2}&quot; because they are of different types..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenTypeIsNotSpecifiedType">
+            <summary>
+              Looks up a localized string similar to ThrowIfTokenTypeIsNotSpecifiedType Convention Thrown : &quot;{0}&quot; - Type of  &quot;{1}&quot;({2})  is not {3}..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenTypeIsNotSpecifiedType_User">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; can&apos;t be validated by &quot;{1}&quot; because its data type is not supported..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenTypeIsNotSupported">
+            <summary>
+              Looks up a localized string similar to ThrowIfTokenTypeIsNotSupported Convention Thrown : &quot;{0}&quot; - Type of  &quot;{1}&quot;({2})  is not the supported types &quot;{3}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenTypeIsNotSupported_User">
+            <summary>
+              Looks up a localized string similar to Token &quot;{0}&quot; can&apos;t be validated by &quot;{1}&quot; because its data type is not supported..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenTypesAreNotSupported">
+            <summary>
+              Looks up a localized string similar to ThrowIfTokenTypesAreNotSupported Convention Thrown : &quot;{0}&quot; - Type of  tokens &quot;{1}&quot;  is not one of the supported types &quot;{2}&quot;..
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorConventionMessages.ThrowIfTokenTypesAreNotSupported_User">
+            <summary>
+              Looks up a localized string similar to Tokens &quot;{0}&quot; can&apos;t be validated by &quot;{1}&quot; because their data types are not supported..
+            </summary>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.ValidatorResult">
+            <summary>
+            Models the result of one validator.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorResult.ResultType">
+            <summary>
+            The Result Type for the validation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorResult.Message">
+            <summary>
+            The Message for the result.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorResult.Status">
+            <summary>
+            The status of the validation, pass or fail.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorResult.UsedDefaultMessage">
+            <summary>
+            Whether the validator's default message was used.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Validator.Validations.ValidatorResultSet">
+            <summary>
+            Models a collection of Validator Results associated with one Validation and a Validation Operator such as AND.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorResultSet.ValidationOperator">
+            <summary>
+            The operator to apply to the Validator Results.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorResultSet.Results">
+            <summary>
+            The results of a chain of validator calls.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Validator.Validations.ValidatorResultSet.ValidationResult">
+            <summary>
+            Get a validator result by applying ValidationOperator to ValidatorResults.
+            </summary>
+        </member>
+    </members>
+</doc>

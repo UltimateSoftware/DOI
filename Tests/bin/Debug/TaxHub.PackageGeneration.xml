@@ -1,0 +1,2542 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.PackageGeneration</name>
+    </assembly>
+    <members>
+        <member name="T:TaxHub.PackageGeneration.Acl.Client.ClientServiceAdapter">
+            <summary>
+            Client service API adapter implementation.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.Client.ClientServiceAdapter.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Common.Runtime.IHttpServiceClientFactory)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="logger">The application logger.</param>
+            <param name="httpClientFactory">The HttpClient factory.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.Client.ClientServiceAdapter.InitializeClient(System.Guid)">
+            <summary>
+            Initializes client.
+            </summary>
+            <param name="correlationId">The correlationId associated with the process.</param>
+            <returns>The Http Client</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.Client.ClientServiceAdapter.FindOne(System.String,System.String,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.Client.ClientView">
+            <summary>
+            A view for the Client aggregate
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.Client.ClientView.ClientId">
+            <summary>
+            The Id for the Client instance
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.Client.ClientView.LegalName">
+            <summary>
+            The Legal Name for the clientInstance
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.Client.ClientView.TenantId">
+            <summary>
+            The TenantId to which this client instance belongs to.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.Client.ClientView.ProcessorId">
+            <summary>
+            The TenantId to which this client instance belongs to.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.Client.IClientServiceAdapter">
+            <summary>
+            An instance of the Client service API
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.Client.IClientServiceAdapter.FindOne(System.String,System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Finds a Client aggregate instance by ClientId
+            </summary>
+            <param name="tenantId">A tenant Id.</param>
+            <param name="clientId">The clientId to find</param>
+            <param name="correlationId">A correlation Id</param>
+            <param name="cancellationToken">A cancellationToken</param>
+            <returns>A view of the Client aggregate</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationCheckpointInfoMapper">
+            <summary>
+            Mapper interface for <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationCheckpointInfoMapper.MapTo(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Maps a the <paramref name="parameters"/> dictionary to a <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo"/> object.
+            </summary>
+            <param name="parameters">A dictionary containing the parameters needed to map.</param>
+            <returns>The populated <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo"/> object.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationCheckpointInfoMapper.MapTo(TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo)">
+            <summary>
+            Maps a the <paramref name="parameters"/> dictionary to a <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo"/> object.
+            </summary>
+            <param name="parameters">A dictionary containing the parameters needed to map.</param>
+            <returns>The populated <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo"/> object.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationCheckpointInfoMapper">
+            <summary>
+            Mapper interface for <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationCheckpointInfoMapper.MapTo(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Maps a the <paramref name="parameters"/> dictionary to a <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo"/> object.
+            </summary>
+            <param name="parameters">A dictionary containing the parameters needed to map.</param>
+            <returns>The populated <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo"/> object.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationCheckpointInfoMapper.MapTo(TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo)">
+            <summary>
+            Maps a the <paramref name="parameters"/> dictionary to a <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo"/> object.
+            </summary>
+            <param name="parameters">A dictionary containing the parameters needed to map.</param>
+            <returns>The populated <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo"/> object.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationParametersMapper">
+            <summary>
+            Mapper interface for <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationParametersMapper.MapTo(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Maps a the <paramref name="parameters"/> dictionary to a <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters"/> object.
+            </summary>
+            <param name="parameters">A dictionary containing the parameters needed to map.</param>
+            <returns>The populated <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters"/> object.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationParametersMapper.MapTo(TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters)">
+            <summary>
+            Maps a the <paramref name="parameters"/> dictionary to a <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters"/> object.
+            </summary>
+            <param name="parameters">A dictionary containing the parameters needed to map.</param>
+            <returns>The populated <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters"/> object.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationParametersMapper">
+            <summary>
+            Mapper interface for <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationParametersMapper.MapTo(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Maps a the <paramref name="parameters"/> dictionary to a <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters"/> object.
+            </summary>
+            <param name="parameters">A dictionary containing the parameters needed to map.</param>
+            <returns>The populated <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters"/> object.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationParametersMapper.MapTo(TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters)">
+            <summary>
+            Maps a the <paramref name="parameters"/> dictionary to a <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters"/> object.
+            </summary>
+            <param name="parameters">A dictionary containing the parameters needed to map.</param>
+            <returns>The populated <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters"/> object.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.Tenant.ITenantServiceAdapter">
+            <summary>
+            An instance of the Tenant service API
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.Tenant.ITenantServiceAdapter.FindOne(System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Finds a Client aggregate instance by ClientId
+            </summary>
+            <param name="tenantId">The clientId to find</param>
+            <param name="correlationId">A correlation Id</param>
+            <param name="cancellationToken">A cancellationToken</param>
+            <returns>A view of the Client aggregate</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.Tenant.TenantServiceAdapter">
+            <summary>
+            Tenant service API adapter implementation.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.Tenant.TenantServiceAdapter.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Common.Runtime.IHttpServiceClientFactory)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="logger">The application logger.</param>
+            <param name="httpClientFactory">The HttpClient factory.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.Tenant.TenantServiceAdapter.InitializeClient(System.Guid)">
+            <summary>
+            Initializes client.
+            </summary>
+            <param name="correlationId">The correlationId associated with the process.</param>
+            <returns>The Http Client</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.Tenant.TenantServiceAdapter.FindOne(System.String,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.Tenant.TenantView">
+            <summary>
+            A view for the Client aggregate
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.Tenant.TenantView.Id">
+            <summary>
+            The Id for the Tenant instance
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.Tenant.TenantView.ARNumber">
+            <summary>
+            Account Receivable Number
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.LegacyYePackageGenerationCheckpointInfoMapper">
+            <summary>
+            Mapper implementation for <see cref="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.LegacyYePackageGenerationCheckpointInfoMapper.MapTo(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.LegacyYePackageGenerationCheckpointInfoMapper.MapTo(TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.LegacyQePackageGenerationCheckpointInfoMapper">
+            <summary>
+            Mapper implementation for <see cref="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.LegacyQePackageGenerationCheckpointInfoMapper.MapTo(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.LegacyQePackageGenerationCheckpointInfoMapper.MapTo(TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.LegacyYePackageGenerationParametersMapper">
+            <summary>
+            Mapper implementation for <see cref="T:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationParametersMapper"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.LegacyYePackageGenerationParametersMapper.MapTo(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.LegacyYePackageGenerationParametersMapper.MapTo(TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.LegacyQePackageGenerationParametersMapper">
+            <summary>
+            Mapper implementation for <see cref="T:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationParametersMapper"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.LegacyQePackageGenerationParametersMapper.MapTo(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.LegacyQePackageGenerationParametersMapper.MapTo(TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.YearEndProcessing.IYearEndTaxProcessingAdapter">
+            <summary>
+            An instance of the YearEndTaxProcessing service API
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.IYearEndTaxProcessingAdapter.FindOne(System.Int32,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Finds an aggregate instance of the YearEndTaxProcessing.
+            </summary>
+            <param name="id">The instance id to find</param>
+            <param name="correlationId">A correlation Id</param>
+            <param name="cancellationToken">A cancellationToken</param>
+            <returns>A view of the Client aggregate</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.IYearEndTaxProcessingAdapter.UpdateYearEndPackageStatus(System.Int32,TaxHub.PackageGeneration.Acl.YearEndProcessing.UpdatePackageStatusCommand,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Updates the package generation status for a YearEndProcessing record.
+            </summary>
+            <param name="id">The id of the instance.</param>
+            <param name="command">The command to apply.</param>
+            <param name="correlationId">The correlation Id</param>
+            <param name="cancellationToken">The cancellation token</param>
+            <returns>If the call succeeded.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.YearEndProcessing.UpdatePackageStatusCommand">
+            <summary>
+            A command object used to update the package generation status.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.UpdatePackageStatusCommand.#ctor(TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus)">
+            <summary>
+            Creates a new command and sets the status to apply.
+            </summary>
+            <param name="status">The new status to apply.</param>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.YearEndProcessing.UpdatePackageStatusCommand.Status">
+            <summary>
+            The new value of the status to set.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.YearEndProcessing.UpdatePackageStatusCommand.CompletedWithErrors">
+            <summary>
+            Indicates that the package is completed but with errors.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingAdapter">
+            <summary>
+            Tenant service API adapter implementation.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingAdapter.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Common.Runtime.IHttpServiceClientFactory)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="logger">The application logger.</param>
+            <param name="httpClientFactory">The HttpClient factory.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingAdapter.InitializeClient(System.Guid)">
+            <summary>
+            Initializes client.
+            </summary>
+            <param name="correlationId">The correlationId associated with the process.</param>
+            <returns>The Http Client</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingAdapter.GetApiVersionUriPart">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingAdapter.FindOne(System.Int32,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingAdapter.UpdateYearEndPackageStatus(System.Int32,TaxHub.PackageGeneration.Acl.YearEndProcessing.UpdatePackageStatusCommand,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingView">
+            <summary>
+            A view for the yearEndTaxProcessing aggregate
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingView.CanTransitionStatus(TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus)">
+            <summary>
+            Controls the status change and ensures state machine remains valid.
+            </summary>
+            <param name="newStatus">The status to attempt to set.</param>
+            <returns>True if a change was made.</returns>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingView.Id">
+            <summary>
+            The Id for the YearEndProcessing instance.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Acl.YearEndProcessing.YearEndTaxProcessingView.PackageGenerationStatus">
+            <summary>
+            The package generation status of the record.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.DOC_NAME">
+            <summary>
+            Copied from PTMCommon
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IW3Service.GenerateW3(System.String,System.Int32,System.String,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Gets data and process W3 form
+            </summary>
+            <param name="clientId">The Client Id</param>
+            <param name="year">The Year</param>
+            <param name="processorId">The processorId</param>
+            <param name="correlationId">The correlationId</param>
+            <param name="cancellationToken">The cancellationToken</param>
+            <returns>Returns  <see cref="T:System.Collections.Generic.List`1"/> containing list of LookupItems and respective file name</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IW3Service.CreatePersistW3(System.String,System.Int32,System.String,System.String,TaxHub.Common.EventStore.DomainEventData,System.Threading.CancellationToken)">
+            <summary>
+            Generates PDF, saves it to object store and triggers event to create all required associations
+            </summary>
+            <param name="clientId">The Client Id</param>
+            <param name="year">The Year</param>
+            <param name="processorId">The processorId</param>
+            <param name="originalName">The original name</param>
+            <param name="eventData">The event Data</param>
+            <param name="cancellationToken">The cancellation token</param>
+            <returns>True if success, False if error</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IW3Service.IsClientPosted(System.String,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Determines whether or not the client has been forced posted to YE phase 6.
+            </summary>
+            <param name="clientId">The client ID</param>
+            <param name="year">The tax year</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>true if the client is forced posted.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IW3Service.RaiseW3LogRegistrationEvent(System.String,System.String,System.Int32,System.Guid)">
+            <summary>
+            Published the Year End Process Info Service Requested event
+            </summary>
+            <param name="message">The info message.</param>
+            <param name="clientId">The client id.</param>
+            <param name="taxYear">The tax year.</param>
+            <param name="correlationId">The correlation id.</param>
+            <returns>A flag indicating the status of the publishing</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyQePackageGenerationProcessorExtensions.RegisterLegacyQePackageGenerationProcessorTypes(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Registers the LegacyQePackageGenerationProcessor and required dependencies in the container.
+            </summary>
+            <param name="container">The container to install to.</param>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.W3Service">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.W3Service.#ctor(TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration,TaxHub.Common.DataAccess.IReadOnlyObject{TaxHub.PackageGeneration.Common.Application.IPrintW3},TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService,TaxHub.Pdf.Abstractions.IPdfOperations,TaxHub.ObjectStorage.Integration.IObjectStoreServiceClient,TaxHub.Common.Logging.IAppLogger,TaxHub.CommonServices.FileManagement.Configuration.IFileServiceConfiguration,TaxHub.Hosting.Runtime.IHashProvider,TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService,TaxHub.Messaging.IMessageHub)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Application.W3Service"/> class.
+            </summary>
+            <param name="configuration">A configuration</param>
+            <param name="printW3">A PrintW3 instance repo</param>
+            <param name="legacyDocumentFolderService">A legacy document folder service</param>
+            <param name="pdfOperations">PDF operations implementation</param>
+            <param name="objectStoreServiceClient">asdasdasda</param>
+            <param name="appLogger">The applogger</param>
+            <param name="fileServiceConfiguration">sdasdas</param>
+            <param name="hashProvider">asaddas</param>
+            <param name="documentFolderService">asdasdas</param>
+            <param name="messageHub">asadsdasd</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.W3Service.GenerateW3(System.String,System.Int32,System.String,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.W3Service.CreatePersistW3(System.String,System.Int32,System.String,System.String,TaxHub.Common.EventStore.DomainEventData,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.W3Service.MarkW3AsPersisted(System.String,System.Int32,TaxHub.Common.EventStore.DomainEventData,TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult)">
+            <summary>
+            Triggers the event the will associate a W3 with FileInfo and YEFileInfo so that it is searchable via the YE Files page
+            </summary>
+            <param name="clientId">The client Id</param>
+            <param name="taxYear">The tax year</param>
+            <param name="eventData">The event data</param>
+            <param name="packageGenerationProcessorResult">The result of previous operations used as input</param>
+            <returns>True if success, False if error</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.W3Service.SetupFormsData(System.String,System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Setup Forms Data
+            </summary>
+            <param name="clientId">The Client Id</param>
+            <param name="year">The Year</param>
+            <param name="processorId">The processorId</param>
+            <param name="cancellationToken">The cancellationToken</param>
+            <returns>W2PrintModel</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.W3Service.IsClientPosted(System.String,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.W3Service.RaiseW3LogRegistrationEvent(System.String,System.String,System.Int32,System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.Fed940Service.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Common.Application.Forms.IFed940,TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration,TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService)">
+            <summary>
+            Initializes an instance of <see cref="T:TaxHub.PackageGeneration.Application.Fed940Service"/> class.
+            </summary>
+            <param name="appLogger">The application logger.</param>
+            <param name="fed940">A fed940.</param>
+            <param name="configuration">The package generation configuration.</param>
+            <param name="legacyDocumentFolderService">The legacy document folder service.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.Fed940Service.GenerateFormModels(System.String,System.Int32,System.Int32,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.Fed941Service">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.Fed941Service.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Common.Application.Forms.IFed941,TaxHub.PackageGeneration.Common.Application.IUtility,TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration,TaxHub.PackageGeneration.Common.DataAccess.IFederalFormRepository,TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Application.Fed941Service"/> class.
+            </summary>
+            <param name="appLogger">An app logger</param>
+            <param name="fed941">A fed941</param>
+            <param name="utility">A utility</param>
+            <param name="configuration">A configuration</param>
+            <param name="federalFormsRepository">A federal forms repo</param>
+            <param name="legacyDocumentFolderService">A legacy document folder service</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.Fed941Service.GenerateFormModels(System.String,System.Int32,System.Int32,System.String,System.Int32,System.DateTime,System.DateTime,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.Fed941Service.Generate(System.String,System.Int32,System.Int32,System.String,System.Int32,System.DateTime,System.DateTime,System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.FormResult">
+            <summary>
+            Resul of a Form Generation
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Application.FormResult.IsSuccessful">
+            <summary>
+            Indicates success of the form generation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Application.FormResult.FilePath">
+            <summary>
+            The path of the generated file.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.IFed940Service">
+            <summary>
+            A service to generate Fed940.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IFed940Service.GenerateFormModels(System.String,System.Int32,System.Int32,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Generate the form model needed for the fed940.
+            </summary>
+            <param name="clientId">The client ID.</param>
+            <param name="quarter">The quarter.</param>
+            <param name="year">The year.</param>
+            <param name="correlationId">The correlation ID.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A list of forms and their models.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.IFed941Service">
+            <summary>
+            An instance of the Fed941Service.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IFed941Service.Generate(System.String,System.Int32,System.Int32,System.String,System.Int32,System.DateTime,System.DateTime,System.Guid,System.Threading.CancellationToken)">
+            <summary> 
+            Generates a Fed941 PDF 
+            </summary> 
+            <param name="clientId">The clientId</param> 
+            <param name="quarter">The quarter.</param> 
+            <param name="year">The year</param> 
+            <param name="clientTin">The Client Tin</param> 
+            <param name="ledgerId">The ledgerId</param> 
+            <param name="fromDate">The from date.</param> 
+            <param name="toDate">The to date.</param> 
+            <param name="correlationId">A correlationId</param> 
+            <param name="cancellationToken">A cancellation token.</param> 
+            <returns>The path to the temp file.</returns> 
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IFed941Service.GenerateFormModels(System.String,System.Int32,System.Int32,System.String,System.Int32,System.DateTime,System.DateTime,System.Guid,System.Threading.CancellationToken)">
+            <summary> 
+            Genertes the form models needed for the fed941 
+            </summary> 
+            <param name="clientId">The clientId</param> 
+            <param name="quarter">The quarter.</param> 
+            <param name="year">The year</param> 
+            <param name="clientTin">The Client Tin</param> 
+            <param name="ledgerId">The ledgerId</param> 
+            <param name="fromDate">The from date.</param> 
+            <param name="toDate">The to date.</param> 
+            <param name="correlationId">A correlationId</param> 
+            <param name="cancellationToken">A cancellation token.</param> 
+            <returns>A list of forms and their models.</returns> 
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService">
+            <summary>
+            An implementation of the Legacy Document Folder Service.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService.GetFolderByName(System.String)">
+            <summary>
+            Gets the The Document by Name
+            </summary>
+            <param name="folderName">The name of the folder to find.</param>
+            <returns>The <see cref="T:TaxHub.PackageGeneration.Models.LegacyDocumentFolder"/></returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.IPackageGenerationProcessor">
+            <summary>
+            Interface for implementation of a Package Generation Processor for a specific <see cref="F:TaxHub.PackageGeneration.Models.PackageType.LegacyQuarterEnd"/> type.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationProcessor.GeneratePackage(System.Guid,System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object},System.Guid,System.Guid,System.String,System.Guid,System.Func{System.Collections.Generic.Dictionary{System.String,System.Object},System.Threading.Tasks.Task{System.Boolean}},System.Threading.CancellationToken)">
+            <summary>
+            Generates a package.
+            </summary>
+            <param name="packageGenerationRequestId">The Id of the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/>.</param>
+            <param name="parameters">The parameters from <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/>.</param>
+            <param name="checkPointInfo">The current checkpoint state from <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/>.</param>
+            <param name="correlationId">The current correlationId.</param>
+            <param name="userId">The user's Id.</param>
+            <param name="userName">The user's name.</param>
+            <param name="originatingEventId">The id of the originating event.</param>
+            <param name="checkpointMarker">The Func for the marking of the checkpoint.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The result of package generation.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationProcessor.InitializeNewCheckpointInstance">
+            <summary>
+            Initializes a new instance of the typed-checkpoint for the specified <see cref="T:TaxHub.PackageGeneration.Models.PackageType"/>.
+            </summary>
+            <returns>The converted dictionary of the typed-checkpoint object.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.IPackageGenerationProcessorFactory">
+            <summary>
+            Factory for resolving the correct <see cref="T:TaxHub.PackageGeneration.Application.IPackageGenerationProcessor"/> for the corresponding <see cref="T:TaxHub.PackageGeneration.Models.PackageType"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationProcessorFactory.GetProcessor(TaxHub.PackageGeneration.Models.PackageType)">
+            <summary>
+            Resolves an implementation of <see cref="T:TaxHub.PackageGeneration.Application.IPackageGenerationProcessor"/>.
+            </summary>
+            <param name="packageType">The type of processor to create.</param>
+            <returns>The correct processor for the package type.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.IPackageGenerationService">
+            <summary>
+            Services related to <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/>
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationService.Create(TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Creates a new instance of <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/>
+            </summary>
+            <param name="packageGenerationCreateCommand">The  <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> create command.</param>
+            <param name="eventDataParams">The event data parameters.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>True for success.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationService.Generate(TaxHub.PackageGeneration.Models.Commands.PackageGenerationGenerateCommand,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Generates a package.
+            </summary>
+            <param name="generationGenerateCommand">Parameters required for package generation.</param>
+            <param name="eventDataParams">Event data Parameters.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The result of the generation process.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationService.FailRequest(System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Fails a package request.
+            </summary>
+            <param name="id">The id of the package generation request</param>
+            <param name="eventDataParams">Event data Parameters.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Returns true if failure, failure if method was unable mark the request as failed.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationService.FindByGeneratedPackageRemoteId(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Finds a <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> by the generated package's remote identifier.
+            </summary>
+            <param name="remoteIdentifier">The identifier in object storage</param>
+            <param name="cancellationToken">A cancellation token</param>
+            <returns>The found entity</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationService.CompleteRequest(System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Completes a package request.
+            </summary>
+            <param name="id">The id of the package generation request</param>
+            <param name="eventDataParams">Event data Parameters.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Returns true if failure, failure if method was unable mark the request as completed.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationService.FinalizeRequest(System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Finalize a package request.
+            </summary>
+            <param name="id">The id of the package generation request</param>
+            <param name="eventDataParams">Event data Parameters.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Returns true if failure, failure if method was unable mark the request as completed.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPackageGenerationService.GetLatestFileInfoIdsBySourceId(System.String,TaxHub.PackageGeneration.Models.PackageType,System.Threading.CancellationToken)">
+            <summary>
+            Gets latest FileInfoId by sourceId list
+            </summary>
+            <param name="sourceId">The sourceId.</param>
+            <param name="packageType">The packageType.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Returns PackageGenerationRequest</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.IPostQuarterEndService">
+            <summary>
+            An instance of <see cref="T:TaxHub.PackageGeneration.Application.IPostQuarterEndService"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPostQuarterEndService.GetPostQE(System.Guid,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Create a model from values in POST_QE table.
+            </summary>
+            <param name="correlationId">The correlation id for logging.</param>
+            <param name="postQeId">The POST_QE_ID of the row.</param>
+            <param name="cancellationToken">A cancellation token.</param>
+            <returns>A PostQE model or null if unsuccessful.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IPostQuarterEndService.UpdatePackageGenerationStatus(System.Guid,System.Int32,TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.Guid,System.DateTime,System.Threading.CancellationToken)">
+            <summary>
+            Updates the PackageGenerationStatus of a POST_QE row.
+            </summary>
+            <param name="correlationId">The correlation Id for logging.</param>
+            <param name="postQeId">The POST_QE_ID of the row.</param>
+            <param name="status">Status to change to.</param>
+            <param name="fileInfoId">The remoteIdentifier</param>
+            <param name="completedUtcDt">Timestamp of when the package was created.</param>
+            <param name="cancellationToken">A cancellation token.</param>
+            <returns>true if successful</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.IQuarterEndProcessingService">
+            <summary>
+            An instance of the Quarter End Processing Service
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IQuarterEndProcessingService.LockSession(System.Guid,System.String,System.Int32,System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Locks a Quarter End record in a session.
+            </summary>
+            <param name="sessionId">session id to create</param>
+            <param name="clientId">client id</param>
+            <param name="quarter">quarter</param>
+            <param name="year">year</param>
+            <param name="processorId">processing id</param>
+            <param name="cancellationToken">cancellation token</param>
+            <returns>The number of records locked</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.IQuarterEndProcessingService.UnlockSession(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Unlocks a session.
+            </summary>
+            <param name="sessionId">session id to unlock</param>
+            <param name="cancellationToken">cancellation token</param>
+            <returns>number of records unlocked</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.LegacyDocumentFolderService">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyDocumentFolderService.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.DataAccess.SqlDbStore.ILegacyDocumentFolderRepository)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Application.LegacyDocumentFolderService"/> class.
+            </summary>
+            <param name="appLogger">An instance of the logger.</param>
+            <param name="repository">An instance of the repository.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyDocumentFolderService.GetFolderByName(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.LegacyYePackageGenerationProcessor">
+            <summary>
+            Implementation class for <see cref="F:TaxHub.PackageGeneration.Models.PackageType.LegacyYearEnd"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyYePackageGenerationProcessor.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationParametersMapper,TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationCheckpointInfoMapper,TaxHub.CommonServices.SqlReportingServices.Application.ISsrsReportProvider,TaxHub.CommonServices.FileManagement.Configuration.IFileServiceConfiguration,TaxHub.ObjectStorage.Integration.IObjectStoreServiceClient,TaxHub.Pdf.Abstractions.IPdfOperations,TaxHub.Hosting.Runtime.IHashProvider,TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService,TaxHub.Common.DataAccess.IReadOnlyObject{TaxHub.PackageGeneration.Application.IFed940Service},TaxHub.ObjectStorage.Integration.SwiftStack.ISwiftStackAuthTokenProvider,TaxHub.Common.Configuration.IHttpServiceLocator,SmartHub.Metrics.IAppMetricsFactory,TaxHub.PackageGeneration.Acl.Client.IClientServiceAdapter,TaxHub.PackageGeneration.Acl.Tenant.ITenantServiceAdapter,TaxHub.Common.DataAccess.IReadOnlyObject{TaxHub.PackageGeneration.Application.IW3Service},TaxHub.Messaging.IMessageHub)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Application.LegacyYePackageGenerationProcessor"/> class.
+            </summary>
+            <param name="appLogger">The logger class.</param>
+            <param name="generationParametersMapper">The <see cref="T:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationParametersMapper"/> instance.</param>
+            <param name="checkpointInfoMapper">The <see cref="T:TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationCheckpointInfoMapper"/> instance.</param>
+            <param name="ssrsReportProvider">The instance of an <see cref="T:TaxHub.CommonServices.SqlReportingServices.Application.ISsrsReportProvider"/></param>
+            <param name="fileServiceConfiguration">Instance of <see cref="T:TaxHub.CommonServices.FileManagement.Configuration.IFileServiceConfiguration"/></param>
+            <param name="objectStoreServiceClient">An instance of <see cref="T:TaxHub.ObjectStorage.Integration.IObjectStoreServiceClient"/></param>
+            <param name="hashProvider">Hash Provider</param>
+            <param name="documentFolderService">An instance of <see cref="T:TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService"/></param>
+            <param name="fed940Service">An instance of <see cref="T:TaxHub.PackageGeneration.Application.IFed940Service"/></param>
+            <param name="pdfOperations">An instance of <see cref="T:TaxHub.Pdf.Abstractions.IPdfOperations"/></param>
+            <param name="swiftStackAuthTokenProvider">An instance of <see cref="T:TaxHub.ObjectStorage.Integration.SwiftStack.ISwiftStackAuthTokenProvider"/></param>
+            <param name="httpServiceLocator">A <see cref="T:TaxHub.Common.Configuration.IHttpServiceLocator"/></param>
+            <param name="appMetricsFactory">An instance of <see cref="T:SmartHub.Metrics.IAppMetricsFactory"/></param>
+            <param name="clientServiceAdapter">The Adapter of <see cref="T:TaxHub.PackageGeneration.Acl.Client.IClientServiceAdapter"/></param>
+            <param name="tenantServiceAdapter">The Adapter of <see cref="T:TaxHub.PackageGeneration.Acl.Tenant.ITenantServiceAdapter"/></param>
+            <param name="irsW3Service">The Service of <see cref="T:TaxHub.PackageGeneration.Application.IW3Service"/></param>
+            <param name="messageHub">The message hub</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyYePackageGenerationProcessor.GeneratePackage(System.Guid,System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object},System.Guid,System.Guid,System.String,System.Guid,System.Func{System.Collections.Generic.Dictionary{System.String,System.Object},System.Threading.Tasks.Task{System.Boolean}},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Application.LegacyYePackageGenerationProcessor.RemoteFileIdFactory">
+            <summary>
+            Generates remote file ids
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyYePackageGenerationProcessor.InitializeNewCheckpointInstance">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.PackageGenerationProcessorFactory">
+            <summary>
+            An implementation that instantiates an <see cref="T:TaxHub.PackageGeneration.Application.IPackageGenerationProcessorFactory"/> based on the required <see cref="T:TaxHub.PackageGeneration.Models.PackageType"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationProcessorFactory.#ctor(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            The constructor.
+            </summary>
+            <param name="container">An instance of the Unity container.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationProcessorFactory.GetProcessor(TaxHub.PackageGeneration.Models.PackageType)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.PackageGenerationService">
+            <summary>
+            <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest" /> service implementation for <see cref="T:TaxHub.Shared.Services.Application.ISelfHealingService`1"/>.
+            </summary>
+            <summary>
+            <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest" /> service implementation.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.DiagnoseFailedEvent">
+            <summary>
+            Retrieves a diagnosis for all the Customer Package failed to consume Events.
+            </summary>
+            <returns>A List of Diagnosis</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.DiagnosePackagesInProgressAndPersisted(System.Guid)">
+            <summary>
+            Retrieves a diagnosis for all the Customer Packages that are stuck in an active phase (e.g. InProgress, Persisted)
+            </summary>
+            <param name="correlationId">The event correlation ID.</param>
+            <returns>A List of Diagnosis</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.FindRequestsStuckInStatus(TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.Guid)">
+            <summary>
+            Finds all the package generations in the given status for more than three hours.
+            </summary>
+            <param name="status">The package Generation status</param>
+            <param name="correlationId">The correlation ID.</param>
+            <returns>The list of package generation requests.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.Diagnose(System.Guid)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.Heal(System.Collections.Generic.IEnumerable{TaxHub.Shared.Services.Models.Diagnosis},System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.ReplayFailedToConsumeEvent(System.Guid,TaxHub.Shared.Services.Models.HealResult,System.Guid)">
+            <summary>
+            Re-queues failed to consume event into the message queue.
+            </summary>
+            <param name="id">The domain event data ID.</param>
+            <param name="healResult">The issue that will be resolved.</param>
+            <param name="eventDataCorrelationId">The correlation Id</param>
+            <returns>True if successful.</returns>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Application.PackageGenerationService.EventInstanceCreated">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.#ctor(TaxHub.PackageGeneration.DataAccess.IPackageGenerationRequestRepository,TaxHub.Messaging.IMessageHub,TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Application.IPackageGenerationProcessorFactory,SmartHub.Metrics.IAppMetricsFactory,TaxHub.Common.EventStore.IEventStoreRepository,TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration,TaxHub.Shared.Services.Application.IDateTime)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Application.PackageGenerationService"/> class.
+            </summary>
+            <param name="repository">An instance of <see cref="T:TaxHub.PackageGeneration.DataAccess.IPackageGenerationRequestRepository"/>.</param>
+            <param name="messageHub">An instance of <see cref="T:TaxHub.Messaging.IMessageHub"/></param>
+            <param name="logger">An instance of <see cref="T:TaxHub.Common.Logging.IAppLogger"/></param>
+            <param name="packageGenerationProcessorFactory">An instance of <see cref="T:TaxHub.PackageGeneration.Application.IPackageGenerationProcessorFactory"/></param>
+            <param name="appMetricsFactory">An instance of <see cref="T:SmartHub.Metrics.IAppMetricsFactory"/></param>
+            <param name="eventStoreRepository">An instance of <see cref="T:TaxHub.Common.EventStore.IEventStoreRepository"/></param>
+            <param name="packageGenerationConfiguration">An instance of <see cref="T:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration"/></param>
+            <param name="dateTime">An instance of <see cref="T:TaxHub.Shared.Services.Application.IDateTime"/></param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.InitializeNew(TaxHub.PackageGeneration.Models.PackageGenerationRequest)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.FindByGeneratedPackageRemoteId(System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.GetLatestFileInfoIdsBySourceId(System.String,TaxHub.PackageGeneration.Models.PackageType,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.CompleteRequest(System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.FailRequest(System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.FinalizeRequest(System.Guid,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.Create(TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <summary>
+            Creates a new instance of <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/>
+            </summary>
+            <param name="packageGenerationCreateCommand">The  <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> create command.</param>
+            <param name="eventDataParams">The event data parameters.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>True for success.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.Generate(TaxHub.PackageGeneration.Models.Commands.PackageGenerationGenerateCommand,TaxHub.Shared.Services.EventDataParams,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PackageGenerationService.GetRequestsByStatusAndLastModifiedThreshold(TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.TimeSpan,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves the list of requests with the given status and whose updated date is before the timespan.
+            </summary>
+            <param name="status">The request status.</param>
+            <param name="statusDuration">The timespan</param>
+            <param name="pagedData">The page size info.</param>
+            <param name="token">The cancellation token.</param>
+            <returns>A list of Package Generation requests. With page size of 100.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.PdfOperationExtensions">
+            <summary>
+            Holds extension methods for <see cref="T:TaxHub.Pdf.Abstractions.IPdfOperations"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PdfOperationExtensions.BuildFileDownloaderForPdfOperationFromObjectStorage(TaxHub.Pdf.Abstractions.IPdfOperations,TaxHub.ObjectStorage.Integration.IObjectStoreServiceClient,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Prepares the <see cref="P:TaxHub.Pdf.ITextSharp.PdfItextSharpOperationOptions.RemoteFileDownloader"/> for use with Object Storage.
+            </summary>
+            <param name="pdfOperations">A PDFOperations Object</param>
+            <param name="objectStoreServiceClient">An object storage client</param>
+            <param name="correlationId">The correlation Id</param>
+            <param name="cancellationToken">A cancellation Token.</param>
+            <returns>A func to download files from object storage</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.PostQuarterEndService">
+            <summary>
+            PostQE Service for POST_QE table.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PostQuarterEndService.#ctor(TaxHub.PackageGeneration.DataAccess.SqlDbStore.IPostQuarterEndRepository,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Creates an instance of a PostQuarterEndService.
+            </summary>
+            <param name="repository">The PostQE repository.</param>
+            <param name="logger">A logger.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PostQuarterEndService.UpdatePackageGenerationStatus(System.Guid,System.Int32,TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.Guid,System.DateTime,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.PostQuarterEndService.GetPostQE(System.Guid,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.QuarterEndProcessingService">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.QuarterEndProcessingService.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.DataAccess.SqlDbStore.IQuarterEndProcessingRepository)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Application.QuarterEndProcessingService"/> class.
+            </summary>
+            <param name="appLogger">An instance of the logger.</param>
+            <param name="repository">An instance of the repository.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.QuarterEndProcessingService.LockSession(System.Guid,System.String,System.Int32,System.Int32,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.QuarterEndProcessingService.UnlockSession(System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.RemoteReportServerConfiguration">
+            <summary>
+            An implementation of <see cref="T:TaxHub.CommonServices.SqlReportingServices.Application.IRemoteReportServerConfiguration"/> that reads SSRS configuration values from a <see cref="T:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration"/> instance.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.RemoteReportServerConfiguration.#ctor(TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Application.RemoteReportServerConfiguration"/> class.
+            </summary>
+            <param name="configuration">The package generation configuration instance.</param>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Application.RemoteReportServerConfiguration.SsrsServiceUri">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Application.RemoteReportServerConfiguration.ReportPath">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Application.RemoteReportServerConfiguration.IsLocalReportServer">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Application.LegacyQePackageGenerationProcessor">
+            <summary>
+            Implementation class for <see cref="F:TaxHub.PackageGeneration.Models.PackageType.LegacyQuarterEnd"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyQePackageGenerationProcessor.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationParametersMapper,TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationCheckpointInfoMapper,TaxHub.CommonServices.SqlReportingServices.Application.ISsrsReportProvider,TaxHub.CommonServices.FileManagement.Configuration.IFileServiceConfiguration,TaxHub.Common.DataAccess.IReadOnlyObject{TaxHub.PackageGeneration.Application.IFed941Service},TaxHub.Common.DataAccess.IReadOnlyObject{TaxHub.PackageGeneration.Application.IFed940Service},TaxHub.ObjectStorage.Integration.IObjectStoreServiceClient,TaxHub.Pdf.Abstractions.IPdfOperations,TaxHub.Hosting.Runtime.IHashProvider,TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService,TaxHub.ObjectStorage.Integration.SwiftStack.ISwiftStackAuthTokenProvider,TaxHub.Common.Configuration.IHttpServiceLocator,SmartHub.Metrics.IAppMetricsFactory,TaxHub.Common.Configuration.IFeatureToggleConfiguration)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Application.LegacyQePackageGenerationProcessor"/> class.
+            </summary>
+            <param name="appLogger">The logger class.</param>
+            <param name="generationParametersMapper">The <see cref="T:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationParametersMapper"/> instance.</param>
+            <param name="checkpointInfoMapper">The <see cref="T:TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationCheckpointInfoMapper"/> instance.</param>
+            <param name="ssrsReportProvider">The instance of an <see cref="T:TaxHub.CommonServices.SqlReportingServices.Application.ISsrsReportProvider"/></param>
+            <param name="fileServiceConfiguration">Instance of <see cref="T:TaxHub.CommonServices.FileManagement.Configuration.IFileServiceConfiguration"/></param>
+            <param name="fed941Service">Instance of <see cref="T:TaxHub.PackageGeneration.Application.IFed941Service"/></param>
+            <param name="fed940Service">Instance o <see cref="T:TaxHub.PackageGeneration.Application.IFed940Service"/></param>
+            <param name="objectStoreServiceClient">An instance of <see cref="T:TaxHub.ObjectStorage.Integration.IObjectStoreServiceClient"/></param>
+            <param name="hashProvider">Hash Provider</param>
+            <param name="documentFolderService">An instance of <see cref="T:TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService"/></param>
+            <param name="pdfOperations">An instance of <see cref="T:TaxHub.Pdf.Abstractions.IPdfOperations"/></param>
+            <param name="swiftStackAuthTokenProvider">An instance of <see cref="T:TaxHub.ObjectStorage.Integration.SwiftStack.ISwiftStackAuthTokenProvider"/></param>
+            <param name="httpServiceLocator">A <see cref="T:TaxHub.Common.Configuration.IHttpServiceLocator"/></param>
+            <param name="appMetricsFactory">An instance of <see cref="T:SmartHub.Metrics.IAppMetricsFactory"/></param>
+            <param name="featureToggleConfiguration">The feature toggle configuration.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyQePackageGenerationProcessor.GeneratePackage(System.Guid,System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object},System.Guid,System.Guid,System.String,System.Guid,System.Func{System.Collections.Generic.Dictionary{System.String,System.Object},System.Threading.Tasks.Task{System.Boolean}},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyQePackageGenerationProcessor.MergeFiles(System.Collections.Generic.IEnumerable{TaxHub.Pdf.Abstractions.PdfOperation},TaxHub.Pdf.Abstractions.PdfOperationContext,TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters,TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfo,System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Merges the list of files in batches of nine. Since the forms engine service has a defect.
+            Forms engines is sorting by alpha and not by alphanumeric.
+            </summary>
+            <param name="filesToMerge">The files to merge.</param>
+            <param name="context">The pdf operation context.</param>
+            <param name="parameters">The QE package generation parameters.</param>
+            <param name="checkPointInfo">The intermediary file checkpoint info.</param>
+            <param name="correlationId">The correlation ID.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The result of the pdf merge.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Application.LegacyQePackageGenerationProcessor.InitializeNewCheckpointInstance">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Controller.LegacyDocumentFolderServiceController">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Controller.LegacyDocumentFolderServiceController.#ctor(TaxHub.PackageGeneration.Application.ILegacyDocumentFolderService,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Controller.LegacyDocumentFolderServiceController"/> class.
+            </summary>
+            <param name="legacyDocumentService">The legacy Document service.</param>
+            <param name="appLogger">The logger</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Controller.LegacyDocumentFolderServiceController.GetAsync(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Retrieves folder path information.
+            </summary>
+            <param name="folderName">The Folder name.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The folder path.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Events.PackageGenerationRequestSelfHealEvent">
+            <summary>
+            The tax.package-generation-request.self-heal event details.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.EventName">
+            <summary>
+            The name of the event raised when YeFileInfo is exported.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.TaxYear">
+            <summary>
+            The Tax Year
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.PackageType">
+            <summary>
+            The type of package being requested.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.RemoteIdentifier">
+            <summary>
+            The remote identifier used in object storage for the generated package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.RemoteContainer">
+            <summary>
+            The remote container used in object storage.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.FileName">
+            <summary>
+            The name of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.Hash">
+            <summary>
+            The Hash of the file contents
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.FileType">
+            <summary>
+            The Type of File
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.DocumentType">
+            <summary>
+            The type of Document
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.Size">
+            <summary>
+            The size of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.FilePath">
+            <summary>
+            The virtual path of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.Status">
+            <summary>
+            The current status of the package request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.TaxYearEndW3GeneratedEvent.FileExpiration">
+            <summary>
+            Expiration date of file stored in Object Storage
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Events.PackageGenerationRequestFinalizeEvent">
+            <summary>
+            Occurs when the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> aggregate instance <see cref="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.Status"/> is changed to <see cref="F:TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus.Failed"/> or <see cref="F:TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus.Completed"/>.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Events.PackageGenerationRequestFinalizeEvent.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFinalizeEvent.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFinalizeEvent.PackageType">
+            <summary>
+            The type of package being requested.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFinalizeEvent.SourceId">
+            <summary>
+            Id of the corresponding source record from the requester.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFinalizeEvent.Status">
+            <summary>
+            The current status of the package request.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent">
+            <summary>
+            Occurs when the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> aggregate instance <see cref="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.Status"/> is changed to <see cref="F:TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus.Persisted"/>.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent"/> class.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.PackageType">
+            <summary>
+            The type of package being requested.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.RemoteIdentifier">
+            <summary>
+            The remote identifier used in object storage for the generated package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.RemoteContainer">
+            <summary>
+            The remote container used in object storage.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.FileName">
+            <summary>
+            The name of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.Hash">
+            <summary>
+            The Hash of the file contents
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.FileType">
+            <summary>
+            The Type of File
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.DocumentType">
+            <summary>
+            The type of Document
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.Size">
+            <summary>
+            The size of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.FilePath">
+            <summary>
+            The virtual path of the file
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.Status">
+            <summary>
+            The current status of the package request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestPersistedEvent.FileExpiration">
+            <summary>
+            Expiration date of file stored in Object Storage
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Events.PackageGenerationRequestFailedEvent">
+            <summary>
+            Occurs when the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> aggregate instance <see cref="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.Status"/> is changed to <see cref="F:TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus.Failed"/>.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Events.PackageGenerationRequestFailedEvent.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFailedEvent.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFailedEvent.PackageType">
+            <summary>
+            The type of package being requested.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFailedEvent.SourceId">
+            <summary>
+            Id of the corresponding source record from the requester.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFailedEvent.Status">
+            <summary>
+            The current status of the package request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestFailedEvent.RemoteIdentifier">
+            <summary>
+            The remote identifier used in object storage for the generated package.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent">
+            <summary>
+            Occurs when the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> aggregate instance <see cref="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.Status"/> is changed to <see cref="F:TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus.Completed"/>.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.PackageType">
+            <summary>
+            The type of package being requested.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.SourceId">
+            <summary>
+            Id of the corresponding source record from the requester.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.FileInfoId">
+            <summary>
+            The Id of the <see cref="T:TaxHub.CommonServices.FileManagement.Models.FileInfo"/> instance of the generated package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.Status">
+            <summary>
+            The current status of the package request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.RemoteIdentifier">
+            <summary>
+            The remote identifier used in object storage for the generated package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.RemoteContainer">
+            <summary>
+            The remote container name used in object storage.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.CompletedUtcDt">
+            <summary>
+            Timestamp of when the package was created.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCompletedEvent.Parameters">
+            <summary>
+            A PackageType-Specific dictionary of checkpoint information objects.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Events.PackageGenerationRequestStartedEvent">
+            <summary>
+            Occurs when the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> aggregate instance <see cref="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.Status"/> is changed to <see cref="F:TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus.InProgress"/>.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Events.PackageGenerationRequestStartedEvent.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestStartedEvent.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestStartedEvent.PackageType">
+            <summary>
+            The type of package being requested.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestStartedEvent.SourceId">
+            <summary>
+            Id of the corresponding source record from the requester.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestStartedEvent.Status">
+            <summary>
+            The current status of the package request.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Events.PackageGenerationRequestCheckpointInfoUpdatedEvent">
+            <summary>
+            Event message that is raised when the CheckpointInfo property is changed on the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> instance.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Events.PackageGenerationRequestCheckpointInfoUpdatedEvent.EventName">
+            <summary>
+            The name of the event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCheckpointInfoUpdatedEvent.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCheckpointInfoUpdatedEvent.TenantId">
+            <summary>
+            The Tenant Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCheckpointInfoUpdatedEvent.PackageType">
+            <summary>
+            The type of package being requested.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCheckpointInfoUpdatedEvent.Status">
+            <summary>
+            The current status of the package request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Events.PackageGenerationRequestCheckpointInfoUpdatedEvent.CheckpointInfo">
+            <summary>
+            A PackageType-Specific Checkpoint Information Object.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber">
+            <summary>
+            Message subscriber for <see cref="F:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.EventStartedName"/>, <see cref="F:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.EventFailedName"/>, <see cref="F:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.PersistedCompletedName"/>, and <see cref="F:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.EventFailedName"/> events.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.EventStartedName">
+            <summary>Event name indicating package request started subscriber listens to.</summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.EventFailedName">
+            <summary>Event name indicating package request failed subscriber listens to.</summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.EventCompletedName">
+            <summary>Event name indicating package request completed subscriber listens to.</summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.PersistedCompletedName">
+            <summary>Event name indicating package request completed subscriber listens to.</summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Application.IPackageGenerationService,TaxHub.PackageGeneration.Acl.YearEndProcessing.IYearEndTaxProcessingAdapter,TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationCheckpointInfoMapper)">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="packageGenerationService">The package generation service.</param>
+            <param name="adapter">The YearEndPostReServiceAdapter adapter</param>
+            <param name="checkpointInfoMapper">Checkpoint mapper</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.YearEndPackageStatusChangeMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.YearEndPackageRequestedMessageSubscriber">
+            <summary>
+            Message subscriber for <see cref="F:TaxHub.PackageGeneration.Messaging.YearEndPackageRequestedMessageSubscriber.EventName"/> event.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.YearEndPackageRequestedMessageSubscriber.EventName">
+            <summary>The event name this subscriber listens to.</summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.YearEndPackageRequestedMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Application.IPackageGenerationService,TaxHub.PackageGeneration.Acl.ILegacyYePackageGenerationParametersMapper)">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.PackageGeneration.Messaging.YearEndPackageRequestedMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="packageGenerationService">The package generation service</param>
+            /// <param name="legacyYeMapper">The ILegacyYePackageGenerationParametersMapper mapper</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.YearEndPackageRequestedMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <summary>
+            Consumes event <see cref="F:TaxHub.PackageGeneration.Messaging.YearEndPackageRequestedMessageSubscriber.EventName"/> and creates the Package.
+            If it fails an Event Fail message is raised.
+            </summary>
+            <param name="eventName">The event name to consume.</param>
+            <param name="eventData">The event data.</param>
+            <returns>true is successful, else false.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.YearEndW3RequestedMessageSubscriber">
+            <summary>
+            Message subscriber for <see cref="F:TaxHub.PackageGeneration.Messaging.YearEndW3RequestedMessageSubscriber.EventName"/> event.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestSelfHealMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Shared.Services.Application.ISelfHealingService{TaxHub.PackageGeneration.Application.PackageGenerationService})">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestSelfHealMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="selfHealingService">The self healing service.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestSelfHealMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestCreatedMessageSubscriber">
+            <summary>
+            Subscriber that listens to <see cref="F:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestCreatedMessageSubscriber.EventName"/> event.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestCreatedMessageSubscriber.EventName">
+            <summary>Event name subscriber listens to.</summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestCreatedMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Application.IPackageGenerationService)">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestCreatedMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="packageGenerationService">The package generation service</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.PackageGenerationRequestCreatedMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc></inheritdoc>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.PackageFinalizeMessageSubscriber">
+            <summary>
+            Message subscriber for <see cref="F:TaxHub.PackageGeneration.Messaging.PackageFinalizeMessageSubscriber.EventFinalizeName"/> event.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.PackageFinalizeMessageSubscriber.EventFinalizeName">
+            <summary>Event name indicating package request finalize.</summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.PackageFinalizeMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.PackageGeneration.Messaging.PackageFinalizeMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.PackageFinalizeMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.QuarterEndPackageRequestedMessageSubscriber">
+            <summary>
+            Message subscriber for <see cref="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageRequestedMessageSubscriber.EventName"/> event.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageRequestedMessageSubscriber.EventName">
+            <summary>The event name this subscriber listens to.</summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.QuarterEndPackageRequestedMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Application.IPackageGenerationService,TaxHub.PackageGeneration.Acl.ILegacyQePackageGenerationParametersMapper)">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.PackageGeneration.Messaging.QuarterEndPackageRequestedMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="packageGenerationService">The package generation service</param>
+            /// <param name="legacyQeMapper">The ILegacyQePackageGenerationParametersMapper mapper</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.QuarterEndPackageRequestedMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <summary>
+            Consumes event <see cref="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageRequestedMessageSubscriber.EventName"/> and creates the Package.
+            If it fails an Event Fail message is raised.
+            </summary>
+            <param name="eventName">The event name to consume.</param>
+            <param name="eventData">The event data.</param>
+            <returns>true is successful, else false.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.GeneratedPackageLinkedSetToCompletedMessageSubscriber">
+            <summary>
+            Message subscriber for tax.file.generated events.
+            This subscriber listens for all files created and determines if the file is one that was generated as a result of a <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/>.
+            It then changes the status of the package generation request to completed or failed.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.GeneratedPackageLinkedSetToCompletedMessageSubscriber.EventName">
+            <summary>Event name indicating package request started subscriber listens to.</summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.GeneratedPackageLinkedSetToCompletedMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Application.IPackageGenerationService)">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="packageGenerationService">The package generation service.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.GeneratedPackageLinkedSetToCompletedMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber">
+            <summary>
+            Message subscriber for <see cref="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.EventStartedName"/>, <see cref="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.EventFailedName"/>, <see cref="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.PersistedCompletedName"/>, and <see cref="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.EventFailedName"/> events.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.EventStartedName">
+            <summary>Event name indicating package request started subscriber listens to.</summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.EventFailedName">
+            <summary>Event name indicating package request failed subscriber listens to.</summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.EventCompletedName">
+            <summary>Event name indicating package request completed subscriber listens to.</summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.PersistedCompletedName">
+            <summary>Event name indicating package request completed subscriber listens to.</summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.PackageGeneration.Application.IPostQuarterEndService,TaxHub.PackageGeneration.Application.IQuarterEndProcessingService,TaxHub.PackageGeneration.Application.IPackageGenerationService)">
+            <summary>
+            Creates an instance of <see cref="T:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber"></see>/>
+            </summary>
+            <param name="logger">The logger.</param>
+            <param name="postQEService">The post qe service</param>
+            <param name="qeProcessingService">The qe processing service.</param>
+            <param name="packageGenerationService">The package generation service.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.QuarterEndPackageStatusChangeMessageSubscriber.ConsumeEvent(System.String,TaxHub.Common.EventStore.DomainEventData)">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Messaging.SystemCommandPackageGenerationSubscriber">
+            <summary>
+            Class provides subscriber functionality for the system-command event.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Messaging.SystemCommandPackageGenerationSubscriber.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Hosting.Runtime.IDomainService)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="logger">The application logger.</param>
+            <param name="domainService">The domain service.</param>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo">
+            <summary>
+            Class used as the <see cref="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.CheckpointInfo"/> for the Legacy YE Package Implementation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo.YearEndPkgIRSW3Form">
+            <summary>
+            Represents the status of the YearEndPkgIRSW3Form report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo.Merged">
+            <summary>
+            Represents the status of the merge of all other files in the process.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo.YearEndPkgCoverLetter">
+            <summary>
+            Represents the status of the YearEndPkgCoverLetter form generation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo.YearEndPkgStmtOfFilingReports">
+            <summary>
+            Represents the status of the YearEndPkgStmtOfFilingReports report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo.YearEndPkgReconRecapReport">
+            <summary>
+            Represents the status of the YearEndPkgReconRecapReport report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationCheckpointInfo.YearEndPkgFed940Form">
+            <summary>
+            Represents the status of the Fed940 report.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters">
+            <summary>
+            The Legacy Year End typed Additional Parameters class.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.PackageType">
+            <summary>
+            An enum denoting the type of package to generate.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageType.Unknown">
+            <summary>
+            The default value, unspecified.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageType.LegacyQuarterEnd">
+            <summary>
+            Used to specify a Legacy Quarter End Package.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageType.LegacyYearEnd">
+            <summary>
+            Used to specify a Legacy Year End Package.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.PackageGenerationSelfHealingIssueTypes">
+            <summary>
+            An enum denoting the type of issue found
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationSelfHealingIssueTypes.FailedEventReplay">
+            <summary>
+            A FailedToConsume event
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationSelfHealingIssueTypes.StuckPackageGenerationRequestFail">
+            <summary>
+            Requests stuck in an active state for a long period of time.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.LegacyDocumentFolder">
+            <summary>
+            Model for Employee
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.LegacyDocumentFolder.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Models.LegacyDocumentFolder"/> class.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyDocumentFolder.FolderName">
+            <summary>
+            The name of the folder.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyDocumentFolder.FolderPath">
+            <summary>
+            The path of the folder
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResultStatus">
+            <summary>
+            Status of the package generation process.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResultStatus.Unknown">
+            <summary>
+            Should never be used.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResultStatus.Completed">
+            <summary>
+            Package generated sucessfully.
+            </summary>
+            
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResultStatus.Failed">
+            <summary>
+            Package failed to generate.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.PackageGenerationRequestGenerateResult">
+            <summary>
+            The result object from the package generation service.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequestGenerateResult.Status">
+            <summary>
+            Status of the package generation request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequestGenerateResult.RemoteIdentifier">
+            <summary>
+            The id of the <see cref="T:TaxHub.CommonServices.FileManagement.Models.FileInfo"/> for generated package file if it completed successfully.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequestGenerateResult.IsReprocessedRequest">
+            <summary>
+            Signals the current result object was generated as part of duplicate event processing and is safe to discard as the work has been performed already.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.PackageGenerationResultStatus">
+            <summary>
+            Status of the package generation process.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationResultStatus.Unknown">
+            <summary>
+            Should never be used.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationResultStatus.Completed">
+            <summary>
+            Package generated sucessfully.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationResultStatus.Failed">
+            <summary>
+            Package failed to generate.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.Commands.PackageGenerationUpdateCheckpointInfoCommand">
+            <summary>
+            Command object for Updating a <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> entity.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationUpdateCheckpointInfoCommand.CheckpointInfo">
+            <summary>
+            The checkpoint information for the specific <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> instance.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationUpdateCheckpointInfoCommand.Id">
+            <summary>
+            The Id of the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> instance to create.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand">
+            <summary>
+            Command object for Creating a <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> entity.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand.SourceId">
+            <summary>
+            The Id of the source record for the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> instance.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand.Parameters">
+            <summary>
+            A list of parameters from the request that should be passed to the appropriate <see cref="T:TaxHub.PackageGeneration.Application.IPackageGenerationProcessor"/>.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand.PackageType">
+            <summary>
+            The <see cref="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand.PackageType"/> to generate.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand.ClientId">
+            <summary>
+            The Id of the Client.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand.RequestedUtcDt">
+            <summary>
+            The timestamp of the request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand.Id">
+            <summary>
+            The Id of the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> instance to create.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationCreateCommand.TenantId">
+            <summary>
+            The Id of the Tenant.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.Commands.PackageGenerationGenerateCommand">
+            <summary>
+            Command object for Generating a Package
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationGenerateCommand.Id">
+            <summary>
+            The Id of the <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> instance to generate a package for.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.Commands.PackageGenerationGenerateCommand.OriginatingEventId">
+            <summary>
+            The of the requesting event id. Should be unique to each request.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult">
+            <summary>
+            Result object for Package Generation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.CheckpointInfo">
+            <summary>
+            Dictionary of checkpoint information.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.Status">
+            <summary>
+            Status of the package generation request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.FileName">
+            <summary>
+            File name
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.FilePath">
+            <summary>
+            File path
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.Hash">
+            <summary>
+            File hash
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.DocumentType">
+            <summary>
+            Document type
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.FileType">
+            <summary>
+            File Type
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.RemoteIdentifier">
+            <summary>
+            Remote identifier
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.RemoteContainer">
+            <summary>
+            Remote container
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.Size">
+            <summary>
+            File size
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult.FileExpiration">
+            <summary>
+            Expiration date of file stored in Object Storage
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfo">
+            <summary>
+            Class representing the status of an intermediary file in the package generation process.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfo.Status">
+            <summary>
+            Status of the intermediary file.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfo.FileId">
+            <summary>
+            The id of the <see cref="P:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfo.FileId"/> instance.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfo.ToString">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfo.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfoStatus">
+            <summary>
+            Possible status values for the <see cref="T:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfo"/>.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfoStatus.Unknown">
+            <summary>
+            An unknown status, should never be used.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfoStatus.Created">
+            <summary>
+            The intermediary file has been created.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfoStatus.CreatedAndStored">
+            <summary>
+            The intermediary file has been created and stored in the associated object store remote identifier.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfoStatus.CreatedAndDeleted">
+            <summary>
+            The intermediary file has been processed and successfully deleted.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfoStatus.Failed">
+            <summary>
+            The process failed.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.IntermediaryFileCheckPointInfoStatus.NotRequired">
+            <summary>
+            The intermediary file is not required for this execution context.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters">
+            <summary>
+            The Legacy Quarter End typed Additional Parameters class.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo">
+            <summary>
+            Class used as the <see cref="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.CheckpointInfo"/> for the Legacy QE Package Implementation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.QtrEndPkgEeWages">
+            <summary>
+            Represents the status of the QtrEndPkgEeWages report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.Merged">
+            <summary>
+            Represents the status of the merge of all other files in the process.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.QtrEndPkgCoverLetter">
+            <summary>
+            Represents the status of the QtrEndPkgCoverLetter form generation.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.QtrEndPkgReconRecap">
+            <summary>
+            Represents the status of the QtrEndPkgReconRecap report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.QtrEndPkgReconDetails">
+            <summary>
+            Represents the status of the QtrEndPkgReconRecap report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.QtrEndPkgDepositRecap">
+            <summary>
+            Represents the status of the QtrEndPkgReconRecap report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.CompanyTaxProfile">
+            <summary>
+            Represents the status of the CompanyTaxProfile report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.QtrEndPkgStmtOfDeposit">
+            <summary>
+            Represents the status of the QtrEndPkgStmtOfDeposit report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.Fed941">
+            <summary>
+            Represents the status of the Fed941 report.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo.Fed940">
+            <summary>
+            Represents the status of the Fed940 report.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest">
+            <summary>
+            Aggregate for the Package Generation Request
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.PackageGenerationRequest.InitializeNew(TaxHub.PackageGeneration.Models.PackageGenerationRequest)">
+            <summary>
+            Factory method that creates a new <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/>
+            </summary>
+            <param name="packageGenerationRequestInstance"> The Package Generation Request Instance </param>
+            <returns> The new Package Generation Request</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.PackageGenerationRequest.UpdateCheckpointInfo(TaxHub.PackageGeneration.Models.Commands.PackageGenerationUpdateCheckpointInfoCommand)">
+            <summary>
+            Updates the CheckpointInfo property of a <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> instance if it has changed and raises an event.
+            </summary>
+            <param name="packageGenerationUpdateCheckpointInfoCommand">The command object to update the checkpoint.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.PackageGenerationRequest.MarkPackagePersisted(TaxHub.PackageGeneration.Models.PackageGenerationProcessorResult)">
+            <summary>
+            Mark a Package Generation request as having completed and been persisted.
+            </summary>
+            <param name="packageGenerationProcessorResult">The result returned by <see cref="M:TaxHub.PackageGeneration.Application.IPackageGenerationProcessor.GeneratePackage(System.Guid,System.Collections.Generic.Dictionary{System.String,System.Object},System.Collections.Generic.Dictionary{System.String,System.Object},System.Guid,System.Guid,System.String,System.Guid,System.Func{System.Collections.Generic.Dictionary{System.String,System.Object},System.Threading.Tasks.Task{System.Boolean}},System.Threading.CancellationToken)"/>.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.PackageGenerationRequest.CompletePackage">
+            <summary>
+            Mark a Package Generation request as having completed successfully.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.PackageGenerationRequest.StartPackage">
+            <summary>
+            Mark a Package Generation request as being inprogress successfully.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.PackageGenerationRequest.FailPackage">
+            <summary>
+            Mark a Package Generation request as having not completed successfully.
+            </summary>
+        </member>
+        <member name="F:TaxHub.PackageGeneration.Models.PackageGenerationRequest.EventName">
+            <summary>
+            The name of the created event.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.ClientId">
+            <summary>
+            The Client Id
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.PackageType">
+            <summary>
+            The type of package being requested.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.Status">
+            <summary>
+            The current status of the package request.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.SourceId">
+            <summary>
+            Id of the corresponding source record from the requester.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.HashKey">
+            <summary>
+             Unique key initially set to '{packageType}{sourceId}'
+             if status == [Completed || Failed ], value is set to "PackageGenerationId" to prevent concurrent duplicate requests
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.RequestedUtcDt">
+            <summary>
+            Timestamp of when the user requested the package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.CompletedUtcDt">
+            <summary>
+            Timestamp of when the package was completed.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.RemoteIdentifier">
+            <summary>
+            The Remote identifier for the generated package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.CheckpointInfo">
+            <summary>
+            A PackageType-Specific Checkpoint Information Object.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.Parameters">
+            <summary>
+            A PackageType-Specific dictionary of checkpoint information objects.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PackageGenerationRequest.RemoteContainer">
+            <summary>
+            The name of the remote container for the file.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Models.PostQuarterEnd">
+            <summary>
+            A class representing a representing a PostQE package/row from POST_QE table.
+            </summary>
+            <summary>
+            A class representing a representing a PostQE package/row from POST_QE table.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.PostQuarterEnd.CanTransitionStatus(TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus)">
+            <summary>
+            Controls the status change and ensures state machine remains valid.
+            </summary>
+            <param name="newStatus">The status to attempt to set.</param>
+            <returns>True if a change was made.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Models.PostQuarterEnd.SetStatus(TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.Guid,System.DateTime)">
+            <summary>
+            Change package generation to new status and set fileInfoId when status is completed
+            </summary>
+            <param name="newStatus">new status</param>
+            <param name="fileInfoId">The RemoteIdentifier</param>
+            <param name="completedUtcDt">Timestamp of when the package was created.</param>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.Id">
+            <summary>
+            The id of the record.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.PackageGenerationStatus">
+            <summary>
+            Current status of package. <see cref="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.PackageGenerationStatus"/>
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.Year">
+            <summary>
+            Year of quarter end package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.Quarter">
+            <summary>
+            Quarter of package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.Period">
+            <summary>
+            Period of package. Business rule QUARTER Concat YEAR.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.ClientId">
+            <summary>
+            The client ID.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.ModifyUser">
+            <summary>
+            The user modifying the Package.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.ParentChildAggregationStatus">
+            <summary>
+            Flag to indicate if this is an aggregate record
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.ModifyUtcDt">
+            <summary>
+            The last modified date.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.PackageGenerationCompletedUtcDt">
+            <summary>
+            Timestamp of when the package was created.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Models.PostQuarterEnd.PackageGenerationFileInfoId">
+            <summary>
+            The FileInfo Id of the latest QE package.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration">
+            <summary>
+            Configuration used by PackageGeneration
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration.LegacyPtmSsrs">
+            <summary>
+            The URL for the Legacy PTM SSRS Service.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration.LocalReportServer">
+            <summary>
+            Denotes we're using the local SSRS Instance
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration.SsrsReportPath">
+            <summary>
+            The base path for the reports.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration.FormsInputPath">
+            <summary>
+            The base path of the input forms.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration.PackageRequestExpirationTimeInMinutes">
+            <summary>
+            The elapsed time in minutes before a package generation request is considered expired when the request is in an active status.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration">
+            <summary>
+            PackageGeneration Configuration
+            </summary>
+            <seealso cref="T:TaxHub.PackageGeneration.Configuration.IPackageGenerationConfiguration" />
+            <seealso cref="T:TaxHub.Configuration.IConfigSection" />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration"/> class.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration.ConfigurationRefreshed(TaxHub.Configuration.IConfigSection)">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration.LegacyPtmSsrs">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration.LocalReportServer">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration.SsrsReportPath">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration.FormsInputPath">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.Configuration.PackageGenerationConfiguration.PackageRequestExpirationTimeInMinutes">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.EntityMappings.PostQuarterEndMap">
+            <summary>
+            Mapping <see cref="T:TaxHub.PackageGeneration.Models.PostQuarterEnd"/> to POST_QE table.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.EntityMappings.PostQuarterEndMap.#ctor">
+            <summary>
+            Creates an instance of a PostQuarterEndMap.
+            </summary>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.ILegacyDocumentFolderContextFactory">
+            <summary>
+            LegacyDocumentFolderDbContext creates new context instances
+            </summary>
+            <seealso cref="T:TaxHub.Common.DataAccess.SqlDataStore.IDbContextFactory" />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.ILegacyDocumentFolderContextFactory.Recreate">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.ILegacyDocumentFolderContextFactory"/> will recreate the database.
+            </summary>
+            <value>
+              <c>true</c> if recreate; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.IQuarterEndProcessingContextFactory">
+            <summary>
+            QuarterEndProcessingDbContext creates new context instances
+            </summary>
+            <seealso cref="T:TaxHub.Common.DataAccess.SqlDataStore.IDbContextFactory" />
+        </member>
+        <member name="P:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.IQuarterEndProcessingContextFactory.Recreate">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.IQuarterEndProcessingContextFactory"/> will recreate the database.
+            </summary>
+            <value>
+              <c>true</c> if recreate; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext">
+            <summary>
+            DbContext for Document Folders
+            </summary>
+            <seealso cref="T:TaxHub.Common.DataAccess.SqlDataStore.DbContextBase" />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext"/> class.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext.#ctor(System.String,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext"/> class.
+            </summary>
+            <param name="connectionString">The connection string.</param>
+            <param name="recreate">if set to <c>true</c> [recreate].</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext.OnModelCreating(System.Data.Entity.DbModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext.LegacyDocumentFolderContextFactory">
+            <summary>
+            LegacyDocumentFolder context factory
+            </summary>
+            <seealso cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.ILegacyDocumentFolderContextFactory" />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext.LegacyDocumentFolderContextFactory.#ctor(TaxHub.Common.DataAccess.IDatabaseConnectivityProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.LegacyDocumentFolderDbContext.LegacyDocumentFolderContextFactory"/> class.
+            </summary>
+            <param name="databaseConnectivityProvider">The database connectivity provider.</param>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.PostQuarterEndDbContext">
+            <summary>
+            DbContext for post qe table
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.PostQuarterEndDbContext.#ctor(System.String)">
+            <summary>
+            Singleton, restrict access to default constructor.
+            </summary>
+            <param name="connectionString">The connection string to db.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.PostQuarterEndDbContext.OnModelCreating(System.Data.Entity.DbModelBuilder)">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.PostQuarterEndDbContext.PostQEDbContextFactory">
+            <summary>
+            Factory for PostQEDbContext
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.PostQuarterEndDbContext.PostQEDbContextFactory.#ctor(TaxHub.Common.DataAccess.IDatabaseConnectivityProvider)">
+            <summary>
+            Creates PostQEDbContextFactory instance.
+            </summary>
+            <param name="connection">Connection to db</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.PostQuarterEndDbContext.PostQEDbContextFactory.Create">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext">
+            <summary>
+            DbContext for QuarterEnd Processing
+            </summary>
+            <seealso cref="T:TaxHub.Common.DataAccess.SqlDataStore.DbContextBase" />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext"/> class.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext.#ctor(System.String,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext"/> class.
+            </summary>
+            <param name="connectionString">The connection string.</param>
+            <param name="recreate">if set to <c>true</c> [recreate].</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext.OnModelCreating(System.Data.Entity.DbModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext.QuarterEndProcessingContextFactory">
+            <summary>
+            QuarterEndProcessing context factory
+            </summary>
+            <seealso cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.IQuarterEndProcessingContextFactory" />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext.QuarterEndProcessingContextFactory.#ctor(TaxHub.Common.DataAccess.IDatabaseConnectivityProvider)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.QuarterEndProcessingDbContext.QuarterEndProcessingContextFactory"/> class.
+            </summary>
+            <param name="databaseConnectivityProvider">The database connectivity provider.</param>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.IQuarterEndProcessingRepository">
+            <summary>
+            An instance of the QuarterEndProcessing repository.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.IQuarterEndProcessingRepository.LockSession(System.Guid,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            Locks a Quarter End record in a session.
+            </summary>
+            <param name="sessionId">session id to create</param>
+            <param name="clientId">client id</param>
+            <param name="quarter">quarter</param>
+            <param name="year">year</param>
+            <param name="cancellationToken">cancellation token</param>
+            <returns>The number of records locked</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.IQuarterEndProcessingRepository.UnLockSession(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Unlocks a session.
+            </summary>
+            <param name="sessionId">session id to unlock</param>
+            <param name="cancellationToken">cancellation token</param>
+            <returns>number of records unlocked</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.PostQuarterEndRepository">
+            <summary>
+            Repository for POST_QE
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.PostQuarterEndRepository.#ctor(TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.PostQuarterEndDbContext.PostQEDbContextFactory)">
+            <summary>
+            Creates an instance of PostQERepository.
+            </summary>
+            <param name="dbContextFactory">The PostQE context.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.PostQuarterEndRepository.FindAllByIds(System.Collections.Generic.IEnumerable{System.Int32},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.PostQuarterEndRepository.Update(System.Int32,TaxHub.PackageGeneration.Models.PostQuarterEnd,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.PostQuarterEndRepository.TransitionStatus(TaxHub.PackageGeneration.Models.PostQuarterEnd,TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.Guid,System.DateTime,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.PostQuarterEndRepository.BulkUpdate(System.Collections.Generic.IEnumerable{TaxHub.PackageGeneration.Models.PostQuarterEnd},System.Threading.CancellationToken,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.IPostQuarterEndRepository">
+            <summary>
+            Interface representing PostQeRepository.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.IPostQuarterEndRepository.TransitionStatus(TaxHub.PackageGeneration.Models.PostQuarterEnd,TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.Guid,System.DateTime,System.Threading.CancellationToken)">
+            <summary>
+            Transitions the status of a PostQuarterEnd
+            </summary>
+            <param name="item">an instance of <see cref="T:TaxHub.PackageGeneration.Models.PostQuarterEnd"/></param>
+            <param name="newStatus">The status to attempt to transition to</param>
+            <param name="fileInfoId">The RemoteIdentifier</param>
+            <param name="completedUtcDt">Timestamp of when the package was created.</param>
+            <param name="cancellationToken">A cancellation token.</param>
+            <returns>True if state transition is valid or if is already set.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.QuarterEndProcessingRepository">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.QuarterEndProcessingRepository.#ctor(TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.IQuarterEndProcessingContextFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.QuarterEndProcessingRepository" /> class.
+            </summary>
+            <param name="collectionContextFactory">The collection context factory.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.QuarterEndProcessingRepository.LockSession(System.Guid,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.QuarterEndProcessingRepository.UnLockSession(System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.ILegacyDocumentFolderRepository">
+            <summary>
+            An instance of <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.ILegacyDocumentFolderRepository"/>
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.ILegacyDocumentFolderRepository.GetFolderByName``1(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Gets a folder by Name
+            </summary>
+            <typeparam name="T">The model to populate with the folder data</typeparam>
+            <param name="folderName">The name of the folder to find.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Folder Data mapped to an instance of <typeparamref name="T"/></returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.LegacyDocumentFolderRepository">
+            <summary>
+            Federal Forms Repository
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.LegacyDocumentFolderRepository.#ctor(TaxHub.PackageGeneration.DataAccess.SqlDbStore.DbContexts.ILegacyDocumentFolderContextFactory,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:TaxHub.PackageGeneration.DataAccess.SqlDbStore.LegacyDocumentFolderRepository" /> class.
+            </summary>
+            <param name="collectionContextFactory">The collection context factory.</param>
+            <param name="logger">The logger.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.SqlDbStore.LegacyDocumentFolderRepository.GetFolderByName``1(System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.IPackageGenerationRequestRepository">
+            <summary>
+            Interface for for the Package Generation Request Repository
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.IPackageGenerationRequestRepository.FindByGeneratedPackageRemoteIdentifier(System.Guid,System.Threading.CancellationToken)">
+            <summary>
+            Finds a <see cref="T:TaxHub.PackageGeneration.Models.PackageGenerationRequest"/> by the generated package's remote identifier.
+            </summary>
+            <param name="remoteIdentifier">The identifier in object storage</param>
+            <param name="cancellationToken">A cancellation token</param>
+            <returns>The found entity</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.IPackageGenerationRequestRepository.GetFileInfoIdsBySourceId(System.String,TaxHub.PackageGeneration.Models.PackageType,System.Threading.CancellationToken)">
+            <summary>
+            Gets FileInfoIds by sourceId
+            </summary>
+            <param name="sourceId">The SourceId.</param>
+            <param name="packageType">The package type.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Returns PackageGenerationRequest collection</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.IPackageGenerationRequestRepository.FindAllByStatusAndModifyDateThreshold(TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.DateTime,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
+            <summary>
+            Finds all request with the given status and the updated date is less than the threshold.
+            </summary>
+            <param name="status">The status of the report</param>
+            <param name="updatedDateThreshold">The cutoff for the update date</param>
+            <param name="pagedData">The page size data</param>
+            <param name="token">The cancellation token.</param>
+            <returns>Returns a list of Customer Package requests.</returns>
+        </member>
+        <member name="T:TaxHub.PackageGeneration.DataAccess.MongoDbStore.PackageGenerationRequestMongoDbRepository">
+            <summary>
+            A repository for the PackageGenerationRequest MongoDb repository.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.MongoDbStore.PackageGenerationRequestMongoDbRepository.#ctor(TaxHub.Common.DataAccess.IDatabaseConnectivityProvider,TaxHub.Common.Logging.IAppLogger)">
+            <summary>
+            The constructor
+            </summary>
+            <param name="connectivityProvider">A <see cref="T:TaxHub.Common.DataAccess.IDatabaseConnectivityProvider"/></param>
+            <param name="logger">A <see cref="T:TaxHub.Common.Logging.IAppLogger"/></param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.MongoDbStore.PackageGenerationRequestMongoDbRepository.Delete(TaxHub.PackageGeneration.Models.PackageGenerationRequest,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.MongoDbStore.PackageGenerationRequestMongoDbRepository.FindByGeneratedPackageRemoteIdentifier(System.Guid,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.MongoDbStore.PackageGenerationRequestMongoDbRepository.FindAllByStatusAndModifyDateThreshold(TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus,System.DateTime,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.MongoDbStore.PackageGenerationRequestMongoDbRepository.EnsureCollection(System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.DataAccess.MongoDbStore.PackageGenerationRequestMongoDbRepository.GetFileInfoIdsBySourceId(System.String,TaxHub.PackageGeneration.Models.PackageType,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.PackageGeneration.PackageGenerationStartup">
+            <summary>
+            Class provides integration between  Package Generation and app host.
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.PackageGenerationStartup.Description">
+            <summary>
+            Description
+            </summary>
+        </member>
+        <member name="P:TaxHub.PackageGeneration.PackageGenerationStartup.ConfigurationFileName">
+            <summary>
+            Gets the name of the configuration file.
+            </summary>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.InitializeMessageSubscribers(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Initialize Message Subscribers
+            </summary>
+            <param name="container">Unity Container</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.StartInternalServices(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Starts services
+            </summary>
+            <param name="container">Unity Container</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.StartInternalServicesAsync(Microsoft.Practices.Unity.IUnityContainer,System.Threading.CancellationToken)">
+            <summary>
+            Called by App Host to asynchronously start internal services for the application.
+            </summary>
+            <remarks>Only StartInternalServices or StartInternalServicesAsync method should actually do the work, not both.</remarks>
+            <param name="container">The Unity Container</param>
+            <param name="cancellationToken">Cancellation token</param>
+            <returns>Returns async task.</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.GetApiEndpointsScope">
+            <summary>
+            Gets API Endpoint
+            </summary>
+            <returns>Api endpoint</returns>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.StopApplication(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Stops the application 
+            </summary>
+            <param name="container">Unity Container</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.ResolveUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.InitializeUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.InitializeEventStoreUnityContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.InitializeContainer(Microsoft.Practices.Unity.IUnityContainer)">
+            <summary>
+            Initializes registrations and configurations in the container
+            </summary>
+            <param name="container">The Container.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.RegisterTypesFromAssembly(Microsoft.Practices.Unity.IUnityContainer,System.String)">
+            <summary>
+            Scans a referenced assembly for types to register in the container.
+            </summary>
+            <param name="container">The container to register types in.</param>
+            <param name="assemblyNameToScan">The assembly to scan and register.</param>
+        </member>
+        <member name="M:TaxHub.PackageGeneration.PackageGenerationStartup.RegisterProcessor``1(Microsoft.Practices.Unity.IUnityContainer,TaxHub.PackageGeneration.Models.PackageType)">
+            <summary>
+            Registers an implementation of <see cref="T:TaxHub.PackageGeneration.Application.IPackageGenerationProcessor"/>.
+            </summary>
+            <typeparam name="TProcessorType">The type to register.</typeparam>
+            <param name="container">The container to register the processor in.</param>
+            <param name="packageType">The type of package implemented by <typeparamref name="TProcessorType"/>.</param>
+        </member>
+    </members>
+</doc>

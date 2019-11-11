@@ -1,0 +1,263 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaxHub.Pdf.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="T:TaxHub.Pdf.Abstractions.Configuration.IOptions`1">
+            <summary>
+            Retrieve configured options 
+            </summary>
+            <typeparam name="TOptions">Configured options.</typeparam>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.Configuration.IOptions`1.Value">
+            <summary>
+            Configured options.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.Configuration.Options">
+            <summary>
+            Options
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.Configuration.Options.Create``1(``0)">
+            <summary>
+            Creates a wrapper around options.
+            </summary>
+            <param name="options">The options</param>
+            <typeparam name="TOptions">Options type</typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.Configuration.OptionsWrapper`1">
+            <inheritdoc />
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.Configuration.OptionsWrapper`1.Value">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.Configuration.OptionsWrapper`1.#ctor(`0)">
+            <summary>
+            Initializes an option wrapper.
+            </summary>
+            <param name="options">The options.</param>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.IPdfOperationContext">
+            <summary>
+            This wraps a context dictionary and provides strongly typed accessors.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperationContext.Get``1">
+            <summary>
+            Gets a value from the operation contex, or returns default(T) if not present.
+            </summary>
+            <typeparam name="T">The type of the value.</typeparam>
+            <returns>The value with the specified key or the default(T) if not present.</returns>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperationContext.Set``1(``0)">
+            <summary>
+            Sets the given key and value in the operation context
+            </summary>
+            <param name="value">The value to set.</param>
+            <typeparam name="T">The type of the value.</typeparam>
+            <returns>This instance.</returns>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.Logging.PdfLoggerOptions">
+            <summary>
+            The options for configuring a Logger for all PDF operations.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.Logging.PdfLoggerOptions.LogVerbose">
+            <summary>
+            Anything and everything you might want to know about
+            a running block of code.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.Logging.PdfLoggerOptions.LogInformation">
+            <summary>
+            The lifeblood of operational intelligence - things
+            happen.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.Logging.PdfLoggerOptions.LogWarning">
+            <summary>
+            Service is degraded or endangered.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.Logging.PdfLoggerOptions.LogError">
+            <summary>
+            Functionality is unavailable, invariants are broken
+            or data is lost.
+            </summary>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.Logging.PdfLoggerOptions.LogCritical">
+            <summary>
+            If you have a pager, it goes off when one of these
+            occurs.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.MergeOptions">
+            <summary>
+            Base class for with common things for PDF Engine operations 
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.MergeOptions.#ctor(TaxHub.Pdf.Abstractions.MergeOrientationOptions)">
+            <summary>
+            Initializes a new instance.
+            </summary>
+            <param name="orientation">The orientation enum.</param>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.MergeOptions.Orientation">
+            <summary>
+            A enum to modify orientation of documents.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.MergeOrientationOptions">
+            <summary>
+            Enums to determine orientation
+            </summary>
+        </member>
+        <member name="F:TaxHub.Pdf.Abstractions.MergeOrientationOptions.KeepOriginalOrientation">
+            <summary>
+            Keeps the original PDF page orientations during a merge.
+            </summary>
+        </member>
+        <member name="F:TaxHub.Pdf.Abstractions.MergeOrientationOptions.AllPortrait">
+            <summary>
+            Sets all page orientation to portrait.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.PdfOperationContext">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.PdfOperationContext.#ctor">
+            <summary>
+            Creates a new instance.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.PdfOperationContext.#ctor(System.Object[])">
+            <summary>
+            Creates and set values.
+            </summary>
+            <param name="objects">Values to set.</param>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.PdfOperationContext.Get``1">
+            <inheritdoc />
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.PdfOperationContext.Set``1(``0)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.IPdfOperations">
+            <summary>
+            Represents operations available on PDF files.
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.Merge(System.Collections.Generic.IEnumerable{System.String},System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <summary>
+            Merge a set of PDF files.
+            </summary>
+            <param name="inputs">An enumerable set of PDF file paths to be merged.</param>
+            <param name="output">The path to the output PDF file result of the merge.</param>
+            <param name="context">Operation context with any additional data needed by the operation.</param>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.MergeAsync(System.Collections.Generic.IEnumerable{System.String},System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
+            <summary>
+            Merge a set of PDF files asynchronously.
+            </summary>
+            <param name="inputs">An enumerable set of PDF file paths to be merged.</param>
+            <param name="output">The path to the output PDF file result of the merge.</param>
+            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.GetPageCount(System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <summary>
+            Get the page count of a PDF file.
+            </summary>
+            <param name="filePath">Path to PDF file.</param>
+            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <returns>The number of pages.</returns>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.Fill(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <summary>
+            Fill a PDF template.
+            </summary>
+            <param name="model">Contains the template info and the data to fill in.</param>
+            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <returns>A stream of the filled PDF.</returns>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.FillAsync(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
+            <summary>
+            Fill a PDF template asynchronously.
+            </summary>
+            <param name="model">Contains the template info and the data to fill in.</param>
+            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>A stream of the filled PDF.</returns>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.FillAndSave(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
+            <summary>
+            Fill a PDF template and save the output PDF content.
+            </summary>
+            <param name="model">Contains the template info, the data to fill in and the output filename.</param>
+            <param name="context">Operation context with any additional data needed by the operation.</param>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.FillAndSaveAsync(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
+            <summary>
+            Fill a PDF template and save the output PDF content asynchronously.
+            </summary>
+            <param name="model">Contains the template info, the data to fill in and the output filename.</param>
+            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.MergeAsync(System.Collections.Generic.IEnumerable{TaxHub.Pdf.Abstractions.PdfOperation},TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
+            <summary>
+            Merge a set of operations asynchronously.
+            </summary>
+            <param name="operations">The set of operations</param>
+            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>The result.</returns>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.GetPageCount(System.IO.Stream)">
+            <summary>
+            Get page count from memory stream
+            </summary>
+            <param name="stream"></param>
+            <returns></returns>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.PdfOperationResult">
+            <summary>
+            A PDF Operation result.
+            This class will contain the PDF content and any relevant metadata associated with the PDF. 
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.PdfOperationResult.#ctor(System.IO.Stream)">
+            <summary>
+            Initializes a result.
+            </summary>
+            <param name="stream">The pdf stream.</param>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.PdfOperationResult.Stream">
+            <summary>
+            The PDF stream.
+            </summary>
+        </member>
+        <member name="T:TaxHub.Pdf.Abstractions.TemplateModel">
+            <summary>
+            PDF Template Model
+            </summary>
+        </member>
+        <member name="M:TaxHub.Pdf.Abstractions.TemplateModel.#ctor(System.String,System.Collections.Generic.Dictionary{System.String,System.String},TaxHub.Pdf.Abstractions.BarcodeType,TaxHub.Pdf.Abstractions.SignatureType)">
+            <summary>
+            Initializes an instance.
+            </summary>
+            <param name="template">The template name</param>
+            <param name="formfieldMap">The form field map values.</param>
+            <param name="barcode">The barcode type</param>
+            <param name="signature">The signature type</param>
+        </member>
+        <member name="P:TaxHub.Pdf.Abstractions.TemplateModel.FormfieldMap">
+            <summary>
+            Form field map values
+            </summary>
+        </member>
+    </members>
+</doc>

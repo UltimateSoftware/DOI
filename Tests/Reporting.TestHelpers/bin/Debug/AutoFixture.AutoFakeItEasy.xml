@@ -1,0 +1,279 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AutoFixture.AutoFakeItEasy</name>
+    </assembly>
+    <members>
+        <member name="T:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization">
+            <summary>
+            Enables auto-mocking with FakeItEasy.
+            </summary>
+            <remarks>
+            NOTICE! You can assign the customization properties to tweak the features you would like to enable. See example.
+            <br />
+            <code>new AutoFakeItEasyCustomization { GenerateDelegates = true }</code>
+            </remarks>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization"/> class.
+            <para>
+            NOTICE! You can assign the customization properties to tweak the features you would like to enable. Example:
+            <br />
+            <code>new AutoFakeItEasyCustomization { GenerateDelegates = true }</code>
+            </para>
+            </summary>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization.#ctor(AutoFixture.Kernel.ISpecimenBuilder)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization"/> class, using the specified
+            <paramref name="relay"/> instead of a <see cref="T:AutoFixture.AutoFakeItEasy.FakeItEasyRelay"/>.
+            </summary>
+            <param name="relay">The relay.</param>
+        </member>
+        <member name="P:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization.Relay">
+            <summary>
+            Gets or sets the relay that will be added to <see cref="P:AutoFixture.IFixture.ResidueCollectors"/> when
+            <see cref="M:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization.Customize(AutoFixture.IFixture)"/> is invoked.
+            </summary>
+        </member>
+        <member name="P:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization.GenerateDelegates">
+            <summary>
+            When <c>true</c>, configures the fixture to automatically generate Fakes when a delegate is requested.
+            </summary>
+        </member>
+        <member name="P:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization.ConfigureMembers">
+            <summary>
+            Specifies whether members of a Fake will be automatically setup to retrieve the return values from a fixture.
+            </summary>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.AutoFakeItEasyCustomization.Customize(AutoFixture.IFixture)">
+            <summary>
+            Customizes an <see cref="T:AutoFixture.IFixture"/> to enable auto-mocking with FakeItEasy.
+            </summary>
+            <param name="fixture">The fixture upon which to enable auto-mocking.</param>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.ConfigureFakeMembersCommand">
+             <summary>
+             Sets up a Fake's members so that the return, out, and ref values of virtual members will
+             be retrieved from the fixture, instead of being created directly by FakeItEasy.
+            
+             This will setup virtual methods and properties.
+             </summary>
+             <remarks>
+             This will setup any virtual methods and properties.
+             This includes:
+              - interface's methods/properties;
+              - class's abstract/virtual/overridden/non-sealed methods/properties.
+             </remarks>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.ConfigureFakeMembersCommand.Execute(System.Object,AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Sets up a Fake's members so that the return, out, and ref values will be retrieved
+            from the fixture, instead of being created directly by FakeItEasy.
+            </summary>
+            <param name="specimen">The Fake to setup.</param>
+            <param name="context">The context of the Fake.</param>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.ConfigureSealedMembersCommand">
+            <summary>
+            A command that populates all public writable sealed properties/fields of a Fake with anonymous values.
+            </summary>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.ConfigureSealedMembersCommand.Execute(System.Object,AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Populates all public writable sealed properties/fields of a Fake with anonymous values.
+            </summary>
+            <param name="specimen">The Fake whose properties/fields will be populated.</param>
+            <param name="context">The context that is used to create anonymous values.</param>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.ConfigureSealedMembersCommand.FieldOrSealedPropertySpecification">
+            <summary>
+            Evaluates whether a request to populate a member is valid.
+            The request is valid if the member is a property or a field,
+            and if it's sealed.
+            </summary>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder">
+            <summary>
+            Provides pre- and post-condition checks for requests for fake instances.
+            </summary>
+            <seealso cref="M:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder.Create(System.Object,AutoFixture.Kernel.ISpecimenContext)" />
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder.#ctor(AutoFixture.Kernel.ISpecimenBuilder)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder"/> class with an
+            <see cref="T:AutoFixture.Kernel.ISpecimenBuilder" /> to decorate.
+            </summary>
+            <param name="builder">The builder which must build mock instances.</param>
+            <remarks>
+            <para>
+            <paramref name="builder" /> is subsequently available through the <see cref="P:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder.Builder"/>
+            property.
+            </para>
+            </remarks>
+            <seealso cref="P:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder.Builder" />
+        </member>
+        <member name="P:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder.Builder">
+            <summary>
+            Gets the decorated builder supplied through the constructor.
+            </summary>
+            <seealso cref="M:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder.#ctor(AutoFixture.Kernel.ISpecimenBuilder)" />
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder.Create(System.Object,AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Creates a new specimen based on a request.
+            </summary>
+            <param name="request">The request that describes what to create.</param>
+            <param name="context">A context that can be used to create other specimens.</param>
+            <returns>
+            A mock instance created by FakeItEasy if appropriate; otherwise a
+            <see cref="T:AutoFixture.Kernel.NoSpecimen"/> instance.
+            </returns>
+            <remarks>
+            <para>
+            The Create method checks whether a request is for an interface or abstract class. If so
+            it delegates the call to the decorated <see cref="P:AutoFixture.AutoFakeItEasy.FakeItEasyBuilder.Builder"/>. When the specimen is
+            returned from the decorated <see cref="T:AutoFixture.Kernel.ISpecimenBuilder"/> the method checks whether
+            the returned instance is a FakeItEasy Fake instance of the correct type.
+            </para>
+            <para>
+            If all pre- and post-conditions are satisfied, the mock instance is returned; otherwise
+            a <see cref="T:AutoFixture.Kernel.NoSpecimen" /> instance.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.FakeItEasyMethodQuery">
+            <summary>
+            Selects appropriate methods to create <see cref="T:FakeItEasy.Fake`1"/> instances.
+            </summary>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.FakeItEasyMethodQuery.SelectMethods(System.Type)">
+            <summary>
+            Selects constructors for the supplied type.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>
+            Constructors for <paramref name="type"/>.
+            </returns>
+            <remarks>
+            <para>
+            This method returns a sequence of <see cref="T:AutoFixture.Kernel.StaticMethod"/> according to
+            the public and protected constructors available on <paramref name="type"/>.
+            </para>
+            </remarks>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.FakeItEasyRelay">
+            <summary>
+            Relays a request for an interface or an abstract class to a request for a
+            <see cref="T:FakeItEasy.Fake`1"/> of that class.
+            </summary>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.FakeItEasyRelay.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AutoFixture.AutoFakeItEasy.FakeItEasyRelay"/> class.
+            </summary>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.FakeItEasyRelay.#ctor(AutoFixture.Kernel.IRequestSpecification)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AutoFixture.AutoFakeItEasy.FakeItEasyRelay"/> class with a specification
+            that determines whether a type should be mocked.
+            </summary>
+            <param name="fakeableSpecification">
+            A specification that determines whether a type should be mocked or not.
+            </param>
+        </member>
+        <member name="P:AutoFixture.AutoFakeItEasy.FakeItEasyRelay.FakeableSpecification">
+            <summary>
+            Gets a specification that determines whether a given type should be mocked.
+            </summary>
+            <value>The specification.</value>
+            <remarks>
+            <para>
+            This specification determins whether a given type should be relayed as a request for a
+            mock of the same type. By default it only returns <see langword="true"/> for interfaces
+            and abstract classes, but a different specification can be supplied by using the
+            overloaded constructor that takes an
+            <see cref="T:AutoFixture.Kernel.IRequestSpecification" /> as input. In that case, this
+            property returns the specification supplied to the constructor.
+            </para>
+            </remarks>
+            <seealso cref="M:AutoFixture.AutoFakeItEasy.FakeItEasyRelay.#ctor(AutoFixture.Kernel.IRequestSpecification)"/>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.FakeItEasyRelay.Create(System.Object,AutoFixture.Kernel.ISpecimenContext)">
+            <summary>
+            Creates a new specimen based on a request.
+            </summary>
+            <param name="request">The request that describes what to create.</param>
+            <param name="context">A context that can be used to create other specimens.</param>
+            <returns>
+            A dynamic mock instance of the requested interface or abstract class if possible;
+            otherwise a <see cref="T:AutoFixture.Kernel.NoSpecimen"/> instance.
+            </returns>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.FakeObjectCall">
+            <summary>
+            A bridge class, required because the types representing fake object calls in
+            1.7.4109.1 (which the .NET Framework version of AutoFixture.AutoFakeItEasy is compiled against)
+            differ from those in 2.0.0+ in ways that prevent us from using them directly.
+            If ever support for FakeItEasy versions below 2.0.0 is dropped, this class may be removed.
+            </summary>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.MethodRule">
+            <summary>
+            A rule that intercepts method calls. Supplies the return and all out and ref values
+            from the fixture. When a method is called repeatedly with the same arguments, the
+            same return value and out and ref values will be provided.
+            </summary>
+        </member>
+        <member name="P:AutoFixture.AutoFakeItEasy.MethodRule.NumberOfTimesToCall">
+            <summary>
+            Gets the number of times this call rule is valid.
+            </summary>
+            <returns><c>null</c>, indicating that the rule has no expiration.</returns>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.MethodRule.IsApplicableTo(FakeItEasy.Core.IFakeObjectCall)">
+            <summary>
+            Gets whether this rule is applicable to the specified
+            call. If <c>true</c> is returned then <see cref="M:AutoFixture.AutoFakeItEasy.MethodRule.Apply(FakeItEasy.Core.IInterceptedFakeObjectCall)" /> will be called.
+            </summary>
+            <param name="fakeObjectCall">The call to check for applicability.</param>
+            <returns><c>true</c>. This rule applies to all methods.</returns>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.MethodRule.Apply(FakeItEasy.Core.IInterceptedFakeObjectCall)">
+            <summary>
+            Applies an action to the call. If the method is not void, obtains a return value and sets it
+            for the call. If there are any ref or out parameters, obtains values for them and sets them
+            for the call.
+            </summary>
+            <param name="interceptedFakeObjectCall">The call to apply the rule to.</param>
+        </member>
+        <member name="T:AutoFixture.AutoFakeItEasy.PropertySetterRule">
+            <summary>
+            A rule that intercepts property setter calls. Values will be saved into a result cache to be
+            provided as the return value from the matching get methods when the latter are called.
+            </summary>
+        </member>
+        <member name="P:AutoFixture.AutoFakeItEasy.PropertySetterRule.NumberOfTimesToCall">
+            <summary>
+            Gets the number of times this call rule is valid.
+            </summary>
+            <returns><c>null</c>, indicating that the rule has no expiration.</returns>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.PropertySetterRule.IsApplicableTo(FakeItEasy.Core.IFakeObjectCall)">
+            <summary>
+            Gets whether this rule is applicable to the specified
+            call. If <c>true</c> is returned then <see cref="M:AutoFixture.AutoFakeItEasy.PropertySetterRule.Apply(FakeItEasy.Core.IInterceptedFakeObjectCall)" /> will be called.
+            </summary>
+            <param name="fakeObjectCall">The call to check for applicability.</param>
+            <returns><c>true</c> if the call is a property setter.</returns>
+        </member>
+        <member name="M:AutoFixture.AutoFakeItEasy.PropertySetterRule.Apply(FakeItEasy.Core.IInterceptedFakeObjectCall)">
+            <summary>
+            Stores the value provided in the property setter to be returned from later
+            calls to the corresponding getter.
+            </summary>
+            <param name="interceptedFakeObjectCall">The call to apply the rule to.</param>
+        </member>
+    </members>
+</doc>
