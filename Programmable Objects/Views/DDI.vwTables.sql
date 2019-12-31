@@ -17,90 +17,103 @@ AS
 
 SELECT	T.*,
 '
+USE ' + T.DatabaseName + '
+GO
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
 AS
-
 ' + 		T.DSTriggerSQL AS CreateDataSynchTriggerSQL,
-'IF OBJECT_ID(''' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NOT NULL
+
+'IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NOT NULL
 BEGIN
-	DROP TABLE ' + T.SchemaName + '.' + T.TableName + '_DataSynch
+	DROP TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch
 END
 
-IF OBJECT_ID(''' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NULL
+IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NULL
 BEGIN
-	CREATE TABLE ' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + T.ColumnListWithTypes + CHAR(13) + CHAR(10) + ' ,DMLType CHAR(1) NOT NULL) ON [' + T.Storage_Desired + '] (' + T.PartitionColumn + ')
+	CREATE TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + T.ColumnListWithTypes + CHAR(13) + CHAR(10) + ' ,DMLType CHAR(1) NOT NULL) ON [' + T.Storage_Desired + '] (' + T.PartitionColumn + ')
 END
 '		AS CreateFinalDataSynchTableSQL,
 		'
+USE ' + T.DatabaseName + '
+GO
+
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
 AS
 
-INSERT INTO ' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListNoTypes + ', DMLType)
+INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListNoTypes + ', DMLType)
 SELECT ' + T.ColumnListNoTypes + ', ''I''
 FROM inserted T
 WHERE NOT EXISTS(SELECT ''True'' FROM deleted PT WHERE ' + T.PKColumnListJoinClause + ')
 
-INSERT INTO ' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListNoTypes + ', DMLType)
+INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListNoTypes + ', DMLType)
 SELECT ' + T.ColumnListNoTypes + ', ''U''
 FROM inserted T
 WHERE EXISTS (SELECT * FROM deleted PT WHERE ' + T.PKColumnListJoinClause + ')
 
-INSERT INTO ' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListNoTypes + ', DMLType)
+INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListNoTypes + ', DMLType)
 SELECT ' + T.ColumnListNoTypes + ', ''D''
 FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
-'		AS CreateFinalDataSynchTriggerSQL,
+GO
+USE DDI
+GO'		AS CreateFinalDataSynchTriggerSQL,
 
-'UPDATE Utility.RefreshIndexStructures_PartitionState
+'UPDATE DDI.Run_PartitionState
 SET DataSynchState = 0
-WHERE SchemaName = ''' + T.SchemaName + '''
+WHERE DatabaseName = ''' + T.DatabaseName + '''
+	AND SchemaName = ''' + T.SchemaName + '''
 	AND ParentTableName = ''' + T.TableName + '''
 '		AS TurnOffDataSynchSQL,
 
 		'
-IF EXISTS(SELECT * FROM sys.triggers WHERE name = ''tr' + T.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + T.TableName + '_OLD'')
+IF EXISTS(SELECT * FROM DDI.SysTriggers tr INNER JOIN DDI.SysDatabases d ON tr.database_id = d.database_id WHERE d.name = ' + T.DatabaseName + ' AND tr.name = ''tr' + T.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + T.TableName + '_OLD'')
 BEGIN
+	USE ' + T.DatabaseName + '
+	GO
 	DROP TRIGGER tr' + T.TableName + '_DataSynch
+	GO
+	USE DDI
+	GO
 END' 
 		AS DropDataSynchTriggerSQL,
 
 		'
-IF OBJECT_ID(''' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NOT NULL
-	AND OBJECT_ID(''' + T.SchemaName + '.' + T.TableName + ''') IS NOT NULL
+IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NOT NULL
+	AND OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ''') IS NOT NULL
 BEGIN
 	IF (SELECT SUM(Counts)
 		FROM (
 				SELECT ''Inserts Left'' AS Type, COUNT(*) AS Counts
-				FROM ' + T.SchemaName + '.' + T.TableName + '_DataSynch PT
+				FROM ' + T.DatabaseName + T.SchemaName + '.' + T.TableName + '_DataSynch PT
 				WHERE PT.DMLType = ''I''
 					AND NOT EXISTS (SELECT ''True'' 
-									FROM ' + T.SchemaName + '.' + T.TableName + ' T
+									FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' T
 									WHERE ' + T.PKColumnListJoinClause + ')
 				UNION ALL
 				SELECT ''Updates Left'' AS Type, COUNT(*)
-				FROM ' + T.SchemaName + '.' + T.TableName + '_DataSynch PT
+				FROM ' + T.DatabaseName + T.SchemaName + '.' + T.TableName + '_DataSynch PT
 				WHERE PT.DMLType = ''U''
 					AND EXISTS (SELECT ''True'' 
-								FROM ' + T.SchemaName + '.' + T.TableName + ' T
+								FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' T
 								WHERE ' + T.PKColumnListJoinClause + '
 									AND T.UpdatedUtcDt < PT.UpdatedUtcDt)
 				UNION ALL
 				SELECT ''Deletes Left'' AS Type, COUNT(*)
-				FROM ' + T.SchemaName + '.' + T.TableName + '_DataSynch PT
+				FROM ' + T.DatabaseName + T.SchemaName + '.' + T.TableName + '_DataSynch PT
 				WHERE PT.DMLType = ''D''
 					AND EXISTS (SELECT ''True'' 
-								FROM ' + T.SchemaName + '.' + T.TableName + ' T
+								FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' T
 								WHERE ' + T.PKColumnListJoinClause + '))c) = 0
 	BEGIN
-		DROP TABLE ' + T.SchemaName + '.' + T.TableName + '_DataSynch
+		DROP TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch
 	END
 	ELSE
 	BEGIN
-		RAISERROR(''Not all data was synched to the new table.  ' + T.SchemaName + '.' + T.TableName + '_DataSynch Table was not dropped'', 10, 1)
+		RAISERROR(''Not all data was synched to the new table.  ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch Table was not dropped'', 10, 1)
 	END
 END
 ELSE
@@ -109,8 +122,9 @@ BEGIN
 END'
 AS DropDataSynchTableSQL,
 '
-DELETE Utility.RefreshIndexStructures_PartitionState 
-WHERE SchemaName = ''' + T.SchemaName + ''' 
+DELETE DDI.Run_PartitionState 
+WHERE DatabaseName = ''' + T.DatabaseName + '''
+	AND SchemaName = ''' + T.SchemaName + ''' 
     AND ParentTableName = ''' + T.TableName + '''' 
 AS DeletePartitionStateMetadataSQL,
 
@@ -123,13 +137,14 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @DataSpaceAvailable = available_MB, 
         @DataSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM Utility.vwFreeSpaceOnDisk FS
-    INNER JOIN Utility.fnFreeSpaceNeededForTableIndexOperations(''' + T.SchemaName + ''', ''' + T.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DDI.vwFreeSpaceOnDisk FS
+    INNER JOIN DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''PaymentReporting''
     AND FS.FileType = ''DATA''
     AND EXISTS(	SELECT ''True''
-				FROM Utility.RefreshIndexStructuresQueue Q 
-				WHERE Q.ParentSchemaName = FSI.SchemaName
+				FROM DDI.Queue Q 
+				WHERE Q.DatabaseName = FSI.DatabaseName
+					AND Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
 
 IF @DataSpaceAvailable <= @DataSpaceNeeded
@@ -154,12 +169,12 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @LogSpaceAvailable = available_MB, 
         @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM Utility.vwFreeSpaceOnDisk FS
-    INNER JOIN Utility.fnFreeSpaceNeededForTableIndexOperations(''' + T.SchemaName + ''', ''' + T.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DDI.vwFreeSpaceOnDisk FS
+    INNER JOIN DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''PaymentReporting''
     AND FS.FileType = ''LOG''
     AND EXISTS(	SELECT ''True''
-				FROM Utility.RefreshIndexStructuresQueue Q 
+				FROM DDI.Queue Q 
 				WHERE Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
 
@@ -186,12 +201,12 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @LogSpaceAvailable = available_MB, 
         @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM Utility.vwFreeSpaceOnDisk FS
-    INNER JOIN Utility.fnFreeSpaceNeededForTableIndexOperations(''' + T.SchemaName + ''', ''' + T.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DDI.vwFreeSpaceOnDisk FS
+    INNER JOIN DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''TempDB''
     AND FS.FileType = ''DATA''
     AND EXISTS(	SELECT ''True''
-				FROM Utility.RefreshIndexStructuresQueue Q 
+				FROM DDI.Queue Q 
 				WHERE Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
 

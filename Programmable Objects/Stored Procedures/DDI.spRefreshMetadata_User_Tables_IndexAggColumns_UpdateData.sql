@@ -119,7 +119,7 @@ FROM DDI.Tables T
                     INNER JOIN DDI.Tables TTP ON TTP.DatabaseName = I.DatabaseName
                         AND TTP.SchemaName = I.SchemaName
                         AND TTP.TableName = I.TableName
-                    CROSS JOIN (SELECT CAST(SettingValue AS INT) AS MinNumPages FROM DDI.SystemSettings WHERE SettingName = 'MinNumPagesForIndexDefrag') SS
+                    CROSS JOIN (SELECT CAST(SettingValue AS INT) AS MinNumPages FROM DDI.DDISettings WHERE SettingName = 'MinNumPagesForIndexDefrag') SS
                 GROUP BY I.DatabaseName, I.SchemaName, I.TableName ) IndexAgg
         ON IndexAgg.DatabaseName = T.DatabaseName
             AND IndexAgg.SchemaName = T.SchemaName

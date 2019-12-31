@@ -137,7 +137,7 @@ BEGIN TRY
 			AND FN.ParentSchemaName = CASE WHEN @SchemaName IS NULL THEN FN.ParentSchemaName ELSE @SchemaName END 
 			AND FN.ParentTableName = CASE WHEN @TableName IS NULL THEN FN.ParentTableName ELSE @TableName END 
 			AND FN.BatchId = CASE WHEN @BatchId IS NULL THEN FN.BatchId ELSE @BatchId END 
-		ORDER BY FN.ParentSchemaName ASC, FN.ParentTableName ASC, FN.SeqNo ASC
+		ORDER BY FN.DatabaseName ASC, FN.ParentSchemaName ASC, FN.ParentTableName ASC, FN.SeqNo ASC
 					
 	OPEN Tables_Run_Cur
 

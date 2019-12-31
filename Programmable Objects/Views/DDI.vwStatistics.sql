@@ -15,7 +15,7 @@ AS
 */
 SELECT  *,         
         '
-        UPDATE STATISTICS ' + S.SchemaName + '.' + S.TableName + '(' + S.StatisticsName + ') 
+        UPDATE STATISTICS ' + S.DatabaseName + '.' + S.SchemaName + '.' + S.TableName + '(' + S.StatisticsName + ') 
         WITH SAMPLE ' + CAST(S.SampleSizePct_Desired AS VARCHAR(3)) + ' PERCENT
             /*, PERSIST_SAMPLE_PERCENT = ON  this has to wait until 2016 SP2.
             , MAXDOP = 0*/
@@ -25,7 +25,7 @@ SELECT  *,
         IF NOT EXISTS(SELECT ''True'' FROM sys.stats WHERE NAME = ''' + S.StatisticsName + ''')
         BEGIN
             CREATE STATISTICS ' + S.StatisticsName + '
-            ON ' + S.SchemaName + '.' + S.TableName + '(' + S.StatisticsColumnList_Desired + ')' + 
+            ON ' + S.DatabaseName + '.' + S.SchemaName + '.' + S.TableName + '(' + S.StatisticsColumnList_Desired + ')' + 
                 CASE 
                     WHEN S.IsFiltered_Desired = 1 
                     THEN '

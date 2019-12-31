@@ -37,3 +37,5 @@ ALTER TABLE [DDI].[Tables] ADD CONSTRAINT [Chk_Tables_PartitioningSetup] CHECK (
 GO
 ALTER TABLE [DDI].[Tables] ADD CONSTRAINT [FK_Tables_Databases] FOREIGN KEY ([DatabaseName]) REFERENCES [DDI].[Databases] ([DatabaseName])
 GO
+ALTER TABLE [DDI].[Tables] NOCHECK CONSTRAINT [FK_Tables_Databases]
+GO

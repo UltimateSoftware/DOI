@@ -12,12 +12,13 @@ CREATE   PROCEDURE [DDI].[spRefreshMetadata_Run_User]
 AS
 
 /*
-    EXEC DDI.spRefreshMetadata_Run_User @Debug = 1
+        EXEC DDI.spRefreshMetadata_Run_User 
+        @Debug = 1
 */
 
-DECLARE @SQL VARCHAR(MAX) = ''
+DECLARE @SQL NVARCHAR(MAX) = ''
 
-SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10)
+SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10) + 'GO' + CHAR(13) + CHAR(10)
 FROM SYS.procedures P
     INNER JOIN sys.schemas s ON p.schema_id = s.schema_id
 WHERE p.NAME LIKE 'spRefreshMetadata_User%'
@@ -31,7 +32,8 @@ BEGIN
 END
 ELSE
 BEGIN
-    EXEC(@SQL)
+    EXEC DDI.sp_ExecuteSQLByBatch 
+        @SQL = @SQL
 END
 
 GO

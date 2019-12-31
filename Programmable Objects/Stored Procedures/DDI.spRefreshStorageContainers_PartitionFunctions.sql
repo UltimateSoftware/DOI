@@ -23,7 +23,7 @@ BEGIN TRY
 
 	IF NOT EXISTS(SELECT 'True' FROM DDI.PartitionFunctions WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END)
 	BEGIN
-		RAISERROR('Invalid partition Function name.  Make sure it exists in Utility.PartitionFunctions table.', 16, 1)
+		RAISERROR('Invalid partition Function name.  Make sure it exists in DDI.PartitionFunctions table.', 16, 1)
 	END
 
 

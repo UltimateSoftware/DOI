@@ -58,7 +58,7 @@ BEGIN ATOMIC WITH (TRANSACTION ISOLATION LEVEL = SNAPSHOT, LANGUAGE = N'English'
             INNER JOIN DDI.SysAllocationUnits a ON p.hobt_id = a.container_id
             INNER JOIN DDI.SysDatabaseFiles df ON df.data_space_id = a.data_space_id
 			CROSS JOIN (SELECT CAST(SettingValue AS INT) AS SizeCutoffValue
-						FROM DDI.SystemSettings 
+						FROM DDI.DDISettings 
 						WHERE SettingName = 'LargeTableCutoffValue')SS
             CROSS JOIN (SELECT database_id FROM DDI.SysDatabases WHERE name = @DatabaseName) DB
 			INNER JOIN DDI.SysDmOsVolumeStats vs ON vs.database_id = DB.database_id

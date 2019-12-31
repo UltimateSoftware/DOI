@@ -15,7 +15,14 @@ AS
     EXEC DDI.spRefreshMetadata_Run_All
 */
 
-EXEC [DDI].[spRefreshMetadata_Run_System]
-EXEC [DDI].[spRefreshMetadata_Run_User]
-
+BEGIN TRY
+    --BEGIN TRAN
+        EXEC [DDI].[spRefreshMetadata_Run_System]
+        EXEC [DDI].[spRefreshMetadata_Run_User]
+    --COMMIT TRAN
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRAN;
+    THROW;
+END CATCH
 GO

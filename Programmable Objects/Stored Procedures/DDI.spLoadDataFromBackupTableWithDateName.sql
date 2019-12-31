@@ -17,8 +17,8 @@ CREATE   PROCEDURE [DDI].[spLoadDataFromBackupTableWithDateName]
 AS
 
 /*
-	EXEC Utility.spLoadDataFromBackupTableWithDatename 
-		@SchemaName = 'Utility',
+	EXEC DDI.spLoadDataFromBackupTableWithDatename 
+		@SchemaName = 'DDI',
 		@TableName = 'ReportTraceFlags',
 		@Debug = 1
 */

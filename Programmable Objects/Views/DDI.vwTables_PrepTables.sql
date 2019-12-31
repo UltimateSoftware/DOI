@@ -8,12 +8,25 @@ SET ANSI_NULLS ON
 GO
 
 
+
+
 CREATE   VIEW [DDI].[vwTables_PrepTables]
 
 /*
 	select *
 	from DDI.vwTables_PrepTables
-	order by tablename
+    where tablename = 'journalentries'
+	order by tablename, partitionnumber
+
+    --to get the PrepTableFilegroup:
+SELECT t.TableName, t.Storage_Desired, ds_desired.name, DDS_Desired.data_space_id, UFG_Desired.name
+FROM DDI.Tables T
+    INNER JOIN DDI.SysDataSpaces DS_Desired ON T.Storage_Desired = DS_Desired.name
+    INNER JOIN DDI.SysDestinationDataSpaces DDS_Desired ON DDS_Desired.database_id = DS_Desired.database_id
+        AND DDS_Desired.partition_scheme_id = DS_Desired.data_space_id
+    INNER JOIN DDI.SysDataSpaces UFG_Desired ON DDS_Desired.database_id = UFG_Desired.database_id
+        AND DDS_Desired.data_space_id = UFG_Desired.data_space_id
+
 */ 
 AS
 
@@ -33,6 +46,7 @@ SELECT  AllTables.DatabaseName,
         AllTables.UpdateColumnList,
         Storage_Desired,
         StorageType_Desired,
+        AllTables.PrepTableFilegroup,
         PartitionNumber,
         CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '
 IF OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NOT NULL
@@ -94,12 +108,12 @@ BEGIN
 END' END AS CheckConstraintSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
-IF (SELECT * FROM Utility.fnCompareTableStructures(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')) > 0
+IF (SELECT * FROM DDI.fnCompareTableStructures(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')) > 0
 BEGIN
     DECLARE @ErrorMessage VARCHAR(MAX) = ''Schemas from the 2 tables do not match!!''
 
     SELECT @ErrorMessage += CHAR(13) + CHAR(10) + ''***'' + IndexName + space(1) + SchemaDifferences + ''***'' + CHAR(13) + CHAR(10)
-    FROM Utility.fnDDI_CompareTableStructuresDetails(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')
+    FROM DDI.fnDDI_CompareTableStructuresDetails(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')
 
 	RAISERROR(@ErrorMessage, 16, 1)
 END
@@ -168,7 +182,7 @@ EXEC sp_rename
 END AS RenameExistingTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
-'UPDATE Utility.RefreshIndexStructures_PartitionState
+'UPDATE DDI.RefreshIndexStructures_PartitionState
 SET DataSynchState = 1
 WHERE SchemaName = ''' + AllTables.SchemaName + '''
 	AND PrepTableName = ''' + AllTables.PrepTableName + '''
@@ -179,7 +193,7 @@ END AS TurnOnDataSynchSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
 IF EXISTS (	SELECT ''True''
-			FROM Utility.RefreshIndexStructures_PartitionState WITH (NOLOCK)
+			FROM DDI.RefreshIndexStructures_PartitionState WITH (NOLOCK)
 			WHERE SchemaName = ''' + AllTables.SchemaName + '''
 				AND PrepTableName = ''' + AllTables.PrepTableName + '''
 				AND DataSynchState = 1)
@@ -382,20 +396,26 @@ FROM (  SELECT T.DatabaseName
 				,T.Storage_Desired
 				,T.StorageType_Desired
 				,P.PartitionNumber
+                ,UFG_Desired.name AS PrepTableFilegroup
 				,0 AS IsNewPartitionedPrepTable
         --SELECT COUNT(*)
         FROM DDI.Tables T
             CROSS APPLY (   SELECT *, T.TableName + P.PrepTableNameSuffix AS PrepTableName, 0 AS IsNewPartitionedPrepTable
                             FROM DDI.vwPartitionFunctionPartitions P 
                             WHERE T.Storage_Desired = PartitionSchemeName) P
-        WHERE ReadyToQueue = 1
-            AND IntendToPartition = 1
+                INNER JOIN DDI.SysDataSpaces DS_Desired ON T.Storage_Desired = DS_Desired.name
+                INNER JOIN DDI.SysDestinationDataSpaces DDS_Desired ON DDS_Desired.database_id = DS_Desired.database_id
+                    AND DDS_Desired.partition_scheme_id = DS_Desired.data_space_id
+                    AND P.PartitionNumber = DDS_Desired.destination_id
+                INNER JOIN DDI.SysDataSpaces UFG_Desired ON DDS_Desired.database_id = UFG_Desired.database_id
+                    AND DDS_Desired.data_space_id = UFG_Desired.data_space_id
+        WHERE IntendToPartition = 1
         UNION ALL
         SELECT	T.DatabaseName
                 ,T.SchemaName
 				,T.TableName
-				,0
-				,T.TableName + '_NewPartitionedTableFromPrep' 
+				,0 AS DateDiffs
+				,T.TableName + '_NewPartitionedTableFromPrep' AS PrepTableName
 				,T.TableName + '_NewPartitionedTableFromPrep' AS NewPartitionedPrepTableName
 				,T.PartitionFunctionName
 				,'9999-12-31' AS NextBoundaryValue
@@ -409,9 +429,13 @@ FROM (  SELECT T.DatabaseName
 				,T.Storage_Desired
 				,T.StorageType_Desired
 				,0 AS PartitionNumber
+                ,NULL AS PrepTableFilegroup
 				,1 AS IsNewPartitionedPrepTable
         FROM DDI.Tables T
         WHERE IntendToPartition = 1) AllTables
     CROSS JOIN (SELECT * FROM DDI.DDISettings WHERE SettingName = 'UTEBCP Filepath') SS
+
+
+
 
 GO

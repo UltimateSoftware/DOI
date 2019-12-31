@@ -41,8 +41,6 @@ FROM DDI.SysForeignKeys FKS
 					WHERE FKC.constraint_object_id = FKS.object_id 
                     ORDER BY FKC.constraint_column_id ASC
 					FOR XML PATH('')) FKReferencedColumns(FKReferencedColumnList)
-    --INNER JOIN Utility.Tables T2 ON S.NAME = T2.SchemaName
-    --    AND T.NAME = T2.TableName
 
 
 GO

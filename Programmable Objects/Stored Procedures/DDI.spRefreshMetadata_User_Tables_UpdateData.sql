@@ -7,9 +7,9 @@ GO
 SET ANSI_NULLS ON
 GO
 
---EXEC Utility.spForeignKeysAdd
+--EXEC DDI.spForeignKeysAdd
 --    @ForMetadataTablesOnly = 1,
---	@ReferencedSchemaName	= 'Utility',
+--	@ReferencedSchemaName	= 'DDI',
 --	@ReferencedTableName	= 'Tables',
 --    @UseExistenceCheck  = 1
 --GO

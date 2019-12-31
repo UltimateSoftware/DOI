@@ -18,8 +18,8 @@ RETURNS NVARCHAR(MAX)
 AS
 
 /*
-	select Utility.[fnGetJoinClauseForTable]('DBO', 'Pays', 1, 'S', 'D')
-    select Utility.[fnGetJoinClauseForTable]('DBO', 'Pays', 1)
+	select [DDI].[fnGetJoinClauseForTable]('DBO', 'Pays', 1, 'S', 'D')
+    select [DDI].[fnGetJoinClauseForTable]('DBO', 'Pays', 1)
 */
 
 BEGIN

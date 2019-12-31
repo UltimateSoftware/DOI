@@ -26,6 +26,4 @@ FROM DDI.SysStats ST
 						AND stc.stats_id = st.stats_id
                     ORDER BY stc.stats_column_id ASC
 					FOR XML PATH('')) StatsColumns(StatsColumnList)
-    --INNER JOIN Utility.Tables T2 ON S.NAME = T2.SchemaName
-    --    AND T.NAME = T2.TableName
 GO

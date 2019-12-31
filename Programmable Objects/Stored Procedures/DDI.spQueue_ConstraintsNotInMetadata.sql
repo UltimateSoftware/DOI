@@ -31,8 +31,7 @@ FROM DDI.SysCheckConstraints ch
 				FROM DDI.SysTables) t ON t.object_id = ch.parent_object_id
 	LEFT JOIN DDI.SysColumns c ON c.object_id = t.object_id
 		AND ch.parent_column_id = c.column_id
-WHERE s.name NOT IN ('Utility')
-	AND t.name NOT LIKE '%|_OLD' ESCAPE '|'
+WHERE t.name NOT LIKE '%|_OLD' ESCAPE '|'
 	AND t.name NOT IN ('DBDefragLog')
 	AND NOT EXISTS (SELECT 'True' 
 					FROM DDI.CheckConstraints CC 
@@ -55,8 +54,7 @@ FROM DDI.SysDefaultConstraints d
 				FROM DDI.SysTables) t ON t.object_id = d.parent_object_id
 	INNER JOIN DDI.SysColumns c ON c.object_id = t.object_id
 		AND d.parent_column_id = c.column_id
-WHERE s.name NOT IN ('Utility')
-	AND t.name NOT LIKE '%|_OLD' ESCAPE '|'
+WHERE t.name NOT LIKE '%|_OLD' ESCAPE '|'
 	AND t.name NOT IN ('DBDefragLog')
 	AND NOT EXISTS (SELECT 'True' 
 					FROM DDI.DefaultConstraints CC 

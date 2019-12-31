@@ -66,20 +66,6 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-PRINT N'Creating [DDI].[SystemSettings]'
-GO
-IF OBJECT_ID(N'[DDI].[SystemSettings]', 'U') IS NULL
-CREATE TABLE [DDI].[SystemSettings]
-(
-[SettingName] [sys].[sysname] NOT NULL,
-[SettingValue] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-CONSTRAINT [PK_SystemSettings] PRIMARY KEY NONCLUSTERED  ([SettingName])
-)
-WITH
-(
-MEMORY_OPTIMIZED = ON
-)
-GO
 PRINT N'Creating [DDI].[SysDefaultConstraints]'
 GO
 IF OBJECT_ID(N'[DDI].[SysDefaultConstraints]', 'U') IS NULL

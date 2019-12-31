@@ -9,6 +9,7 @@ CREATE TABLE [DDI].[SysDmDbStatsProperties]
 [steps] [int] NULL,
 [unfiltered_rows] [bigint] NULL,
 [modification_counter] [bigint] NULL,
+[persisted_sample_percent] [float] NULL,
 CONSTRAINT [PK_SysDmDbStatsProperties] PRIMARY KEY NONCLUSTERED  ([database_id], [object_id], [stats_id])
 )
 WITH

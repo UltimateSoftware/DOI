@@ -8,6 +8,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DDI].[spQueue_BCPTables]
+    @DatabaseName NVARCHAR(128),
 	@SchemaName NVARCHAR(128),
 	@TableName NVARCHAR(128),
 	@BatchId UNIQUEIDENTIFIER
@@ -19,13 +20,10 @@ AS
 select newid()
 
 	EXEC DDI.[spQueue_BCPTables]
+        @DatabaseName = 'PaymentReporting',
 		@SchemaName = 'dbo',
 		@TableName = 'Pays',
 		@BatchId = '63F397D3-824B-47C2-A8CF-CED62565D2A2'
-
-		call from a job at off hours
-		wait at low priority
-		maxdop = 1
 */
 SET NOCOUNT ON
 SET ANSI_NULLS ON
@@ -37,7 +35,8 @@ SET NUMERIC_ROUNDABORT OFF
 SET QUOTED_IDENTIFIER ON
 
 BEGIN TRY
-	DECLARE @CurrentSchemaName							NVARCHAR(128),
+	DECLARE @CurrentDatabaseName						NVARCHAR(128),
+			@CurrentSchemaName							NVARCHAR(128),
 			@CurrentTableName							NVARCHAR(128),
 			@CurrentParentIndexName						NVARCHAR(128),
 			@CurrentPartitionColumn						NVARCHAR(128),
@@ -84,7 +83,7 @@ BEGIN TRY
             @DeletePartitionStateMetadataSQL            NVARCHAR(500) = '',
 			@PriorErrorValidationSQL					NVARCHAR(MAX) = '
 IF EXISTS(	SELECT ''True''
-			FROM DDI.RefreshIndexStructuresLog 
+			FROM DDI.Log 
 			WHERE BatchId = ''' + CAST(@BatchId AS VARCHAR(40)) + '''
 				AND TableName LIKE ''%' + @TableName + '%''
 				AND ErrorText IS NOT NULL ) /*ONLY PROCEED IF NOTHING HAS FAILED IN THIS BATCH.*/
@@ -115,79 +114,82 @@ RECONFIGURE
 	END
     
 	CREATE TABLE #Indexes (
-		SchemaName SYSNAME,
-		ParentTableName SYSNAME,
-		IndexName SYSNAME,
-		ParentIndexName SYSNAME,
-		CreateIndexStatement NVARCHAR(MAX),
-		RenameExistingTableIndexSQL NVARCHAR(MAX),
-		RenameNewPartitionedPrepTableIndexSQL NVARCHAR(MAX),
-		RowNum BIGINT,
-		PrepTableName SYSNAME,
-		IndexSizeInMB INT
-		CONSTRAINT PK_Indexes
-			PRIMARY KEY CLUSTERED (SchemaName, PrepTableName, IndexName))
+        DatabaseName                            SYSNAME,
+		SchemaName                              SYSNAME,
+		ParentTableName                         SYSNAME,
+		IndexName                               SYSNAME,
+		ParentIndexName                         SYSNAME,
+		CreateIndexStatement                    NVARCHAR(MAX),
+		RenameExistingTableIndexSQL             NVARCHAR(MAX),
+		RenameNewPartitionedPrepTableIndexSQL   NVARCHAR(MAX),
+		RowNum                                  BIGINT,
+		PrepTableName                           SYSNAME,
+		IndexSizeInMB                           INT
+		PRIMARY KEY CLUSTERED (DatabaseName, SchemaName, PrepTableName, IndexName))
 
 
-	INSERT INTO #Indexes ( SchemaName ,ParentTableName ,IndexName , ParentIndexName, CreateIndexStatement ,RenameExistingTableIndexSQL ,RenameNewPartitionedPrepTableIndexSQL ,RowNum ,PrepTableName, IndexSizeInMB )		
-	SELECT	FNIDX.SchemaName,
-				FNIDX.ParentTableName,
-				FNIDX.IndexName, 
-				FNIDX.ParentIndexName,
-				FNIDX.CreateIndexStatement,
-				FNIDX.RenameExistingTableIndexSQL,
-				FNIDX.RenameNewPartitionedPrepTableIndexSQL,
-				FNIDX.RowNum,
-				FNIDX.PrepTableName,
-				FNIDX.IndexSizeMB
-	FROM  DDI.fnDataDrivenIndexes_GetPrepTableIndexesSQL() FNIDX
-	WHERE FNIDX.SchemaName = @SchemaName
-		AND FNIDX.ParentTableName = @TableName
+	INSERT INTO #Indexes ( DatabaseName, SchemaName ,ParentTableName ,IndexName , ParentIndexName, CreateIndexStatement ,RenameExistingTableIndexSQL ,RenameNewPartitionedPrepTableIndexSQL ,RowNum ,PrepTableName, IndexSizeInMB )		
+	SELECT	PTI.DatabaseName,
+            PTI.SchemaName,
+			PTI.ParentTableName,
+			PTI.PrepTableIndexName, 
+			PTI.ParentIndexName,
+			PTI.PrepTableIndexCreateSQL,
+			PTI.RenameExistingTableIndexSQL,
+			PTI.RenameNewPartitionedPrepTableIndexSQL,
+			PTI.RowNum,
+			PTI.PrepTableName,
+			PTI.IndexSizeMB_Actual
+	FROM  DDI.vwTables_PrepTables_Indexes PTI
+	WHERE PTI.SchemaName = @SchemaName
+		AND PTI.ParentTableName = @TableName
 								
 	DECLARE PrepTable_Cur CURSOR LOCAL FAST_FORWARD FOR
-		SELECT	TTP.SchemaName, 
-					TTP.TableName,
-					TTP.PartitionColumn,
-					FN.PrepTableName,
-					FN.CreatePrepTableSQL,
-					TTP.CreateDataSynchTriggerSQL,
-					TTP.CreateFinalDataSynchTableSQL,
-					TTP.CreateFinalDataSynchTriggerSQL,
-					FN.TurnOnDataSynchSQL,
-					TTP.TurnOffDataSynchSQL,
-					FN.BCPSQL,
-					FN.NewStorage,
-					FN.NewStorageType,
-					FN.IsNewPartitionedPrepTable,
-					FN.NewPartitionedPrepTableName,
-					FN.CheckConstraintSQL,
-					FN.RenameNewPartitionedPrepTableSQL,
-					FN.RenameExistingTableSQL,
-					TTP.DropDataSynchTriggerSQL,
-					TTP.DropDataSynchTableSQL,
-					FN.SynchDeletesPrepTableSQL,
-					FN.SynchInsertsPrepTableSQL,
-					FN.SynchUpdatesPrepTableSQL,
-					FN.FinalRepartitioningValidationSQL,
-                    TTP.DeletePartitionStateMetadataSQL
-			FROM DDI.vwTables TTP
-				INNER JOIN DDI.fnDataDrivenIndexes_GetPrepTableSQL() FN ON FN.SchemaName = TTP.SchemaName
-					AND FN.TableName = TTP.TableName
-			WHERE TTP.UseBCPStrategy = 1
-				AND FN.PrepTableName IS NOT NULL
-				AND TTP.IsStorageChanging = 1
-				AND TTP.SchemaName = @SchemaName
-				AND TTP.TableName = @TableName
-			ORDER BY FN.IsNewPartitionedPrepTable, FN.PartitionNumber
+		SELECT	TTP.DatabaseName,
+                TTP.SchemaName, 
+				TTP.TableName,
+				TTP.PartitionColumn,
+				PT.PrepTableName,
+				PT.CreatePrepTableSQL,
+				TTP.CreateDataSynchTriggerSQL,
+				TTP.CreateFinalDataSynchTableSQL,
+				TTP.CreateFinalDataSynchTriggerSQL,
+				PT.TurnOnDataSynchSQL,
+				TTP.TurnOffDataSynchSQL,
+				PT.BCPSQL,
+				PT.Storage_Desired,
+				PT.StorageType_Desired,
+				PT.IsNewPartitionedPrepTable,
+				PT.NewPartitionedPrepTableName,
+				PT.CheckConstraintSQL,
+				PT.RenameNewPartitionedPrepTableSQL,
+				PT.RenameExistingTableSQL,
+				TTP.DropDataSynchTriggerSQL,
+				TTP.DropDataSynchTableSQL,
+				PT.SynchDeletesPrepTableSQL,
+				PT.SynchInsertsPrepTableSQL,
+				PT.SynchUpdatesPrepTableSQL,
+				PT.FinalRepartitioningValidationSQL,
+                TTP.DeletePartitionStateMetadataSQL
+		FROM DDI.vwTables TTP
+			INNER JOIN DDI.vwTables_PrepTables PT ON PT.SchemaName = TTP.SchemaName
+				AND PT.TableName = TTP.TableName
+		WHERE TTP.IntendToPartition = 1
+			AND PT.PrepTableName IS NOT NULL
+			AND TTP.IsStorageChanging = 1
+			AND TTP.SchemaName = @SchemaName
+			AND TTP.TableName = @TableName
+		ORDER BY PT.IsNewPartitionedPrepTable, PT.PartitionNumber
 	
 	OPEN PrepTable_Cur
 
-	FETCH NEXT FROM PrepTable_Cur INTO @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
+	FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
 
 	IF @@FETCH_STATUS NOT IN (-1, -2)
 	BEGIN
-		EXEC DDI.spRefreshIndexesQueueInsert
-			@CurrentSchemaName				= @CurrentSchemaName ,
+		EXEC DDI.spQueue_Insert
+            @CurrentDatabaseName            = @CurrentDatabaseName,
+			@CurrentSchemaName				= @CurrentSchemaName,
 			@CurrentTableName				= @PrepTableName, 
 			@CurrentIndexName				= 'N/A',
 			@CurrentPartitionNumber			= 0,
@@ -207,7 +209,8 @@ RECONFIGURE
 	BEGIN
 		IF @@FETCH_STATUS <> -2
 		BEGIN
-			EXEC DDI.spRefreshIndexesQueueInsert
+			EXEC DDI.spQueue_Insert
+                @CurrentDatabaseName            = @CurrentDatabaseName,
 				@CurrentSchemaName				= @CurrentSchemaName ,
                 @CurrentTableName				= @PrepTableName, 
                 @CurrentIndexName				= 'N/A',
@@ -225,7 +228,8 @@ RECONFIGURE
 
 			IF @IsNewPartitionedPrepTable = 0
 			BEGIN
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName,
 					@CurrentTableName				= @PrepTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -242,7 +246,8 @@ RECONFIGURE
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName,
 					@CurrentTableName				= @PrepTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -259,7 +264,8 @@ RECONFIGURE
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
 
-            	EXEC DDI.spRefreshIndexesQueueInsert
+            	EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @PrepTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -275,7 +281,8 @@ RECONFIGURE
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @PrepTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -310,7 +317,8 @@ RECONFIGURE
 			BEGIN
 				IF @@FETCH_STATUS <> -2
 				BEGIN
-					EXEC DDI.spRefreshIndexesQueueInsert
+					EXEC DDI.spQueue_Insert
+                        @CurrentDatabaseName            = @CurrentDatabaseName,
 						@CurrentSchemaName				= @CurrentSchemaName ,
 						@CurrentTableName				= @PrepTableName, 
 						@CurrentIndexName				= @IndexName, 
@@ -336,11 +344,11 @@ RECONFIGURE
 
 			--create all Constraints
 			DECLARE CreateAllConstraints_Cur CURSOR LOCAL FAST_FORWARD FOR
-				SELECT	FNIDX.CreateConstraintStatement, RowNum
-				FROM  DDI.fnDataDrivenIndexes_GetPrepTableConstraintsSQL() FNIDX
-				WHERE FNIDX.SchemaName = @CurrentSchemaName
-					AND FNIDX.ParentTableName = @CurrentTableName
-					AND FNIDX.PrepTableName = @PrepTableName
+				SELECT	PTC.CreateConstraintStatement, RowNum
+				FROM  DDI.vwTables_PrepTables_Constraints PTC
+				WHERE PTC.SchemaName = @CurrentSchemaName
+					AND PTC.ParentTableName = @CurrentTableName
+					AND PTC.PrepTableName = @PrepTableName
 
 			OPEN CreateAllConstraints_Cur
 
@@ -350,7 +358,8 @@ RECONFIGURE
 			BEGIN
 				IF @@FETCH_STATUS <> -2
 				BEGIN
-					EXEC DDI.spRefreshIndexesQueueInsert
+					EXEC DDI.spQueue_Insert
+                        @CurrentDatabaseName            = @CurrentDatabaseName,
 						@CurrentSchemaName				= @CurrentSchemaName ,
 						@CurrentTableName				= @PrepTableName, 
 						@CurrentIndexName				= 'N/A',
@@ -377,7 +386,8 @@ RECONFIGURE
 			IF @IsNewPartitionedPrepTable = 1
             BEGIN
 				--MAKE SURE NOTHING HAS ERRORED OUT UP UNTIL THIS POINT BEFORE CONTINUING....
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @SchemaName ,
 					@CurrentTableName				= @TableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -394,7 +404,8 @@ RECONFIGURE
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1 
 					
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @PrepTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -410,7 +421,8 @@ RECONFIGURE
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @PrepTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -426,7 +438,8 @@ RECONFIGURE
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -449,7 +462,7 @@ RECONFIGURE
 							PartitionSwitchSQL,
 							DropTableSQL,
 							PartitionNumber
-					FROM DDI.fnDataDrivenIndexes_GetPartitionSQL()
+					FROM DDI.vwTables_PrepTables_Partitions
 					WHERE SchemaName = @CurrentSchemaName
 						AND ParentTableName = @CurrentTableName
 					ORDER BY PartitionNumber ASC
@@ -461,7 +474,8 @@ RECONFIGURE
 				BEGIN
 					IF @@FETCH_STATUS <> -2
 					BEGIN
-						EXEC DDI.spRefreshIndexesQueueInsert
+						EXEC DDI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
 							@CurrentSchemaName				= @CurrentSchemaName ,
 							@CurrentTableName				= @NewPartitionedPrepTableName, 
 							@CurrentIndexName				= 'N/A', 
@@ -493,7 +507,8 @@ RECONFIGURE
 
 				IF @NewPartitionedPrepTableName IS NOT NULL
                 BEGIN
-                	EXEC DDI.spRefreshIndexesQueueInsert
+                	EXEC DDI.spQueue_Insert
+                        @CurrentDatabaseName            = @CurrentDatabaseName,
 						@CurrentSchemaName				= @CurrentSchemaName ,
 						@CurrentTableName				= @NewPartitionedPrepTableName, 
 						@CurrentIndexName				= 'N/A', 
@@ -516,7 +531,8 @@ BEGIN TRAN',
 				BEGIN
 					IF @@FETCH_STATUS <> -2
 					BEGIN
-						EXEC DDI.spRefreshIndexesQueueInsert
+						EXEC DDI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
 							@CurrentSchemaName				= @CurrentSchemaName ,
 							@CurrentTableName				= @NewPartitionedPrepTableName, 
 							@CurrentIndexName				= 'N/A',
@@ -533,7 +549,8 @@ BEGIN TRAN',
 							@BatchId						= @BatchId,
 							@ExitTableLoopOnError			= 1
 
-						EXEC DDI.spRefreshIndexesQueueInsert
+						EXEC DDI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
 							@CurrentSchemaName				= @CurrentSchemaName ,
 							@CurrentTableName				= @UnPartitionedPrepTableName, 
 							@CurrentIndexName				= 'N/A', 
@@ -557,7 +574,8 @@ BEGIN TRAN',
 				CLOSE Partitions_Cur
 				DEALLOCATE Partitions_Cur
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @NewPartitionedPrepTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -577,7 +595,8 @@ BEGIN TRAN',
 				SET @TransactionId = NULL 
 
 				--validate if all has gone well:  do both tables exist, with the right structure, and are their rowcounts within a certain % of each other?
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @NewPartitionedPrepTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -596,7 +615,8 @@ BEGIN TRAN',
 				--rename tables, in a transaction
 				SET @TransactionId = NEWID()
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @NewPartitionedPrepTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -634,7 +654,8 @@ BEGIN TRAN',
 					BEGIN
 						IF NULLIF(LTRIM(RTRIM(@RenameExistingTableIndexSQL)), '') IS NOT NULL --MISSING INDEXES WON'T EXIST IN THE 'EXISTING' TABLE.
                         BEGIN
-							EXEC DDI.spRefreshIndexesQueueInsert
+							EXEC DDI.spQueue_Insert
+                                @CurrentDatabaseName            = @CurrentDatabaseName,
 								@CurrentSchemaName				= @CurrentSchemaName ,
 								@CurrentTableName				= @CurrentTableName, 
 								@CurrentIndexName				= @IndexName, 
@@ -652,7 +673,8 @@ BEGIN TRAN',
 								@ExitTableLoopOnError			= 1
 						END
 
-						EXEC DDI.spRefreshIndexesQueueInsert
+						EXEC DDI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
 							@CurrentSchemaName				= @CurrentSchemaName ,
 							@CurrentTableName				= @PrepTableName, 
 							@CurrentIndexName				= @IndexName, 
@@ -678,13 +700,13 @@ BEGIN TRAN',
 
 				--Rename all Constraints  
 				DECLARE RenameAllConstraints_Cur CURSOR LOCAL FAST_FORWARD for
-					SELECT	FNC.RenameExistingTableConstraintSQL,
-							FNC.RenameNewPartitionedPrepTableConstraintSQL,
-							FNC.RowNum
-					FROM  DDI.fnDataDrivenIndexes_GetPrepTableConstraintsSQL() FNC
-					WHERE FNC.SchemaName = @CurrentSchemaName
-						AND FNC.ParentTableName = @CurrentTableName
-						AND FNC.PrepTableName = @PrepTableName
+					SELECT	PTC.RenameExistingTableConstraintSQL,
+							PTC.RenameNewPartitionedPrepTableConstraintSQL,
+							PTC.RowNum
+					FROM  DDI.vwTables_PrepTables_Constraints PTC
+					WHERE PTC.SchemaName = @CurrentSchemaName
+						AND PTC.ParentTableName = @CurrentTableName
+						AND PTC.PrepTableName = @PrepTableName
 
 				OPEN RenameAllConstraints_Cur
 
@@ -694,7 +716,8 @@ BEGIN TRAN',
 				BEGIN
 					IF @@FETCH_STATUS <> -2
 					BEGIN
-						EXEC DDI.spRefreshIndexesQueueInsert
+						EXEC DDI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
 							@CurrentSchemaName				= @CurrentSchemaName ,
 							@CurrentTableName				= @CurrentTableName, 
 							@CurrentIndexName				= 'N/A', 
@@ -711,7 +734,8 @@ BEGIN TRAN',
 							@BatchId						= @BatchId,
 							@ExitTableLoopOnError			= 1
 
-						EXEC DDI.spRefreshIndexesQueueInsert
+						EXEC DDI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
 							@CurrentSchemaName				= @CurrentSchemaName ,
 							@CurrentTableName				= @PrepTableName, 
 							@CurrentIndexName				= 'N/A', 
@@ -735,7 +759,8 @@ BEGIN TRAN',
 				CLOSE RenameAllConstraints_Cur
 				DEALLOCATE RenameAllConstraints_Cur
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -751,7 +776,8 @@ BEGIN TRAN',
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @NewPartitionedPrepTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -767,7 +793,8 @@ BEGIN TRAN',
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
                 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -788,7 +815,8 @@ BEGIN TRAN',
 				--data synch
 				--AT THIS POINT, WE HAVE ALREADY RENAMED, SO NO MORE ERRORS SHOULD EXIT THE LOOP.
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -804,7 +832,8 @@ BEGIN TRAN',
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 0
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -820,7 +849,8 @@ BEGIN TRAN',
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 0
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -836,7 +866,8 @@ BEGIN TRAN',
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 0
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -852,7 +883,8 @@ BEGIN TRAN',
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 0
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -873,7 +905,8 @@ EXEC DDI.spForeignKeysDrop
 	@ParentSchemaName = ''' + @CurrentSchemaName + ''',
 	@ParentTableName = ''' + @CurrentTableName + ''''
 				
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -894,7 +927,8 @@ EXEC DDI.spForeignKeysDrop
 	@ReferencedSchemaName = ''' + @CurrentSchemaName + ''',
 	@ReferencedTableName = ''' + @CurrentTableName + ''''
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -915,7 +949,8 @@ EXEC DDI.spForeignKeysAdd
 	@ParentSchemaName = ''' + @CurrentSchemaName + ''',
 	@ParentTableName = ''' + @CurrentTableName + ''''
 				
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A', 
@@ -936,7 +971,8 @@ EXEC DDI.spForeignKeysAdd
 	@ReferencedSchemaName = ''' + @CurrentSchemaName + ''',
 	@ReferencedTableName = ''' + @CurrentTableName + ''''
 
-				EXEC DDI.spRefreshIndexesQueueInsert
+				EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
 					@CurrentTableName				= @CurrentTableName, 
 					@CurrentIndexName				= 'N/A',
@@ -952,7 +988,8 @@ EXEC DDI.spForeignKeysAdd
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 0
 
-                EXEC DDI.spRefreshIndexesQueueInsert
+                EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
 		            @CurrentSchemaName				= @SchemaName,
 		            @CurrentTableName				= @TableName, 
 		            @CurrentIndexName				= 'N/A',
@@ -970,7 +1007,7 @@ EXEC DDI.spForeignKeysAdd
 		            @ExitTableLoopOnError			= 0
 			END --if @IsNewPartitionedTable = 1
 		END --IF @@FETCH_STATUS <> -2
-		FETCH NEXT FROM PrepTable_Cur INTO @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
+		FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
 	END  --IF @@FETCH_STATUS <> -1
 
 	CLOSE PrepTable_Cur

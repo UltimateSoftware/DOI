@@ -10,9 +10,9 @@ GO
 CREATE   PROCEDURE [DDI].[spRefreshMetadata_User_IndexesColumnStore_CreateTables]
 
 AS
---EXEC Utility.spForeignKeysDrop 
+--EXEC DDI.spForeignKeysDrop 
 --    @ForMetadataTablesOnly = 1,
---    @ReferencedSchemaName = 'Utility',
+--    @ReferencedSchemaName = 'DDI',
 --	@ReferencedTableName	= 'IndexesColumnStore'
 --GO
 
