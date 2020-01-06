@@ -7,6 +7,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
 CREATE   VIEW [DDI].[vwPartitionFunctions]
 AS
 
@@ -32,12 +33,14 @@ SELECT	PartitionFunctionName,
 		CASE WHEN pf.name IS NULL THEN 1 ELSE 0 END AS IsPartitionFunctionMissing,
 		CASE WHEN ps.name IS NULL THEN 1 ELSE 0 END AS IsPartitionSchemeMissing,
         NUF.NextUsedFileGroupName,
-N'IF NOT EXISTS(SELECT * FROM sys.partition_functions WHERE name = ''' + PFM.PartitionFunctionName + ''')
+N'USE ' + DatabaseName + ';
+IF NOT EXISTS(SELECT * FROM sys.partition_functions WHERE name = ''' + PFM.PartitionFunctionName + ''')
 BEGIN
 	CREATE PARTITION FUNCTION ' + PFM.PartitionFunctionName + ' (' + PFM.PartitionFunctionDataType + ') 
 		AS RANGE RIGHT FOR VALUES (' + STUFF(PfBoundaryList.BoundaryList, LEN(PfBoundaryList.BoundaryList), 1, SPACE(0)) + ')
 END'  AS CreatePartitionFunctionSQL,
 '
+USE ' + DatabaseName + ';
 IF NOT EXISTS(SELECT * FROM sys.partition_schemes WHERE name = ''' + PFM.PartitionSchemeName + ''')
 BEGIN
 	CREATE PARTITION SCHEME	' + PFM.PartitionSchemeName + ' 
@@ -60,25 +63,26 @@ FROM DDI.PartitionFunctions PFM
 	LEFT JOIN DDI.SysPartitionFunctions pf ON pf.name = PFM.PartitionFunctionName
     LEFT JOIN DDI.SysPartitionSchemes ps ON ps.name = PFM.PartitionSchemeName
 	OUTER APPLY (	SELECT *
-					FROM (	SELECT	FG.Name as NextUsedFileGroupName,
+					FROM (	SELECT	FG.Name AS NextUsedFileGroupName,
 									prv.value, 
 									ps.Name,
 									ps.function_id,
-									RANK() OVER (PARTITION BY ps.name order by dds.destination_Id) AS dest_rank
-							FROM DDI.SysDestinationDataSpaces as DDS 
-								INNER JOIN DDI.SysFilegroups as FG ON FG.data_space_id = DDS.data_space_ID 
-								LEFT JOIN DDI.SysPartitionRangeValues as PRV on PRV.Boundary_ID = DDS.destination_id 
+									RANK() OVER (PARTITION BY ps.name ORDER BY dds.destination_Id) AS dest_rank
+							FROM DDI.SysDestinationDataSpaces AS DDS 
+								INNER JOIN DDI.SysFilegroups AS FG ON FG.data_space_id = DDS.data_space_ID 
+								LEFT JOIN DDI.SysPartitionRangeValues AS PRV ON PRV.Boundary_ID = DDS.destination_id 
 									AND prv.function_id = ps.function_id 
 							WHERE DDS.partition_scheme_id = ps.data_space_id
 								AND prv.Value IS NULL) x
 					WHERE x.dest_rank = 2) AS NUF
     OUTER APPLY (   SELECT prv.function_id, COUNT(prv.boundary_id) AS NumFutureIntervals
-                    FROM DDI.SysDestinationDataSpaces as DDS 
-						INNER JOIN DDI.SysFilegroups as FG ON FG.data_space_id = DDS.data_space_ID 
-						LEFT JOIN DDI.SysPartitionRangeValues as PRV on PRV.Boundary_ID = DDS.destination_id 
+                    FROM DDI.SysDestinationDataSpaces AS DDS 
+						INNER JOIN DDI.SysFilegroups AS FG ON FG.data_space_id = DDS.data_space_ID 
+						LEFT JOIN DDI.SysPartitionRangeValues AS PRV ON PRV.Boundary_ID = DDS.destination_id 
 							AND prv.function_id = ps.function_id 
 					WHERE DDS.partition_scheme_id = ps.data_space_id
                         AND prv.value > GETDATE()
                     GROUP BY PRV.function_id)FI
+
 
 GO

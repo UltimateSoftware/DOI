@@ -31,3 +31,7 @@ MEMORY_OPTIMIZED = ON
 GO
 ALTER TABLE [DDI].[Log] ADD CONSTRAINT [Chk_Log_RunStatus] CHECK (([RunStatus]='Error - Skipping...' OR [RunStatus]='Error - Retrying...' OR [RunStatus]='Error' OR [RunStatus]='Finish' OR [RunStatus]='Running' OR [RunStatus]='Start'))
 GO
+ALTER TABLE [DDI].[Log] ADD CONSTRAINT [FK_Log_Databases] FOREIGN KEY ([DatabaseName]) REFERENCES [DDI].[Databases] ([DatabaseName])
+GO
+ALTER TABLE [DDI].[Log] NOCHECK CONSTRAINT [FK_Log_Databases]
+GO

@@ -19,7 +19,20 @@ AS
 
 DELETE DDI.SysDmOsVolumeStats
 
-EXEC DDI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysDmOsVolumeStats'
+    SELECT  FN.*
+    INTO #SysDmOsVolumeStats
+    FROM DDI.SysDatabaseFiles p 
+        CROSS APPLY sys.dm_os_volume_stats(p.database_id, p.file_id) FN 
+    WHERE p.database_id = DB_ID('PaymentReporting')
 
+    INSERT INTO #SysDmOsVolumeStats
+    SELECT  FN.*
+    FROM DDI.SysDatabaseFiles p
+        CROSS APPLY sys.dm_os_volume_stats(p.database_id, file_id) FN 
+    WHERE p.database_id = DB_ID('TempDB')    
+
+    INSERT INTO DDI.SysDmOsVolumeStats
+    SELECT * FROM #SysDmOsVolumeStats
+
+DROP TABLE #SysDmOsVolumeStats
 GO

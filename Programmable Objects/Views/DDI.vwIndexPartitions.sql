@@ -7,6 +7,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
 CREATE   VIEW [DDI].[vwIndexPartitions]
 AS
 
@@ -36,8 +37,11 @@ SELECT	SchemaName,
 		END AS PartitionUpdateType,
 		PartitionType,
 		OptionDataCompression,
-		'TRUNCATE TABLE ' + SchemaName + '.' + TableName + 'WITH (PARTITIONS (' + CAST(PartitionNumber AS VARCHAR(5)) + '))' AS TruncateStatement,
-		'ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + CHAR(10) + 
+		'
+USE ' + DatabaseName + ';
+TRUNCATE TABLE ' + SchemaName + '.' + TableName + 'WITH (PARTITIONS (' + CAST(PartitionNumber AS VARCHAR(5)) + '))' AS TruncateStatement,
+'USE ' + DatabaseName + ';
+ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + CHAR(10) + 
 '	REBUILD PARTITION = ' + CAST(PartitionNumber AS VARCHAR(5)) + CHAR(13) + CHAR(10) + 
 '		WITH (	' + CASE WHEN PartitionType = 'RowStore' THEN '
 				SORT_IN_TEMPDB = ON,' ELSE '' END + '
@@ -45,9 +49,12 @@ SELECT	SchemaName,
 				MAXDOP = 0,
 				DATA_COMPRESSION = ' + OptionDataCompression COLLATE DATABASE_DEFAULT + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 AS AlterRebuildStatement
-				,'ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + CHAR(10) + 
+				,'
+USE ' + DatabaseName + ';
+ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + CHAR(10) + 
 '	REORGANIZE PARTITION = ' + CAST(PartitionNumber AS VARCHAR(5)) + CHAR(13) + CHAR(10) + 
 '		WITH (	LOB_COMPACTION = ON)' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) AS AlterReorganizeStatement
 --select count(*)
 FROM DDI.IndexRowStorePartitions 
+
 GO

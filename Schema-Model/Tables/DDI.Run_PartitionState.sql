@@ -15,3 +15,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+ALTER TABLE [DDI].[Run_PartitionState] ADD CONSTRAINT [FK_Run_PartitionState_Tables] FOREIGN KEY ([DatabaseName], [SchemaName], [ParentTableName]) REFERENCES [DDI].[Tables] ([DatabaseName], [SchemaName], [TableName])
+GO
+ALTER TABLE [DDI].[Run_PartitionState] NOCHECK CONSTRAINT [FK_Run_PartitionState_Tables]
+GO

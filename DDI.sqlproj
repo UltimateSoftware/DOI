@@ -186,7 +186,7 @@
     <None Include="Post-Deployment\01_Finalize_Deployment.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\001_20191216-1151_SamuelBe.sql" />
+    <None Include="Migrations\001_Metadata_System_Tables.sql" />
     <None Include="Programmable Objects\Functions\DDI.fn_ListToTable.sql" />
     <None Include="Programmable Objects\Functions\DDI.fnActualIndex_Frag.sql" />
     <None Include="Programmable Objects\Functions\DDI.fnActualIndex_NumPages.sql" />
@@ -341,13 +341,13 @@
     <None Include="Post-Deployment\05_Create Sql Agent Job - Refresh Storage Containers.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\002_20191217-1549_SamuelBe.sql" />
+    <None Include="Migrations\003_NotInMetadata_Tables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_System_SysIndexes.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_System_SysStats_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_System_SysStatsColumns_InsertData.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\003_20191218-1714_SamuelBe.sql" />
+    <None Include="Migrations\004_DDISettings_Table.sql" />
     <None Include="Programmable Objects\Stored Procedures\dbo.spEnableDisableAllFKs.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spForeignKeysAdd.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spForeignKeysDrop.sql" />
@@ -372,7 +372,6 @@
     <None Include="Programmable Objects\Stored Procedures\DDI.spIndexValidations.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\004_20191226-1707_SamuelBe.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_User_Tables_AddRefFKs.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_User_Tables_DropRefFKs.sql" />
   </ItemGroup>
@@ -383,10 +382,10 @@
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_User_Databases_InsertData.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\005_20191227-1139_SamuelBe.sql" />
+    <None Include="Migrations\005_Queue_and_Run_Tables.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\006_20191227-1649_SamuelBe.sql" />
+    <None Include="Migrations\006_Table_Types.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spQueue_ConstraintsNotInMetadata.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_System_SysCheckConstraints.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_System_SysCheckConstraints_CreateTables.sql" />
@@ -402,29 +401,18 @@
     <None Include="Programmable Objects\Stored Procedures\DDI.spRun_RecoverLogRowsFromRollback.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRun_ReleaseApplicationLock.sql" />
     <None Include="Programmable Objects\Views\DDI.vwFreeSpaceOnDisk.sql" />
-    <None Include="Schema-Model\Tables\DDI.SysCheckConstraints.sql" />
     <None Include="Schema-Model\Tables\DDI.SysDefaultConstraints.sql" />
     <None Include="Schema-Model\Tables\DDI.SysMasterFiles.sql" />
     <None Include="Schema-Model\Tables\DDI.SysTriggers.sql" />
     <None Include="Schema-Model\Types\User-defined Data Types\DDI.LogTT.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\007_20191227-1656_SamuelBe.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Programmable Objects\Functions\DDI.fnFreeSpaceNeededForTableIndexOperations.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Migrations\008_20191230-1020_SamuelBe.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Schema-Model\Tables\DDI.Run_PartitionState.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\009_20191230-1024_SamuelBe.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Migrations\010_20191230-1457_SamuelBe.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spEnableDisableAllFKs.sql" />
     <None Include="Programmable Objects\Stored Procedures\Utility.spEnableDisableAllFKs.sql" />
     <None Include="Schema-Model\Security\Schemas\Utility.sql" />
@@ -432,14 +420,19 @@
     <None Include="Schema-Model\Types\User-defined Data Types\DDI.IndexColumnsTT.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\011_20191230-1555_SamuelBe.sql" />
     <None Include="Programmable Objects\Stored Procedures\Utility.spRowCountsAllTables.sql" />
     <None Include="Schema-Model\Types\User-defined Data Types\DDI.SysPartitionRangeValuesTT.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\012_20191231-1438_SamuelBe.sql" />
+    <None Include="Migrations\002_Metadata_User_Tables.sql" />
     <None Include="Programmable Objects\Views\DDI.vwTables_PrepTables_Constraints.sql" />
     <None Include="Programmable Objects\Views\DDI.vwTables_PrepTables_Indexes.sql" />
     <None Include="Programmable Objects\Views\DDI.vwTables_PrepTables_Partitions.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pre-Deployment\02_Create_Schemas.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Schema-Model\Tables\DDI.SysCheckConstraints.sql" />
   </ItemGroup>
 </Project>

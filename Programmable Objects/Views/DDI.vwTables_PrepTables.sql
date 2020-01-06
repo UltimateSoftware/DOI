@@ -10,6 +10,8 @@ GO
 
 
 
+
+
 CREATE   VIEW [DDI].[vwTables_PrepTables]
 
 /*
@@ -49,6 +51,7 @@ SELECT  AllTables.DatabaseName,
         AllTables.PrepTableFilegroup,
         PartitionNumber,
         CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '
+USE ' + DatabaseName + ';
 IF OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NOT NULL
 BEGIN
 	DROP TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '
@@ -59,6 +62,7 @@ BEGIN
 	CREATE TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' (' + CHAR(13) + CHAR(10) + AllTables.ColumnListWithTypes + ') ON [' + AllTables.Storage_Desired + ']' + CASE WHEN AllTables.PrepTableName LIKE '%NewPartitionedTableFromPrep' THEN '(' + AllTables.PartitionColumn + ')' ELSE '' END + '
 END' 
 ELSE '
+USE ' + DatabaseName + ';
 IF OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NOT NULL
 BEGIN
 	DROP TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '
@@ -70,6 +74,7 @@ BEGIN
 END' END AS CreatePrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
+USE ' + DatabaseName + ';
 IF NOT EXISTS(SELECT * FROM sys.triggers WHERE name = ''tr' + AllTables.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + AllTables.TableName + ''')
 BEGIN
 	RAISERROR (''Data Synch Trigger has not been created!!'', 16, 1)
@@ -98,6 +103,7 @@ END'
 END AS BCPSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
+USE ' + DatabaseName + ';
 IF OBJECT_ID(''Chk_' + AllTables.PrepTableName + ''') IS NULL
 BEGIN
 	ALTER TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' WITH CHECK ADD
@@ -108,6 +114,7 @@ BEGIN
 END' END AS CheckConstraintSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
+USE ' + DatabaseName + ';
 IF (SELECT * FROM DDI.fnCompareTableStructures(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')) > 0
 BEGIN
     DECLARE @ErrorMessage VARCHAR(MAX) = ''Schemas from the 2 tables do not match!!''
@@ -166,6 +173,7 @@ END'
 END AS FinalRepartitioningValidationSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
+USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''',
@@ -174,6 +182,7 @@ EXEC sp_rename
 END AS RenameNewPartitionedPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
+USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + AllTables.SchemaName + '.' + AllTables.TableName + ''',
@@ -182,7 +191,8 @@ EXEC sp_rename
 END AS RenameExistingTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
-'UPDATE DDI.RefreshIndexStructures_PartitionState
+'USE ' + DatabaseName + ';
+UPDATE DDI.RefreshIndexStructures_PartitionState
 SET DataSynchState = 1
 WHERE SchemaName = ''' + AllTables.SchemaName + '''
 	AND PrepTableName = ''' + AllTables.PrepTableName + '''
@@ -231,6 +241,7 @@ END' END AS PrepTableTriggerSQLFragment,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
+USE ' + DatabaseName + ';
 INSERT INTO ' + AllTables.SchemaName + '.' + AllTables.TableName + '
 SELECT ' + AllTables.ColumnListNoTypes + '
 FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
@@ -253,6 +264,7 @@ END'
 END AS SynchInsertsPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
+USE ' + DatabaseName + ';
 UPDATE PT
 SET ' + AllTables.UpdateColumnList + '
 FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
@@ -285,6 +297,7 @@ END'
 END AS SynchUpdatesPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
+USE ' + DatabaseName + ';
 DELETE PT
 FROM ' + + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK)
 WHERE EXISTS (	SELECT ''True'' 
@@ -306,6 +319,7 @@ END'
 END AS SynchDeletesPrepTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
+USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + AllTables.SchemaName + '.' + AllTables.TableName + ''',
@@ -314,6 +328,7 @@ EXEC sp_rename
 END AS RevertRenameNewPartitionedPrepTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
+USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD'',
@@ -323,6 +338,7 @@ END AS RevertRenameExistingTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
+USE ' + DatabaseName + ';
 SELECT *
 FROM (
 
@@ -349,6 +365,7 @@ FROM (
 						WHERE ' + AllTables.PKColumnListJoinClause + '))c
 ' END AS DataSynchProgressSQL,
 '
+USE ' + DatabaseName + ';
 SELECT COUNT(*), ''MissingInserts''
 FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD O
 WHERE NOT EXISTS (	SELECT ''True''
@@ -434,6 +451,8 @@ FROM (  SELECT T.DatabaseName
         FROM DDI.Tables T
         WHERE IntendToPartition = 1) AllTables
     CROSS JOIN (SELECT * FROM DDI.DDISettings WHERE SettingName = 'UTEBCP Filepath') SS
+
+
 
 
 

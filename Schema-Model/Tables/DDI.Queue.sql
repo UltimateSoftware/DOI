@@ -32,3 +32,7 @@ ALTER TABLE [DDI].[Queue] ADD CONSTRAINT [Chk_Queue_IndexOperation] CHECK (([Ind
 GO
 ALTER TABLE [DDI].[Queue] ADD CONSTRAINT [Chk_Queue_RunStatus] CHECK (([RunStatus]='Finish' OR [RunStatus]='Running' OR [RunStatus]='Start'))
 GO
+ALTER TABLE [DDI].[Queue] ADD CONSTRAINT [FK_Queue_Databases] FOREIGN KEY ([DatabaseName]) REFERENCES [DDI].[Databases] ([DatabaseName])
+GO
+ALTER TABLE [DDI].[Queue] NOCHECK CONSTRAINT [FK_Queue_Databases]
+GO

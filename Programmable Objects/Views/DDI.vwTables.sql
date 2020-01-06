@@ -7,6 +7,11 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
+
+
+
+
 CREATE   VIEW [DDI].[vwTables]
 
 AS
@@ -17,7 +22,7 @@ AS
 
 SELECT	T.*,
 '
-USE ' + T.DatabaseName + '
+USE ' + T.DatabaseName + ';
 GO
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
@@ -36,9 +41,8 @@ BEGIN
 END
 '		AS CreateFinalDataSynchTableSQL,
 		'
-USE ' + T.DatabaseName + '
+USE ' + T.DatabaseName + ';
 GO
-
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
@@ -58,11 +62,10 @@ INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_Data
 SELECT ' + T.ColumnListNoTypes + ', ''D''
 FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
-GO
-USE DDI
 GO'		AS CreateFinalDataSynchTriggerSQL,
 
-'UPDATE DDI.Run_PartitionState
+'USE ' + T.DatabaseName + ';
+UPDATE DDI.Run_PartitionState
 SET DataSynchState = 0
 WHERE DatabaseName = ''' + T.DatabaseName + '''
 	AND SchemaName = ''' + T.SchemaName + '''
@@ -70,18 +73,16 @@ WHERE DatabaseName = ''' + T.DatabaseName + '''
 '		AS TurnOffDataSynchSQL,
 
 		'
+USE ' + T.DatabaseName + ';
 IF EXISTS(SELECT * FROM DDI.SysTriggers tr INNER JOIN DDI.SysDatabases d ON tr.database_id = d.database_id WHERE d.name = ' + T.DatabaseName + ' AND tr.name = ''tr' + T.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + T.TableName + '_OLD'')
 BEGIN
-	USE ' + T.DatabaseName + '
-	GO
+	USE ' + T.DatabaseName + ';
 	DROP TRIGGER tr' + T.TableName + '_DataSynch
-	GO
-	USE DDI
-	GO
 END' 
 		AS DropDataSynchTriggerSQL,
 
 		'
+USE ' + T.DatabaseName + ';
 IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NOT NULL
 	AND OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ''') IS NOT NULL
 BEGIN
@@ -122,6 +123,7 @@ BEGIN
 END'
 AS DropDataSynchTableSQL,
 '
+USE ' + T.DatabaseName + ';
 DELETE DDI.Run_PartitionState 
 WHERE DatabaseName = ''' + T.DatabaseName + '''
 	AND SchemaName = ''' + T.SchemaName + ''' 
@@ -137,12 +139,12 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @DataSpaceAvailable = available_MB, 
         @DataSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM DDI.vwFreeSpaceOnDisk FS
-    INNER JOIN DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DDI.DDI.vwFreeSpaceOnDisk FS
+    INNER JOIN DDI.DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''PaymentReporting''
     AND FS.FileType = ''DATA''
     AND EXISTS(	SELECT ''True''
-				FROM DDI.Queue Q 
+				FROM DDI.DDI.Queue Q 
 				WHERE Q.DatabaseName = FSI.DatabaseName
 					AND Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
@@ -169,12 +171,12 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @LogSpaceAvailable = available_MB, 
         @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM DDI.vwFreeSpaceOnDisk FS
-    INNER JOIN DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DDI.DDI.vwFreeSpaceOnDisk FS
+    INNER JOIN DDI.DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''PaymentReporting''
     AND FS.FileType = ''LOG''
     AND EXISTS(	SELECT ''True''
-				FROM DDI.Queue Q 
+				FROM DDI.DDI.Queue Q 
 				WHERE Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
 
@@ -201,12 +203,12 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @LogSpaceAvailable = available_MB, 
         @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM DDI.vwFreeSpaceOnDisk FS
-    INNER JOIN DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DDI.DDI.vwFreeSpaceOnDisk FS
+    INNER JOIN DDI.DDI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''TempDB''
     AND FS.FileType = ''DATA''
     AND EXISTS(	SELECT ''True''
-				FROM DDI.Queue Q 
+				FROM DDI.DDI.Queue Q 
 				WHERE Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
 
@@ -225,5 +227,10 @@ END
 ' AS FreeTempDBSpaceCheckSQL
 --select count(*)
 FROM DDI.Tables T
+
+
+
+
+
 
 GO

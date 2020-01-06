@@ -31,7 +31,6 @@ CREATE TABLE [DDI].[SysDatabaseFiles]
 [redo_target_fork_guid] [uniqueidentifier] NULL,
 [backup_lsn] [numeric] (25, 0) NULL,
 CONSTRAINT [PK_SysDatabaseFiles] PRIMARY KEY NONCLUSTERED  ([database_id], [file_id]),
-CONSTRAINT [UQ_SysDatabaseFiles_FileGUID] UNIQUE NONCLUSTERED  ([database_id], [file_guid]),
 CONSTRAINT [UQ_SysDatabaseFiles_Name] UNIQUE NONCLUSTERED  ([database_id], [name]),
 CONSTRAINT [UQ_SysDatabaseFiles_PhysicalName] UNIQUE NONCLUSTERED  ([database_id], [physical_name])
 )

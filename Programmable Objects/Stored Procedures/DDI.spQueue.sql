@@ -53,8 +53,8 @@ BEGIN TRY
             @FreeDataSpaceValidationSQL             VARCHAR(MAX) = '',
             @FreeLogSpaceValidationSQL              VARCHAR(MAX) = '',
             @FreeTempDBSpaceValidationSQL           VARCHAR(MAX) = '',
-			@GetApplicationLockSQL					NVARCHAR(80) = 'EXEC DDI.spRun_GetApplicationLock',
-			@ReleaseApplicationLockSQL				NVARCHAR(80) = 'EXEC DDI.spRun_ReleaseApplicationLock',
+			@GetApplicationLockSQL					NVARCHAR(80) = 'EXEC DDI.DDI.spRun_GetApplicationLock',
+			@ReleaseApplicationLockSQL				NVARCHAR(80) = 'EXEC DDI.DDI.spRun_ReleaseApplicationLock',
 			@DropSingleIndexSQL						VARCHAR(MAX) = '',
 			@CreateSingleIndexSQL					VARCHAR(MAX) = '',
             @StatisticsUpdateType					VARCHAR(MAX) = '',
@@ -103,69 +103,10 @@ BEGIN TRY
 				AND X.TableName = T.TableName
 	WHERE T.ReadyToQueue = 1
 
-    DECLARE Databases_Queued_Cur CURSOR LOCAL FAST_FORWARD FOR
-        SELECT *
-        FROM DDI.Databases
-        WHERE EXISTS (  SELECT	'True'
-		                FROM DDI.vwTables FN
-		                WHERE (FN.AreIndexesBeingUpdated = 1 
-				                OR FN.AreIndexesMissing = 1 
-				                OR FN.AreIndexesFragmented = 1
-				                OR FN.IsStorageChanging = 1
-                                OR FN.AreStatisticsChanging = 1) --any indexes to add or update?
-			                AND ReadyToQueue = 1
-			                AND NOT EXISTS (SELECT 'True' 
-							                FROM #TablesWithPendingConstraintsTable TV 
-							                WHERE TV.SchemaName = FN.SchemaName 
-								                AND TV.TableName = FN.TableName))
-	OPEN Databases_Queued_Cur
-
-	FETCH NEXT FROM Databases_Queued_Cur INTO @CurrentDatabaseName
-
 	WHILE @@FETCH_STATUS <> -1
 	BEGIN
 		IF @@FETCH_STATUS <> -2
 		BEGIN
-		    --APPLICATION LOCK, SO OTHER PROCESSES CAN SEE IF THIS IS RUNNING...
-		    EXEC DDI.spQueue_Insert
-			    @CurrentDatabaseName			= @CurrentDatabaseName ,
-			    @CurrentSchemaName				= '1', 
-			    @CurrentTableName				= '1', 
-			    @CurrentIndexName				= '1', 
-			    @CurrentPartitionNumber			= 0, 
-			    @IndexSizeInMB					= 0,
-			    @CurrentParentSchemaName		= '1', 
-			    @CurrentParentTableName			= '1', 
-			    @CurrentParentIndexName			= '1',
-			    @IndexOperation					= 'Get Application Lock',
-			    @IsOnlineOperation				= @OnlineOperations, --RUNS FOR BOTH ONLINE AND OFFLINE OPERATIONS
-			    @TableChildOperationId			= 0,
-			    @SQLStatement					= @GetApplicationLockSQL,
-			    @TransactionId					= NULL,
-			    @BatchId						= @BatchIdOUT,
-			    @ExitTableLoopOnError			= 1
-
-		    --CHANGE OVER TO CURRENT DB
-            SET @ChangeDBSQL += @CurrentDatabaseName
-
-		    EXEC DDI.spQueue_Insert
-			    @CurrentDatabaseName			= @CurrentDatabaseName ,
-			    @CurrentSchemaName				= '1', 
-			    @CurrentTableName				= '1', 
-			    @CurrentIndexName				= '1', 
-			    @CurrentPartitionNumber			= 0, 
-			    @IndexSizeInMB					= 0,
-			    @CurrentParentSchemaName		= '1', 
-			    @CurrentParentTableName			= '1', 
-			    @CurrentParentIndexName			= '1',
-                @IndexOperation					= 'Change DB',
-			    @IsOnlineOperation				= @OnlineOperations, --RUNS FOR BOTH ONLINE AND OFFLINE OPERATIONS
-			    @TableChildOperationId			= 0,
-			    @SQLStatement					= @ChangeDBSQL,
-			    @TransactionId					= NULL,
-			    @BatchId						= @BatchIdOUT,
-			    @ExitTableLoopOnError			= 1
-
 	        DECLARE Tables_Queued_Cur CURSOR LOCAL FAST_FORWARD FOR
 		        SELECT	FN.DatabaseName,
 				        FN.SchemaName, 
@@ -200,7 +141,26 @@ BEGIN TRY
 		        IF @@FETCH_STATUS <> -2
 		        BEGIN
                     BEGIN TRY
-				        IF EXISTS (	SELECT 'True' 
+		                --APPLICATION LOCK, SO OTHER PROCESSES CAN SEE IF THIS IS RUNNING...
+		                EXEC DDI.spQueue_Insert
+			                @CurrentDatabaseName			= @CurrentDatabaseName ,
+			                @CurrentSchemaName				= '1', 
+			                @CurrentTableName				= '1', 
+			                @CurrentIndexName				= '1', 
+			                @CurrentPartitionNumber			= 0, 
+			                @IndexSizeInMB					= 0,
+			                @CurrentParentSchemaName		= '1', 
+			                @CurrentParentTableName			= '1', 
+			                @CurrentParentIndexName			= '1',
+			                @IndexOperation					= 'Get Application Lock',
+			                @IsOnlineOperation				= @OnlineOperations, --RUNS FOR BOTH ONLINE AND OFFLINE OPERATIONS
+			                @TableChildOperationId			= 0,
+			                @SQLStatement					= @GetApplicationLockSQL,
+			                @TransactionId					= NULL,
+			                @BatchId						= @BatchIdOUT,
+			                @ExitTableLoopOnError			= 1
+                
+                		IF EXISTS (	SELECT 'True' 
 							        FROM #TablesWithPendingConstraintsTable 
 							        WHERE DatabaseName = @CurrentDatabaseName
 								        AND SchemaName = @CurrentSchemaName 
@@ -752,8 +712,6 @@ BEGIN TRY
 
 		        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @IsClusteredIndexBeingDroppedForTable, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, /*@RunAutomaticallyOnDeployment, @RunAutomaticallyOnSQLJob,*/ @NeedsTransaction, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
 	        END --@@fetch_status <> -1
-   	        
-            FETCH NEXT FROM Databases_Queued_Cur INTO @CurrentDatabaseName
         END
     END 
 END TRY

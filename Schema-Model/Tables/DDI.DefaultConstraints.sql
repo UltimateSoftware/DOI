@@ -13,3 +13,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+ALTER TABLE [DDI].[DefaultConstraints] ADD CONSTRAINT [FK_DefaultConstraints_Tables] FOREIGN KEY ([DatabaseName], [SchemaName], [TableName]) REFERENCES [DDI].[Tables] ([DatabaseName], [SchemaName], [TableName])
+GO
+ALTER TABLE [DDI].[DefaultConstraints] NOCHECK CONSTRAINT [FK_DefaultConstraints_Tables]
+GO

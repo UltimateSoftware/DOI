@@ -7,6 +7,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
 CREATE   VIEW [DDI].[vwTables_PrepTables_Indexes]
 
 AS
@@ -63,6 +64,7 @@ SELECT  PT.DatabaseName,
 			WHEN 0
 			THEN ''
 			ELSE '
+USE ' + PT.DatabaseName + ';
 IF EXISTS(	SELECT ''True'' 
 			FROM sys.indexes i 
 				INNER JOIN sys.tables t ON t.object_id = i.object_id 
@@ -74,20 +76,24 @@ BEGIN
 	' + I.RevertRenameIndexSQL + '
 END'
 		END AS RevertRenameExistingTableIndexSQL,
+
 		CASE PT.IsNewPartitionedPrepTable
 			WHEN 0
 			THEN ''
 			ELSE '
+USE ' + PT.DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename 
 	@objname = ''' + PT.SchemaName + '.' + PT.PrepTableName + '.' + REPLACE(I.IndexName, PT.TableName, PT.PrepTableName) + ''', 
 	@newname = ''' + I.IndexName + ''', 
 	@objtype = ''INDEX''' 
 		END AS RenameNewPartitionedPrepTableIndexSQL,
+
 		CASE PT.IsNewPartitionedPrepTable
 			WHEN 0
 			THEN ''
 			ELSE '
+USE ' + PT.DatabaseName + ';
 IF EXISTS(	SELECT ''True'' 
 			FROM sys.indexes i 
 				INNER JOIN sys.tables t ON t.object_id = i.object_id 
@@ -107,6 +113,7 @@ FROM DDI.vwTables_PrepTables PT
     INNER JOIN DDI.vwIndexes I ON I.DatabaseName = PT.DatabaseName
         AND I.SchemaName = PT.SchemaName
         AND I.TableName = PT.TableName
+
 
 
 GO

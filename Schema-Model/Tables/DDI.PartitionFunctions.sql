@@ -26,3 +26,7 @@ ALTER TABLE [DDI].[PartitionFunctions] ADD CONSTRAINT [Chk_PartitionFunctions_Bo
 GO
 ALTER TABLE [DDI].[PartitionFunctions] ADD CONSTRAINT [Chk_PartitionFunctions_SlidingWindow] CHECK (([UsesSlidingWindow]=(1) AND [SlidingWindowSize] IS NOT NULL OR [UsesSlidingWindow]=(0) AND [SlidingWindowSize] IS NULL))
 GO
+ALTER TABLE [DDI].[PartitionFunctions] ADD CONSTRAINT [FK_PartitionFunctions_Databases] FOREIGN KEY ([DatabaseName]) REFERENCES [DDI].[Databases] ([DatabaseName])
+GO
+ALTER TABLE [DDI].[PartitionFunctions] NOCHECK CONSTRAINT [FK_PartitionFunctions_Databases]
+GO

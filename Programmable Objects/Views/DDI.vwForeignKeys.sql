@@ -6,6 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
 CREATE   VIEW [DDI].[vwForeignKeys]
 
 /*
@@ -18,12 +19,14 @@ AS
 SELECT  FK.*,
 		('FK_' + ParentTableName + '_' + ReferencedTableName + '_' + REPLACE(FK.ParentColumnList_Desired, ',', '_')) AS FKName,
         ('
+USE ' + DatabaseName + ';
 ALTER TABLE ' + FK.DatabaseName + '.' + ParentSchemaName + '.[' + ParentTableName + '] WITH NOCHECK ADD 
 	CONSTRAINT ' + 'FK_' + ParentTableName + '_' + ReferencedTableName + '_' + REPLACE(ParentColumnList_Desired, ',', '_') + ' 
 	    FOREIGN KEY (' + ParentColumnList_Desired + ') 
 	    	REFERENCES ' + FK.DatabaseName + '.' + ReferencedSchemaName + '.[' + ReferencedTableName + '](' + ParentColumnList_Desired + ')') 
 AS CreateFKSQL,
 		('
+USE ' + DatabaseName + ';
 IF NOT EXISTS(  SELECT ''True''
                 FROM DDI.SysForeignKeys fku
                     INNER JOIN DDI.SysForeignKeys fks ON fk.parent_object_id = pt.object_id
@@ -54,6 +57,7 @@ BEGIN
 	    		REFERENCES ' + ReferencedSchemaName + '.[' + ReferencedTableName + '](' + ReferencedColumnList_Desired + ')
 END') AS CreateFKWithExistenceCheckSQL,
         ('
+USE ' + DatabaseName + ';
 IF EXISTS(  SELECT ''True''
             FROM DDI.SysForeignKeys fku
                 INNER JOIN DDI.SysForeignKeys fks ON fk.parent_object_id = pt.object_id
@@ -81,6 +85,7 @@ BEGIN
     ALTER TABLE ' + FK.DatabaseName + '.' + ParentSchemaName + '.[' + ParentTableName + '] DROP CONSTRAINT ' + 'FK_' + ParentTableName + '_' + ReferencedTableName + '_' + REPLACE(ParentColumnList_Desired, ',', '_') + '
 END') AS DropFKSQL,
 	   ('
+USE ' + DatabaseName + ';
 ALTER TABLE ' + FK.DatabaseName + '.' + ParentSchemaName + '.[' + ParentTableName + '] NOCHECK CONSTRAINT FK_' + ParentTableName + '_' + ReferencedTableName + '_' + REPLACE(ParentColumnList_Desired, ',', '_')) 
 AS DisableFKSQL
 
@@ -114,6 +119,7 @@ FROM DDI.ForeignKeys FK
     --                    AND t.name = FK.ParentTableName
     --                    AND s.name  <> 'DDI'
     --                    AND (ISNULL(NewPf.name, '') <> ISNULL(ExistingPf.name, '')))ipc2
+
 
 
 GO

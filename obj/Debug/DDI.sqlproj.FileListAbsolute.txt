@@ -1,0 +1,10 @@
+C:\Projects\DDI\bin\Debug\
+C:\Projects\DDI\bin\Debug\DDI_DeployPackage.ps1
+C:\Projects\DDI\bin\Debug\DDI.sql
+C:\Projects\DDI\bin\Debug\DDI.dll
+C:\Projects\DDI\bin\Debug\DDI.pdb
+C:\Projects\DDI\obj\Debug\DDI.sqlprojAssemblyReference.cache
+C:\Projects\DDI\obj\Debug\DDI.sql
+C:\Projects\DDI\obj\Debug\TargetedProvisioningScript.sql
+C:\Projects\DDI\obj\Debug\DDI.dll
+C:\Projects\DDI\obj\Debug\DDI.pdb

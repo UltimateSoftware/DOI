@@ -6,6 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
 CREATE   VIEW [DDI].[vwTables_PrepTables_Partitions]
 AS
 
@@ -22,18 +23,27 @@ SELECT	PTNonPartitioned.SchemaName,
 		PTNonPartitioned.BoundaryValue AS PartitionFunctionValue,
 		ISNULL(PTNonPartitioned.NextBoundaryValue, '9999-12-31') AS NextPartitionFunctionValue,
 			'
+USE ' + PTNonPartitioned.DatabaseName + ';
 IF EXISTS(	SELECT ''True'' 
 			FROM ' + PTPartitioned.SchemaName + '.' + PTPartitioned.PrepTableName + ' 
 			WHERE $PARTITION.' + PTPartitioned.PartitionFunctionName + '(' + PTPartitioned.PartitionColumn + ') = ' + CAST(PTNonPartitioned.PartitionNumber AS VARCHAR(6)) + ')
 BEGIN
 	TRUNCATE TABLE ' + PTPartitioned.SchemaName + '.' + PTPartitioned.PrepTableName + ' WITH (PARTITIONS (' + CAST(PTNonPartitioned.PartitionNumber AS VARCHAR(6)) + '))
 END' AS PartitionDataValidationSQL,
-		'ALTER TABLE ' + PTNonPartitioned.SchemaName + '.' + PTNonPartitioned.PrepTableName + ' SWITCH TO ' +  PTPartitioned.SchemaName + '.' + PTPartitioned.PrepTableName + ' PARTITION ' + CAST(PTNonPartitioned.PartitionNumber AS VARCHAR(5)) + '' + CHAR(13) + CHAR(10) AS PartitionSwitchSQL,
-		'DROP TABLE ' + PTNonPartitioned.SchemaName + '.' + PTNonPartitioned.PrepTableName AS DropTableSQL,
+		'
+USE ' + PTNonPartitioned.DatabaseName + ';
+ALTER TABLE ' + PTNonPartitioned.SchemaName + '.' + PTNonPartitioned.PrepTableName + ' SWITCH TO ' +  PTPartitioned.SchemaName + '.' + PTPartitioned.PrepTableName + ' PARTITION ' + CAST(PTNonPartitioned.PartitionNumber AS VARCHAR(5)) + '' + CHAR(13) + CHAR(10) 
+AS PartitionSwitchSQL,
+		'
+USE ' + PTNonPartitioned.DatabaseName + ';
+DROP TABLE ' + PTNonPartitioned.SchemaName + '.' + PTNonPartitioned.PrepTableName 
+AS DropTableSQL,
+
 		PTNonPartitioned.PartitionNumber
 FROM DDI.vwTables_PrepTables PTNonPartitioned
 	INNER JOIN DDI.vwTables_PrepTables PTPartitioned ON PTNonPartitioned.SchemaName = PTPartitioned.SchemaName
 		AND PTPartitioned.TableName = PTNonPartitioned.TableName
 WHERE PTNonPartitioned.IsNewPartitionedPrepTable = 0
 	AND PTPartitioned.IsNewPartitionedPrepTable = 1
+
 GO

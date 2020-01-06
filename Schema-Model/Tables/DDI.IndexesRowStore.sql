@@ -150,3 +150,7 @@ ALTER TABLE [DDI].[IndexesRowStore] ADD CONSTRAINT [Def_IndexesRowStore_StorageT
 GO
 ALTER TABLE [DDI].[IndexesRowStore] ADD CONSTRAINT [Def_IndexesRowStore_StorageType_Desired] CHECK (([StorageType_Desired]='PARTITION_SCHEME' OR [StorageType_Desired]='ROWS_FILEGROUP'))
 GO
+ALTER TABLE [DDI].[IndexesRowStore] ADD CONSTRAINT [FK_IndexesRowStore_Tables] FOREIGN KEY ([DatabaseName], [SchemaName], [TableName]) REFERENCES [DDI].[Tables] ([DatabaseName], [SchemaName], [TableName])
+GO
+ALTER TABLE [DDI].[IndexesRowStore] NOCHECK CONSTRAINT [FK_IndexesRowStore_Tables]
+GO

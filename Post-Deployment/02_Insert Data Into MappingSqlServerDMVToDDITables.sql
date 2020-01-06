@@ -2,7 +2,7 @@
 GO
 
 INSERT INTO DDI.MappingSqlServerDMVToDDITables 
-        ( DDITableName              , SQLServerObjectName               , SQLServerObjectType   , HasDatabaseIdInOutput , DatabaseOutputString	, FunctionParameterList												, FunctionParentDMV	)
+        ( DDITableName              , SQLServerObjectName               , SQLServerObjectType   , HasDatabaseIdInOutput , DatabaseOutputString			, FunctionParameterList										, FunctionParentDMV	)
 VALUES   ('SysFilegroups'           , 'sys.filegroups'                  , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
         ,('SysDestinationDataSpaces', 'sys.destination_data_spaces'     , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
         ,('SysSchemas'              , 'sys.schemas'                     , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
@@ -12,7 +12,7 @@ VALUES   ('SysFilegroups'           , 'sys.filegroups'                  , 'V'   
         ,('SysPartitions'           , 'sys.partitions'                  , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
         ,('SysAllocationUnits'      , 'sys.allocation_units'            , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
         ,('SysDatabaseFiles'        , 'sys.database_files'              , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
-        ,('SysDmOsVolumeStats'      , 'sys.dm_os_volume_stats'          , 'FN'                  , 1                     , NULL							, 'DB_ID(''{DatabaseName}''), file_id'						, 'SysDatabaseFiles')
+        ,('SysDmOsVolumeStats'      , 'sys.dm_os_volume_stats'          , 'FN'                  , 1                     , 'DB_ID(''{DatabaseName}'')'	, 'DB_ID(''{DatabaseName}''), file_id'						, 'SysDatabaseFiles')
         ,('SysDatabases'            , 'sys.databases'                   , 'V'                   , 1                     , NULL							, NULL														, NULL				)
         ,('SysColumns'              , 'sys.columns'                     , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
         ,('SysTypes'                , 'sys.types'                       , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)

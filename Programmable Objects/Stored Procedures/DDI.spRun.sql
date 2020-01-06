@@ -257,7 +257,8 @@ BEGIN TRY
 						END
                         ELSE 
 						BEGIN						
-							EXEC (@CurrentSQLStatement)
+							EXEC DDI.sp_ExecuteSQLByBatch 
+                                @CurrentSQLStatement
 						END
 
 						--LOG FINISH
