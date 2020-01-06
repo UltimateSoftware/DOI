@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\bin",
+    "\\Migrations",
+    "\\obj",
+    "\\Pre-Deployment",
+    "\\Schema-Model",
+    "\\Schema-Model\\Security",
+    "\\Schema-Model\\Security\\Schemas",
+    "\\Schema-Model\\Tables",
+    "\\Schema-Model\\Types",
+    "\\Schema-Model\\Types\\User-defined Data Types"
+  ],
+  "SelectedNode": "\\DDI.dbmdl",
+  "PreviewInSolutionExplorer": false
+}

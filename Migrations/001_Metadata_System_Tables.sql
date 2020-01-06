@@ -1,6 +1,5 @@
 ﻿-- <Migration ID="34c17dd7-07bb-4639-9759-e17109d3ebbc" TransactionHandling="Custom" />
-DROP TABLE IF EXISTS [DDI].[MappingSqlServerDMVToDDITables]
-GO
+IF OBJECT_ID('[DDI].[MappingSqlServerDMVToDDITables]') IS NULL
 CREATE TABLE [DDI].[MappingSqlServerDMVToDDITables]
 (
 [DDITableName] [sys].[sysname] NOT NULL,
@@ -17,7 +16,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-
+IF OBJECT_ID('[DDI].[SysDatabases]') IS NULL
 CREATE TABLE [DDI].[SysDatabases]
 (
 [name] [sys].[sysname] NOT NULL,
@@ -104,6 +103,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysDatabaseFiles]') IS NULL
 CREATE TABLE [DDI].[SysDatabaseFiles]
 (
 [database_id] [int] NOT NULL,
@@ -145,6 +145,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysDataSpaces]') IS NULL
 CREATE TABLE [DDI].[SysDataSpaces]
 (
 [database_id] [int] NOT NULL,
@@ -161,6 +162,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysDefaultConstraints]') IS NULL
 CREATE TABLE [DDI].[SysDefaultConstraints]
 (
 [database_id] [int] NOT NULL,
@@ -186,6 +188,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysDestinationDataSpaces]') IS NULL
 CREATE TABLE [DDI].[SysDestinationDataSpaces]
 (
 [database_id] [int] NOT NULL,
@@ -199,6 +202,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysDmDbStatsProperties]') IS NULL
 CREATE TABLE [DDI].[SysDmDbStatsProperties]
 (
 [database_id] [int] NOT NULL,
@@ -218,6 +222,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysDmOsVolumeStats]') IS NULL
 CREATE TABLE [DDI].[SysDmOsVolumeStats]
 (
 [database_id] [int] NOT NULL,
@@ -240,6 +245,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysFilegroups]') IS NULL
 CREATE TABLE [DDI].[SysFilegroups]
 (
 [database_id] [int] NOT NULL,
@@ -260,6 +266,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysForeignKeyColumns]') IS NULL
 CREATE TABLE [DDI].[SysForeignKeyColumns]
 (
 [database_id] [int] NOT NULL,
@@ -276,6 +283,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysForeignKeys]') IS NULL
 CREATE TABLE [DDI].[SysForeignKeys]
 (
 [database_id] [int] NOT NULL,
@@ -311,8 +319,10 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('DDI.Chk_SysForeignKeys_DeploymentTime','C') IS NULL
 ALTER TABLE [DDI].[SysForeignKeys] ADD CONSTRAINT [Chk_SysForeignKeys_DeploymentTime] CHECK (([DeploymentTime]='Deployment' OR [DeploymentTime]='Job'))
 GO
+IF OBJECT_ID('[DDI].[SysIndexColumns]') IS NULL
 CREATE TABLE [DDI].[SysIndexColumns]
 (
 [database_id] [int] NOT NULL,
@@ -331,6 +341,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysIndexes]') IS NULL
 CREATE TABLE [DDI].[SysIndexes]
 (
 [database_id] [int] NOT NULL,
@@ -363,6 +374,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysIndexPhysicalStats]') IS NULL
 CREATE TABLE [DDI].[SysIndexPhysicalStats]
 (
 [database_id] [smallint] NOT NULL,
@@ -396,6 +408,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysMasterFiles]') IS NULL
 CREATE TABLE [DDI].[SysMasterFiles]
 (
 [database_id] [int] NOT NULL,
@@ -436,6 +449,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysPartitionFunctions]') IS NULL
 CREATE TABLE [DDI].[SysPartitionFunctions]
 (
 [database_id] [sys].[sysname] NOT NULL,
@@ -455,6 +469,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysPartitionRangeValues]') IS NULL
 CREATE TABLE [DDI].[SysPartitionRangeValues]
 (
 [database_id] [sys].[sysname] NOT NULL,
@@ -469,6 +484,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysPartitions]') IS NULL
 CREATE TABLE [DDI].[SysPartitions]
 (
 [database_id] [int] NOT NULL,
@@ -489,6 +505,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysPartitionSchemes]') IS NULL
 CREATE TABLE [DDI].[SysPartitionSchemes]
 (
 [database_id] [sys].[sysname] NOT NULL,
@@ -506,6 +523,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysSchemas]') IS NULL
 CREATE TABLE [DDI].[SysSchemas]
 (
 [database_id] [int] NOT NULL,
@@ -519,6 +537,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysStats]') IS NULL
 CREATE TABLE [DDI].[SysStats]
 (
 [database_id] [int] NOT NULL,
@@ -540,6 +559,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysStatsColumns]') IS NULL
 CREATE TABLE [DDI].[SysStatsColumns]
 (
 [database_id] [int] NOT NULL,
@@ -554,6 +574,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysTables]') IS NULL
 CREATE TABLE [DDI].[SysTables]
 (
 [database_id] [int] NOT NULL,
@@ -600,6 +621,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysTriggers]') IS NULL
 CREATE TABLE [DDI].[SysTriggers]
 (
 [database_id] [int] NOT NULL,
@@ -623,6 +645,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysTypes]') IS NULL
 CREATE TABLE [DDI].[SysTypes]
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
@@ -648,6 +671,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysColumns]') IS NULL
 CREATE TABLE [DDI].[SysColumns]
 (
 [database_id] [int] NOT NULL,
@@ -693,6 +717,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF OBJECT_ID('[DDI].[SysAllocationUnits]') IS NULL
 CREATE TABLE [DDI].[SysAllocationUnits]
 (
 [database_id] [int] NOT NULL,
@@ -712,7 +737,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-IF OBJECT_ID(N'[DDI].[SysCheckConstraints]', 'U') IS NULL
+IF OBJECT_ID('[DDI].[SysCheckConstraints]') IS NULL
 CREATE TABLE [DDI].[SysCheckConstraints]
 (
 [database_id] [int] NOT NULL,

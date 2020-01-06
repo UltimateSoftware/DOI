@@ -1,8 +1,5 @@
 ﻿-- <Migration ID="b24fe523-c6f3-4b5c-b70c-b41d635e0248" TransactionHandling="Custom" />
-PRINT N'Creating [DDI].[IndexesNotInMetadata]'
-GO
-DROP TABLE IF EXISTS [DDI].[IndexesNotInMetadata]
-GO
+IF OBJECT_ID('[DDI].[IndexesNotInMetadata]') IS NULL
 CREATE TABLE [DDI].[IndexesNotInMetadata]
 (
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -19,10 +16,7 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-PRINT N'Creating [DDI].[DefaultConstraintsNotInMetadata]'
-GO
-DROP TABLE IF EXISTS [DDI].[DefaultConstraintsNotInMetadata]
-GO
+IF OBJECT_ID('[DDI].[DefaultConstraintsNotInMetadata]') IS NULL
 CREATE TABLE [DDI].[DefaultConstraintsNotInMetadata]
 (
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -39,10 +33,7 @@ MEMORY_OPTIMIZED = ON
 )
 GO
 
-PRINT N'Creating [DDI].[CheckConstraintsNotInMetadata]'
-GO
-DROP TABLE IF EXISTS [DDI].[CheckConstraintsNotInMetadata]
-GO
+IF OBJECT_ID('[DDI].[CheckConstraintsNotInMetadata]') IS NULL
 CREATE TABLE [DDI].[CheckConstraintsNotInMetadata]
 (
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,

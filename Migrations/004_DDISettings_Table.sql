@@ -1,5 +1,5 @@
 ﻿-- <Migration ID="a554310f-9be4-40a7-8d38-9daace3f094c" TransactionHandling="Custom" />
-GO
+IF OBJECT_ID('[DDI].[DDISettings]') IS NULL
 CREATE TABLE [DDI].[DDISettings]
 (
 [SettingName] [sys].[sysname] NOT NULL,
