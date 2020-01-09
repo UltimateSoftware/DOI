@@ -48,6 +48,7 @@ BEGIN TRY
 			@CreateFinalDataSynchTriggerSQL				NVARCHAR(MAX) = '',
 			@TurnOnDataSynchSQL							NVARCHAR(MAX) = '',
 			@TurnOffDataSynchSQL						NVARCHAR(MAX) = '',
+            @CreateBCPViewSQL                           NVARCHAR(MAX) = '',
 			@BCPCmd										NVARCHAR(MAX) = '',
 			@CreateIndexStatement						NVARCHAR(MAX) = '',
 			@CreateConstraintStatement					NVARCHAR(MAX) = '',
@@ -83,7 +84,7 @@ BEGIN TRY
             @DeletePartitionStateMetadataSQL            NVARCHAR(500) = '',
 			@PriorErrorValidationSQL					NVARCHAR(MAX) = '
 IF EXISTS(	SELECT ''True''
-			FROM DDI.Log 
+			FROM DDI.DDI.Log 
 			WHERE BatchId = ''' + CAST(@BatchId AS VARCHAR(40)) + '''
 				AND TableName LIKE ''%' + @TableName + '%''
 				AND ErrorText IS NOT NULL ) /*ONLY PROCEED IF NOTHING HAS FAILED IN THIS BATCH.*/
@@ -125,7 +126,8 @@ RECONFIGURE
 		RowNum                                  BIGINT,
 		PrepTableName                           SYSNAME,
 		IndexSizeInMB                           INT
-		PRIMARY KEY CLUSTERED (DatabaseName, SchemaName, PrepTableName, IndexName))
+		PRIMARY KEY CLUSTERED (DatabaseName, SchemaName, PrepTableName, IndexName)) 
+        --this clust index is too large a row size.  if it's a problem, change columns to varchar?
 
 
 	INSERT INTO #Indexes ( DatabaseName, SchemaName ,ParentTableName ,IndexName , ParentIndexName, CreateIndexStatement ,RenameExistingTableIndexSQL ,RenameNewPartitionedPrepTableIndexSQL ,RowNum ,PrepTableName, IndexSizeInMB )		
@@ -156,6 +158,7 @@ RECONFIGURE
 				TTP.CreateFinalDataSynchTriggerSQL,
 				PT.TurnOnDataSynchSQL,
 				TTP.TurnOffDataSynchSQL,
+                PT.CreateViewForBCPSQL,
 				PT.BCPSQL,
 				PT.Storage_Desired,
 				PT.StorageType_Desired,
@@ -183,7 +186,7 @@ RECONFIGURE
 	
 	OPEN PrepTable_Cur
 
-	FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
+	FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @CreateBCPViewSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
 
 	IF @@FETCH_STATUS NOT IN (-1, -2)
 	BEGIN
@@ -260,6 +263,23 @@ RECONFIGURE
 					@IsOnlineOperation				= 1,
 					@TableChildOperationId			= 0,
 					@SQLStatement					= @EnableCmdShellSQL, 
+					@TransactionId					= @TransactionId,
+					@BatchId						= @BatchId,
+					@ExitTableLoopOnError			= 1
+
+            	EXEC DDI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
+					@CurrentSchemaName				= @CurrentSchemaName ,
+					@CurrentTableName				= @PrepTableName, 
+					@CurrentIndexName				= 'N/A',
+					@CurrentPartitionNumber			= 1,
+					@IndexSizeInMB					= 0,
+					@CurrentParentSchemaName		= @CurrentSchemaName,
+					@CurrentParentTableName			= @CurrentTableName,
+					@CurrentParentIndexName			= 'N/A',
+					@IndexOperation					= 'Create BCP View', 
+					@IsOnlineOperation				= 1,
+					@SQLStatement					= @CreateBCPViewSQL,
 					@TransactionId					= @TransactionId,
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
@@ -901,7 +921,7 @@ BEGIN TRAN',
 					@ExitTableLoopOnError			= 0
 
 				SET @DropParentOldTableFKs = '
-EXEC DDI.spForeignKeysDrop
+EXEC DDI.DDI.spForeignKeysDrop
 	@ParentSchemaName = ''' + @CurrentSchemaName + ''',
 	@ParentTableName = ''' + @CurrentTableName + ''''
 				
@@ -923,7 +943,7 @@ EXEC DDI.spForeignKeysDrop
 					@ExitTableLoopOnError			= 0
 
 				SET @DropRefOldTableFKs = '
-EXEC DDI.spForeignKeysDrop
+EXEC DDI.DDI.spForeignKeysDrop
 	@ReferencedSchemaName = ''' + @CurrentSchemaName + ''',
 	@ReferencedTableName = ''' + @CurrentTableName + ''''
 
@@ -945,7 +965,7 @@ EXEC DDI.spForeignKeysDrop
 					@ExitTableLoopOnError			= 0
 
 				SET @AddBackParentTableFKs = '
-EXEC DDI.spForeignKeysAdd
+EXEC DDI.DDI.spForeignKeysAdd
 	@ParentSchemaName = ''' + @CurrentSchemaName + ''',
 	@ParentTableName = ''' + @CurrentTableName + ''''
 				
@@ -967,7 +987,7 @@ EXEC DDI.spForeignKeysAdd
 					@ExitTableLoopOnError			= 0
 
 				SET @AddBackRefTableFKs = '
-EXEC DDI.spForeignKeysAdd
+EXEC DDI.DDI.spForeignKeysAdd
 	@ReferencedSchemaName = ''' + @CurrentSchemaName + ''',
 	@ReferencedTableName = ''' + @CurrentTableName + ''''
 
@@ -1007,7 +1027,7 @@ EXEC DDI.spForeignKeysAdd
 		            @ExitTableLoopOnError			= 0
 			END --if @IsNewPartitionedTable = 1
 		END --IF @@FETCH_STATUS <> -2
-		FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
+		FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @CreateBCPViewSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
 	END  --IF @@FETCH_STATUS <> -1
 
 	CLOSE PrepTable_Cur

@@ -7,6 +7,8 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
+
 CREATE   VIEW [DDI].[vwTables_PrepTables_Constraints]
 AS
 
@@ -34,9 +36,8 @@ FROM DDI.vwTables_PrepTables FN
 								TableName,
 								dc.DefaultConstraintName AS ConstraintName,
 								'
-USE ' + DatabaseName + ';
-IF OBJECT_ID(''' + FN.SchemaName + '.' + FN.PrepTableName + ''') IS NOT NULL
-	AND OBJECT_ID(''' + REPLACE(dc.DefaultConstraintName, TableName, FN.PrepTableName) + ''') IS NULL
+IF OBJECT_ID(''' + FN.DatabaseName + '.' + FN.SchemaName + '.' + FN.PrepTableName + ''') IS NOT NULL
+	AND OBJECT_ID(''' + FN.DatabaseName + '.' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstraintName, TableName, FN.PrepTableName) + ''') IS NULL
 BEGIN
 	ALTER TABLE ' + SchemaName + '.' + FN.PrepTableName + ' ADD CONSTRAINT ' + REPLACE(dc.DefaultConstraintName, TableName, FN.PrepTableName) + ' DEFAULT ' + dc.DefaultDefinition + ' FOR ' + ColumnName + '
 END' + CHAR(13) + CHAR(10) 
@@ -44,7 +45,6 @@ AS CreateConstraintStatement,
 
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + dc.DefaultConstraintName + ''',
 				@newname = ''' + REPLACE(dc.DefaultConstraintName, FN.TableName, FN.TableName + '_OLD') + ''',
@@ -53,7 +53,6 @@ AS RenameExistingTableConstraintSQL,
 
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstraintName, FN.TableName, FN.PrepTableName) + ''',
 				@newname = ''' + REPLACE(dc.DefaultConstraintName, FN.PrepTableName, FN.TableName) + ''',
@@ -62,7 +61,6 @@ AS RenameNewPartitionedPrepTableConstraintSQL,
 
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstraintName, FN.TableName, FN.TableName + '_OLD') + ''',
 				@newname = ''' + dc.DefaultConstraintName + ''',
@@ -71,7 +69,6 @@ AS RevertRenameExistingTableConstraintSQL,
 
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstraintName, FN.PrepTableName, FN.TableName) + ''',
 				@newname = ''' + REPLACE(dc.DefaultConstraintName, FN.TableName, FN.PrepTableName) + ''',
@@ -84,9 +81,8 @@ AS RevertRenameNewPartitionedPrepTableConstraintSQL
 								cc.TableName,
 								cc.CheckConstraintName,
 								'
-USE ' + DatabaseName + ';
-IF OBJECT_ID(''' + FN.SchemaName + '.' + FN.PrepTableName + ''') IS NOT NULL
-	AND OBJECT_ID(''' + REPLACE(cc.CheckConstraintName, cc.TableName, FN.PrepTableName) + ''') IS NULL
+IF OBJECT_ID(''' + FN.DatabaseName + '.' + FN.SchemaName + '.' + FN.PrepTableName + ''') IS NOT NULL
+	AND OBJECT_ID(''' + FN.DatabaseName + '.' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, cc.TableName, FN.PrepTableName) + ''') IS NULL
 BEGIN
 	ALTER TABLE ' + cc.SchemaName + '.' + FN.PrepTableName + ' ADD CONSTRAINT ' + REPLACE(cc.CheckConstraintName, cc.TableName, FN.PrepTableName) + ' CHECK ' + cc.CheckDefinition + '
 END' + CHAR(13) + CHAR(10) 
@@ -94,7 +90,6 @@ AS CreateConstraintStatement,
 
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + cc.CheckConstraintName + ''',
 				@newname = ''' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.TableName + '_OLD') + ''',
@@ -103,7 +98,6 @@ AS RenameExistingTableConstraintSQL,
 
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + REPLACE(cc.CheckConstraintName, FN.PrepTableName, FN.TableName) + ''',
 				@newname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
@@ -112,7 +106,6 @@ AS RenameNewPartitionedPrepTableConstraintSQL,
 
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.TableName + '_OLD') + ''',
 				@newname = ''' + cc.CheckConstraintName + ''',
@@ -121,7 +114,6 @@ AS RevertRenameExistingTableConstraintSQL,
 
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
 				@newname = ''' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
@@ -131,6 +123,8 @@ AS RevertRenameNewPartitionedPrepTableConstraintSQL
 						FROM DDI.CheckConstraints cc) Constraints
 				WHERE Constraints.SchemaName = FN.SchemaName
 					AND Constraints.TableName = FN.TableName) C
+
+
 
 
 GO

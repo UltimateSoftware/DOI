@@ -8,6 +8,7 @@ SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DDI].[spRun]
 	@OnlineOperations BIT,
+    @DatabaseName NVARCHAR(128) = NULL,
 	@SchemaName NVARCHAR(128) = NULL,
 	@TableName NVARCHAR(128)  = NULL,
 	@BatchId UNIQUEIDENTIFIER = NULL,
@@ -36,6 +37,13 @@ SET CONCAT_NULL_YIELDS_NULL ON
 SET NUMERIC_ROUNDABORT OFF
 SET QUOTED_IDENTIFIER ON
 SET DEADLOCK_PRIORITY 10 --the highest priority
+
+IF @TableName IS NOT NULL AND @SchemaName IS NULL
+THROW 50000, 'Please specify Schema Name when specifying a Table Name.', 1
+
+IF ISNULL(@SchemaName, @TableName) IS NOT NULL AND @DatabaseName IS NULL
+THROW 50000, 'Please specify Database Name when specifying a Table/Schema Name.', 1
+
 
 DECLARE @ApplicationRunningThisProcess NVARCHAR(128) = (SELECT program_name
 														FROM SYS.dm_exec_sessions 
@@ -98,9 +106,10 @@ BEGIN TRY
 			@TransactionId					UNIQUEIDENTIFIER = NULL,
 			@IndexSizeInMB					INT,
 			@RetryCount						TINYINT = 0,
-			@ExitRetryLoopOnError				BIT = 0,
+			@ExitRetryLoopOnError			BIT = 0,
 			@RowCount						INT = 0,
-			@ParamList						NVARCHAR(500) = '@RowCountOUT INT OUTPUT'
+			@ParamList						NVARCHAR(500) = '@RowCountOUT INT OUTPUT',
+            @DBContext                      NVARCHAR(200) 
 
 	SELECT @SwitchAGToAsyncSQL += 'ALTER AVAILABILITY GROUP [' + AGS.name + '] MODIFY REPLICA ON ''' + replica_server_name + ''' WITH (AVAILABILITY_MODE = ASYNCHRONOUS_COMMIT)' + char(13) + char(10)
 	FROM sys.availability_groups AGS 
@@ -134,6 +143,7 @@ BEGIN TRY
 				FN.IndexSizeInMB
 		FROM DDI.Queue FN
 		WHERE FN.IsOnlineOperation = @OnlineOperations
+			AND FN.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN FN.DatabaseName ELSE @DatabaseName END 
 			AND FN.ParentSchemaName = CASE WHEN @SchemaName IS NULL THEN FN.ParentSchemaName ELSE @SchemaName END 
 			AND FN.ParentTableName = CASE WHEN @TableName IS NULL THEN FN.ParentTableName ELSE @TableName END 
 			AND FN.BatchId = CASE WHEN @BatchId IS NULL THEN FN.BatchId ELSE @BatchId END 
@@ -142,6 +152,8 @@ BEGIN TRY
 	OPEN Tables_Run_Cur
 
 	FETCH NEXT FROM Tables_Run_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentSeqNo, @TransactionId, @CurrentIndexName, @CurrentPartitionNumber, @CurrentSQLStatement, @RunStatus, @CurrentIndexOperation, @CurrentTableChildOperationId, @BatchId, @ExitTableLoopOnError, @IndexSizeInMB
+
+    SET @DBContext = @CurrentDatabaseName + N'.sys.sp_executesql'
 
 	IF (@CurrentSchemaName + '.' + @CurrentTableName) IS NOT NULL
 	BEGIN 
@@ -246,7 +258,9 @@ BEGIN TRY
 							COMMIT TRAN
 						END
 						ELSE
-						IF @CurrentIndexOperation IN ('Synch Deletes', 'Synch Inserts', 'Synch Updates',  'Loading Data')
+						IF @CurrentIndexOperation IN ('Synch Deletes', 'Synch Inserts', 'Synch Updates',  'Loading Data', 
+                                                        'Free Data Space Validation', 'Free Log Space Validation', 
+                                                        'Free TempDB Space Validation')
 						BEGIN
 							EXEC sys.sp_executesql 
 								@CurrentSQLStatement, 
@@ -257,8 +271,7 @@ BEGIN TRY
 						END
                         ELSE 
 						BEGIN						
-							EXEC DDI.sp_ExecuteSQLByBatch 
-                                @CurrentSQLStatement
+							EXEC @DBContext @CurrentSQLStatement
 						END
 
 						--LOG FINISH

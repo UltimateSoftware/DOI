@@ -21,19 +21,24 @@ AS
 
 /*
 	EXEC DDI.spRun_DropObjects
-		@SchemaName = 'dbo',
-		@TableName = 'Liabilities'
-
+        @CurrentDatabaseName = 'PaymentReporting',
+		@CurrentSchemaName = 'dbo',
+		@CurrentTableName = 'Bai2BankTransactions'
+        @CurrentParentTableName = 'Bai2BankTransactions'
 */
 --DROP DATA SYNCH TRIGGER, BUT WE NEED TO FIND OUT WHICH TABLE HAS THE TRIGGER....
 BEGIN TRY
 	DECLARE @TriggerName SYSNAME = (SELECT tr.name
 									FROM DDI.SysTriggers tr
-										INNER JOIN DDI.SysTables t ON tr.parent_id = t.object_id
-									WHERE t.name IN (@CurrentParentTableName, @CurrentParentTableName + '_OLD')
+                                        INNER JOIN DDI.SysDatabases d ON d.database_id = tr.database_id
+										INNER JOIN DDI.SysTables t ON tr.database_id = t.database_id
+                                            AND tr.parent_id = t.object_id
+									WHERE d.name = @CurrentDatabaseName
+                                        AND t.name IN (@CurrentParentTableName, @CurrentParentTableName + '_OLD')
 										AND tr.name LIKE '%|DataSynch' ESCAPE '|')
 
-	DECLARE @DropDataSynchTriggerSQL NVARCHAR(MAX) = 'DROP TRIGGER ' + @TriggerName
+	DECLARE @DropDataSynchTriggerSQL NVARCHAR(MAX) = 'DROP TRIGGER IF EXISTS ' + @TriggerName,
+            @DropBCPViewSQL VARCHAR(100) = 'DROP VIEW IF EXISTS dbo.vwCurrentBCPQuery'
 
 	EXEC DDI.spRun_LogInsert 
         @CurrentDatabaseName    = @CurrentDatabaseName,
@@ -75,14 +80,37 @@ BEGIN TRY
 		@RunStatus				= 'Finish',
 		@ExitTableLoopOnError	= @ExitTableLoopOnError
 
+	EXEC DDI.spRun_LogInsert 
+        @CurrentDatabaseName    = @CurrentDatabaseName,
+		@CurrentSchemaName		= 'N/A' , 
+		@CurrentTableName		= 'N/A' ,  
+		@CurrentIndexName		= 'N/A' , 
+		@CurrentPartitionNumber	= 0,  
+		@IndexSizeInMB			= 0 ,
+		@IndexOperation			= 'Drop BCP View',
+		@IsOnlineOperation		= 1 ,
+		@RowCount				= 0 ,
+		@SQLStatement			= @DropBCPViewSQL ,
+		@ErrorText				= NULL,
+		@TransactionId			= NULL,
+		@TableChildOperationId	= 0,
+		@BatchId				= @BatchId,
+		@SeqNo					= @CurrentSeqNo,
+		@RunStatus				= 'Finish',
+		@ExitTableLoopOnError	= @ExitTableLoopOnError
+
+    EXEC(@DropBCPViewSQL)
+
 	IF @DeleteTables = 1
 	BEGIN
 		DECLARE @DropPrepAndDataSynchTablesSQL NVARCHAR(MAX) = ''
 		SELECT @DropPrepAndDataSynchTablesSQL += 'DROP TABLE ' + s.name + '.' + t.name + CHAR(13) + CHAR(10)
 		FROM DDI.SysTables t
+            INNER JOIN DDI.SysDatabases d ON d.database_id = t.database_id
 			INNER JOIN DDI.SysSchemas s ON s.schema_id = t.schema_id
-		WHERE t.name LIKE '%' + @CurrentParentTableName + '|_DataSynch' ESCAPE '|'
-			OR t.name LIKE '%' + @CurrentParentTableName + '|_%prep' ESCAPE '|'
+		WHERE d.name = @CurrentDatabaseName
+            AND (t.name LIKE '%' + @CurrentParentTableName + '|_DataSynch' ESCAPE '|'
+			        OR t.name LIKE '%' + @CurrentParentTableName + '|_%prep' ESCAPE '|')
 
 		EXEC DDI.spRun_LogInsert 
             @CurrentDatabaseName    = @CurrentDatabaseName,

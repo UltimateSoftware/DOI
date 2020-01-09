@@ -9,6 +9,7 @@ GO
 
 
 
+
 CREATE   VIEW [DDI].[vwIndexes]
 AS
 
@@ -92,15 +93,14 @@ FROM (	SELECT	 IRS.*
 				
 				,CASE 
 					WHEN ISNULL(IRS.IsPrimaryKey_Actual, IRS.IsPrimaryKey_Desired) = 1 OR ISNULL(IRS.IsUniqueConstraint_Actual, IRS.IsUniqueConstraint_Desired) = 1 
-					THEN 'USE ' + DatabaseName + '; ALTER TABLE ' + IRS.SchemaName + '.' + IRS.TableName + ' DROP CONSTRAINT IF EXISTS ' + IRS.IndexName
-					ELSE 'USE ' + DatabaseName + '; DROP INDEX IF EXISTS '+ IRS.SchemaName + '.' + IRS.TableName + '.' + IRS.IndexName
+					THEN 'ALTER TABLE ' + IRS.SchemaName + '.' + IRS.TableName + ' DROP CONSTRAINT IF EXISTS ' + IRS.IndexName
+					ELSE 'DROP INDEX IF EXISTS '+ IRS.SchemaName + '.' + IRS.TableName + '.' + IRS.IndexName
 				END AS DropStatement
 				,
-'USE ' + DatabaseName + '; IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
+'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
 BEGIN' + 	CASE 
 				WHEN (IRS.IsPrimaryKey_Desired = 1 OR IRS.IsUniqueConstraint_Desired = 1)
 				THEN '
-USE ' + DatabaseName + ';
 ALTER TABLE ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 '	ADD CONSTRAINT ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 '		' + CASE WHEN IRS.IsPrimaryKey_Desired = 1 THEN 'PRIMARY KEY ' WHEN IRS.IsUniqueConstraint_Desired = 1 THEN ' UNIQUE ' ELSE '' END + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED (' + IRS.KeyColumnList_Desired + ') ' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
@@ -123,7 +123,6 @@ ALTER TABLE ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + CHA
 								ELSE '' 
 							END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
 					ELSE '
-USE ' + DatabaseName + ';
 CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										'	ON ' + IRS.SchemaName + '.' + IRS.TableName + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										CASE 
@@ -161,7 +160,6 @@ CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE W
 		END + 
 'END' AS CreateStatement
 				,'
-USE ' + DatabaseName + ';
 ALTER INDEX ' + IRS.IndexName + ' ON ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + 
 '	SET (	IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 			STATISTICS_NORECOMPUTE = ' + CASE WHEN IRS.OptionStatisticsNoRecompute_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
@@ -171,7 +169,6 @@ AS AlterSetStatement
 				,	CASE 
 						WHEN ISNULL(IRS.NeedsPartitionLevelOperations, 0) = 0
 						THEN '
-USE ' + DatabaseName + ';
 ALTER INDEX ' + IRS.IndexName + ' ON ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + 
 '	REBUILD PARTITION = ALL' + CHAR(13) + CHAR(10) + 
 '		WITH (	
@@ -192,29 +189,25 @@ END AS AlterRebuildStatement
 				,	CASE
 						WHEN ISNULL(IRS.NeedsPartitionLevelOperations, 0) = 0
 						THEN '
-USE ' + DatabaseName + ';
 ALTER INDEX ' + IRS.IndexName + ' ON ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + 
 '	REORGANIZE PARTITION = ALL' + CHAR(13) + CHAR(10) + 
 '		WITH (	LOB_COMPACTION = ON)' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 						ELSE 'Needs Partition Level Statements'
 END AS AlterReorganizeStatement,
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + IRS.SchemaName + '.' + IRS.TableName + '.' + IRS.IndexName + ''',
 	@newname = ''' + REPLACE(IRS.IndexName, IRS.TableName, IRS.TableName + '_OLD') + ''',
 	@objtype = ''INDEX''' AS RenameIndexSQL,
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + IRS.SchemaName + '.' + IRS.TableName + '.' + REPLACE(IRS.IndexName, IRS.TableName, IRS.TableName + '_OLD') + ''',
 	@newname = ''' + IRS.IndexName + ''',
 	@objtype = ''INDEX''' AS RevertRenameIndexSQL,
 CASE WHEN IsPrimaryKey_Desired = 0 THEN '' ELSE 
-'USE ' + DatabaseName + ';
-IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
+'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
 BEGIN
 	CREATE UNIQUE ' + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 											'	ON ' + IRS.SchemaName + '.' + IRS.TableName + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
@@ -253,8 +246,7 @@ BEGIN
 'END'
 END AS CreatePKAsUniqueIndexSQL,
 CASE WHEN IsPrimaryKey_Desired = 0 THEN '' ELSE 
-'USE ' + DatabaseName + ';
-DROP INDEX IF EXISTS '+ IRS.SchemaName + '.' + IRS.TableName + '.' + IRS.IndexName 
+'DROP INDEX IF EXISTS '+ IRS.SchemaName + '.' + IRS.TableName + '.' + IRS.IndexName 
 END AS DropPKAsUniqueIndexSQL
 		--select count(*)
 		FROM DDI.fnIndexesRowStore() IRS
@@ -296,11 +288,9 @@ END AS DropPKAsUniqueIndexSQL
 					ELSE 'None'
 				END AS IndexUpdateType 
 				,'
-USE ' + DatabaseName + ';
 DROP INDEX IF EXISTS '+ ICS.SchemaName + '.' + ICS.TableName + '.' + ICS.IndexName AS DropStatement
 				,
-'USE ' + DatabaseName + ';
-IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + ICS.SchemaName + ''' AND t.name = ''' + ICS.TableName + ''' AND i.name = ''' + ICS.IndexName + ''')
+'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + ICS.SchemaName + ''' AND t.name = ''' + ICS.TableName + ''' AND i.name = ''' + ICS.IndexName + ''')
 BEGIN
 	CREATE' + CASE WHEN ICS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED COLUMNSTORE INDEX ' + ICS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										'	ON ' + ICS.SchemaName + '.' + ICS.TableName + CASE WHEN ICS.IsClustered_Desired = 1 THEN '' ELSE '(' + ICS.KeyColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
@@ -325,31 +315,26 @@ BEGIN
 																END + CHAR(13) + CHAR(10) + '
 END' AS CreateStatement
 				,'
-USE ' + DatabaseName + ';
 ALTER INDEX ' + ICS.IndexName + ' ON ' + ICS.SchemaName + '.' + ICS.TableName + CHAR(13) + CHAR(10) + 
 '	SET (COMPRESSION_DELAY = ' + ICS.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 AS AlterSetStatement
 				,'
-USE ' + DatabaseName + ';
 ALTER INDEX ' + ICS.IndexName + ' ON ' + ICS.SchemaName + '.' + ICS.TableName + CHAR(13) + CHAR(10) + 
 '	REBUILD PARTITION = ALL' + CHAR(13) + CHAR(10) + 
 '		WITH (	DATA_COMPRESSION = ' + ICS.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(10) --COMPRESSION_DELAY errors out...not available yet?
 AS AlterRebuildStatement
 				,'
-USE ' + DatabaseName + ';
 ALTER INDEX ' + ICS.IndexName + ' ON ' + ICS.SchemaName + '.' + ICS.TableName + CHAR(13) + CHAR(10) + 
 '	REORGANIZE PARTITION = ALL' + CHAR(13) + CHAR(10) + 
 '		WITH (COMPRESS_ALL_ROW_GROUPS = OFF)' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 AS AlterReorganizeStatement,
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + ICS.SchemaName + '.' + ICS.TableName + '.' + ICS.IndexName + ''',
 	@newname = ''' + REPLACE(ICS.IndexName, ICS.TableName, ICS.TableName + '_OLD') + ''',
 	@objtype = ''INDEX''' AS RenameIndexSQL,
 '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + ICS.SchemaName + '.' + ICS.TableName + '.' + REPLACE(ICS.IndexName, ICS.TableName, ICS.TableName + '_OLD') + ''',
@@ -359,6 +344,7 @@ EXEC sp_rename
 '' AS DropPKAsUniqueIndexSQL
 		--select count(*)
 		FROM DDI.fnIndexesColumnStore() AS ICS ) AS AllIdx
+
 
 
 GO

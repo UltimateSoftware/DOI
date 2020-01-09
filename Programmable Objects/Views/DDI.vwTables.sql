@@ -12,6 +12,8 @@ GO
 
 
 
+
+
 CREATE   VIEW [DDI].[vwTables]
 
 AS
@@ -22,8 +24,6 @@ AS
 
 SELECT	T.*,
 '
-USE ' + T.DatabaseName + ';
-GO
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
@@ -41,8 +41,6 @@ BEGIN
 END
 '		AS CreateFinalDataSynchTableSQL,
 		'
-USE ' + T.DatabaseName + ';
-GO
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
@@ -62,10 +60,9 @@ INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_Data
 SELECT ' + T.ColumnListNoTypes + ', ''D''
 FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
-GO'		AS CreateFinalDataSynchTriggerSQL,
+'		AS CreateFinalDataSynchTriggerSQL,
 
-'USE ' + T.DatabaseName + ';
-UPDATE DDI.Run_PartitionState
+'UPDATE DDI.DDI.Run_PartitionState
 SET DataSynchState = 0
 WHERE DatabaseName = ''' + T.DatabaseName + '''
 	AND SchemaName = ''' + T.SchemaName + '''
@@ -73,16 +70,13 @@ WHERE DatabaseName = ''' + T.DatabaseName + '''
 '		AS TurnOffDataSynchSQL,
 
 		'
-USE ' + T.DatabaseName + ';
-IF EXISTS(SELECT * FROM DDI.SysTriggers tr INNER JOIN DDI.SysDatabases d ON tr.database_id = d.database_id WHERE d.name = ' + T.DatabaseName + ' AND tr.name = ''tr' + T.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + T.TableName + '_OLD'')
+IF EXISTS(SELECT * FROM DDI.DDI.SysTriggers tr INNER JOIN DDI.SysDatabases d ON tr.database_id = d.database_id WHERE d.name = ' + T.DatabaseName + ' AND tr.name = ''tr' + T.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + T.TableName + '_OLD'')
 BEGIN
-	USE ' + T.DatabaseName + ';
 	DROP TRIGGER tr' + T.TableName + '_DataSynch
 END' 
 		AS DropDataSynchTriggerSQL,
 
 		'
-USE ' + T.DatabaseName + ';
 IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NOT NULL
 	AND OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ''') IS NOT NULL
 BEGIN
@@ -123,8 +117,7 @@ BEGIN
 END'
 AS DropDataSynchTableSQL,
 '
-USE ' + T.DatabaseName + ';
-DELETE DDI.Run_PartitionState 
+DELETE DDI.DDI.Run_PartitionState 
 WHERE DatabaseName = ''' + T.DatabaseName + '''
 	AND SchemaName = ''' + T.SchemaName + ''' 
     AND ParentTableName = ''' + T.TableName + '''' 
@@ -227,6 +220,8 @@ END
 ' AS FreeTempDBSpaceCheckSQL
 --select count(*)
 FROM DDI.Tables T
+
+
 
 
 

@@ -9,6 +9,7 @@ GO
 
 
 
+
 CREATE   VIEW [DDI].[vwPartitionFunctionPartitions]
 AS
 
@@ -71,7 +72,6 @@ BEGIN
 			TO FILEGROUP ' + DBFilePath.DatabaseName + '_' + PFI.Suffix + '
 END' AS AddFileSQL,
 '
-USE ' + DBFilePath.DatabaseName + ';
 BEGIN TRY
 	BEGIN TRAN
 		ALTER PARTITION SCHEME ' + PFI.PartitionSchemeName + ' NEXT USED [' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ']
@@ -83,8 +83,7 @@ BEGIN CATCH
 	IF @@TRANCOUNT > 0 ROLLBACK TRAN;
 	THROW;
 END CATCH' AS PartitionFunctionSplitSQL,
-'USE ' + DBFilePath.DatabaseName + ';
-		ALTER PARTITION SCHEME ' + PFI.PartitionSchemeName + ' NEXT USED [' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ']' 
+'		ALTER PARTITION SCHEME ' + PFI.PartitionSchemeName + ' NEXT USED [' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ']' 
 AS SetFilegroupToNextUsedSQL
         --SELECT count(*)
         FROM (  SELECT	TOP (2147483647) *
@@ -166,6 +165,7 @@ AS SetFilegroupToNextUsedSQL
 								        AND prv.Value IS NULL) x
 					        WHERE x.dest_rank = 2) AS NUF
     )X
+
 
 
 GO

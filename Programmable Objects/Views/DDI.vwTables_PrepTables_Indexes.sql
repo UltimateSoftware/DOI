@@ -8,6 +8,9 @@ SET ANSI_NULLS ON
 GO
 
 
+
+
+
 CREATE   VIEW [DDI].[vwTables_PrepTables_Indexes]
 
 AS
@@ -43,12 +46,11 @@ SELECT  PT.DatabaseName,
 		CASE PT.IsNewPartitionedPrepTable 
 			WHEN 0 
 			THEN	REPLACE(REPLACE(REPLACE(REPLACE(I.CreateStatement, I.TableName, PT.PrepTableName), 
-									'ON ' + ISNULL(I.Storage_Desired, I.Storage_Actual),	'ON ' + PT.Storage_Desired), 
+									'ON ' + ISNULL(I.Storage_Desired, I.Storage_Actual),	'ON ' + PT.PrepTableFilegroup), 
 									'(' + ISNULL(I.PartitionColumn_Desired, '') + ')', SPACE(0)) , 
 							'STATISTICS_INCREMENTAL = ON', 'STATISTICS_INCREMENTAL = OFF') 
 			WHEN 1
-			THEN	REPLACE(I.CreateStatement, I.TableName, PT.PrepTableName) + 
-									'ON ' + I.Storage_Desired
+			THEN	REPLACE(I.CreateStatement, I.TableName, PT.PrepTableName) 
 		END COLLATE SQL_Latin1_General_CP1_CI_AS AS PrepTableIndexCreateSQL,
         I.CreateStatement AS OrigCreateSQL,
 		CASE PT.IsNewPartitionedPrepTable
@@ -64,7 +66,6 @@ SELECT  PT.DatabaseName,
 			WHEN 0
 			THEN ''
 			ELSE '
-USE ' + PT.DatabaseName + ';
 IF EXISTS(	SELECT ''True'' 
 			FROM sys.indexes i 
 				INNER JOIN sys.tables t ON t.object_id = i.object_id 
@@ -81,7 +82,6 @@ END'
 			WHEN 0
 			THEN ''
 			ELSE '
-USE ' + PT.DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename 
 	@objname = ''' + PT.SchemaName + '.' + PT.PrepTableName + '.' + REPLACE(I.IndexName, PT.TableName, PT.PrepTableName) + ''', 
@@ -93,7 +93,6 @@ EXEC sp_rename
 			WHEN 0
 			THEN ''
 			ELSE '
-USE ' + PT.DatabaseName + ';
 IF EXISTS(	SELECT ''True'' 
 			FROM sys.indexes i 
 				INNER JOIN sys.tables t ON t.object_id = i.object_id 
@@ -113,6 +112,9 @@ FROM DDI.vwTables_PrepTables PT
     INNER JOIN DDI.vwIndexes I ON I.DatabaseName = PT.DatabaseName
         AND I.SchemaName = PT.SchemaName
         AND I.TableName = PT.TableName
+
+
+
 
 
 

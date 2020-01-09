@@ -58,11 +58,11 @@ BEGIN
 		END + SPACE(1) +
 		CASE 
 			WHEN @ShowDataTypes = 1
-			THEN UPPER(t.name) + 
+			THEN UPPER(ty.name) + 
 				CASE 
-					WHEN T.NAME LIKE '%CHAR%' 
+					WHEN ty.NAME LIKE '%CHAR%' 
 					THEN '(' + CASE WHEN c.max_length = -1 THEN 'MAX' ELSE CAST(CASE WHEN c.user_type_id IN (231, 239) THEN c.max_length/2 ELSE c.max_length END AS NVARCHAR(10)) END  + ')' 
-					WHEN T.NAME IN ('DECIMAL', 'NUMERIC')
+					WHEN ty.NAME IN ('DECIMAL', 'NUMERIC')
 					THEN '(' + CAST(c.precision AS NVARCHAR(10)) + ', ' + CAST(c.scale AS NVARCHAR(10)) + ')' 
 					ELSE '' 
 				END + 

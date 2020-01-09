@@ -8,6 +8,7 @@ SET ANSI_NULLS ON
 GO
 
 
+
 CREATE   VIEW [DDI].[vwPartitionFunctions]
 AS
 
@@ -33,14 +34,12 @@ SELECT	PartitionFunctionName,
 		CASE WHEN pf.name IS NULL THEN 1 ELSE 0 END AS IsPartitionFunctionMissing,
 		CASE WHEN ps.name IS NULL THEN 1 ELSE 0 END AS IsPartitionSchemeMissing,
         NUF.NextUsedFileGroupName,
-N'USE ' + DatabaseName + ';
-IF NOT EXISTS(SELECT * FROM sys.partition_functions WHERE name = ''' + PFM.PartitionFunctionName + ''')
+N'IF NOT EXISTS(SELECT * FROM sys.partition_functions WHERE name = ''' + PFM.PartitionFunctionName + ''')
 BEGIN
 	CREATE PARTITION FUNCTION ' + PFM.PartitionFunctionName + ' (' + PFM.PartitionFunctionDataType + ') 
 		AS RANGE RIGHT FOR VALUES (' + STUFF(PfBoundaryList.BoundaryList, LEN(PfBoundaryList.BoundaryList), 1, SPACE(0)) + ')
 END'  AS CreatePartitionFunctionSQL,
 '
-USE ' + DatabaseName + ';
 IF NOT EXISTS(SELECT * FROM sys.partition_schemes WHERE name = ''' + PFM.PartitionSchemeName + ''')
 BEGIN
 	CREATE PARTITION SCHEME	' + PFM.PartitionSchemeName + ' 
@@ -83,6 +82,7 @@ FROM DDI.PartitionFunctions PFM
 					WHERE DDS.partition_scheme_id = ps.data_space_id
                         AND prv.value > GETDATE()
                     GROUP BY PRV.function_id)FI
+
 
 
 GO

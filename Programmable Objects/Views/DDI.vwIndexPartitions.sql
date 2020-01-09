@@ -8,6 +8,7 @@ SET ANSI_NULLS ON
 GO
 
 
+
 CREATE   VIEW [DDI].[vwIndexPartitions]
 AS
 
@@ -38,7 +39,6 @@ SELECT	SchemaName,
 		PartitionType,
 		OptionDataCompression,
 		'
-USE ' + DatabaseName + ';
 TRUNCATE TABLE ' + SchemaName + '.' + TableName + 'WITH (PARTITIONS (' + CAST(PartitionNumber AS VARCHAR(5)) + '))' AS TruncateStatement,
 'USE ' + DatabaseName + ';
 ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + CHAR(10) + 
@@ -50,11 +50,11 @@ ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + C
 				DATA_COMPRESSION = ' + OptionDataCompression COLLATE DATABASE_DEFAULT + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 AS AlterRebuildStatement
 				,'
-USE ' + DatabaseName + ';
 ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + CHAR(10) + 
 '	REORGANIZE PARTITION = ' + CAST(PartitionNumber AS VARCHAR(5)) + CHAR(13) + CHAR(10) + 
 '		WITH (	LOB_COMPACTION = ON)' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) AS AlterReorganizeStatement
 --select count(*)
 FROM DDI.IndexRowStorePartitions 
+
 
 GO

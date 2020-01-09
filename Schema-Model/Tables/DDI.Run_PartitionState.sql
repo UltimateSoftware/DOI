@@ -7,15 +7,8 @@ CREATE TABLE [DDI].[Run_PartitionState]
 [PartitionFromValue] [date] NOT NULL,
 [PartitionToValue] [date] NOT NULL,
 [DataSynchState] [bit] NOT NULL,
-[LastUpdateDateTime] [datetime] NULL CONSTRAINT [Def_Run_PartitionState_LastUpdateDateTime] DEFAULT (getdate()),
-CONSTRAINT [PK_Run_PartitionState] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [ParentTableName], [PrepTableName], [PartitionFromValue])
-)
-WITH
-(
-MEMORY_OPTIMIZED = ON
+[LastUpdateDateTime] [datetime] NULL CONSTRAINT [Def_Run_PartitionState_LastUpdateDateTime] DEFAULT (getdate())
 )
 GO
-ALTER TABLE [DDI].[Run_PartitionState] ADD CONSTRAINT [FK_Run_PartitionState_Tables] FOREIGN KEY ([DatabaseName], [SchemaName], [ParentTableName]) REFERENCES [DDI].[Tables] ([DatabaseName], [SchemaName], [TableName])
-GO
-ALTER TABLE [DDI].[Run_PartitionState] NOCHECK CONSTRAINT [FK_Run_PartitionState_Tables]
+ALTER TABLE [DDI].[Run_PartitionState] ADD CONSTRAINT [PK_Run_PartitionState] PRIMARY KEY CLUSTERED  ([DatabaseName], [SchemaName], [ParentTableName], [PrepTableName], [PartitionFromValue])
 GO

@@ -12,12 +12,24 @@ GO
 
 
 
-CREATE   VIEW [DDI].[vwTables_PrepTables]
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE     VIEW [DDI].[vwTables_PrepTables]
 
 /*
-	select *
+	select top 10 CreateViewForBCPSQL
 	from DDI.vwTables_PrepTables
-    where tablename = 'journalentries'
+    where tablename = 'BAI2BANKTRANSACTIONS'
 	order by tablename, partitionnumber
 
     --to get the PrepTableFilegroup:
@@ -28,8 +40,7 @@ FROM DDI.Tables T
         AND DDS_Desired.partition_scheme_id = DS_Desired.data_space_id
     INNER JOIN DDI.SysDataSpaces UFG_Desired ON DDS_Desired.database_id = UFG_Desired.database_id
         AND DDS_Desired.data_space_id = UFG_Desired.data_space_id
-
-*/ 
+ */ 
 AS
 
 SELECT  AllTables.DatabaseName,
@@ -50,32 +61,30 @@ SELECT  AllTables.DatabaseName,
         StorageType_Desired,
         AllTables.PrepTableFilegroup,
         PartitionNumber,
-        CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '
-USE ' + DatabaseName + ';
-IF OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NOT NULL
+        '
+IF OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NOT NULL
 BEGIN
-	DROP TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '
+	DROP TABLE ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '
 END
 
-IF OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NULL
+IF OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NULL
 BEGIN
-	CREATE TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' (' + CHAR(13) + CHAR(10) + AllTables.ColumnListWithTypes + ') ON [' + AllTables.Storage_Desired + ']' + CASE WHEN AllTables.PrepTableName LIKE '%NewPartitionedTableFromPrep' THEN '(' + AllTables.PartitionColumn + ')' ELSE '' END + '
-END' 
-ELSE '
-USE ' + DatabaseName + ';
-IF OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NOT NULL
-BEGIN
-	DROP TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '
-END
-
-IF OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NULL
-BEGIN
-	CREATE TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' (' + CHAR(13) + CHAR(10) + AllTables.ColumnListWithTypes + ') ON [' + AllTables.Storage_Desired + ']' + CASE WHEN AllTables.PrepTableName LIKE '%NewPartitionedTableFromPrep' THEN '(' + AllTables.PartitionColumn + ')' ELSE '' END + '
-END' END AS CreatePrepTableSQL,
+	CREATE TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' (' + CHAR(13) + CHAR(10) + AllTables.ColumnListWithTypes + ') ON ' + CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '[' + AllTables.Storage_Desired + '](' + AllTables.PartitionColumn + ')' ELSE '[' + AllTables.PrepTableFilegroup + ']' END + '
+END' AS CreatePrepTableSQL,
+--CREATE VIEW FOR BCP QUERY BECAUSE SQL STRING IS TOO LONG FOR XP_CMDSHELL.
+CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
+'CREATE OR ALTER VIEW dbo.vwCurrentBCPQuery AS 
+SELECT * 
+FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' T 
+WHERE ' + CASE WHEN AllTables.BoundaryValue = '0001-01-01' THEN '' ELSE AllTables.PartitionColumn + ' >= ''' + CONVERT(VARCHAR(30), AllTables.BoundaryValue, 120) + '''' + ' AND ' END + AllTables.PartitionColumn + ' < ''' + CONVERT(VARCHAR(50), ISNULL(AllTables.NextBoundaryValue, '9999-12-31'), 120) + ''' AND NOT EXISTS (SELECT 1 FROM ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' PT WHERE ' + AllTables.PKColumnListJoinClause + ')'
+END AS CreateViewForBCPSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
-USE ' + DatabaseName + ';
-IF NOT EXISTS(SELECT * FROM sys.triggers WHERE name = ''tr' + AllTables.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + AllTables.TableName + ''')
+IF NOT EXISTS(  SELECT ''True''
+                FROM ' + AllTables.DatabaseName + '.sys.triggers tr
+                    INNER JOIN ' + AllTables.DatabaseName + '.sys.tables t ON tr.parent_id = t.object_id
+                WHERE tr.name = ''tr' + AllTables.TableName + '_DataSynch'' 
+                    AND t.name = ''' + AllTables.TableName + ''')
 BEGIN
 	RAISERROR (''Data Synch Trigger has not been created!!'', 16, 1)
 END
@@ -83,8 +92,10 @@ ELSE
 BEGIN
 	DECLARE @T TABLE (XpCmdShellOutput VARCHAR(1000))
 
-	INSERT INTO @T ( XpCmdShellOutput )
-	EXEC xp_cmdshell ''' + SS.SettingValue + 'utebcAllTables.exe -query="SELECT * FROM PaymentReporting.' + AllTables.SchemaName + '.' + AllTables.TableName + ' T  WHERE ' + CASE WHEN AllTables.BoundaryValue = '0001-01-01' THEN '' ELSE AllTables.PartitionColumn + ' >= ''''' + CONVERT(VARCHAR(30), AllTables.BoundaryValue, 120) + '''''' + ' AND ' END + AllTables.PartitionColumn + ' < ''''' + CONVERT(VARCHAR(50), ISNULL(AllTables.NextBoundaryValue, '9999-12-31'), 120) + ''''' AND NOT EXISTS (SELECT 1 FROM ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' PT WHERE ' + AllTables.PKColumnListJoinClause + ')" -destination="' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '" -database=PaymentReporting -batch=1000000''
+    DECLARE @bcpString VARCHAR(8000) = ''' + SS.SettingValue + 'utebcp.exe -queryout="SELECT * FROM dbo.vwCurrentBCPQuery" -destinationtable="' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '" -database=' + AllTables.DatabaseName + ' -batch=1000000''
+	
+    INSERT INTO @T ( XpCmdShellOutput )
+	EXEC xp_cmdshell @bcpString
 
 	IF EXISTS(SELECT ''True'' FROM @T where TRY_CAST(XpCmdShellOutput AS INT) IS NULL)
 	BEGIN
@@ -103,8 +114,7 @@ END'
 END AS BCPSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
-USE ' + DatabaseName + ';
-IF OBJECT_ID(''Chk_' + AllTables.PrepTableName + ''') IS NULL
+IF OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.Chk_' + AllTables.PrepTableName + ''') IS NULL
 BEGIN
 	ALTER TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' WITH CHECK ADD
 		CONSTRAINT Chk_' + AllTables.PrepTableName + '
@@ -114,56 +124,55 @@ BEGIN
 END' END AS CheckConstraintSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
-USE ' + DatabaseName + ';
-IF (SELECT * FROM DDI.fnCompareTableStructures(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')) > 0
+IF (SELECT * FROM DDI.DDI.fnCompareTableStructures(''' + AllTables.DatabaseName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')) > 0
 BEGIN
     DECLARE @ErrorMessage VARCHAR(MAX) = ''Schemas from the 2 tables do not match!!''
 
     SELECT @ErrorMessage += CHAR(13) + CHAR(10) + ''***'' + IndexName + space(1) + SchemaDifferences + ''***'' + CHAR(13) + CHAR(10)
-    FROM DDI.fnDDI_CompareTableStructuresDetails(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')
+    FROM DDI.DDI.fnCompareTableStructuresDetails(''' + AllTables.DatabaseName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')
 
 	RAISERROR(@ErrorMessage, 16, 1)
 END
 
 IF NOT EXISTS(	 SELECT * 
-		  	 FROM sys.schemas s 
-				INNER JOIN sys.tables t ON s.schema_id = AllTables.schema_id 
-			 WHERE s.name = ''' + AllTables.SchemaName + ''' 
-				AND AllTables.name = ''' + AllTables.NewPartitionedPrepTableName + ''') 
+		  	     FROM sys.schemas s 
+				    INNER JOIN sys.tables t ON s.schema_id = AllTables.schema_id 
+			     WHERE s.name = ''' + AllTables.SchemaName + ''' 
+				    AND AllTables.name = ''' + AllTables.NewPartitionedPrepTableName + ''') 
 BEGIN
 	RAISERROR(''NewPartitionedPrepTable does not exist!!'', 16, 1)
 END
 
 IF NOT EXISTS(	 SELECT * 
-		  	 FROM sys.schemas s 
-		  		INNER JOIN sys.tables t ON s.schema_id = AllTables.schema_id 
-			 WHERE s.name = ''' + AllTables.SchemaName + ''' 
-				AND AllTables.name = ''' + AllTables.TableName + ''')
+		  	     FROM sys.schemas s 
+		  		    INNER JOIN sys.tables t ON s.schema_id = AllTables.schema_id 
+			     WHERE s.name = ''' + AllTables.SchemaName + ''' 
+				    AND AllTables.name = ''' + AllTables.TableName + ''')
 BEGIN
 	RAISERROR(''Live table does not exist!!'', 16, 1)
 END
 
-IF EXISTS(SELECT * 
-		FROM sys.tables t 
-		WHERE name <> ''' + AllTables.NewPartitionedPrepTableName + ''' 
-		    AND name LIKE ''%' + AllTables.TableName + '%Prep%'')
+IF EXISTS(  SELECT *
+		    FROM sys.tables t 
+		    WHERE name <> ''' + AllTables.NewPartitionedPrepTableName + ''' 
+		        AND name LIKE ''%' + AllTables.TableName + '%Prep%'')
 BEGIN
 	RAISERROR(''Some Prep tables still exist!!'', 16, 1)
 END
 
 DECLARE @RowCount_NewPrepTable int = (SELECT SUM(ROWS)
 									  FROM sys.partitions 
-									  WHERE object_id = OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.NewPartitionedPrepTableName + ''') 
+									  WHERE object_id = OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.NewPartitionedPrepTableName + ''') 
 										 AND index_id in (0,1))
 
 DECLARE @RowCount_OldTable int = (SELECT SUM(ROWS) 
 								  FROM sys.partitions 
-								  WHERE object_id = OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.TableName + ''') 
+								  WHERE object_id = OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ''') 
 									 AND index_id in (0,1))
 
 DECLARE @MaximumAllowedRowsDifference DECIMAL(18,4) =  (	SELECT SUM(ROWS) * 0.1 
 															FROM sys.partitions 
-															WHERE object_id = OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.TableName + ''') 
+															WHERE object_id = OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ''') 
 																AND index_id in (0,1))
 
 IF ABS( @RowCount_NewPrepTable - @RowCount_OldTable ) > @MaximumAllowedRowsDifference 
@@ -173,7 +182,6 @@ END'
 END AS FinalRepartitioningValidationSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''',
@@ -181,9 +189,7 @@ EXEC sp_rename
 	@objtype = ''OBJECT''' 
 END AS RenameNewPartitionedPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
-'
-USE ' + DatabaseName + ';
-SET DEADLOCK_PRIORITY 10
+'SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + AllTables.SchemaName + '.' + AllTables.TableName + ''',
 	@newname = ''' + AllTables.TableName + '_OLD'',
@@ -191,8 +197,7 @@ EXEC sp_rename
 END AS RenameExistingTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
-'USE ' + DatabaseName + ';
-UPDATE DDI.RefreshIndexStructures_PartitionState
+'UPDATE DDI.DDI.Run_PartitionState
 SET DataSynchState = 1
 WHERE SchemaName = ''' + AllTables.SchemaName + '''
 	AND PrepTableName = ''' + AllTables.PrepTableName + '''
@@ -203,7 +208,7 @@ END AS TurnOnDataSynchSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
 IF EXISTS (	SELECT ''True''
-			FROM DDI.RefreshIndexStructures_PartitionState WITH (NOLOCK)
+			FROM DDI.DDI.Run_PartitionState WITH (NOLOCK)
 			WHERE SchemaName = ''' + AllTables.SchemaName + '''
 				AND PrepTableName = ''' + AllTables.PrepTableName + '''
 				AND DataSynchState = 1)
@@ -241,7 +246,6 @@ END' END AS PrepTableTriggerSQLFragment,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
-USE ' + DatabaseName + ';
 INSERT INTO ' + AllTables.SchemaName + '.' + AllTables.TableName + '
 SELECT ' + AllTables.ColumnListNoTypes + '
 FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
@@ -264,7 +268,6 @@ END'
 END AS SynchInsertsPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
-USE ' + DatabaseName + ';
 UPDATE PT
 SET ' + AllTables.UpdateColumnList + '
 FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
@@ -297,7 +300,6 @@ END'
 END AS SynchUpdatesPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
-USE ' + DatabaseName + ';
 DELETE PT
 FROM ' + + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK)
 WHERE EXISTS (	SELECT ''True'' 
@@ -319,7 +321,6 @@ END'
 END AS SynchDeletesPrepTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + AllTables.SchemaName + '.' + AllTables.TableName + ''',
@@ -328,7 +329,6 @@ EXEC sp_rename
 END AS RevertRenameNewPartitionedPrepTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
-USE ' + DatabaseName + ';
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename
 	@objname = ''' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD'',
@@ -338,7 +338,6 @@ END AS RevertRenameExistingTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
-USE ' + DatabaseName + ';
 SELECT *
 FROM (
 
@@ -365,7 +364,6 @@ FROM (
 						WHERE ' + AllTables.PKColumnListJoinClause + '))c
 ' END AS DataSynchProgressSQL,
 '
-USE ' + DatabaseName + ';
 SELECT COUNT(*), ''MissingInserts''
 FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD O
 WHERE NOT EXISTS (	SELECT ''True''
@@ -406,7 +404,7 @@ FROM (  SELECT T.DatabaseName
 				,P.BoundaryValue
 				,DDI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL) AS ColumnListWithTypes
 				,DDI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL) AS ColumnListNoTypes
-				,DDI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'O') AS UpdateColumnList
+				,DDI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'T') AS UpdateColumnList
     			,T.PartitionColumn
     			,T.PKColumnList
 				,T.PKColumnListJoinClause
@@ -439,7 +437,7 @@ FROM (  SELECT T.DatabaseName
 				,'0001-01-01' AS BoundaryValue
 				,DDI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL) AS ColumnListWithTypes
 				,DDI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL) AS ColumnListNoTypes
-				,DDI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'O') AS UpdateColumnList
+				,DDI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'T') AS UpdateColumnList
     			,T.PartitionColumn
     			,T.PKColumnList
 				,T.PKColumnListJoinClause
@@ -451,6 +449,18 @@ FROM (  SELECT T.DatabaseName
         FROM DDI.Tables T
         WHERE IntendToPartition = 1) AllTables
     CROSS JOIN (SELECT * FROM DDI.DDISettings WHERE SettingName = 'UTEBCP Filepath') SS
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -7,7 +7,7 @@
     <Name>DDI</Name>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
-    <ProjectGuid>83a05767-285b-46e4-889f-5745c174ebed</ProjectGuid>
+    <ProjectGuid>{83a05767-285b-46e4-889f-5745c174ebed}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
@@ -434,5 +434,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Schema-Model\Tables\DDI.SysCheckConstraints.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DDI.fnActualConstraintsForTable.sql" />
+    <None Include="Programmable Objects\Functions\DDI.fnActualIndexStructuresForTable.sql" />
+    <None Include="Programmable Objects\Functions\DDI.fnCompareTableStructures.sql" />
+    <None Include="Programmable Objects\Functions\DDI.fnCompareTableStructuresDetails.sql" />
+    <None Include="Programmable Objects\Functions\DDI.fnFixStatsSampleSize.sql" />
   </ItemGroup>
 </Project>
