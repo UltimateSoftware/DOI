@@ -29,16 +29,21 @@ AS
 --DROP DATA SYNCH TRIGGER, BUT WE NEED TO FIND OUT WHICH TABLE HAS THE TRIGGER....
 BEGIN TRY
 	DECLARE @TriggerName SYSNAME = (SELECT tr.name
-									FROM DDI.SysTriggers tr
-                                        INNER JOIN DDI.SysDatabases d ON d.database_id = tr.database_id
-										INNER JOIN DDI.SysTables t ON tr.database_id = t.database_id
+									FROM DDI.SysTriggers tr WITH (SNAPSHOT)
+                                        INNER JOIN DDI.SysDatabases d WITH (SNAPSHOT) ON d.database_id = tr.database_id
+										INNER JOIN DDI.SysTables t WITH (SNAPSHOT) ON tr.database_id = t.database_id
                                             AND tr.parent_id = t.object_id
 									WHERE d.name = @CurrentDatabaseName
                                         AND t.name IN (@CurrentParentTableName, @CurrentParentTableName + '_OLD')
 										AND tr.name LIKE '%|DataSynch' ESCAPE '|')
 
 	DECLARE @DropDataSynchTriggerSQL NVARCHAR(MAX) = 'DROP TRIGGER IF EXISTS ' + @TriggerName,
-            @DropBCPViewSQL VARCHAR(100) = 'DROP VIEW IF EXISTS dbo.vwCurrentBCPQuery'
+            @DropBCPViewSQL VARCHAR(100) = 'DROP VIEW IF EXISTS dbo.vwCurrentBCPQuery',
+            @DropCompareObjectsSQL VARCHAR(500) = '
+DROP FUNCTION IF EXISTS dbo.fnCompareTableStructuresDetails;
+DROP FUNCTION IF EXISTS dbo.fnCompareTableStructures;
+DROP FUNCTION IF EXISTS dbo.fnActualIndexesForTable;
+DROP FUNCTION IF EXISTS dbo.fnActualConstraintsForTable;'
 
 	EXEC DDI.spRun_LogInsert 
         @CurrentDatabaseName    = @CurrentDatabaseName,
@@ -100,6 +105,27 @@ BEGIN TRY
 		@ExitTableLoopOnError	= @ExitTableLoopOnError
 
     EXEC(@DropBCPViewSQL)
+
+    EXEC DDI.spRun_LogInsert 
+        @CurrentDatabaseName    = @CurrentDatabaseName,
+		@CurrentSchemaName		= 'N/A' , 
+		@CurrentTableName		= 'N/A' ,  
+		@CurrentIndexName		= 'N/A' , 
+		@CurrentPartitionNumber	= 0,  
+		@IndexSizeInMB			= 0 ,
+		@IndexOperation			= 'Drop Compare Objects',
+		@IsOnlineOperation		= 1 ,
+		@RowCount				= 0 ,
+		@SQLStatement			= @DropCompareObjectsSQL ,
+		@ErrorText				= NULL,
+		@TransactionId			= NULL,
+		@TableChildOperationId	= 0,
+		@BatchId				= @BatchId,
+		@SeqNo					= @CurrentSeqNo,
+		@RunStatus				= 'Finish',
+		@ExitTableLoopOnError	= @ExitTableLoopOnError
+
+    EXEC(@DropCompareObjectsSQL)
 
 	IF @DeleteTables = 1
 	BEGIN

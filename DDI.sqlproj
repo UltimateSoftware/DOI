@@ -436,10 +436,6 @@
     <None Include="Schema-Model\Tables\DDI.SysCheckConstraints.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Functions\DDI.fnActualConstraintsForTable.sql" />
-    <None Include="Programmable Objects\Functions\DDI.fnActualIndexStructuresForTable.sql" />
-    <None Include="Programmable Objects\Functions\DDI.fnCompareTableStructures.sql" />
-    <None Include="Programmable Objects\Functions\DDI.fnCompareTableStructuresDetails.sql" />
     <None Include="Programmable Objects\Functions\DDI.fnFixStatsSampleSize.sql" />
   </ItemGroup>
 </Project>

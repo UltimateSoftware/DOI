@@ -24,6 +24,8 @@ GO
 
 
 
+
+
 CREATE     VIEW [DDI].[vwTables_PrepTables]
 
 /*
@@ -122,32 +124,290 @@ BEGIN
 					AND ' + AllTables.PartitionColumn + ' >= ''' + CONVERT(VARCHAR(30), AllTables.BoundaryValue , 120) + '''  
 					AND ' + AllTables.PartitionColumn + ' < ''' + CONVERT(VARCHAR(50), ISNULL(AllTables.NextBoundaryValue, '9999-12-31'), 120) + ''')
 END' END AS CheckConstraintSQL,
+'
+CREATE OR ALTER FUNCTION [dbo].[fnActualIndexesForTable](
+	@SchemaName SYSNAME,
+	@TableName SYSNAME,
+	@NameStringReplace SYSNAME = NULL,
+	@PartitionColumnToReplace SYSNAME = NULL)
+RETURNS TABLE
+AS RETURN
+(
+
+/*
+SELECT * 
+FROM DDI.fnActualIndexStructuresForTable(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''', ''_NewPartitionedTableFromPrep'', ''' + AllTables.PartitionColumn + ''')
+
+SELECT *
+FROM DDI.fnActualIndexStructuresForTable(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''', ''_NewPartitionedTableFromPrep'', ''' + AllTables.PartitionColumn + ''')
+*/
+SELECT 
+    d.name AS DatabaseName
+    ,s.name AS SchemaName
+    ,REPLACE(t.name, @NameStringReplace, SPACE(0)) AS TableName
+	,REPLACE(i.name, @NameStringReplace, SPACE(0)) AS IndexName
+	--,i.type
+	,i.type_desc
+	,i.is_unique
+	,i.ignore_dup_key
+	,i.is_primary_key
+	,i.is_unique_constraint
+	,i.is_disabled
+	,i.is_hypothetical
+	,i.has_filter
+	,i.filter_definition
+    ,i.key_column_list AS IndexKeys
+    ,i.included_column_list AS IncludedColumns 
+FROM sys.indexes i
+	INNER JOIN sys.tables t ON t.object_id = i.object_id
+	INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+WHERE s.name = @SchemaName
+	AND t.name = @TableName)
+' AS FinalRepartitioningValidation_CreateActualIndexesForTableFunctionSQL,
+'
+CREATE OR ALTER FUNCTION [dbo].[fnActualConstraintsForTable](
+	@SchemaName SYSNAME,
+	@TableName SYSNAME,
+	@NameStringReplace SYSNAME = NULL)
+RETURNS TABLE
+AS RETURN
+(
+
+/*
+SELECT * 
+FROM DDI.fnActualConstraintsForTable((''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''', ''_NewPartitionedTableFromPrep'', '' '')
+--order by ConstraintName	
+except
+SELECT *
+FROM DDI.fnActualConstraintsForTable((''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''', ''_NewPartitionedTableFromPrep'', ''_OLD'')
+order by ConstraintName	
+*/
+
+SELECT	REPLACE(cc.name, @NameStringReplace, SPACE(0)) AS ConstraintName, 
+		cc.type_desc, 
+		c.name AS ColumnName, 
+		cc.definition
+FROM DDI.SysCheckConstraints cc
+	INNER JOIN sys.tables t ON t.object_id = i.object_id
+	INNER JOIN sys.columns c ON c.object_id = t.object_id
+		AND c.column_id = cc.parent_column_id
+	INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+WHERE s.name = @SchemaName
+	AND t.name = @TableName
+UNION ALL
+SELECT	REPLACE(dc.name, @NameStringReplace, SPACE(0)) AS ConstraintName, 
+		dc.type_desc, 
+		c.name AS ColumnName, 
+		dc.definition
+FROM DDI.SysDefaultConstraints dc
+	INNER JOIN sys.tables t ON t.object_id = i.object_id
+	INNER JOIN sys.columns c ON c.object_id = t.object_id
+		AND c.column_id = cc.parent_column_id
+	INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+WHERE s.name = @SchemaName
+	AND t.name = @TableName)
+' AS FinalRepartitioningValidation_CreateActualConstraintsForTableFunctionSQL,
+'
+CREATE OR ALTER FUNCTION [dbo].[fnCompareTableStructuresDetails](
+    @DatabaseName SYSNAME,
+	@SchemaName1 SYSNAME,
+	@TableName1 SYSNAME,
+	@SchemaName2 SYSNAME,
+	@TableName2 SYSNAME,
+	@DiffBetTableNames SYSNAME,
+	@PartitionColumnToReplaceInPK SYSNAME)
+RETURNS TABLE
+
+AS
+
+/*
+    select * from dbo.fnCompareTableStructuresDetails(
+    ''PaymentReporting'',
+    ''dbo'',
+    ''Bai2BankTransactions'',
+    ''dbo'',
+    ''Bai2BankTransactions_NewPartitionedTableFromPrep'',
+    ''_NewPartitionedTableFromPrep'',
+    ''TransactionSysUtcDt'')
+*/
+RETURN (
+        SELECT *
+        FROM (  SELECT  AT.DatabaseName,
+                        ISNULL(AT.TableName, NPT.TableName) AS TableName,
+                        ISNULL(AT.IndexName, NPT.IndexName) AS IndexName,
+                        CASE 
+                            WHEN ISNULL(AT.type_desc, '''') <> ISNULL(NPT.type_desc, '''') 
+                            THEN ''TypeDiff:  Actual Table:  '' + ISNULL(AT.type_desc, '''') + ''// New Table:  '' + ISNULL(NPT.type_desc, '''') 
+                            ELSE ''''
+                        END + 
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_unique AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_unique AS CHAR(1)), '''') 
+                            THEN ''IsUniqueDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_unique AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_unique AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.ignore_dup_key AS CHAR(1)), '''') <> ISNULL(CAST(NPT.ignore_dup_key AS CHAR(1)), '''') 
+                            THEN ''OptionIgnoreDupKeyDiff:  Actual Table:  '' + ISNULL(CAST(AT.ignore_dup_key AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.ignore_dup_key AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_primary_key AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_primary_key AS CHAR(1)), '''') 
+                            THEN ''IsPrimaryKeyDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_primary_key AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_primary_key AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_unique_constraint AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_unique_constraint AS CHAR(1)), '''') 
+                            THEN ''IsUniqueConstraintDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_unique_constraint AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_unique_constraint AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_disabled AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_disabled AS CHAR(1)), '''') 
+                            THEN ''IsDisabledDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_disabled AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_disabled AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_hypothetical AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_hypothetical AS CHAR(1)), '''') 
+                            THEN ''IsHypotheticalDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_hypothetical AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_hypothetical AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.has_filter AS CHAR(1)), '''') <> ISNULL(CAST(NPT.has_filter AS CHAR(1)), '''') 
+                            THEN ''IsFilteredDiff:  Actual Table:  '' + ISNULL(CAST(AT.has_filter AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.has_filter AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(AT.filter_definition, '''') <> ISNULL(NPT.filter_definition, '''') 
+                            THEN ''FilterPredicateDiff:  Actual Table:  '' + ISNULL(AT.filter_definition, '''') + ''// New Table:  '' + ISNULL(NPT.filter_definition, '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(AT.IndexKeys, '''') <> ISNULL(NPT.IndexKeys, '''') 
+                            THEN ''KeyColumnListDiff:  Actual Table:  '' + ISNULL(AT.IndexKeys, '''') + ''// New Table:  '' + ISNULL(NPT.IndexKeys, '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(AT.IncludedColumns, '''') <> ISNULL(NPT.IncludedColumns, '''') 
+                            THEN ''IncludedColumnListDiff:  Actual Table:  '' + ISNULL(AT.IncludedColumns, '''') + ''// New Table:  '' + ISNULL(NPT.IncludedColumns, '''') 
+                            ELSE ''''
+                        END COLLATE DATABASE_DEFAULT AS SchemaDifferences
+                FROM dbo.fnActualIndexesForTable(@SchemaName1,@TableName1, @DiffBetTableNames, @PartitionColumnToReplaceInPK) AT
+                    FULL OUTER JOIN dbo.fnActualIndexesForTable(@SchemaName2,@TableName2, @DiffBetTableNames, @PartitionColumnToReplaceInPK) NPT
+                        ON AT.TableName = NPT.TableName
+                            AND AT.IndexName = NPT.IndexName) x
+        WHERE EXISTS (  SELECT *
+                        FROM (
+                                SELECT * 
+                                FROM dbo.fnActualIndexesForTable(@SchemaName1,@TableName1, @DiffBetTableNames, @PartitionColumnToReplaceInPK)
+                                WHERE TableName = @TableName1
+                                EXCEPT
+                                SELECT *
+                                FROM dbo.fnActualIndexesForTable(@SchemaName2,@TableName2, @DiffBetTableNames, @PartitionColumnToReplaceInPK)
+                                WHERE TableName = @TableName1)Diff
+                        WHERE Diff.TableName = x.TableName
+                            AND Diff.IndexName = x.IndexName))
+' AS FinalRepartitioningValidation_CreateCompareTableStructuresDetailsFunctionSQL,
+'
+
+CREATE OR ALTER FUNCTION [dbo].[fnCompareTableStructures](
+    @DatabaseName SYSNAME,
+	@SchemaName1 SYSNAME,
+	@TableName1 SYSNAME,
+	@SchemaName2 SYSNAME,
+	@TableName2 SYSNAME,
+	@DiffBetTableNames SYSNAME,
+	@PartitionColumnToReplaceInPK SYSNAME)
+RETURNS TABLE
+AS RETURN
+(
+
+/*
+
+SELECT * FROM dbo.fnCompareTableStructures(
+    ''PaymentReporting'',
+    ''dbo'',
+    ''Liabilities'',
+    ''dbo'',
+    ''Liabilities_NewPartitionedTableFromPrep'',
+    ''_NewPartitionedTableFromPrep'',
+    ''PayDate'')	
+*/
+
+
+SELECT 
+(SELECT	COUNT(*) AS Counts
+FROM (	SELECT * 
+		FROM sys.dm_exec_describe_first_result_set (N''SELECT * FROM '' + @SchemaName1 + ''.'' + @TableName1 , NULL, 0) 
+		WHERE name NOT IN (''DMLType'')) Live 
+	FULL OUTER JOIN (	SELECT * 
+						FROM sys.dm_exec_describe_first_result_set (N''SELECT * FROM '' + @SchemaName2 + ''.'' + @TableName2, NULL, 0) 
+						WHERE name NOT IN (''DMLType'')) Prep 
+		ON Live.name = Prep.name 
+WHERE (Live.is_nullable <> Prep.is_nullable
+		OR live.system_type_name <> prep.system_type_name
+		OR live.is_identity_column <> prep.is_identity_column
+		OR Live.max_length <> Prep.max_length
+		OR Live.precision <> Prep.precision
+		OR Live.collation_name <> Prep.collation_name
+		OR Live.scale <> Prep.scale
+		OR Live.is_part_of_unique_key <> Prep.is_part_of_unique_key
+		OR Live.name IS NULL
+		OR Prep.name IS NULL))
++ --indexes
+(SELECT COUNT(*)
+FROM (
+		SELECT * 
+		FROM dbo.fnActualIndexStructuresForTable(@SchemaName1,@TableName1, @DiffBetTableNames, @PartitionColumnToReplaceInPK)
+		WHERE NOT EXISTS (  SELECT ''True''
+                            FROM DDI.IndexesNotInMetadata INIM 
+                            WHERE DatabaseName = INIM.DatabaseName
+                                AND SchemaName = INIM.SchemaName
+                                AND TableName = INIM.TableName
+                                AND INIM.IndexName = IndexName)
+		EXCEPT
+		SELECT *
+		FROM dbo.fnActualIndexStructuresForTable(@SchemaName2,@TableName2, @DiffBetTableNames, @PartitionColumnToReplaceInPK)
+		WHERE NOT EXISTS (  SELECT ''True'' 
+                            FROM DDI.IndexesNotInMetadata INIM 
+                            WHERE DatabaseName = INIM.DatabaseName
+                                AND SchemaName = INIM.SchemaName
+                                AND TableName = INIM.TableName
+                                AND INIM.IndexName = IndexName))x)
++ --constraints
+(SELECT COUNT(*)
+FROM (
+		SELECT * 
+		FROM dbo.fnActualConstraintsForTable(@SchemaName1,@TableName1, @DiffBetTableNames)
+		EXCEPT
+		SELECT *
+		FROM dbo.fnActualConstraintsForTable(@SchemaName2,@TableName2, @DiffBetTableNames))x) AS Counts
+)
+' AS FinalRepartitioningValidation_CreateCompareTableStructuresFunctionSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
-IF (SELECT * FROM DDI.DDI.fnCompareTableStructures(''' + AllTables.DatabaseName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')) > 0
+IF (SELECT * FROM dbo.fnCompareTableStructures(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')) > 0
 BEGIN
     DECLARE @ErrorMessage VARCHAR(MAX) = ''Schemas from the 2 tables do not match!!''
 
     SELECT @ErrorMessage += CHAR(13) + CHAR(10) + ''***'' + IndexName + space(1) + SchemaDifferences + ''***'' + CHAR(13) + CHAR(10)
-    FROM DDI.DDI.fnCompareTableStructuresDetails(''' + AllTables.DatabaseName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')
+    FROM dbo.fnCompareTableStructuresDetails(''' + AllTables.SchemaName + ''',''' + AllTables.TableName + ''',''' + AllTables.SchemaName + ''',''' + AllTables.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + AllTables.PartitionColumn + ''')
 
 	RAISERROR(@ErrorMessage, 16, 1)
 END
 
 IF NOT EXISTS(	 SELECT * 
 		  	     FROM sys.schemas s 
-				    INNER JOIN sys.tables t ON s.schema_id = AllTables.schema_id 
+				    INNER JOIN sys.tables t ON s.schema_id = t.schema_id 
 			     WHERE s.name = ''' + AllTables.SchemaName + ''' 
-				    AND AllTables.name = ''' + AllTables.NewPartitionedPrepTableName + ''') 
+				    AND t.name = ''' + AllTables.NewPartitionedPrepTableName + ''') 
 BEGIN
 	RAISERROR(''NewPartitionedPrepTable does not exist!!'', 16, 1)
 END
 
 IF NOT EXISTS(	 SELECT * 
 		  	     FROM sys.schemas s 
-		  		    INNER JOIN sys.tables t ON s.schema_id = AllTables.schema_id 
+		  		    INNER JOIN sys.tables t ON s.schema_id = t.schema_id 
 			     WHERE s.name = ''' + AllTables.SchemaName + ''' 
-				    AND AllTables.name = ''' + AllTables.TableName + ''')
+				    AND t.name = ''' + AllTables.TableName + ''')
 BEGIN
 	RAISERROR(''Live table does not exist!!'', 16, 1)
 END
@@ -162,17 +422,17 @@ END
 
 DECLARE @RowCount_NewPrepTable int = (SELECT SUM(ROWS)
 									  FROM sys.partitions 
-									  WHERE object_id = OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.NewPartitionedPrepTableName + ''') 
+									  WHERE object_id = OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.NewPartitionedPrepTableName + ''') 
 										 AND index_id in (0,1))
 
 DECLARE @RowCount_OldTable int = (SELECT SUM(ROWS) 
 								  FROM sys.partitions 
-								  WHERE object_id = OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ''') 
+								  WHERE object_id = OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.TableName + ''') 
 									 AND index_id in (0,1))
 
 DECLARE @MaximumAllowedRowsDifference DECIMAL(18,4) =  (	SELECT SUM(ROWS) * 0.1 
 															FROM sys.partitions 
-															WHERE object_id = OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ''') 
+															WHERE object_id = OBJECT_ID(''' + AllTables.SchemaName + '.' + AllTables.TableName + ''') 
 																AND index_id in (0,1))
 
 IF ABS( @RowCount_NewPrepTable - @RowCount_OldTable ) > @MaximumAllowedRowsDifference 
@@ -449,6 +709,8 @@ FROM (  SELECT T.DatabaseName
         FROM DDI.Tables T
         WHERE IntendToPartition = 1) AllTables
     CROSS JOIN (SELECT * FROM DDI.DDISettings WHERE SettingName = 'UTEBCP Filepath') SS
+
+
 
 
 
