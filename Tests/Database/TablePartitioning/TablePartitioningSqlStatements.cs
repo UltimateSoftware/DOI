@@ -28,10 +28,14 @@ EXEC Utility.spPartitionSchemeCreate
 	                                        [Id] [int] NOT NULL,
 	                                        [myDateTime] [datetime2](7) NOT NULL,
 	                                        [Comments] [nvarchar](100) NULL,
-	                                        [updatedUtcDt] [datetime2](7) NOT NULL,
+	                                        [updatedUtcDt] [datetime2](7) NOT NULL
+                                                CONSTRAINT Chk_PartitioningTestAutomationTable_updatedUtcDt
+                                                    CHECK (updatedUtcDt > '0001-01-01')
+                                                CONSTRAINT Def_PartitioningTestAutomationTable_updatedUtcDt
+                                                    DEFAULT SYSDATETIME(),
                                         ) ON [PRIMARY]
 
-                                        CREATE CLUSTERED INDEX [CDX_myDateTime] ON [dbo].[PartitioningTestAutomationTable]
+                                        CREATE CLUSTERED INDEX [CDX_PartitioningTestAutomationTable] ON [dbo].[PartitioningTestAutomationTable]
                                         (
 	                                        [myDateTime] ASC
                                         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -44,17 +48,54 @@ EXEC Utility.spPartitionSchemeCreate
 
                                         SET ANSI_PADDING ON
 
-                                        CREATE NONCLUSTERED INDEX [NonClusteredIndex_Comments] ON [dbo].[PartitioningTestAutomationTable]
+                                        CREATE NONCLUSTERED INDEX [IDX_PartitioningTestAutomationTable_Comments] ON [dbo].[PartitioningTestAutomationTable]
                                         (
 	                                        [Comments] ASC,
                                             [myDateTime] ASC
                                         )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-                                        CREATE NONCLUSTERED COLUMNSTORE INDEX [NonClusteredColumnStoreIndex_Comments] ON [dbo].[PartitioningTestAutomationTable]
+                                        CREATE NONCLUSTERED COLUMNSTORE INDEX [NCCI_PartitioningTestAutomationTable_Comments] ON [dbo].[PartitioningTestAutomationTable]
                                         (
 	                                        [Comments],
                                             [myDateTime]
-                                        )WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0) ON [PRIMARY]";
+                                        )WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0) ON [PRIMARY]
+
+                                        IF NOT EXISTS (   SELECT 'True'
+                                                          FROM   sys.stats
+                                                          WHERE  name = 'ST_PartitioningTestAutomationTable_Comments' )
+                                            BEGIN
+                                                CREATE STATISTICS ST_PartitioningTestAutomationTable_Comments
+                                                    ON dbo.PartitioningTestAutomationTable ( Comments )
+                                                    WITH SAMPLE 20 PERCENT /*, PERSIST_SAMPLE_PERCENT = ON  this has to wait until 2016 SP2.                  , MAXDOP = 0*/ ,
+                                                         INCREMENTAL = OFF;
+                                            END;
+                                        IF NOT EXISTS (   SELECT 'True'
+                                                          FROM   sys.stats
+                                                          WHERE  name = 'ST_PartitioningTestAutomationTable_id' )
+                                            BEGIN
+                                                CREATE STATISTICS ST_PartitioningTestAutomationTable_id
+                                                    ON dbo.PartitioningTestAutomationTable ( Id )
+                                                    WITH SAMPLE 20 PERCENT /*, PERSIST_SAMPLE_PERCENT = ON  this has to wait until 2016 SP2.                  , MAXDOP = 0*/ ,
+                                                         INCREMENTAL = OFF;
+                                            END;
+                                        IF NOT EXISTS (   SELECT 'True'
+                                                          FROM   sys.stats
+                                                          WHERE  name = 'ST_PartitioningTestAutomationTable_myDateTime' )
+                                            BEGIN
+                                                CREATE STATISTICS ST_PartitioningTestAutomationTable_myDateTime
+                                                    ON dbo.PartitioningTestAutomationTable ( myDateTime )
+                                                    WITH SAMPLE 20 PERCENT /*, PERSIST_SAMPLE_PERCENT = ON  this has to wait until 2016 SP2.                  , MAXDOP = 0*/ ,
+                                                         INCREMENTAL = OFF;
+                                            END;
+                                        IF NOT EXISTS (   SELECT 'True'
+                                                          FROM   sys.stats
+                                                          WHERE  name = 'ST_PartitioningTestAutomationTable_updatedUtcDt' )
+                                            BEGIN
+                                                CREATE STATISTICS ST_PartitioningTestAutomationTable_updatedUtcDt
+                                                    ON dbo.PartitioningTestAutomationTable ( updatedUtcDt )
+                                                    WITH SAMPLE 20 PERCENT /*, PERSIST_SAMPLE_PERCENT = ON  this has to wait until 2016 SP2.                  , MAXDOP = 0*/ ,
+                                                         INCREMENTAL = OFF;
+                                            END;";
 
         public static string RowStoreIndexes = @"            
     INSERT INTO Utility.IndexesRowStore (SchemaName,TableName,IndexName,IsUnique,IsPrimaryKey,IsUniqueConstraint,IsClustered,KeyColumnList,IncludedColumnList,IsFiltered,FilterPredicate,[Fillfactor],OptionPadIndex,OptionStatisticsNoRecompute,OptionStatisticsIncremental,OptionIgnoreDupKey,OptionResumable,OptionMaxDuration,OptionAllowRowLocks,OptionAllowPageLocks,OptionDataCompression,NewStorage,PartitionColumn)
@@ -62,7 +103,7 @@ EXEC Utility.spPartitionSchemeCreate
     Select 
         SchemaName					 = N'dbo'
         ,TableName                      = N'PartitioningTestAutomationTable'
-        ,IndexName                      = N'CDX_myDateTime'
+        ,IndexName                      = N'CDX_PartitioningTestAutomationTable'
         ,IsUnique                       = 0
         ,IsPrimaryKey                   = 0
         ,IsUniqueConstraint             = 0
@@ -94,7 +135,7 @@ EXEC Utility.spPartitionSchemeCreate
         ,IsPrimaryKey                   = 1
         ,IsUniqueConstraint             = 0
         ,IsClustered                    = 0
-        ,KeyColumnList                  = N'ID ASC, MyDateTime ASC'
+        ,KeyColumnList                  = N'ID ASC,MyDateTime ASC'
         ,IncludedColumnList             = NULL
         ,IsFiltered                     = 0
         ,FilterPredicate                = NULL
@@ -116,12 +157,12 @@ EXEC Utility.spPartitionSchemeCreate
 	   Select 
         SchemaName					 = N'dbo'
         ,TableName                      = N'PartitioningTestAutomationTable'
-        ,IndexName                      = N'NonClusteredIndex_Comments'
+        ,IndexName                      = N'IDX_PartitioningTestAutomationTable_Comments'
         ,IsUnique                       = 0
         ,IsPrimaryKey                   = 0
         ,IsUniqueConstraint             = 0
         ,IsClustered                    = 0
-        ,KeyColumnList                  = N'Comments ASC, MyDatetime ASC'
+        ,KeyColumnList                  = N'Comments ASC,MyDatetime ASC'
         ,IncludedColumnList             = NULL
         ,IsFiltered                     = 0
         ,FilterPredicate                = NULL
@@ -145,9 +186,9 @@ EXEC Utility.spPartitionSchemeCreate
                     SELECT 
                       [SchemaName]              = N'dbo'
                     , [TableName]               = N'PartitioningTestAutomationTable'	
-                    , [IndexName]               = N'NonClusteredColumnStoreIndex_Comments'	
+                    , [IndexName]               = N'NCCI_PartitioningTestAutomationTable_Comments'	
                     , [IsClustered]             = 0
-                    , [ColumnList]              = N'Comments, MyDatetime'				
+                    , [ColumnList]              = N'Comments,MyDatetime'				
                     , [IsFiltered]              = 0
                     , [FilterPredicate]         = NULL
                     , [OptionDataCompression]   = N'COLUMNSTORE'
@@ -156,16 +197,26 @@ EXEC Utility.spPartitionSchemeCreate
                     , PartitionColumn           = 'MyDatetime'
                     ";
 
-        public static string StartJob = @"  exec msdb.dbo.sp_start_job          @job_name =  'Refresh Index Structures' ";
+        public static string StartJob = @"  exec msdb.dbo.sp_start_job          @job_name =  'Refresh Index Structures - Online' ";
 
-        public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'Refresh Index Structures'";
+        public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'Refresh Index Structures - Online'";
 
         public static string DropTableAndDeleteMetadata = @"
+                        DELETE FROM  [Utility].[Statistics] WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [Utility].[CheckConstraints] WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [Utility].[DefaultConstraints] WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
                         DELETE FROM  [Utility].[IndexesColumnStore] WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
                         DELETE FROM  [Utility].[IndexesRowStore]    WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
                         DELETE FROM  [Utility].[Tables]		    WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DROP TABLE IF EXISTS DBO.PartitioningTestAutomationTable;
-                        DROP TABLE IF EXISTS DBO.PartitioningTestAutomationTable_Old;
+
+                        DECLARE @sql VARCHAR(MAX) = SPACE(0)
+                        SELECT @sql += 'DROP TABLE IF EXISTS ' + s.name + '.' + t.name + CHAR(13) + CHAR(10)
+                        FROM sys.tables t
+                            INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+                        WHERE t.name LIKE 'PartitioningTestAutomationTable%'
+
+                        EXEC(@sql)
+
                         TRUNCATE TABLE Utility.RefreshIndexStructuresLog;
                         TRUNCATE TABLE Utility.RefreshIndexStructuresQueue
                         DELETE PT FROM Utility.RefreshIndexStructures_PartitionState pt WHERE pt.ParentTableName = 'PartitioningTestAutomationTable';
@@ -203,6 +254,25 @@ EXEC Utility.spPartitionSchemeCreate
                                  0,
                                  1
                                 );  ";
+
+        public static string StatisticsToMetadata = @"
+                                INSERT INTO Utility.[Statistics] ( SchemaName, TableName, StatisticsName, StatisticsColumnList, SampleSizePct, IsFiltered, FilterPredicate, IsIncremental, NoRecompute, LowerSampleSizeToDesired, ReadyToQueue )
+                                VALUES ( N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_id', 'id', 20, 0, NULL, 1, 0, 0, 1)
+                                INSERT INTO Utility.[Statistics] ( SchemaName, TableName, StatisticsName, StatisticsColumnList, SampleSizePct, IsFiltered, FilterPredicate, IsIncremental, NoRecompute, LowerSampleSizeToDesired, ReadyToQueue )
+                                VALUES ( N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_myDateTime', 'myDateTime', 20, 0, NULL, 1, 0, 0, 1)
+                                INSERT INTO Utility.[Statistics] ( SchemaName, TableName, StatisticsName, StatisticsColumnList, SampleSizePct, IsFiltered, FilterPredicate, IsIncremental, NoRecompute, LowerSampleSizeToDesired, ReadyToQueue )
+                                VALUES ( N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_Comments', 'Comments', 20, 0, NULL, 1, 0, 0, 1)
+                                INSERT INTO Utility.[Statistics] ( SchemaName, TableName, StatisticsName, StatisticsColumnList, SampleSizePct, IsFiltered, FilterPredicate, IsIncremental, NoRecompute, LowerSampleSizeToDesired, ReadyToQueue )
+                                VALUES ( N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_updatedUtcDt', 'updatedUtcDt', 20, 0, NULL, 1, 0, 0, 1)";
+
+        public static string ConstraintsToMetadata = @"
+                                INSERT INTO Utility.CheckConstraints ( SchemaName ,TableName ,ColumnName ,CheckDefinition ,IsDisabled ,CheckConstraintName )
+                                VALUES (N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(updatedUtcDt > ''0001-01-01'')', 0, N'Chk_PartitioningTestAutomationTable_updatedUtcDt')
+
+                                INSERT INTO Utility.DefaultConstraints ( SchemaName ,TableName ,ColumnName ,DefaultDefinition )
+                                VALUES (N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(SYSDATETIME())')";
+
+
         public static string DataInsert => GenerateDataInsertScript();
 
         private static string GenerateDataInsertScript()
@@ -274,7 +344,7 @@ EXEC Utility.spPartitionSchemeCreate
                                             AND pts.partition_id = p.partition_id
                                         WHERE t.name =  'PartitioningTestAutomationTable'
                                         AND  s.name = 'dbo'
-                                        AND  i.name = 'CDX_myDateTime' ";
+                                        AND  i.name = 'CDX_PartitioningTestAutomationTable' ";
 
 
         public static string TotalRowsInFileGroups = @"
@@ -291,14 +361,14 @@ EXEC Utility.spPartitionSchemeCreate
                                         AND pts.partition_id = p.partition_id
                                     WHERE t.name =  'PartitioningTestAutomationTable'
                                     AND  s.name = 'dbo'
-                                    AND  i.name = 'CDX_myDateTime'
+                                    AND  i.name = 'CDX_PartitioningTestAutomationTable'
                                     ";
 
         public static string UpdateJobStepForTest = @"
                                                     EXEC msdb.dbo.sp_update_jobstep  
-                                                     @job_name =  'Refresh Index Structures' 
+                                                     @job_name =  'Refresh Index Structures - Online' 
                                                     ,@step_id = 2
-                                                    ,@step_name = 'Populate Index Structures Queue'
+                                                    ,@step_name = 'Populate Index Structures Queue - Online'
                                                     ,@command = N' 
                                                            DECLARE @BatchId UNIQUEIDENTIFIER
                                                            
@@ -311,9 +381,9 @@ EXEC Utility.spPartitionSchemeCreate
 
         public static string RestoreJobStep = @"
                                                     EXEC msdb.dbo.sp_update_jobstep  
-                                                     @job_name =  'Refresh Index Structures' 
+                                                     @job_name =  'Refresh Index Structures - Online' 
                                                     ,@step_id = 2
-                                                    ,@step_name = 'Populate Index Structures Queue'
+                                                    ,@step_name = 'Populate Index Structures Queue - Online'
                                                     ,@command = N' 
 	                                                       DECLARE @BatchId UNIQUEIDENTIFIER
                                                            
@@ -333,19 +403,17 @@ EXEC Utility.spPartitionSchemeCreate
                                                         JOIN sys.tables t ON t.object_id = pts.object_id
                                                         JOIN sys.schemas s on s.schema_id = t.schema_id
                                                         JOIN sys.indexes i ON i.object_id = pts.object_id
-	                                                           AND i.index_id = pts.index_id
+                                                            AND i.index_id = pts.index_id
                                                         JOIN sys.partitions p ON pts.object_id = p.object_id
-                                                        AND pts.index_id = p.index_id
-                                                        AND pts.partition_number = p.partition_number
-                                                        AND pts.partition_id = p.partition_id
+                                                            AND pts.index_id = p.index_id
+                                                            AND pts.partition_number = p.partition_number
+                                                            AND pts.partition_id = p.partition_id
                                                         WHERE t.name =  'PartitioningTestAutomationTable'
-                                                        AND  s.name = 'dbo'
-                                                        AND  i.name = 'CDX_myDateTime'
-                                                        AND p.rows = 0 
+                                                            AND  s.name = 'dbo'
+                                                            AND  i.name = 'CDX_PartitioningTestAutomationTable'
+                                                            AND p.rows = 0";
 
-                                                        ";
-
-        public static string IndexesAfterPartitioning = @"SELECT IndexName = ix.Name
+        public static string IndexesAfterPartitioningNewTable = @"SELECT IndexName = ix.Name
                                                         FROM sys.indexes ix 
                                                         JOIN sys.tables t  on ix.object_id = t.object_id
                                                         JOIN sys.schemas s  on s.schema_id = t.schema_id
@@ -353,7 +421,55 @@ EXEC Utility.spPartitionSchemeCreate
                                                         AND t.name = 'PartitioningTestAutomationTable'
                                                         AND s.name = 'dbo'";
 
+        public static string IndexesAfterPartitioningOldTable = @"SELECT IndexName = ix.Name
+                                                        FROM sys.indexes ix 
+                                                        JOIN sys.tables t  on ix.object_id = t.object_id
+                                                        JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                        where 1=1
+                                                        AND t.name = 'PartitioningTestAutomationTable_OLD'
+                                                        AND s.name = 'dbo'";
+
+        public static string ConstraintsAfterPartitioningNewTable = @"
+                                                            SELECT ConstraintName = x.Name
+                                                            FROM (  SELECT parent_object_id, name
+                                                                    FROM sys.check_constraints c
+                                                                    UNION ALL
+                                                                    SELECT parent_object_id, name
+                                                                    FROM sys.default_constraints d) x
+                                                                INNER JOIN sys.tables t  on x.parent_object_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            WHERE t.name = 'PartitioningTestAutomationTable'
+                                                                AND s.name = 'dbo'";
+
+        public static string ConstraintsAfterPartitioningOldTable = @"
+                                                            SELECT ConstraintName = x.Name
+                                                            FROM (  SELECT parent_object_id, name
+                                                                    FROM sys.check_constraints c
+                                                                    UNION ALL
+                                                                    SELECT parent_object_id, name
+                                                                    FROM sys.default_constraints d) x
+                                                                INNER JOIN sys.tables t  on x.parent_object_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            WHERE t.name = 'PartitioningTestAutomationTable_OLD'
+                                                                AND s.name = 'dbo'";
+
+        public static string StatisticsAfterPartitioningNewTable = @"SELECT StatisticsName = st.Name
+                                                            FROM sys.stats st
+                                                                INNER JOIN sys.tables t  on st.object_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            where t.name = 'PartitioningTestAutomationTable'
+                                                                AND s.name = 'dbo'";
+
+        public static string StatisticsAfterPartitioningOldTable = @"SELECT StatisticsName = st.Name
+                                                            FROM sys.stats st
+                                                                INNER JOIN sys.tables t  on st.object_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            where t.name = 'PartitioningTestAutomationTable_OLD'
+                                                                AND s.name = 'dbo'";
+
         public static string RecordsInTheQueue = @"Select * FROM  utility.RefreshIndexStructuresQueue WHERE IsOnlineOperation = 1";
+
+        public static string LogHasNoErrors = @"SELECT * FROM Utility.RefreshIndexStructuresLog WHERE SchemaName = 'dbo' and TableName = 'PartitioningTestAutomationTable' and ErrorText IS NOT NULL";
 
         public static string PartitionStateMetadata = @"
                                                     INSERT INTO Utility.RefreshIndexStructures_PartitionState ( SchemaName ,ParentTableName , PrepTableName, PartitionFromValue ,PartitionToValue ,DataSynchState ,LastUpdateDateTime )
@@ -382,13 +498,13 @@ EXEC Utility.spPartitionSchemeCreate
                                                         , @LatestRunTime =  max(jh.run_time ) 
                                                     from msdb.dbo.sysjobs j
                                                     JOIN msdb.dbo.sysjobhistory jh on jh.job_id = j.job_id
-                                                    where  j.name = N'Refresh Index Structures'
+                                                    where  j.name = N'Refresh Index Structures - Online'
                                                         AND jh.step_id = 1
 
                                                     select jh. step_id,  step_name , message , sql_severity, run_date , run_time, run_status
                                                     from msdb.dbo.sysjobs j
                                                     JOIN msdb.dbo.sysjobhistory jh on jh.job_id = j.job_id
-                                                    where  j.name = N'Refresh Index Structures'
+                                                    where  j.name = N'Refresh Index Structures - Online'
                                                     and jh.run_date >= @LatestRunDate 
                                                     AND jh.run_time >= @LatestRunTime";
 

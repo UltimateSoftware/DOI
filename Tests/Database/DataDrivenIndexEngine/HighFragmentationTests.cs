@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using TaxHub.TestHelpers;
 using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
-using TestHelper = DDI.TestHelpers;
+using TestHelper = Reporting.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {

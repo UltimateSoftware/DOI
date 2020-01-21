@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.Practices.Unity.Utility;
 using NUnit.Framework;
 using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
-using TestHelper = TestHel;
+using TestHelper = Reporting.TestHelpers;
 
-namespace DDI.Integration.Tests.Database
+namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {
-    public class DDITestHelper
+    public class DataDrivenIndexTestHelper
     {
-        private TestHelpers.SqlHelper sqlHelper;
+        private TestHelper.SqlHelper sqlHelper;
         private TempARepository tempARepository;
 
-        public DDITestHelper(TestHelper.SqlHelper sqlHelper)
+        public DataDrivenIndexTestHelper(TestHelper.SqlHelper sqlHelper)
         {
             this.sqlHelper = sqlHelper;
             this.tempARepository = new TempARepository(sqlHelper);
@@ -44,6 +45,16 @@ namespace DDI.Integration.Tests.Database
             sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
 
             this.sqlHelper.Execute(sql, 0);
+        }
+
+        public async Task ExecuteSPRefreshIndexStructuresRunAsync(bool onlineOperations, string schemaName = null, string tableName = null)
+        {
+            var sql = $"EXEC [Utility].[spRefreshIndexStructures_Run]  " +
+                      $"@OnlineOperations = {(onlineOperations ? "1" : "0")}";
+            sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
+            sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
+
+            await this.sqlHelper.ExecuteAsync(sql, 0, false);
         }
 
         public void ExecuteSPCreateNewPartitionFunction(string partitionFunctionName)
@@ -451,6 +462,16 @@ namespace DDI.Integration.Tests.Database
 
             this.sqlHelper.Execute(@"INSERT [Utility].[IndexesColumnStore]  ([SchemaName]	, [TableName]   , [IndexName]			, [IsClustered]	, [ColumnList]			, [IsFiltered]	, [FilterPredicate]	, [OptionDataCompression]	, [OptionCompressionDelay]	, NewStorage    , PartitionColumn		) 
                                                                     VALUES	(N'dbo'			, N'TempB'		, N'CCI_TempB_Report'	, 1				, NULL					, 0				, NULL				, N'COLUMNSTORE'			, 0							, 'PRIMARY'	    , NULL					)");
+        }
+
+        public static string OfflineQueueCountSQL(string schemaName, string tableName)
+        {
+            return $@"
+            SELECT COUNT(*) 
+            FROM Utility.RefreshIndexStructuresQueue 
+            WHERE SchemaName = '{schemaName}' 
+                AND TableName = '{tableName}' 
+                AND IsOnlineOperation = 0";
         }
     }
 }

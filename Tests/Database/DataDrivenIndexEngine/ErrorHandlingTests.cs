@@ -3,7 +3,7 @@ using System.Diagnostics;
 using NUnit.Framework;
 using TaxHub.TestHelpers;
 using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
-using TestHelper = DDI.TestHelpers;
+using TestHelper = Reporting.TestHelpers;
 
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
@@ -13,7 +13,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
     [Category("ReportingIntegration")]
     [Category("ExcludePreflight")]
     [Category("DataDrivenIndex")]
-    public class ErrorHandlingTests
+    public class ErrorHandlingTests : SqlIndexJobBaseTest
     {
         /*
         
@@ -25,7 +25,6 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
          * 6. Prep tables and objects should be dropped on failure.
          
          */
-        protected TestHelper.SqlHelper sqlHelper;
         protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
         protected TempARepository tempARepository;
         protected const string TempTableName = "TempA";
@@ -34,7 +33,6 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         [SetUp]
         public virtual void Setup()
         {
-            this.sqlHelper = new TestHelper.SqlHelper();
             this.TearDown();
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
             this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(sqlHelper);
@@ -251,7 +249,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             }
             catch (Exception e)
             {
-                Assert.AreEqual("Resource Governor is not turned on.  Aborting.", e.Message);
+                Assert.AreEqual("Online job is trying to run with Resource Governor off.  Aborting.  Need to turn on Resource Governor.", e.Message);
             }
             
             //4.Check for Resource Gov error and NO OTHER ACTIVITY in the log table.
@@ -267,20 +265,20 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             this.sqlHelper.Execute($"TRUNCATE TABLE Utility.RefreshIndexStructuresQueue");
             this.sqlHelper.Execute($"TRUNCATE TABLE Utility.RefreshIndexStructuresLog");
             this.dataDrivenIndexTestHelper.ExecuteSPRefreshIndexStructuresQueue(false);
-            var transactionId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 TransactionId FROM Utility.RefreshIndexStructuresQueue WHERE TransactionId IS NOT NULL");
-            var batchId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 BatchId FROM Utility.RefreshIndexStructuresQueue");
-            var seqNo = this.sqlHelper.ExecuteScalar<int>($"SELECT TOP 1 SeqNo FROM Utility.RefreshIndexStructuresQueue WHERE TableName = 'TempA' AND IndexName = 'CDX_TempA' AND IndexOperation = 'Drop Index'");
+            var transactionId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 TransactionId FROM Utility.RefreshIndexStructuresQueue WHERE TableName = '{TempTableName}' AND TransactionId IS NOT NULL");
+            var batchId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 BatchId FROM Utility.RefreshIndexStructuresQueue WHERE TableName = '{TempTableName}'");
+            var seqNo = this.sqlHelper.ExecuteScalar<int>($"SELECT TOP 1 SeqNo FROM Utility.RefreshIndexStructuresQueue WHERE TableName = '{TempTableName}' AND IndexName = 'CDX_TempA' AND IndexOperation = 'Drop Index'");
 
             //3. Introduce an error into the Queue while the transaction is open.
             this.sqlHelper.ExecuteScalar<int>($"UPDATE Q SET SeqNo = SeqNo + 1 FROM Utility.RefreshIndexStructuresQueue Q WHERE SeqNo > {seqNo}");
             this.sqlHelper.Execute($@"
                 INSERT INTO Utility.RefreshIndexStructuresQueue ( SchemaName ,TableName ,IndexName ,PartitionNumber ,IndexSizeInMB ,ParentSchemaName ,ParentTableName ,ParentIndexName ,IndexOperation ,IsOnlineOperation ,TableChildOperationId ,SQLStatement ,SeqNo ,DateTimeInserted ,InProgress ,RunStatus ,ErrorMessage ,TransactionId ,BatchId ,ExitTableLoopOnError )
-                VALUES(N'dbo', N'TempA', N'CDX_TempA', 0, 0, N'dbo', N'TempA', N'CDX_TempA', 'Stop Processing', 0, 0, 'SELECT 1/0', {seqNo + 1}, SYSDATETIME(), 0, 'Start', '', '{transactionId}', '{batchId}', 0)");
+                VALUES(N'dbo', N'{TempTableName}', N'CDX_TempA', 0, 0, N'dbo', N'{TempTableName}', N'CDX_TempA', 'Stop Processing', 0, 0, 'SELECT 1/0', {seqNo + 1}, SYSDATETIME(), 0, 'Start', '', '{transactionId}', '{batchId}', 0)");
             //4. Run the Run SP.
             dataDrivenIndexTestHelper.ExecuteSPRefreshIndexStructuresRun(false, "dbo", "TempA");
             //5. Check that the Logged rows are still in the Log table.
             var countOfLogRows = this.sqlHelper.ExecuteScalar<int>($"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE ErrorText = 'Divide by zero error encountered.'");
-            Assert.AreEqual(2, countOfLogRows);
+            Assert.AreEqual(1, countOfLogRows);
         }
     }
 }

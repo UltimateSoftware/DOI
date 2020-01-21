@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
-using TestHelper = DDI.TestHelpers;
+using TestHelper = Reporting.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.Foreign_Keys
 {

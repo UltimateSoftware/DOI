@@ -8,9 +8,9 @@ using System.Threading;
 using Microsoft.Practices.Unity.Utility;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using DDI.TestHelpers;
+using Reporting.TestHelpers;
 using TaxHub.TestHelpers;
-using SqlHelper = DDI.TestHelpers.SqlHelper;
+using SqlHelper = Reporting.TestHelpers.SqlHelper;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
 {
@@ -74,16 +74,36 @@ namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
 
             //Validation
             ValidateThatTheJobFinishedSuccessfully();
+
+            //tables
             ValidateThatTheOldTableExists();
             ValidateThatTheNewTableExists();
             ValidateThatTheNewTableIsPartitioned();
+
+            //data
             ValidateThatTheNewTableHasAllTheData();
             ValidateThatThereIsDataInPartitions();
             ValidateThatAllPartitionsHaveData();
             ValidateThatAllRowsAreInPartitionedTable();
-            ValidateIndexesAreThereAfterPartitioning();
+
+            //indexes
+            ValidateIndexesAreThereOnNewTableAfterPartitioning();
+            ValidateIndexesAreThereOnOldTableAfterPartitioning();
+
+            //constraints
+            ValidateConstraintsAreThereOnNewTableAfterPartitioning();
+            ValidateConstraintsAreThereOnOldTableAfterPartitioning();
+
+            //statistics
+            ValidateStatisticsAreThereOnNewTableAfterPartitioning();
+            ValidateStatisticsAreThereOnOldTableAfterPartitioning();
+
+            //queue
             ValidateThatTheQueueIsEmptyAfterPartitioning();
+            //metadata
             ValidateThatPartitionStateMetadataTableIsEmptyAfterPartitioning();
+            //log has no errors.
+            ValidateThatLogTableHasNoErrors();
         }
 
         private void StartSqlServerAgentIfIsNotRunning()
@@ -103,7 +123,10 @@ namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
             sqlHelper.Execute(TablePartitioningSqlStatements.TableToMetadata);
             sqlHelper.Execute(TablePartitioningSqlStatements.RowStoreIndexes);
             sqlHelper.Execute(TablePartitioningSqlStatements.ColumnStoreIndexes);
+            sqlHelper.Execute(TablePartitioningSqlStatements.StatisticsToMetadata);
+            sqlHelper.Execute(TablePartitioningSqlStatements.ConstraintsToMetadata);
             sqlHelper.Execute(TablePartitioningSqlStatements.UpdateJobStepForTest);
+
 
             /*This sql statement was extracted from [Utility].[spDataDrivenIndexes_RefreshPartitionState]
             we should change calling the SQL code and call instead the Sp itself for this we need to wait for
@@ -227,13 +250,62 @@ namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
             Assert.AreEqual(list.Count, 96, $"Expecting 96 rows in the partitioned table but found {list.Count}.");
         }
 
-        private void ValidateIndexesAreThereAfterPartitioning()
+        private void ValidateIndexesAreThereOnNewTableAfterPartitioning()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.IndexesAfterPartitioning));
-            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_myDateTime"), "Index CDX_myDateTime is missing.");
-            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NonClusteredColumnStoreIndex_Comments"), "Index NonClusteredColumnStoreIndex_Comments is missing.");
-            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NonClusteredIndex_Comments"), "Index NonClusteredIndex_Comments is missing.");
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.IndexesAfterPartitioningNewTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable"), "Index CDX_PartitioningTestAutomationTable is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_Comments"), "Index NCCI_PartitioningTestAutomationTable_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_Comments"), "Index IDX_PartitioningTestAutomationTable_Comments is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "PK_PartitioningTestAutomationTable"), "Index PK_PartitioningTestAutomationTable is missing.");
+        }
+
+        private void ValidateIndexesAreThereOnOldTableAfterPartitioning()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.IndexesAfterPartitioningOldTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable_OLD"), "Index CDX_PartitioningTestAutomationTable_OLD is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_OLD_Comments"), "Index NCCI_PartitioningTestAutomationTable_OLD_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_OLD_Comments"), "Index IDX_PartitioningTestAutomationTable_OLD_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "PK_PartitioningTestAutomationTable_OLD"), "Index PK_PartitioningTestAutomationTable_OLD is missing.");
+        }
+
+        private void ValidateConstraintsAreThereOnNewTableAfterPartitioning()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.ConstraintsAfterPartitioningNewTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Chk_PartitioningTestAutomationTable_updatedUtcDt"), "Constraint Chk_PartitioningTestAutomationTable_updatedUtcDt is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Def_PartitioningTestAutomationTable_updatedUtcDt"), "Constraint Def_PartitioningTestAutomationTable_updatedUtcDt is missing.");
+        }
+
+        private void ValidateConstraintsAreThereOnOldTableAfterPartitioning()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.ConstraintsAfterPartitioningOldTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Chk_PartitioningTestAutomationTable_OLD_updatedUtcDt"), "Constraint Chk_PartitioningTestAutomationTable_OLD_updatedUtcDt is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Def_PartitioningTestAutomationTable_OLD_updatedUtcDt"), "Constraint Def_PartitioningTestAutomationTable_OLD_updatedUtcDt is missing.");
+        }
+
+        private void ValidateStatisticsAreThereOnNewTableAfterPartitioning()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.StatisticsAfterPartitioningNewTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable"), "Statistics for index CDX_PartitioningTestAutomationTable is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_Comments"), "Statistics for index NCCI_PartitioningTestAutomationTable_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_Comments"), "Statistics for index IDX_PartitioningTestAutomationTable_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "PK_PartitioningTestAutomationTable"), "Statistics for index PK_PartitioningTestAutomationTable is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_id"), "Statistics ST_PartitioningTestAutomationTable_id is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_myDateTime"), "Statistics ST_PartitioningTestAutomationTable_myDateTime is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_Comments"), "Statistics ST_PartitioningTestAutomationTable_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_updatedUtcDt"), "Statistics ST_PartitioningTestAutomationTable_updatedUtcDt is missing.");
+        }
+
+        private void ValidateStatisticsAreThereOnOldTableAfterPartitioning()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.StatisticsAfterPartitioningOldTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable_OLD"), "Statistics for index CDX_PartitioningTestAutomationTable_OLD is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_OLD_Comments"), "Statistics for index NCCI_PartitioningTestAutomationTable_OLD_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_OLD_Comments"), "Statistics for index IDX_PartitioningTestAutomationTable_OLD_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "PK_PartitioningTestAutomationTable_OLD"), "Statistics for index PK_PartitioningTestAutomationTable_OLD is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_OLD_id"), "Statistics ST_PartitioningTestAutomationTable_OLD_id is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_OLD_myDateTime"), "Statistics ST_PartitioningTestAutomationTable_OLD_myDateTime is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_OLD_Comments"), "Statistics ST_PartitioningTestAutomationTable_OLD_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_OLD_updatedUtcDt"), "Statistics ST_PartitioningTestAutomationTable_OLD_updatedUtcDt is missing.");
         }
 
         private void ValidateThatTheQueueIsEmptyAfterPartitioning()
@@ -241,6 +313,10 @@ namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
             Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.RecordsInTheQueue)), "Expecting the Queue table [utility.RefreshIndexStructuresQueue] to be empty but found records.");
         }
 
+        private void ValidateThatLogTableHasNoErrors()
+        {
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.LogHasNoErrors)), "Log table [Utility].[RefreshIndexStructuresLog] has errors!!");
+        }
 
         private void ValidateThatPartitionStateMetadataTableIsEmptyAfterPartitioning()
         {

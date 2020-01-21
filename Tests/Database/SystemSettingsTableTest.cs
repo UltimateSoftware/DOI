@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Practices.Unity.Utility;
 using  NUnit.Framework;
-using DDI.TestHelpers;
+using Reporting.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database
 {

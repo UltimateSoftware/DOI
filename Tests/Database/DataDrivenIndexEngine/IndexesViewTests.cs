@@ -3,7 +3,7 @@ using NUnit.Framework;
 using TaxHub.TestHelpers;
 using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
 using TaxHub.Common.Extensions;
-using TestHelper = DDI.TestHelpers;
+using TestHelper = Reporting.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {
@@ -12,9 +12,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
     [Category("ReportingIntegration")]
     [Category("ExcludePreflight")]
     [Category("DataDrivenIndex")]
-    public class IndexesViewTests
+    public class IndexesViewTests : SqlIndexJobBaseTest
     {
-        protected TestHelper.SqlHelper sqlHelper;
         private List<IndexView> expectedIndexViews;
         private List<ForeignKey> expectedForeignKeys;
         protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
@@ -26,11 +25,10 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         {
             this.expectedIndexViews = new List<IndexView>();
             this.expectedForeignKeys = new List<ForeignKey>();
-            this.sqlHelper = new TestHelper.SqlHelper();
             this.TearDown();
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
-            this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(sqlHelper);
-            this.tempARepository = new TempARepository(sqlHelper);
+            this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
+            this.tempARepository = new TempARepository(this.sqlHelper);
 
             this.expectedIndexViews.Add(new IndexView()
             {
@@ -45,7 +43,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 AlterRebuildStatement = "ALTER INDEX CDX_TempA ON dbo.TempA   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 90,      SORT_IN_TEMPDB = ON,      IGNORE_DUP_KEY = OFF,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)",
                 AlterReorganizeStatement = "ALTER INDEX CDX_TempA ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.CDX_TempA',   @newname = 'CDX_TempA_OLD',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.CDX_TempA_OLD',   @newname = 'CDX_TempA',   @objtype = 'INDEX'"
+                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.CDX_TempA_OLD',   @newname = 'CDX_TempA',   @objtype = 'INDEX'",
+                IsOnlineOperation = true
             });
 
             this.expectedIndexViews.Add(new IndexView()
@@ -60,7 +59,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 AlterRebuildStatement = "ALTER INDEX NIDX_TempA_Report ON dbo.TempA   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 80,      SORT_IN_TEMPDB = ON,      IGNORE_DUP_KEY = OFF,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)    ",
                 AlterReorganizeStatement = "ALTER INDEX NIDX_TempA_Report ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)    ",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_Report',   @newname = 'NIDX_TempA_OLD_Report',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_OLD_Report',   @newname = 'NIDX_TempA_Report',   @objtype = 'INDEX'"
+                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_OLD_Report',   @newname = 'NIDX_TempA_Report',   @objtype = 'INDEX'",
+                IsOnlineOperation = true
             });
 
             this.expectedIndexViews.Add(new IndexView()
@@ -90,7 +90,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 AlterRebuildStatement = "ALTER INDEX PK_TempA ON dbo.TempA   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 90,      SORT_IN_TEMPDB = ON,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)    ",
                 AlterReorganizeStatement = "ALTER INDEX PK_TempA ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)    ",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.PK_TempA',   @newname = 'PK_TempA_OLD',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.PK_TempA_OLD',   @newname = 'PK_TempA',   @objtype = 'INDEX'"
+                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.PK_TempA_OLD',   @newname = 'PK_TempA',   @objtype = 'INDEX'",
+                IsOnlineOperation = true
             });
 
             this.expectedIndexViews.Add(new IndexView()
@@ -105,7 +106,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 AlterRebuildStatement = "  ALTER INDEX NCCI_TempA_Report ON dbo.TempA   REBUILD PARTITION = ALL WITH ( DATA_COMPRESSION = COLUMNSTORE)  ",
                 AlterReorganizeStatement = "  ALTER INDEX NCCI_TempA_Report ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH (COMPRESS_ALL_ROW_GROUPS = OFF)    ",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NCCI_TempA_Report',   @newname = 'NCCI_TempA_OLD_Report',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NCCI_TempA_OLD_Report',   @newname = 'NCCI_TempA_Report',   @objtype = 'INDEX'"
+                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NCCI_TempA_OLD_Report',   @newname = 'NCCI_TempA_Report',   @objtype = 'INDEX'",
+                IsOnlineOperation = true
             });
 
             this.expectedIndexViews.Add(new IndexView()
@@ -121,7 +123,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 AlterRebuildStatement = "  ALTER INDEX CCI_TempB_Report ON dbo.TempB   REBUILD PARTITION = ALL WITH ( DATA_COMPRESSION = COLUMNSTORE)  ",
                 AlterReorganizeStatement = "  ALTER INDEX CCI_TempB_Report ON dbo.TempB   REORGANIZE PARTITION = ALL    WITH (COMPRESS_ALL_ROW_GROUPS = OFF)    ",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.CCI_TempB_Report',   @newname = 'CCI_TempB_OLD_Report',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.CCI_TempB_OLD_Report',   @newname = 'CCI_TempB_Report',   @objtype = 'INDEX'"
+                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.CCI_TempB_OLD_Report',   @newname = 'CCI_TempB_Report',   @objtype = 'INDEX'",
+                IsOnlineOperation = true
             });
 
             this.expectedForeignKeys.Add(new ForeignKey()
@@ -155,7 +158,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             this.dataDrivenIndexTestHelper.CreateIndex("NIDX_TempA_Report2");
             this.dataDrivenIndexTestHelper.CreateForeignKeys();
 
-            var result = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName);
+            this.expectedIndexViews.ForEach(x => x.IsOnlineOperation = false);
+
             this.AssertIndexViews(TempTableName, null);
             this.AssertForeignKeys();
         }
@@ -177,12 +181,13 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 
             this.AssertIndexViews(tableName, indexName);
 
-            this.dataDrivenIndexTestHelper.ExecuteSPRefreshIndexStructuresQueue(false, true);
-            this.dataDrivenIndexTestHelper.ExecuteSPRefreshIndexStructuresRun(false);
-
+            this.dataDrivenIndexTestHelper.ExecuteSPRefreshIndexStructuresQueue(true, true);
+            this.dataDrivenIndexTestHelper.ExecuteSPRefreshIndexStructuresRun(true, "dbo", tableName);
+            
             indexRow.IsIndexMissing = false;
             indexRow.IndexUpdateType = "None";
-
+            indexRow.IsOnlineOperation = false;
+            
             this.AssertIndexViews(tableName, indexName);
         }
 
@@ -1011,41 +1016,41 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 
         private void AssertSpecificIndexViews(IndexView expectedIndexModel, IndexView actualIndexModel)
         {
-            Assert.AreEqual(expectedIndexModel.IndexName, actualIndexModel.IndexName, "IndexName");
-            Assert.AreEqual(expectedIndexModel.TableName, actualIndexModel.TableName, "TableName");
-            Assert.AreEqual(expectedIndexModel.SchemaName, actualIndexModel.SchemaName, "SchemaName");
-            Assert.AreEqual(expectedIndexModel.IsClustered, actualIndexModel.IsClustered, "IsClustered");
-            Assert.AreEqual(expectedIndexModel.IsIndexMissing, actualIndexModel.IsIndexMissing, "IsIndexMissing");
-            Assert.AreEqual(expectedIndexModel.IsIndexStorageChanging, actualIndexModel.IsIndexStorageChanging, "IsIndexStorageChanging");
-            Assert.AreEqual(expectedIndexModel.AreDropRecreateOptionsChanging, actualIndexModel.AreDropRecreateOptionsChanging, "AreDropRecreateOptionsChanging");
-            Assert.AreEqual(expectedIndexModel.AreRebuildOptionsChanging, actualIndexModel.AreRebuildOptionsChanging, "AreRebuildOptionsChanging");
-            Assert.AreEqual(expectedIndexModel.AreReorgOptionsChanging, actualIndexModel.AreReorgOptionsChanging, "AreReorgOptionsChanging");
-            Assert.AreEqual(expectedIndexModel.AreSetOptionsChanging, actualIndexModel.AreSetOptionsChanging, "AreSetOptionsChanging");
-            Assert.AreEqual(expectedIndexModel.IsUniquenessChanging, actualIndexModel.IsUniquenessChanging, "IsUniquenessChanging");
-            Assert.AreEqual(expectedIndexModel.IsKeyColumnListChanging, actualIndexModel.IsKeyColumnListChanging, "IsKeyColumnListChanging");
-            Assert.AreEqual(expectedIndexModel.IsIncludedColumnListChanging, actualIndexModel.IsIncludedColumnListChanging, "IsIncludedColumnListChanging");
-            Assert.AreEqual(expectedIndexModel.IsFilterChanging, actualIndexModel.IsFilterChanging, "IsFilterChanging");
-            Assert.AreEqual(expectedIndexModel.IsClusteredChanging, actualIndexModel.IsClusteredChanging, "IsClusteredChanging");
-            Assert.AreEqual(expectedIndexModel.IsPartitioningChanging, actualIndexModel.IsPartitioningChanging, "IsPartitioningChanging");
-            Assert.AreEqual(expectedIndexModel.IsPadIndexChanging, actualIndexModel.IsPadIndexChanging, "IsPadIndexChanging");
-            Assert.AreEqual(expectedIndexModel.IsFillfactorChanging, actualIndexModel.IsFillfactorChanging, "IsFillfactorChanging");
-            Assert.AreEqual(expectedIndexModel.IsIgnoreDupKeyChanging, actualIndexModel.IsIgnoreDupKeyChanging, "IsIgnoreDupKeyChanging");
-            Assert.AreEqual(expectedIndexModel.IsStatisticsNoRecomputeChanging, actualIndexModel.IsStatisticsNoRecomputeChanging, "IsStatisticsNoRecomputeChanging");
-            Assert.AreEqual(expectedIndexModel.IsStatisticsIncrementalChanging, actualIndexModel.IsStatisticsIncrementalChanging, "IsStatisticsIncrementalChanging");
-            Assert.AreEqual(expectedIndexModel.IsAllowRowLocksChanging, actualIndexModel.IsAllowRowLocksChanging, "IsAllowRowLocksChanging");
-            Assert.AreEqual(expectedIndexModel.IsAllowPageLocksChanging, actualIndexModel.IsAllowPageLocksChanging, "IsAllowPageLocksChanging");
-            Assert.AreEqual(expectedIndexModel.IsDataCompressionChanging, actualIndexModel.IsDataCompressionChanging, "IsDataCompressionChanging");
-            Assert.AreEqual(expectedIndexModel.IsCompressionDelayChanging, actualIndexModel.IsCompressionDelayChanging, "IsCompressionDelayChanging");
-            Assert.AreEqual(expectedIndexModel.IndexUpdateType, actualIndexModel.IndexUpdateType, "IndexUpdateType");
-            Assert.AreEqual(expectedIndexModel.IsOnlineOperation, actualIndexModel.IsOnlineOperation, "IsOnlineOperation");
-            Assert.AreEqual(expectedIndexModel.ListOfChanges, actualIndexModel.ListOfChanges, "ListOfChanges");
-            Assert.AreEqual(this.CleanUp(expectedIndexModel.DropStatement), this.CleanUp(actualIndexModel.DropStatement), "DropStatement");
-            Assert.AreEqual(this.CleanUp(expectedIndexModel.CreateStatement), this.CleanUp(actualIndexModel.CreateStatement), "CreateStatement");
-            Assert.AreEqual(this.CleanUp(expectedIndexModel.AlterSetStatement), this.CleanUp(actualIndexModel.AlterSetStatement), "AlterSetStatement");
-            Assert.AreEqual(this.CleanUp(expectedIndexModel.AlterRebuildStatement), this.CleanUp(actualIndexModel.AlterRebuildStatement), "AlterRebuildStatement");
-            Assert.AreEqual(this.CleanUp(expectedIndexModel.AlterReorganizeStatement), this.CleanUp(actualIndexModel.AlterReorganizeStatement), "AlterReorganizeStatement");
-            Assert.AreEqual(this.CleanUp(expectedIndexModel.RenameIndexSQL), this.CleanUp(actualIndexModel.RenameIndexSQL), "RenameIndexSQL");
-            Assert.AreEqual(this.CleanUp(expectedIndexModel.RevertRenameIndexSQL), this.CleanUp(actualIndexModel.RevertRenameIndexSQL), "RevertRenameIndexSQL");
+            Assert.AreEqual(expectedIndexModel.IndexName, actualIndexModel.IndexName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IndexName");
+            Assert.AreEqual(expectedIndexModel.TableName, actualIndexModel.TableName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:TableName");
+            Assert.AreEqual(expectedIndexModel.SchemaName, actualIndexModel.SchemaName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:SchemaName");
+            Assert.AreEqual(expectedIndexModel.IsClustered, actualIndexModel.IsClustered, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsClustered");
+            Assert.AreEqual(expectedIndexModel.IsIndexMissing, actualIndexModel.IsIndexMissing, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIndexMissing");
+            Assert.AreEqual(expectedIndexModel.IsIndexStorageChanging, actualIndexModel.IsIndexStorageChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIndexStorageChanging");
+            Assert.AreEqual(expectedIndexModel.AreDropRecreateOptionsChanging, actualIndexModel.AreDropRecreateOptionsChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AreDropRecreateOptionsChanging");
+            Assert.AreEqual(expectedIndexModel.AreRebuildOptionsChanging, actualIndexModel.AreRebuildOptionsChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AreRebuildOptionsChanging");
+            Assert.AreEqual(expectedIndexModel.AreReorgOptionsChanging, actualIndexModel.AreReorgOptionsChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AreReorgOptionsChanging");
+            Assert.AreEqual(expectedIndexModel.AreSetOptionsChanging, actualIndexModel.AreSetOptionsChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AreSetOptionsChanging");
+            Assert.AreEqual(expectedIndexModel.IsUniquenessChanging, actualIndexModel.IsUniquenessChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsUniquenessChanging");
+            Assert.AreEqual(expectedIndexModel.IsKeyColumnListChanging, actualIndexModel.IsKeyColumnListChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsKeyColumnListChanging");
+            Assert.AreEqual(expectedIndexModel.IsIncludedColumnListChanging, actualIndexModel.IsIncludedColumnListChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIncludedColumnListChanging");
+            Assert.AreEqual(expectedIndexModel.IsFilterChanging, actualIndexModel.IsFilterChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsFilterChanging");
+            Assert.AreEqual(expectedIndexModel.IsClusteredChanging, actualIndexModel.IsClusteredChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsClusteredChanging");
+            Assert.AreEqual(expectedIndexModel.IsPartitioningChanging, actualIndexModel.IsPartitioningChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsPartitioningChanging");
+            Assert.AreEqual(expectedIndexModel.IsPadIndexChanging, actualIndexModel.IsPadIndexChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsPadIndexChanging");
+            Assert.AreEqual(expectedIndexModel.IsFillfactorChanging, actualIndexModel.IsFillfactorChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsFillfactorChanging");
+            Assert.AreEqual(expectedIndexModel.IsIgnoreDupKeyChanging, actualIndexModel.IsIgnoreDupKeyChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIgnoreDupKeyChanging");
+            Assert.AreEqual(expectedIndexModel.IsStatisticsNoRecomputeChanging, actualIndexModel.IsStatisticsNoRecomputeChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsStatisticsNoRecomputeChanging");
+            Assert.AreEqual(expectedIndexModel.IsStatisticsIncrementalChanging, actualIndexModel.IsStatisticsIncrementalChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsStatisticsIncrementalChanging");
+            Assert.AreEqual(expectedIndexModel.IsAllowRowLocksChanging, actualIndexModel.IsAllowRowLocksChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsAllowRowLocksChanging");
+            Assert.AreEqual(expectedIndexModel.IsAllowPageLocksChanging, actualIndexModel.IsAllowPageLocksChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsAllowPageLocksChanging");
+            Assert.AreEqual(expectedIndexModel.IsDataCompressionChanging, actualIndexModel.IsDataCompressionChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsDataCompressionChanging");
+            Assert.AreEqual(expectedIndexModel.IsCompressionDelayChanging, actualIndexModel.IsCompressionDelayChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsCompressionDelayChanging");
+            Assert.AreEqual(expectedIndexModel.IndexUpdateType, actualIndexModel.IndexUpdateType, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IndexUpdateType");
+            Assert.AreEqual(expectedIndexModel.IsOnlineOperation, actualIndexModel.IsOnlineOperation, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsOnlineOperation");
+            Assert.AreEqual(expectedIndexModel.ListOfChanges, actualIndexModel.ListOfChanges, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:ListOfChanges");
+            Assert.AreEqual(this.CleanUp(expectedIndexModel.DropStatement), this.CleanUp(actualIndexModel.DropStatement), $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:DropStatement");
+            Assert.AreEqual(this.CleanUp(expectedIndexModel.CreateStatement), this.CleanUp(actualIndexModel.CreateStatement), $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:CreateStatement");
+            Assert.AreEqual(this.CleanUp(expectedIndexModel.AlterSetStatement), this.CleanUp(actualIndexModel.AlterSetStatement), $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AlterSetStatement");
+            Assert.AreEqual(this.CleanUp(expectedIndexModel.AlterRebuildStatement), this.CleanUp(actualIndexModel.AlterRebuildStatement), $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AlterRebuildStatement");
+            Assert.AreEqual(this.CleanUp(expectedIndexModel.AlterReorganizeStatement), this.CleanUp(actualIndexModel.AlterReorganizeStatement), $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AlterReorganizeStatement");
+            Assert.AreEqual(this.CleanUp(expectedIndexModel.RenameIndexSQL), this.CleanUp(actualIndexModel.RenameIndexSQL), $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:RenameIndexSQL");
+            Assert.AreEqual(this.CleanUp(expectedIndexModel.RevertRenameIndexSQL), this.CleanUp(actualIndexModel.RevertRenameIndexSQL), $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:RevertRenameIndexSQL");
         }
 
         /// <summary>

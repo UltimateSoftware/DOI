@@ -7,7 +7,7 @@ using NUnit.Framework;
 using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
 using SmartHub.Hosting.Extensions;
 using PaymentSolutions.TestHelpers.Attributes;
-using TestHelper = DDI.TestHelpers;
+using TestHelper = Reporting.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {
@@ -87,6 +87,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         [TestCase(0, TestName = "YearlySlidingWindow_BegOfYear")]
         [TestCase(1, TestName = "YearlySlidingWindow_EndOfLastYear")]
         [TestCase(2, TestName = "YearlySlidingWindow_Jan2nd")]
+        [Quarantine("ULTI-413328: Flaky test in the CI.")]
         public void PartitionFunctionSlidingWindowDuplicateBoundaryTest(int? numToSubtract)
         {
             //SETUP

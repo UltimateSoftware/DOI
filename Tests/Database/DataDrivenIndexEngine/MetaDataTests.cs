@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Reporting.Ingestion.DataAccess.SqlDataStore.EntityMappings;
 using NUnit.Framework;
-using DDI.TestHelpers;
+using Reporting.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {
@@ -50,7 +50,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 var actualItems = existingIndexes.FindAll(i => i.SchemaName == expectedTable.SchemaName && i.TableName == expectedTable.TableName);
                 var expectedItems = indexesInMetaData.FindAll(i => i.SchemaName == expectedTable.SchemaName && i.TableName == expectedTable.TableName);
 
-                Assert.AreEqual(expectedItems.Count, actualItems.Count, $"Index count for {expectedTable}.");
+                Assert.AreEqual(expectedItems.Count, actualItems.Count, $"Index count for {expectedTable.TableName}.");
             }
         }
 
