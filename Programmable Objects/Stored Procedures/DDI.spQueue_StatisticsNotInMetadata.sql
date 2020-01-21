@@ -1,0 +1,78 @@
+IF OBJECT_ID('[DDI].[spQueue_StatisticsNotInMetadata]') IS NOT NULL
+	DROP PROCEDURE [DDI].[spQueue_StatisticsNotInMetadata];
+
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+
+CREATE   PROCEDURE [DDI].[spQueue_StatisticsNotInMetadata]
+        @DatabaseName SYSNAME = NULL,
+        @SchemaName SYSNAME = NULL,
+        @TableName SYSNAME = NULL
+AS
+
+/*
+    EXEC DDI.spQueue_StatisticsNotInMetadata
+        @DatabaseName = 'PaymentReporting',
+        @SchemaName = 'dbo',
+        @TableName = 'Bai2BankTransactions'
+*/
+
+INSERT INTO DDI.[Statistics] ( SchemaName ,TableName ,StatisticsName ,StatisticsColumnList_Desired ,SampleSizePct_Desired ,IsFiltered_Desired ,FilterPredicate_Desired ,IsIncremental_Desired ,NoRecompute_Desired ,LowerSampleSizeToDesired ,ReadyToQueue )
+SELECT  s.name, 
+        t.name, 
+        CASE 
+            WHEN st.name LIKE '|_WA%' ESCAPE '|' 
+            THEN 'ST_' + T.NAME + '_' + REPLACE(STUFF(StatsColumns.StatsColumnList, LEN(StatsColumns.StatsColumnList), 1,NULL), ',', '_') 
+            ELSE ST.NAME 
+        END,
+        STUFF(StatsColumns.StatsColumnList, LEN(StatsColumns.StatsColumnList), 1,NULL),
+        20,
+        has_filter,
+        filter_definition,
+        CAST(is_incremental AS VARCHAR(1)),
+        CAST(no_recompute AS VARCHAR(1)),
+        0,
+        1
+FROM DDI.SysStats AS ST 	    
+    INNER JOIN DDI.SysDatabases d ON d.database_id = ST.database_id
+	CROSS APPLY (	SELECT c.name + ',' 
+					FROM DDI.SysStatsColumns stc 
+						INNER JOIN DDI.SysColumns c ON stc.database_id = c.database_id
+                            AND stc.object_id = c.object_id
+							AND stc.column_id = c.column_id
+					WHERE stc.database_id = st.database_id
+                        AND stc.object_id = st.object_id 
+						AND stc.stats_id = st.stats_id
+                    ORDER BY stc.stats_column_id ASC
+					FOR XML PATH('')) StatsColumns(StatsColumnList)
+	INNER JOIN DDI.SysDmDbStatsProperties sp ON sp.database_id = ST.database_id
+        AND sp.object_id = st.object_id
+        AND sp.stats_id = st.stats_id
+    INNER JOIN DDI.SysTables t ON st.database_id = t.database_id
+        AND st.object_id = t.object_id
+    INNER JOIN DDI.SysSchemas s ON s.database_id = t.database_id
+        AND s.schema_id = t.schema_id
+    INNER JOIN DDI.Tables TM ON TM.DatabaseName = d.name
+        AND TM.SchemaName = S.name  
+        AND TM.TableName = t.name
+WHERE d.name = CASE WHEN @DatabaseName IS NULL THEN S.NAME ELSE @DatabaseName END
+    AND S.NAME = CASE WHEN @SchemaName IS NULL THEN S.NAME ELSE @SchemaName END
+    AND T.NAME = CASE WHEN @TableName IS NULL THEN T.NAME ELSE @TableName END
+    AND st.name NOT LIKE 'NCCI|_%' ESCAPE '|'
+    AND st.name NOT LIKE 'CCI|_%' ESCAPE '|'
+    AND NOT EXISTS( SELECT 'True' 
+                    FROM DDI.[Statistics] STM
+                    WHERE d.name = STM.DatabaseName
+                        AND s.name = STM.SchemaName
+                        AND t.name = STM.TableName
+                        AND stm.StatisticsName =    CASE 
+                                                        WHEN st.name LIKE '|_WA%' ESCAPE '|' 
+                                                        THEN 'ST_' + T.NAME + '_' + REPLACE(STUFF(StatsColumns.StatsColumnList, LEN(StatsColumns.StatsColumnList), 1,NULL), ',', '_') 
+                                                        ELSE ST.NAME 
+                                                    END)
+ORDER BY d.name, s.name, t.name, st.name
+
+GO

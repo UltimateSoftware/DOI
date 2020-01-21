@@ -40,6 +40,7 @@ BEGIN TRY
 			@CurrentTableName							NVARCHAR(128),
 			@CurrentParentIndexName						NVARCHAR(128),
 			@CurrentPartitionColumn						NVARCHAR(128),
+            @CurrentStatisticsName                      NVARCHAR(128),
 			@PrepTableName								NVARCHAR(128),
 			@IndexName									NVARCHAR(128),
 			@CreatePrepTableSQL							NVARCHAR(MAX) = '',
@@ -63,6 +64,8 @@ BEGIN TRY
 			@RenameNewPartitionedPrepTableIndexSQL		NVARCHAR(MAX) = '',
 			@RenameExistingTableSQL						NVARCHAR(MAX) = '',
 			@RenameExistingTableConstraintSQL			NVARCHAR(MAX) = '',
+   			@RenameExistingTableStatisticsSQL    		NVARCHAR(MAX) = '',
+            @CreateMissingTableStatisticsSQL            NVARCHAR(MAX) = '',
 			@RenameNewPartitionedPrepTableConstraintSQL	NVARCHAR(MAX) = '',
 			@DropDataSynchTableSQL						NVARCHAR(MAX) = '',
 			@DropDataSynchTriggerSQL					NVARCHAR(MAX) = '',
@@ -779,6 +782,50 @@ BEGIN TRAN',
 				CLOSE RenameAllConstraints_Cur
 				DEALLOCATE RenameAllConstraints_Cur
 
+                --rename statistics from _OLD table
+				DECLARE RenameAllStatistics_Cur CURSOR LOCAL FAST_FORWARD for
+					SELECT	S.StatisticsName,
+                            S.RenameExistingTableStatisticsSQL,
+							S.RowNum
+					FROM  DDI.vwTables_PrepTables_Statistics S
+					WHERE S.SchemaName = @CurrentSchemaName
+						AND S.ParentTableName = @CurrentTableName
+
+				OPEN RenameAllStatistics_Cur
+
+				FETCH NEXT FROM RenameAllStatistics_Cur INTO @CurrentStatisticsName, @RenameExistingTableStatisticsSQL, @TableChildOperationId
+
+				WHILE @@FETCH_STATUS <> -1
+				BEGIN
+					IF @@FETCH_STATUS <> -2
+					BEGIN
+						EXEC DDI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
+							@CurrentSchemaName				= @CurrentSchemaName ,
+							@CurrentTableName				= @CurrentTableName, 
+							@CurrentIndexName				= @CurrentStatisticsName, 
+							@CurrentPartitionNumber			= 1, 
+							@IndexSizeInMB					= 0,
+							@CurrentParentSchemaName		= @CurrentSchemaName,
+							@CurrentParentTableName			= @CurrentTableName,
+							@CurrentParentIndexName			= 'N/A',
+							@IndexOperation					= 'Rename Existing Statistic',
+							@IsOnlineOperation				= 1,
+							@TableChildOperationId			= @TableChildOperationId,
+							@SQLStatement					= @RenameExistingTableStatisticsSQL,
+							@TransactionId					= @TransactionId,
+							@BatchId						= @BatchId,
+							@ExitTableLoopOnError			= 1
+					END
+
+					FETCH NEXT FROM RenameAllStatistics_Cur INTO @CurrentStatisticsName, @RenameExistingTableStatisticsSQL, @TableChildOperationId
+				END
+
+				CLOSE RenameAllStatistics_Cur
+				DEALLOCATE RenameAllStatistics_Cur
+
+                --rename tables
+
 				EXEC DDI.spQueue_Insert
                     @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
@@ -919,6 +966,53 @@ BEGIN TRAN',
 					@TransactionId					= @TransactionId,
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 0
+
+                --rename all statistics, before we check for any missing....
+                EXEC DDI.spQueue_RenameStatistics 
+                    @SchemaName = @CurrentSchemaName,
+                    @TableName = @CurrentTableName
+
+                --create any missing stats on the newly renamed table
+				DECLARE CreateMissingStatistics_Cur CURSOR LOCAL FAST_FORWARD for
+					SELECT	s.StatisticsName,
+                            s.CreateStatisticsSQL,
+                            ROW_NUMBER() OVER(ORDER BY S.StatisticsName) AS RowNum
+					FROM  DDI.vwStatistics S
+					WHERE s.SchemaName = @CurrentSchemaName
+						AND s.TableName = @CurrentTableName
+
+				OPEN CreateMissingStatistics_Cur
+
+				FETCH NEXT FROM CreateMissingStatistics_Cur INTO @CurrentStatisticsName, @CreateMissingTableStatisticsSQL, @TableChildOperationId
+
+				WHILE @@FETCH_STATUS <> -1
+				BEGIN
+					IF @@FETCH_STATUS <> -2
+					BEGIN
+						EXEC DDI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
+							@CurrentSchemaName				= @CurrentSchemaName ,
+							@CurrentTableName				= @CurrentTableName, 
+							@CurrentIndexName				= @CurrentStatisticsName, 
+							@CurrentPartitionNumber			= 1, 
+							@IndexSizeInMB					= 0,
+							@CurrentParentSchemaName		= @CurrentSchemaName,
+							@CurrentParentTableName			= @CurrentTableName,
+							@CurrentParentIndexName			= 'N/A',
+							@IndexOperation					= 'Create Missing Table Statistic',
+							@IsOnlineOperation				= 1,
+							@TableChildOperationId			= @TableChildOperationId,
+							@SQLStatement					= @CreateMissingTableStatisticsSQL,
+							@TransactionId					= @TransactionId,
+							@BatchId						= @BatchId,
+							@ExitTableLoopOnError			= 1
+					END
+
+					FETCH NEXT FROM CreateMissingStatistics_Cur INTO @CurrentStatisticsName, @CreateMissingTableStatisticsSQL, @TableChildOperationId
+				END
+
+				CLOSE CreateMissingStatistics_Cur
+				DEALLOCATE CreateMissingStatistics_Cur
 
 				SET @DropParentOldTableFKs = '
 EXEC DDI.DDI.spForeignKeysDrop
@@ -1098,7 +1192,26 @@ BEGIN CATCH
 
 		DEALLOCATE RenameAllConstraints_Cur
 	END;
+    IF (SELECT CURSOR_STATUS('local','RenameAllStatistics_Cur')) >= -1
+	BEGIN
+		IF (SELECT CURSOR_STATUS('local','RenameAllStatistics_Cur')) > -1
+		BEGIN
+			CLOSE RenameAllStatistics_Cur
+		END
 
+		DEALLOCATE RenameAllStatistics_Cur
+	END;
+
+	IF (SELECT CURSOR_STATUS('local','CreateMissingStatistics_Cur')) >= -1
+	BEGIN
+		IF (SELECT CURSOR_STATUS('local','CreateMissingStatistics_Cur')) > -1
+		BEGIN
+			CLOSE CreateMissingStatistics_Cur
+		END
+
+		DEALLOCATE CreateMissingStatistics_Cur
+	END;
+    
 	THROW;
 END CATCH
 

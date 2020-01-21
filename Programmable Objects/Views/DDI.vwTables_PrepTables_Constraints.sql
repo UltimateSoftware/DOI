@@ -9,6 +9,7 @@ GO
 
 
 
+
 CREATE   VIEW [DDI].[vwTables_PrepTables_Constraints]
 AS
 
@@ -99,8 +100,8 @@ AS RenameExistingTableConstraintSQL,
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
-EXEC sp_rename @objname = ''' + REPLACE(cc.CheckConstraintName, FN.PrepTableName, FN.TableName) + ''',
-				@newname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
+EXEC sp_rename @objname = ''' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
+				@newname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.PrepTableName, FN.TableName) + ''',
 				@objtype = ''OBJECT''' END 
 AS RenameNewPartitionedPrepTableConstraintSQL,
 
@@ -123,6 +124,7 @@ AS RevertRenameNewPartitionedPrepTableConstraintSQL
 						FROM DDI.CheckConstraints cc) Constraints
 				WHERE Constraints.SchemaName = FN.SchemaName
 					AND Constraints.TableName = FN.TableName) C
+
 
 
 

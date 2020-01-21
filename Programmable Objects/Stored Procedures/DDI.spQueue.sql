@@ -489,8 +489,8 @@ BEGIN TRY
 					        DEALLOCATE UpdateAllIndexes_Cur
 
                             --STATISTICS UPDATES
-                            --rename any recently auto-created stats
-                            EXEC DDI.spQueue_RenameAutoCreatedStatistics
+                            --rename any stats
+                            EXEC DDI.spQueue_RenameStatistics
                 
                             DECLARE CreateOrUpdateStatistics_Cur CURSOR LOCAL FAST_FORWARD FOR 
                                 SELECT  StatisticsName, 
@@ -648,17 +648,17 @@ BEGIN TRY
 						        FROM DDI.Queue 
 						        WHERE DatabaseName = @CurrentDatabaseName
 							        AND ParentTableName = @CurrentTableName
-							        AND IndexOperation IN ('Free TempDB Space Validation', 'Free Log Space Validation', 'Free Data Space Validation', 'Stamp The Date - Insert','Disable CmdShell','Stamp The Date - Delete', 'Get Application Lock', 'Release Application Lock'))
+							        AND IndexOperation IN ('Free TempDB Space Validation', 'Free Log Space Validation', 'Free Data Space Validation', 'Disable CmdShell', 'Get Application Lock', 'Release Application Lock'))
 				        AND NOT EXISTS (SELECT 'True' 
 								        FROM DDI.Queue 
 								        WHERE DatabaseName = @CurrentDatabaseName
 									        AND ParentTableName = @CurrentTableName
-									        AND IndexOperation NOT IN ('Free TempDB Space Validation', 'Free Log Space Validation', 'Free Data Space Validation', 'Stamp The Date - Insert','Disable CmdShell','Stamp The Date - Delete', 'Get Application Lock', 'Release Application Lock'))
+									        AND IndexOperation NOT IN ('Free TempDB Space Validation', 'Free Log Space Validation', 'Free Data Space Validation', 'Disable CmdShell', 'Get Application Lock', 'Release Application Lock'))
 			        BEGIN
 				        DELETE FROM DDI.Queue 
 				        WHERE DatabaseName = @CurrentDatabaseName
 					        AND ParentTableName = @CurrentTableName
-					        AND IndexOperation IN ('Free TempDB Space Validation', 'Free Log Space Validation', 'Free Data Space Validation', 'Stamp The Date - Insert','Disable CmdShell','Stamp The Date - Delete', 'Get Application Lock', 'Release Application Lock')
+					        AND IndexOperation IN ('Free TempDB Space Validation', 'Free Log Space Validation', 'Free Data Space Validation', 'Disable CmdShell', 'Get Application Lock', 'Release Application Lock')
 			        END
 				
 			        END TRY

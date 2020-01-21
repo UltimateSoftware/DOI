@@ -211,7 +211,6 @@
     <None Include="Programmable Objects\Stored Procedures\DDI.spQueue.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spQueue_BCPTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spQueue_IndexesNotInMetadata.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DDI.spQueue_RenameAutoCreatedStatistics.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_User_6_Tables_IndexAggColumns_UpdateData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_Run_All.sql" />
@@ -437,5 +436,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Functions\DDI.fnFixStatsSampleSize.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DDI.spQueue_RenameStatistics.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DDI.spQueue_StatisticsNotInMetadata.sql" />
+    <None Include="Programmable Objects\Views\DDI.vwTables_PrepTables_Statistics.sql" />
   </ItemGroup>
 </Project>

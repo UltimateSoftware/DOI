@@ -9,6 +9,7 @@ GO
 
 
 
+
 CREATE   VIEW [DDI].[vwStatistics]
 AS 
 
@@ -48,8 +49,25 @@ DROP STATISTICS ' + S.TableName + '.' + S.StatisticsName AS DropStatisticsSQL,
 EXEC sys.sp_rename 
     @objname = N''' + S.SchemaName + '.' + S.TableName + '.' + S.StatisticsName + ''', 
     @newname = N''ST_' + LEFT(S.TableName + '_' + REPLACE(STUFF(StatisticsColumnList_Desired, LEN(StatisticsColumnList_Desired), 1,NULL), ',', '_'), 125) + ''',
-    @objtype = N''STATISTICS'';' + CHAR(13) + CHAR(10) AS RenameStatisticsSQL
+    @objtype = N''STATISTICS'';' + CHAR(13) + CHAR(10) AS RenameStatisticsSQL,
+        '
+IF EXISTS ( SELECT ''True''
+            FROM SYS.stats st 
+                INNER JOIN SYS.TABLES t ON t.object_id = st.object_id 
+                INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+            WHERE s.name = ''' + S.SchemaName + '''
+                AND t.name = ''' + S.TableName + '''
+                AND st.name = ''' + REPLACE(S.StatisticsName, S.TableName, S.TableName + '_OLD') + ''')
+BEGIN
+    SET DEADLOCK_PRIORITY 10
+    EXEC sys.sp_rename 
+        @objname = ''' + S.SchemaName + '.' + S.TableName + '.' + REPLACE(S.StatisticsName, S.TableName, S.TableName + '_OLD') + '''
+        ,@newname = ''' + S.StatisticsName + '''
+        ,@objtype = ''STATISTICS''
+        ' AS RevertRenameStatisticsSQL
+
 FROM DDI.[Statistics] S
+
 
 
 
