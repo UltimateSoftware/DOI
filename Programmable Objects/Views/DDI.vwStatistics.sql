@@ -10,6 +10,7 @@ GO
 
 
 
+
 CREATE   VIEW [DDI].[vwStatistics]
 AS 
 
@@ -64,9 +65,10 @@ BEGIN
         @objname = ''' + S.SchemaName + '.' + S.TableName + '.' + REPLACE(S.StatisticsName, S.TableName, S.TableName + '_OLD') + '''
         ,@newname = ''' + S.StatisticsName + '''
         ,@objtype = ''STATISTICS''
-        ' AS RevertRenameStatisticsSQL
+END' AS RevertRenameStatisticsSQL
 
 FROM DDI.[Statistics] S
+
 
 
 

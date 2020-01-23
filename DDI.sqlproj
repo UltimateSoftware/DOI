@@ -442,4 +442,7 @@
     <None Include="Programmable Objects\Stored Procedures\DDI.spQueue_StatisticsNotInMetadata.sql" />
     <None Include="Programmable Objects\Views\DDI.vwTables_PrepTables_Statistics.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DDI.spRun_RevertRename.sql" />
+  </ItemGroup>
 </Project>

@@ -27,7 +27,7 @@ CREATE TYPE [DDI].[LogTT] AS TABLE
 [BatchId] [uniqueidentifier] NOT NULL,
 [SeqNo] [int] NOT NULL,
 [ExitTableLoopOnError] [bit] NOT NULL,
-PRIMARY KEY NONCLUSTERED  ([SchemaName], [TableName], [IndexName], [PartitionNumber], [IndexOperation], [RunStatus], [TableChildOperationId], [LogDateTime])
+PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [PartitionNumber], [IndexOperation], [RunStatus], [TableChildOperationId], [LogDateTime])
 )
 WITH
 (

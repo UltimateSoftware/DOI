@@ -10,6 +10,8 @@ GO
 
 
 
+
+
 CREATE   VIEW [DDI].[vwTables_PrepTables_Constraints]
 AS
 
@@ -20,7 +22,8 @@ AS
 		AND preptablename = 'PayTaxes_NewPartitionedTableFromPrep'
 */ 
 
-SELECT	FN.SchemaName,
+SELECT	FN.DatabaseName,
+        FN.SchemaName,
 		FN.TableName AS ParentTableName,
 		FN.PrepTableName,
 		FN.IsNewPartitionedPrepTable,
@@ -116,7 +119,7 @@ AS RevertRenameExistingTableConstraintSQL,
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
-EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
+EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.PrepTableName, FN.TableName) + ''',
 				@newname = ''' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
 				@objtype = ''OBJECT''' END 
 AS RevertRenameNewPartitionedPrepTableConstraintSQL
@@ -124,6 +127,8 @@ AS RevertRenameNewPartitionedPrepTableConstraintSQL
 						FROM DDI.CheckConstraints cc) Constraints
 				WHERE Constraints.SchemaName = FN.SchemaName
 					AND Constraints.TableName = FN.TableName) C
+
+
 
 
 

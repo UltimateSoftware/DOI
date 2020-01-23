@@ -7,6 +7,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
+
 CREATE   VIEW [DDI].[vwTables_PrepTables_Statistics]
 AS
 
@@ -23,7 +24,8 @@ AS
         - SO WE REALLY ONLY NEED TO RENAME THE STATISTICS NOT ASSOCIATED WITH AN INDEX.
             - FOR THIS REASON, WE ADDED AN IF...EXISTS TO THE STATISTICS RENAMES.
 */ 
-	SELECT	T.SchemaName,
+	SELECT	STM.DatabaseName,
+            T.SchemaName,
 			T.TableName AS ParentTableName, 
             T.PrepTableName,
 			REPLACE(STM.StatisticsName, T.TableName, T.PrepTableName) AS StatisticsName,
@@ -106,4 +108,5 @@ END'
         INNER JOIN DDI.[vwStatistics] STM ON STM.SchemaName = T.SchemaName 
             AND STM.TableName = T.TableName
     WHERE T.IsNewPartitionedPrepTable = 1
+
 GO
