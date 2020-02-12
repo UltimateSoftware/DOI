@@ -8,8 +8,8 @@
     <ProjectGuid>{43EAB591-C6C7-421F-BEBA-7F456AEE4E4C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Reporting.Ingestion.Integration.Tests</RootNamespace>
-    <AssemblyName>Reporting.Ingestion.Integration.Tests</AssemblyName>
+    <RootNamespace>DDI.Tests.Integration</RootNamespace>
+    <AssemblyName>DDI.Tests.Integration</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -29,7 +29,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
-    <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\DDItests.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
@@ -58,7 +58,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\Reporting.Ingestion.Integration.Tests.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\DDI.Tests.Integration.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\Release\</OutputPath>
@@ -69,7 +69,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Release\Reporting.Ingestion.Integration.Tests.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\DDI.Tests.Integration.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugCI|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -422,34 +422,82 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\DataDrivenIndexEngine\DataDrivenIndexTestHelper.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\ErrorHandlingTests.cs" />
-    <Compile Include="Database\Foreign Keys\ForeignKeySqlStatements.cs" />
-    <Compile Include="Database\Foreign Keys\ForeignKeyTests.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\HighFragmentationTests.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\LowFragmentationTests.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\IndexesViewTests.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\MetaDataTests.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\ForeignKey.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\Index.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\IndexRowStore.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\IndexView.cs" />
-    <Compile Include="MongoDbReportingEventArchiveRepo.cs" />
+    <Compile Include="IntegrationTests\BusinessHoursScheduleTableTest.cs" />
+    <Compile Include="IntegrationTests\Models\Entity.cs" />
+    <Compile Include="IntegrationTests\Models\VersionTracker.cs" />
+    <Compile Include="TestHelpers\CommonSetup\EventStore\AggregateEvent.cs" />
+    <Compile Include="TestHelpers\CommonSetup\EventStore\DomainEventData.cs" />
+    <Compile Include="TestHelpers\CommonSetup\EventStore\EventDetailsAttribute.cs" />
+    <Compile Include="TestHelpers\CommonSetup\EventStore\IAggregateSnapshotFilter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Hosting\Convention.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Hosting\Formatters\PascalCasingExpandoObjectConverter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\ApplicationInformationEnricher.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\ApplicationLogger.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\EpochConverter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\FailoverLogger.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\InlineJsonFormatter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\LogInitializer.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\SensuAlert.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\SensuClientAdapter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\SensuClientSink.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Runtime\IVersionTracker.cs" />
+    <Compile Include="TestHelpers\DataAccess\BulkCreateResults.cs" />
+    <Compile Include="TestHelpers\DataAccess\FilterCollection.cs" />
+    <Compile Include="TestHelpers\DataAccess\FilterParameters.cs" />
+    <Compile Include="TestHelpers\DataAccess\IBulkOperations.cs" />
+    <Compile Include="TestHelpers\DataAccess\IRepository.cs" />
+    <Compile Include="TestHelpers\DataAccess\ISimpleRepository.cs" />
+    <Compile Include="TestHelpers\DataAccess\PagedDataParameters.cs" />
+    <Compile Include="TestHelpers\DataAccess\SortDirection.cs" />
+    <Compile Include="TestHelpers\DataAccess\SortParameter.cs" />
+    <Compile Include="TestHelpers\DataAccess\SqlDataStore\SqlServerBaseRepository.cs" />
+    <Compile Include="TestHelpers\DataAccess\SqlDataStore\SqlServerGuidRepository.cs" />
+    <Compile Include="TestHelpers\DataAccess\SqlDataStore\SqlServerSimpleRepository.cs" />
+    <Compile Include="TestHelpers\DataDrivenIndexTestHelper.cs" />
+    <Compile Include="IntegrationTests\ErrorHandlingTests\ErrorHandlingTests.cs" />
+    <Compile Include="IntegrationTests\IndexMaintenanceTests\HighFragmentationTests.cs" />
+    <Compile Include="IntegrationTests\IndexesViewTests.cs" />
+    <Compile Include="IntegrationTests\IndexMaintenanceTests\LowFragmentationTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\MetaDataTests.cs" />
+    <Compile Include="IntegrationTests\Models\ForeignKey.cs" />
+    <Compile Include="IntegrationTests\Models\Index.cs" />
+    <Compile Include="IntegrationTests\Models\IndexRowStore.cs" />
+    <Compile Include="IntegrationTests\Models\IndexView.cs" />
+    <Compile Include="IntegrationTests\Models\LogTableRow.cs" />
+    <Compile Include="IntegrationTests\Models\MetaDataTable.cs" />
+    <Compile Include="IntegrationTests\Models\PartitionFunction.cs" />
+    <Compile Include="IntegrationTests\Models\PartitionFunctionBoundaries.cs" />
+    <Compile Include="IntegrationTests\Models\PartitionSchemeFilegroup.cs" />
+    <Compile Include="IntegrationTests\Models\PrepTable.cs" />
+    <Compile Include="IntegrationTests\Models\Statistics.cs" />
+    <Compile Include="IntegrationTests\Models\TempARow.cs" />
+    <Compile Include="IntegrationTests\OfflineRunTests.cs" />
+    <Compile Include="IntegrationTests\OfflineRunTestsHelper.cs" />
+    <Compile Include="IntegrationTests\SqlIndexJobBaseTest.cs" />
+    <Compile Include="IntegrationTests\StatisticsTests.cs" />
+    <Compile Include="IntegrationTests\StorageContainersTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemSettingsTableTest.cs" />
+    <Compile Include="IntegrationTests\TablePartitioningTests\ApplicationLockTests.cs" />
+    <Compile Include="IntegrationTests\TablePartitioningTests\ApplicationLockTestsHelper.cs" />
+    <Compile Include="IntegrationTests\TablePartitioningTests\TablePartitioningSqlStatements.cs" />
+    <Compile Include="IntegrationTests\TablePartitioningTests\TablePartitioningTest.cs" />
+    <Compile Include="TestHelpers\GenericDictionaryExtensions.cs" />
+    <Compile Include="TestHelpers\ResourceLoader.cs" />
+    <Compile Include="TestHelpers\TempARepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\LogTableRow.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\MetaDataTable.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\PartitionFunction.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\PartitionFunctionBoundaries.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\PartitionSchemeFilegroup.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\PrepTable.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\Statistics.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\Models\TempARow.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\StatisticsTests.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\StorageContainersTests.cs" />
-    <Compile Include="Database\DataDrivenIndexEngine\TempARepository.cs" />
-    <Compile Include="Database\SystemSettingsTableTest.cs" />
-    <Compile Include="Database\TablePartitioning\TablePartitioningSqlStatements.cs" />
-    <Compile Include="Database\TablePartitioning\TablePartitioningTest.cs" />
+    <Compile Include="TestHelpers\bin\Debug\IBLCheckPayee.cs" />
+    <Compile Include="TestHelpers\CommonSetup\BaseDataSetup.cs" />
+    <Compile Include="TestHelpers\CommonSetup\SetupRepository.cs" />
+    <Compile Include="TestHelpers\CommonSetup\SqlDataReaderExtensions.cs" />
+    <Compile Include="TestHelpers\Guid2Base64.cs" />
+    <Compile Include="TestHelpers\ObjectExtensions.cs" />
+    <Compile Include="TestHelpers\obj\x64\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="TestHelpers\obj\x64\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="TestHelpers\obj\x64\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="TestHelpers\Properties\AssemblyInfo.cs" />
+    <Compile Include="TestHelpers\SqlHelper.cs" />
+    <Compile Include="TestHelpers\TestConfiguration.cs" />
+    <Compile Include="TestHelpers\WaitHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
@@ -510,9 +558,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\stylecop.json">
-      <Link>stylecop.json</Link>
-    </None>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -524,19 +569,452 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\bigEventPayload.json" />
     <None Include="Resources\dbo.TempA_format.fmt" />
+    <None Include="TestHelpers\app.config" />
+    <None Include="TestHelpers\bin\Debug\ApplicationInsights.config" />
+    <None Include="TestHelpers\bin\Debug\config.yml" />
+    <None Include="TestHelpers\bin\Debug\Migration.CoreService.dll.config" />
+    <None Include="TestHelpers\bin\Debug\mtmigration-local.yml" />
+    <None Include="TestHelpers\bin\Debug\NLog.config" />
+    <None Include="TestHelpers\bin\Debug\package_generation-local.yml" />
+    <None Include="TestHelpers\bin\Debug\PTMBAL.dll.config" />
+    <None Include="TestHelpers\bin\Debug\PTMCommon.dll.config" />
+    <None Include="TestHelpers\bin\Debug\PtmDAL.dll.config" />
+    <None Include="TestHelpers\bin\Debug\PtmWebSite.dll.config" />
+    <None Include="TestHelpers\bin\Debug\Reporting.Ingestion.dll.config" />
+    <None Include="TestHelpers\bin\Debug\Reporting.TestHelpers.dll.config" />
+    <None Include="TestHelpers\bin\Debug\reporting_ingestion-local.yml" />
+    <None Include="TestHelpers\bin\Debug\SmartHub.Reporting.Utilities.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Amendments.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Common.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Common.Logging.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Common.Pdf.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Common.Tasks.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.CommonServices.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Configuration.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.CoreServices.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Filing.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Hosting.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Messaging.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Models.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.ObjectStorage.Integration.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.PackageGeneration.Common.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.PackageGeneration.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Pdf.Abstractions.nuspec" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.SetMeUpLib.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Shared.Services.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.TestHelpers.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.TokenParser.Core.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Validator.Core.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.Validator.Validations.dll.config" />
+    <None Include="TestHelpers\bin\Debug\TaxHub.YearEnd.YearlyVarianceReport.dll.config" />
+    <None Include="TestHelpers\bin\Debug\tax_core-local.yml" />
+    <None Include="TestHelpers\bin\Debug\UploadFiles\SuiRateTest.csv" />
+    <None Include="TestHelpers\bin\Debug\UploadFiles\TestAgencyImportTool.csv" />
+    <None Include="TestHelpers\bin\Debug\web-local.yml" />
+    <None Include="TestHelpers\obj\x64\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="TestHelpers\obj\x64\Debug\Reporting.TestHelpers.csproj.CopyComplete" />
+    <None Include="TestHelpers\obj\x64\Debug\Reporting.TestHelpers.csproj.CoreCompileInputs.cache" />
+    <None Include="TestHelpers\obj\x64\Debug\Reporting.TestHelpers.csprojAssemblyReference.cache" />
+    <None Include="TestHelpers\obj\x64\Debug\Reporting.TestHelpers.dll.config" />
+    <None Include="TestHelpers\packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="IntegrationTests\TablePartitioningTests\utebcp.exe" />
+    <Content Include="TestHelpers\bin\Debug\AjaxControlToolkit.dll" />
+    <Content Include="TestHelpers\bin\Debug\AjaxControlToolkit.pdb" />
+    <Content Include="TestHelpers\bin\Debug\Albedo.dll" />
+    <Content Include="TestHelpers\bin\Debug\Albedo.xml" />
+    <Content Include="TestHelpers\bin\Debug\AntiXssLibrary.dll" />
+    <Content Include="TestHelpers\bin\Debug\AntiXssLibrary.xml" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Abstractions.dll" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Abstractions.xml" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Concurrency.dll" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Concurrency.xml" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Core.dll" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Core.xml" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Formatters.Ascii.dll" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Formatters.Ascii.xml" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Formatters.InfluxDB.dll" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Formatters.InfluxDB.xml" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Reporting.InfluxDB.dll" />
+    <Content Include="TestHelpers\bin\Debug\App.Metrics.Reporting.InfluxDB.xml" />
+    <Content Include="TestHelpers\bin\Debug\ar\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.AutoFakeItEasy.dll" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.AutoFakeItEasy.pdb" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.AutoFakeItEasy.xml" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.dll" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.Idioms.dll" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.Idioms.pdb" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.Idioms.xml" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.NUnit3.dll" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.NUnit3.pdb" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.NUnit3.xml" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.pdb" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.SeedExtensions.dll" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.SeedExtensions.pdb" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.SeedExtensions.xml" />
+    <Content Include="TestHelpers\bin\Debug\AutoFixture.xml" />
+    <Content Include="TestHelpers\bin\Debug\BouncyCastle.Crypto.dll" />
+    <Content Include="TestHelpers\bin\Debug\Castle.Core.dll" />
+    <Content Include="TestHelpers\bin\Debug\Castle.Core.xml" />
+    <Content Include="TestHelpers\bin\Debug\CsvHelper.dll" />
+    <Content Include="TestHelpers\bin\Debug\CsvHelper.xml" />
+    <Content Include="TestHelpers\bin\Debug\cs\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\de\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\DnsClient.dll" />
+    <Content Include="TestHelpers\bin\Debug\DnsClient.xml" />
+    <Content Include="TestHelpers\bin\Debug\DocumentFormat.OpenXml.dll" />
+    <Content Include="TestHelpers\bin\Debug\DocumentFormat.OpenXml.xml" />
+    <Content Include="TestHelpers\bin\Debug\DropDownCheckBoxes.dll" />
+    <Content Include="TestHelpers\bin\Debug\DropDownCheckBoxes.pdb" />
+    <Content Include="TestHelpers\bin\Debug\EntityFramework.dll" />
+    <Content Include="TestHelpers\bin\Debug\EntityFramework.xml" />
+    <Content Include="TestHelpers\bin\Debug\es\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\FakeItEasy.dll" />
+    <Content Include="TestHelpers\bin\Debug\FakeItEasy.pdb" />
+    <Content Include="TestHelpers\bin\Debug\FakeItEasy.xml" />
+    <Content Include="TestHelpers\bin\Debug\Fare.dll" />
+    <Content Include="TestHelpers\bin\Debug\Fare.xml" />
+    <Content Include="TestHelpers\bin\Debug\FluentAssertions.Core.dll" />
+    <Content Include="TestHelpers\bin\Debug\FluentAssertions.Core.pdb" />
+    <Content Include="TestHelpers\bin\Debug\FluentAssertions.Core.xml" />
+    <Content Include="TestHelpers\bin\Debug\FluentAssertions.dll" />
+    <Content Include="TestHelpers\bin\Debug\FluentAssertions.pdb" />
+    <Content Include="TestHelpers\bin\Debug\FluentAssertions.xml" />
+    <Content Include="TestHelpers\bin\Debug\fr\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\he\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\hi\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\ICSharpCode.SharpZipLib.dll" />
+    <Content Include="TestHelpers\bin\Debug\ICSharpCode.SharpZipLib.xml" />
+    <Content Include="TestHelpers\bin\Debug\itextsharp.dll" />
+    <Content Include="TestHelpers\bin\Debug\it\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\ja\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\KellermanSoftware.Compare-NET-Objects.dll" />
+    <Content Include="TestHelpers\bin\Debug\KellermanSoftware.Compare-NET-Objects.xml" />
+    <Content Include="TestHelpers\bin\Debug\ko\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\LinqKit.dll" />
+    <Content Include="TestHelpers\bin\Debug\LinqKit.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.Agent.Intercept.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.DependencyCollector.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.DependencyCollector.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.PerfCounterCollector.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.PerfCounterCollector.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.ServerTelemetryChannel.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.ServerTelemetryChannel.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.WindowsServer.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.AI.WindowsServer.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.ApplicationInsights.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.ApplicationInsights.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Hadoop.Avro.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Hadoop.Avro.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Owin.Cors.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Owin.Cors.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Owin.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Owin.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Common.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.EnterpriseLibrary.Logging.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.ObjectBuilder2.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.ServiceLocation.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.ServiceLocation.pdb" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.ServiceLocation.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.Unity.Configuration.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.Unity.Configuration.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.Unity.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.Unity.Interception.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.Unity.Interception.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.Unity.RegistrationByConvention.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.Unity.RegistrationByConvention.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Practices.Unity.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.ReportViewer.Common.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.ReportViewer.DataVisualization.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.ReportViewer.ProcessingObjectModel.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.ReportViewer.WebForms.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml" />
+    <Content Include="TestHelpers\bin\Debug\Microsoft.Win32.Primitives.dll" />
+    <Content Include="TestHelpers\bin\Debug\Migration.CoreService.dll" />
+    <Content Include="TestHelpers\bin\Debug\Migration.CoreService.pdb" />
+    <Content Include="TestHelpers\bin\Debug\Migration.CoreService.xml" />
+    <Content Include="TestHelpers\bin\Debug\MongoDB.Bson.dll" />
+    <Content Include="TestHelpers\bin\Debug\MongoDB.Bson.xml" />
+    <Content Include="TestHelpers\bin\Debug\MongoDB.Driver.Core.dll" />
+    <Content Include="TestHelpers\bin\Debug\MongoDB.Driver.Core.xml" />
+    <Content Include="TestHelpers\bin\Debug\MongoDB.Driver.dll" />
+    <Content Include="TestHelpers\bin\Debug\MongoDB.Driver.xml" />
+    <Content Include="TestHelpers\bin\Debug\netstandard.dll" />
+    <Content Include="TestHelpers\bin\Debug\Newtonsoft.Json.dll" />
+    <Content Include="TestHelpers\bin\Debug\Newtonsoft.Json.xml" />
+    <Content Include="TestHelpers\bin\Debug\nl\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\nunit.framework.dll" />
+    <Content Include="TestHelpers\bin\Debug\nunit.framework.pdb" />
+    <Content Include="TestHelpers\bin\Debug\nunit.framework.xml" />
+    <Content Include="TestHelpers\bin\Debug\Oracle.ManagedDataAccess.dll" />
+    <Content Include="TestHelpers\bin\Debug\Owin.dll" />
+    <Content Include="TestHelpers\bin\Debug\Pages\Logon.aspx" />
+    <Content Include="TestHelpers\bin\Debug\PaymentSolutions.Filing.EFile.A2AToolkit.dll" />
+    <Content Include="TestHelpers\bin\Debug\PaymentSolutions.TestHelpers.dll" />
+    <Content Include="TestHelpers\bin\Debug\PTMBAL.dll" />
+    <Content Include="TestHelpers\bin\Debug\PTMBAL.pdb" />
+    <Content Include="TestHelpers\bin\Debug\PTMCommon.dll" />
+    <Content Include="TestHelpers\bin\Debug\PTMCommon.pdb" />
+    <Content Include="TestHelpers\bin\Debug\PtmDAL.dll" />
+    <Content Include="TestHelpers\bin\Debug\PtmDAL.pdb" />
+    <Content Include="TestHelpers\bin\Debug\PtmWebSite.dll" />
+    <Content Include="TestHelpers\bin\Debug\PtmWebSite.pdb" />
+    <Content Include="TestHelpers\bin\Debug\pt\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\RabbitMQ.Client.dll" />
+    <Content Include="TestHelpers\bin\Debug\Reporting.Ingestion.dll" />
+    <Content Include="TestHelpers\bin\Debug\Reporting.Ingestion.pdb" />
+    <Content Include="TestHelpers\bin\Debug\Reporting.Ingestion.xml" />
+    <Content Include="TestHelpers\bin\Debug\Reporting.TestHelpers.dll" />
+    <Content Include="TestHelpers\bin\Debug\Reporting.TestHelpers.pdb" />
+    <Content Include="TestHelpers\bin\Debug\Reporting.TestHelpers.xml" />
+    <Content Include="TestHelpers\bin\Debug\RestSharp.dll" />
+    <Content Include="TestHelpers\bin\Debug\RestSharp.xml" />
+    <Content Include="TestHelpers\bin\Debug\ru\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\Scientist.dll" />
+    <Content Include="TestHelpers\bin\Debug\Scientist.pdb" />
+    <Content Include="TestHelpers\bin\Debug\Serilog.dll" />
+    <Content Include="TestHelpers\bin\Debug\Serilog.FullNetFx.dll" />
+    <Content Include="TestHelpers\bin\Debug\Serilog.FullNetFx.pdb" />
+    <Content Include="TestHelpers\bin\Debug\Serilog.FullNetFx.xml" />
+    <Content Include="TestHelpers\bin\Debug\Serilog.pdb" />
+    <Content Include="TestHelpers\bin\Debug\Serilog.xml" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Hosting.dll" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Hosting.xml" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Metrics.dll" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Metrics.xml" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Notifications.dll" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Notifications.xml" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Reporting.Utilities.dll" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Reporting.Utilities.pdb" />
+    <Content Include="TestHelpers\bin\Debug\SmartHub.Reporting.Utilities.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.AppContext.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Buffers.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Collections.Concurrent.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Collections.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Collections.Immutable.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Collections.Immutable.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.Collections.NonGeneric.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Collections.Specialized.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.ComponentModel.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.ComponentModel.EventBasedAsync.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.ComponentModel.Primitives.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.ComponentModel.TypeConverter.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Composition.AttributedModel.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Composition.Convention.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Composition.Hosting.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Composition.Runtime.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Composition.TypedParts.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Console.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Data.Common.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.Contracts.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.Debug.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.DiagnosticSource.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.DiagnosticSource.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.FileVersionInfo.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.Process.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.StackTrace.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.TextWriterTraceListener.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.Tools.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.TraceSource.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Diagnostics.Tracing.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Drawing.Primitives.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Dynamic.Runtime.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Globalization.Calendars.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Globalization.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Globalization.Extensions.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.Compression.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.Compression.ZipFile.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.FileSystem.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.FileSystem.DriveInfo.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.FileSystem.Primitives.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.FileSystem.Watcher.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.IsolatedStorage.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.MemoryMappedFiles.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.Pipes.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.IO.UnmanagedMemoryStream.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Linq.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Linq.Expressions.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Linq.Parallel.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Linq.Queryable.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.Http.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.Http.Formatting.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.Http.Formatting.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.NameResolution.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.NetworkInformation.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.Ping.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.Primitives.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.Requests.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.Security.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.Sockets.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.WebHeaderCollection.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.WebSockets.Client.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Net.WebSockets.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.ObjectModel.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Reflection.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Reflection.Extensions.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Reflection.Metadata.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Reflection.Metadata.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.Reflection.Primitives.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Resources.Reader.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Resources.ResourceManager.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Resources.Writer.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.CompilerServices.VisualC.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.Extensions.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.Handles.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.InteropServices.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.Numerics.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.Serialization.Formatters.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.Serialization.Json.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.Serialization.Primitives.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Runtime.Serialization.Xml.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Security.Claims.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Security.Cryptography.Algorithms.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Security.Cryptography.Csp.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Security.Cryptography.Encoding.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Security.Cryptography.Primitives.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Security.Cryptography.X509Certificates.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Security.Principal.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Security.SecureString.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Text.Encoding.CodePages.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Text.Encoding.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Text.Encoding.Extensions.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Text.RegularExpressions.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.Overlapped.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.Tasks.Dataflow.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.Tasks.Dataflow.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.Tasks.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.Tasks.Parallel.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.Thread.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.ThreadPool.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Threading.Timer.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.ValueTuple.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.ValueTuple.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.Web.Cors.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Web.Http.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Web.Http.Owin.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Web.Http.Owin.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.Web.Http.xml" />
+    <Content Include="TestHelpers\bin\Debug\System.Xml.ReaderWriter.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Xml.XDocument.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Xml.XmlDocument.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Xml.XmlSerializer.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Xml.XPath.dll" />
+    <Content Include="TestHelpers\bin\Debug\System.Xml.XPath.XDocument.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Amendments.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Amendments.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Amendments.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.Logging.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.Logging.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.Logging.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.Pdf.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.Pdf.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.Tasks.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.Tasks.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Common.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.CommonServices.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.CommonServices.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.CommonServices.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Configuration.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Configuration.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Configuration.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.CoreServices.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.CoreServices.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.CoreServices.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.DataflowManager.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.DataflowManager.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.DataflowManager.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Filing.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Filing.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Filing.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Hosting.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Hosting.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Hosting.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Messaging.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Messaging.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Messaging.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Models.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Models.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Models.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.ObjectStorage.Integration.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.ObjectStorage.Integration.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.ObjectStorage.Integration.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.PackageGeneration.Common.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.PackageGeneration.Common.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.PackageGeneration.Common.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.PackageGeneration.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.PackageGeneration.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.PackageGeneration.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.Abstractions.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.Abstractions.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.Abstractions.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.ITextSharp.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.ITextSharp.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.ITextSharp.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.PdfFormsEngine.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.PdfFormsEngine.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Pdf.PdfFormsEngine.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.SetMeUpLib.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.SetMeUpLib.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.SetMeUpLib.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Shared.Services.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Shared.Services.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TestHelpers.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TestHelpers.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TestHelpers.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TokenParser.Core.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TokenParser.Core.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TokenParser.Core.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TokenParser.Formatters.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TokenParser.Formatters.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.TokenParser.Formatters.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Validator.Core.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Validator.Core.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Validator.Core.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Validator.Validations.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Validator.Validations.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.Validator.Validations.xml" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.YearEnd.YearlyVarianceReport.dll" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.YearEnd.YearlyVarianceReport.pdb" />
+    <Content Include="TestHelpers\bin\Debug\TaxHub.YearEnd.YearlyVarianceReport.xml" />
+    <Content Include="TestHelpers\bin\Debug\tr-TR\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\Web.UI.Controls.Pager.dll" />
+    <Content Include="TestHelpers\bin\Debug\Web.UI.Controls.Pager.pdb" />
+    <Content Include="TestHelpers\bin\Debug\YamlDotNet.dll" />
+    <Content Include="TestHelpers\bin\Debug\YamlDotNet.pdb" />
+    <Content Include="TestHelpers\bin\Debug\YamlDotNet.xml" />
+    <Content Include="TestHelpers\bin\Debug\zh-CHS\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\zh-CHT\AjaxControlToolkit.resources.dll" />
+    <Content Include="TestHelpers\bin\Debug\zxing.dll" />
+    <Content Include="TestHelpers\bin\Debug\zxing.pdb" />
+    <Content Include="TestHelpers\bin\Debug\zxing.xml" />
+    <Content Include="TestHelpers\obj\x64\Debug\Reporting.TestHelpers.csproj.FileListAbsolute.txt" />
+    <Content Include="TestHelpers\obj\x64\Debug\Reporting.TestHelpers.dll" />
+    <Content Include="TestHelpers\obj\x64\Debug\Reporting.TestHelpers.pdb" />
+    <Content Include="TestHelpers\TestHelpers.csproj" />
     <EmbeddedResource Include="Resources\IndexesViewTests_Setup.sql" />
     <EmbeddedResource Include="Resources\IndexesViewTests_TearDown.sql" />
     <EmbeddedResource Include="Resources\FragmentationTests_Setup.sql" />
-    <Content Include="Database\TablePartitioning\utebcp.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="PsService.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="TestHelpers\bin\DebugCI\" />
+    <Folder Include="TestHelpers\bin\Release\" />
+    <Folder Include="TestHelpers\bin\x64\DebugCI\" />
+    <Folder Include="TestHelpers\obj\Debug\TempPE\" />
+    <Folder Include="TestHelpers\obj\x64\Debug\TempPE\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

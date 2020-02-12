@@ -1,6 +1,0 @@
-Client Id,Agency,Client Tax Id,Deposit Schedule,Next Deposit Schedule,Next Deposit Schedule Date,Tax Rate,Next Tax Rate,Next Tax Rate Date,Legal Name,Agency Start Date,Access Code,PIN,Status,EFT Requirement,Received POA,Registered,EFT Application,Balance Only,P&I Payment Method,Memo,Version
-TestClient,COSW,12-345678-9,FEDM,,,1,,,Test Updated Legal,11/24/2017,,,Active,Yes,No,No,No,No,Check,Updated Deposit Schedule and Tax Rate,1
-TestClient,COSUI,12-345678-9,FEDQTR,,,1,,,Test New Legal,11/25/2017,,,Active,Yes,No,No,No,No,Check,,1
-TestClient,CODENVER  ,12-345678-9,FEDQTR,,,1,,,Test New Legal,11/26/2017,,,Active,Yes,No,No,No,No,Check,,1
-TestClient,CODENVERER,12-345678-9,MONTHLASTQ,,,1,,,Test New Legal,11/27/2017,,,Active,Yes,No,No,No,No,Check,,1
-TestClient,COAURORAER,12-345678-9,SEMIMONTH ,,,1,,,Test New Legal,11/28/2017,,,Active,Yes,No,No,No,No,Check,,1

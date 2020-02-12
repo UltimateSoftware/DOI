@@ -55,6 +55,7 @@ CREATE TABLE [DDI].[Log]
 [TableChildOperationId] [smallint] NOT NULL,
 [RunStatus] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ErrorText] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[InfoMessage] [VARCHAR] (MAX) NULL,
 [TransactionId] [uniqueidentifier] NULL,
 [BatchId] [uniqueidentifier] NOT NULL,
 [SeqNo] [int] NOT NULL,
@@ -64,7 +65,7 @@ CONSTRAINT [UQ_Log] UNIQUE NONCLUSTERED  ([DatabaseName], [SchemaName], [TableNa
 )
 GO
 IF OBJECT_ID('[DDI].[Chk_Log_RunStatus]') IS NULL
-ALTER TABLE [DDI].[Log] ADD CONSTRAINT [Chk_Log_RunStatus] CHECK (([RunStatus]='Error - Skipping...' OR [RunStatus]='Error - Retrying...' OR [RunStatus]='Error' OR [RunStatus]='Finish' OR [RunStatus]='Running' OR [RunStatus]='Start'))
+ALTER TABLE [DDI].[Log] ADD CONSTRAINT [Chk_Log_RunStatus] CHECK (([RunStatus]='Error - Skipping...' OR [RunStatus]='Error - Retrying...' OR [RunStatus]='Error' OR [RunStatus]='Finish' OR [RunStatus]='Running' OR [RunStatus]='Start' OR [RunStatus]='Info'))
 GO
 IF OBJECT_ID('[DDI].[Run_PartitionState]') IS NULL
 CREATE TABLE [DDI].[Run_PartitionState]

@@ -1,12 +1,12 @@
 ﻿/*
     Target database:    DDI
     Target instance:    A07688SAMUELBE
-    Generated date:     1/3/2020 3:18:16 PM
+    Generated date:     2/12/2020 2:32:38 PM
     Generated on:       A07688SAMUELBE
     Package version:    (undefined)
     Migration version:  (n/a)
     Baseline version:   (n/a)
-    SQL Change Automation version:  4.1.19350.14154
+    SQL Change Automation version:  4.2.20036.15306
     Migrations pending: 0
 
     IMPORTANT! "SQLCMD Mode" must be activated prior to execution (under the Query menu in SSMS).
@@ -211,6 +211,59 @@ AUTHORIZATION [dbo]'
 GO
 GO
 --------------------------- END PRE-DEPLOYMENT SCRIPT: "Pre-Deployment\02_Create_Schemas.sql" ----------------------------
+
+SET IMPLICIT_TRANSACTIONS, NUMERIC_ROUNDABORT OFF;
+SET ANSI_NULLS, ANSI_PADDING, ANSI_WARNINGS, ARITHABORT, CONCAT_NULL_YIELDS_NULL, NOCOUNT, QUOTED_IDENTIFIER ON;
+
+PRINT '----- executing pre-deployment script "Pre-Deployment\03_Query_Store.sql" -----';
+GO
+
+--------------------------- BEGIN PRE-DEPLOYMENT SCRIPT: "Pre-Deployment\03_Query_Store.sql" -----------------------------
+/*
+ Pre-Deployment Script Template							
+--------------------------------------------------------------------------------------
+ This file contains SQL statements that will be executed before the build script.	
+ Use SQLCMD syntax to include a file in the pre-deployment script.			
+ Example:      :r .\myfile.sql								
+ Use SQLCMD syntax to reference a variable in the pre-deployment script.		
+ Example:      :setvar TableName MyTable							
+               SELECT * FROM [$(TableName)]					
+--------------------------------------------------------------------------------------
+*/
+USE DDI
+GO
+
+IF (SELECT is_query_store_on FROM SYS.databases WHERE NAME = 'DDI') <> 1
+BEGIN
+	ALTER DATABASE DDI SET QUERY_STORE = ON;
+
+	PRINT 'Set DDI QUERY_STORE to ON.'
+END
+GO
+
+
+IF EXISTS(	SELECT 'True'
+			FROM sys.database_query_store_options 
+			WHERE actual_state_desc <> 'READ_WRITE'
+				OR max_storage_size_mb <> 10000
+				OR query_capture_mode_desc <> 'ALL'
+				OR size_based_cleanup_mode_desc <> 'AUTO'
+				OR STALE_QUERY_THRESHOLD_DAYS <> 120)
+BEGIN
+	ALTER DATABASE DDI SET QUERY_STORE
+		(
+			OPERATION_MODE = READ_WRITE,
+			MAX_STORAGE_SIZE_MB = 10000,
+			QUERY_CAPTURE_MODE = ALL,
+			SIZE_BASED_CLEANUP_MODE = AUTO,
+			CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 120)
+		);
+
+	PRINT 'Fixed QUERY_STORE settings.'
+END		
+GO
+GO
+---------------------------- END PRE-DEPLOYMENT SCRIPT: "Pre-Deployment\03_Query_Store.sql" ------------------------------
 
 SET IMPLICIT_TRANSACTIONS, NUMERIC_ROUNDABORT OFF;
 SET ANSI_NULLS, ANSI_PADDING, ANSI_WARNINGS, ARITHABORT, CONCAT_NULL_YIELDS_NULL, NOCOUNT, QUOTED_IDENTIFIER ON;
@@ -445,7 +498,13 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]
 --------------------------------------------------------------------------------------
 */
+EXEC DDI.spRun_RenameDefaultConstraints 
+	@Debug = 0
 
+EXEC DDI.spRun_RenameStatistics
+    @Debug = 0
+
+GO
 GO
 ----------------------- END POST-DEPLOYMENT SCRIPT: "Post-Deployment\01_Finalize_Deployment.sql" -------------------------
 

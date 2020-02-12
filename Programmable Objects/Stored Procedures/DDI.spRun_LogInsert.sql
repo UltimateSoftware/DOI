@@ -23,6 +23,7 @@ CREATE   PROCEDURE [DDI].[spRun_LogInsert]
 			@TransactionId			UNIQUEIDENTIFIER,
 			@BatchId				UNIQUEIDENTIFIER,
 			@ErrorText				VARCHAR(4000) = NULL,
+            @InfoMessage            VARCHAR(4000) = NULL,
 			@SeqNo					INT,
 			@ExitTableLoopOnError	BIT 
 AS
@@ -48,8 +49,8 @@ BEGIN TRY
 		SET @IndexSizeInMB = 0
 	END
     
-	INSERT INTO DDI.Log ( DatabaseName, SchemaName ,TableName ,IndexName, IndexSizeInMB, LoginName, UserName, LogDateTime, SQLStatement, IndexOperation, IsOnlineOperation, [RowCount], TableChildOperationId, RunStatus, ErrorText, TransactionId, BatchId, SeqNo, ExitTableLoopOnError)
-	VALUES ( @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentIndexName, @IndexSizeInMB, SUSER_NAME(), USER_NAME(), SYSDATETIME(), @SQLStatement, @IndexOperation, @IsOnlineOperation, @RowCount, @TableChildOperationId, @RunStatus, @ErrorText, @TransactionId, @BatchId, @SeqNo, @ExitTableLoopOnError)
+	INSERT INTO DDI.Log ( DatabaseName, SchemaName ,TableName ,IndexName, IndexSizeInMB, LoginName, UserName, LogDateTime, SQLStatement, IndexOperation, IsOnlineOperation, [RowCount], TableChildOperationId, RunStatus, ErrorText, InfoMessage, TransactionId, BatchId, SeqNo, ExitTableLoopOnError)
+	VALUES ( @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentIndexName, @IndexSizeInMB, SUSER_NAME(), USER_NAME(), SYSDATETIME(), @SQLStatement, @IndexOperation, @IsOnlineOperation, @RowCount, @TableChildOperationId, @RunStatus, @ErrorText, @InfoMessage, @TransactionId, @BatchId, @SeqNo, @ExitTableLoopOnError)
 END TRY
 
 BEGIN CATCH

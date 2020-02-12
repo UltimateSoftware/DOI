@@ -26,7 +26,7 @@ AS
 DECLARE @RenameStatisticsSQL NVARCHAR(MAX) = ''
 
 SELECT @RenameStatisticsSQL += '
-EXEC sys.sp_rename 
+EXEC ' + @DatabaseName + '.sys.sp_rename 
     @objname = N''' + s.name + '.' + t.name + '.' + ST.NAME + ''', 
     @newname = N''ST_' + LEFT(T.NAME + '_' + REPLACE(STUFF(StatsColumns.StatsColumnList, LEN(StatsColumns.StatsColumnList), 1,NULL), ',', '_'), 125) + ''',
     @objtype = N''STATISTICS'';' + CHAR(13) + CHAR(10)

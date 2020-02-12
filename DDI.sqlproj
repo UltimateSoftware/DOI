@@ -445,4 +445,14 @@
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DDI.spRun_RevertRename.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Pre-Deployment\03_Query_Store.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DDI.spRun_RenameDefaultConstraints.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DDI.spRun_RenameStatistics.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\Utility.spDDI_GetIndexCreationProgress.sql" />
+  </ItemGroup>
 </Project>

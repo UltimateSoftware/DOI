@@ -482,6 +482,9 @@ BEGIN CATCH
 		@ExitTableLoopOnError	= @ExitTableLoopOnError
 
 	EXEC DDI.spRun_ReleaseApplicationLock
+        @DatabaseName = @CurrentDatabaseName,
+        @BatchId = @BatchId,
+        @IsOnlineOperation = @OnlineOperations
 
 	EXEC DDI.spRun_DropObjects
         @CurrentDatabaseName    = @CurrentDatabaseName,

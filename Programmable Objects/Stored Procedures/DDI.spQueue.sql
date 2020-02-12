@@ -53,8 +53,8 @@ BEGIN TRY
             @FreeDataSpaceValidationSQL             VARCHAR(MAX) = '',
             @FreeLogSpaceValidationSQL              VARCHAR(MAX) = '',
             @FreeTempDBSpaceValidationSQL           VARCHAR(MAX) = '',
-			@GetApplicationLockSQL					NVARCHAR(80) = 'EXEC DDI.DDI.spRun_GetApplicationLock',
-			@ReleaseApplicationLockSQL				NVARCHAR(80) = 'EXEC DDI.DDI.spRun_ReleaseApplicationLock',
+            @GetApplicationLockSQL					NVARCHAR(300),
+            @ReleaseApplicationLockSQL				NVARCHAR(300),
 			@DropSingleIndexSQL						VARCHAR(MAX) = '',
 			@CreateSingleIndexSQL					VARCHAR(MAX) = '',
             @StatisticsUpdateType					VARCHAR(MAX) = '',
@@ -141,6 +141,17 @@ BEGIN TRY
 		        IF @@FETCH_STATUS <> -2
 		        BEGIN
                     BEGIN TRY
+			            SELECT  @GetApplicationLockSQL	    = '
+EXEC DDI.DDI.spRun_GetApplicationLock
+    @DatabaseName + ''' + @CurrentDatabaseName + ''',
+    @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''',
+    @IsOnlineOperation = ' + CAST(@OnlineOperations AS VARCHAR(1)),
+			                    @ReleaseApplicationLockSQL	= '
+EXEC DDI.DDI.spRun_ReleaseApplicationLock
+    @DatabaseName + ''' + @CurrentDatabaseName + ''',
+    @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''',
+    @IsOnlineOperation = ' + CAST(@OnlineOperations AS VARCHAR(1))
+
 		                --APPLICATION LOCK, SO OTHER PROCESSES CAN SEE IF THIS IS RUNNING...
 		                EXEC DDI.spQueue_Insert
 			                @CurrentDatabaseName			= @CurrentDatabaseName ,

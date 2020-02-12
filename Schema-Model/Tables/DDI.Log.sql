@@ -20,10 +20,11 @@ CREATE TABLE [DDI].[Log]
 [TransactionId] [uniqueidentifier] NULL,
 [BatchId] [uniqueidentifier] NOT NULL,
 [SeqNo] [int] NOT NULL,
-[ExitTableLoopOnError] [bit] NOT NULL
+[ExitTableLoopOnError] [bit] NOT NULL,
+[InfoMessage] [varchar] (max) NULL
 )
 GO
-ALTER TABLE [DDI].[Log] ADD CONSTRAINT [Chk_Log_RunStatus] CHECK (([RunStatus]='Error - Skipping...' OR [RunStatus]='Error - Retrying...' OR [RunStatus]='Error' OR [RunStatus]='Finish' OR [RunStatus]='Running' OR [RunStatus]='Start'))
+ALTER TABLE [DDI].[Log] ADD CONSTRAINT [Chk_Log_RunStatus] CHECK (([RunStatus]='Error - Skipping...' OR [RunStatus]='Error - Retrying...' OR [RunStatus]='Error' OR [RunStatus]='Finish' OR [RunStatus]='Running' OR [RunStatus]='Start' OR [RunStatus]='Info'))
 GO
 ALTER TABLE [DDI].[Log] ADD CONSTRAINT [PK_Log] PRIMARY KEY CLUSTERED  ([LogID])
 GO
