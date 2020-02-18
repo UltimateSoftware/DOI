@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 
-namespace Reporting.TestHelpers.CommonSetup
+namespace DDI.Tests.TestHelpers.CommonSetup
 {
     public static class SqlDataReaderExtensions
     {

@@ -8,7 +8,7 @@ using System.Text;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DDI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// Writes log events as documents to a Sensu local client.

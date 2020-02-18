@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using DDI.Tests.Integration.IntegrationTests.Models;
+using DDI.Tests.TestHelpers.CommonSetup.Logging;
 using NUnit.Framework;
-using Reporting.Ingestion.Models;
-using TaxHub.Common.DataAccess;
-using TaxHub.Common.Logging;
-using TaxHub.Common.Security.KeyServer;
-using TaxHub.Hosting.Runtime;
+using DDI.Tests.TestHelpers.CommonSetup.Hosting.Runtime;
+using DDI.Tests.TestHelpers.CommonSetup.Security.KeyServer;
+using DDI.Tests.TestHelpers.DataAccess;
 
-namespace DDI.TestHelpers.CommonSetup
+namespace DDI.Tests.TestHelpers.CommonSetup
 {
     public abstract class BaseDataSetup<TSource> 
         where TSource : AggregateViewBase<TSource>

@@ -7,7 +7,7 @@ using System.Reflection;
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DDI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// Class is designed to log an error message into a file when main logger fails to start. 

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDI.TestHelpers
+namespace DDI.Tests.TestHelpers
 {
     public static class ResourceLoader
     {

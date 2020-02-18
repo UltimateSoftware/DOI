@@ -3,7 +3,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DDI.Tests.TestHelpers.CommonSetup.Logging
 {
     internal class EpochConverter : DateTimeConverterBase
     {

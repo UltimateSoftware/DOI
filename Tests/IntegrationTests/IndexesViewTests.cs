@@ -3,7 +3,7 @@ using DDI.TestHelpers;
 using DDI.Tests.Integration;
 using DDI.Tests.Integration.Models;
 using NUnit.Framework;
-using TestHelper = DDI.TestHelpers;
+using TestHelper = DDI.Tests.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {

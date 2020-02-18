@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 using SmartHub.Hosting.Annotations;
 using SmartHub.Hosting.Exceptions;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Hosting
+namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
 {
     /// <summary>
     /// Provides methods for checking method arguments for validity and throwing localizable exceptions for invalid
@@ -424,6 +424,7 @@ namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Hosting
         /// <param name="min">The minimum allowable value (inclusive).</param>
         /// <param name="max">The maximum allowable value (inclusive).</param>
         /// <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not within the inclusive range.</exception>
+        /// <typeparam name="T">bla</typeparam>
         public static void ThrowIfOutOfRange<T>(T value, T min, T max)
             where T : IComparable
         {
@@ -445,6 +446,7 @@ namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Hosting
         /// <param name="min">The minimum allowable value (inclusive).</param>
         /// <param name="max">The maximum allowable value (inclusive).</param>
         /// <exception cref="T:ArgumentOutOfRangeException"><paramref name="value"/> is not within the inclusive range.</exception>
+        /// <typeparam name="T">bla</typeparam>
         public static void ThrowIfOutOfRange<T>(T value, string parameterName, T min, T max)
             where T : IComparable
         {

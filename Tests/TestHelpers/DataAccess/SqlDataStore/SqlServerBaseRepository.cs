@@ -2,9 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using DDI.Tests.TestHelpers.CommonSetup.Logging;
+using DDI.Tests.TestHelpers.CommonSetup.Models;
+using DDI.Tests.TestHelpers.DataAccess;
+using DDI.Tests.TestHelpers.DataAccess.SqlDataStore;
+using SmartHub.Hosting.DataAccess;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup
+namespace DDI.Tests.TestHelpers.CommonSetup
 {
     public abstract class SqlServerBaseRepository<TSource, TKey> : SqlServerSimpleRepository<TSource, TKey>
         where TSource : Aggregate<TKey>

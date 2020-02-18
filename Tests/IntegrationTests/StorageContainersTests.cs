@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using DDI.TestHelpers;
+using DDI.Tests.Integration.Models;
 using FluentAssertions;
 using NUnit.Framework;
-using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
 using SmartHub.Hosting.Extensions;
 using PaymentSolutions.TestHelpers.Attributes;
-using TestHelper = Reporting.TestHelpers;
+using TestHelper = DDI.Tests.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {
@@ -27,7 +28,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         private const string PartitionSchemeNameMonthly = "psMonthlyUnitTest";
         private const string TableTestFuturePartitionFailsDueToLocking = "TestFuturePartitionFailsDueToLocking";
 
-        private DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
+        private TestHelper.DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
         private List<PartitionFunctionBoundary> expectedPartitionFunctionBoundaries;
         private List<PartitionSchemeFilegroup> expectedPartitionSchemeFilegroups;
 
@@ -35,7 +36,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         public void Setup()
         {
             this.sqlHelper = new TestHelper.SqlHelper();
-            this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(sqlHelper);
+            this.dataDrivenIndexTestHelper = new TestHelper.DataDrivenIndexTestHelper(sqlHelper);
             this.TearDown();
 
             this.expectedPartitionFunctionBoundaries = new List<PartitionFunctionBoundary>();

@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DDI.Tests.Integration.TestHelpers.CommonSetup.Hosting;
+using DDI.Tests.TestHelpers.CommonSetup.Hosting;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.EventStore
+namespace DDI.Tests.TestHelpers.CommonSetup.EventStore
 {
     /// <summary>
     /// The delegate used to raise an aggregate event.

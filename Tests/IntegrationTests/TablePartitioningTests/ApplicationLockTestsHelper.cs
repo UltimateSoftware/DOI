@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using Reporting.TestHelpers;
+using DDI.Tests.TestHelpers;
 
-namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.TablePartitioning
+namespace DDI.Tests.Integration.Tests.TablePartitioning
 {
     public class ApplicationLockTestsHelper
     {

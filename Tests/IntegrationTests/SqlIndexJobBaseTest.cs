@@ -2,6 +2,8 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+using DDI.Tests.TestHelpers;
+
 namespace DDI.Tests.Integration
 {
     using DDI.TestHelpers;

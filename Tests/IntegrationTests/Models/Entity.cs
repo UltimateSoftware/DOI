@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
-using DDI.Tests.Integration.TestHelpers.CommonSetup.EventStore;
-using DDI.Tests.Integration.TestHelpers.CommonSetup.Hosting;
+using DDI.Tests.TestHelpers.CommonSetup.EventStore;
+using DDI.Tests.TestHelpers.CommonSetup.Hosting;
 
 namespace DDI.Tests.Integration.IntegrationTests.Models
 {

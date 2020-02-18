@@ -8,8 +8,8 @@
     <ProjectGuid>{43EAB591-C6C7-421F-BEBA-7F456AEE4E4C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DDI.Tests.Integration</RootNamespace>
-    <AssemblyName>DDI.Tests.Integration</AssemblyName>
+    <RootNamespace>DDI.Tests</RootNamespace>
+    <AssemblyName>DDI.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -32,6 +32,7 @@
     <CodeAnalysisRuleSet>..\DDItests.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -58,7 +59,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\DDI.Tests.Integration.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\DDI.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\Release\</OutputPath>
@@ -69,7 +70,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>..\..\txmtests.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Release\DDI.Tests.Integration.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\DDI.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugCI|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -151,6 +152,10 @@
       <HintPath>..\..\packages\AutoFixture.SeedExtensions.4.10.0\lib\net452\AutoFixture.SeedExtensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Correlator, Version=1.1.0.0, Culture=neutral, PublicKeyToken=ad71b95c30d52163, processorArchitecture=MSIL">
       <HintPath>..\..\packages\WebApiCorrelator.1.1.0.0\lib\net452\Correlator.dll</HintPath>
       <Private>True</Private>
@@ -178,6 +183,13 @@
     </Reference>
     <Reference Include="FluentAssertions.Core, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\packages\JetBrains.Annotations.10.4.0\lib\net\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="LinqKit, Version=1.1.8.0, Culture=neutral, PublicKeyToken=bc217f8844052a91, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\LinqKit.1.1.8.0\lib\net461\LinqKit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
@@ -390,6 +402,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Text.Encoding.CodePages, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Text.Encoding.CodePages.4.3.0\lib\net46\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
@@ -426,17 +439,29 @@
     <Reference Include="System.Xml.XPath.XDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Xml.XPath.XDocument.4.3.0\lib\net46\System.Xml.XPath.XDocument.dll</HintPath>
     </Reference>
+    <Reference Include="YamlDotNet, Version=3.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\YamlDotNet.3.9.0\lib\net35\YamlDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IntegrationTests\BusinessHoursScheduleTableTest.cs" />
+    <Compile Include="IntegrationTests\Models\AggregateViewBase.cs" />
     <Compile Include="IntegrationTests\Models\Entity.cs" />
     <Compile Include="IntegrationTests\Models\VersionTracker.cs" />
+    <Compile Include="TestHelpers\ApplyEventFilter.cs" />
+    <Compile Include="TestHelpers\ApplyEventFilterAttribute.cs" />
+    <Compile Include="TestHelpers\ApplyEventFilterCollection.cs" />
     <Compile Include="TestHelpers\CommonSetup\EventStore\AggregateEvent.cs" />
     <Compile Include="TestHelpers\CommonSetup\EventStore\DomainEventData.cs" />
     <Compile Include="TestHelpers\CommonSetup\EventStore\EventDetailsAttribute.cs" />
     <Compile Include="TestHelpers\CommonSetup\EventStore\IAggregateSnapshotFilter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Extensions\DataContextExtensions.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Helpers\AggregateIdHelper.cs" />
     <Compile Include="TestHelpers\CommonSetup\Hosting\Convention.cs" />
-    <Compile Include="TestHelpers\CommonSetup\Hosting\Formatters\PascalCasingExpandoObjectConverter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Hosting\DataAccess\DeadlockException.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Hosting\Runtime\HttpClientFactoryBase.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Hosting\Runtime\ISimpleHttpClientFactory.cs" />
     <Compile Include="TestHelpers\CommonSetup\Logging\ApplicationInformationEnricher.cs" />
     <Compile Include="TestHelpers\CommonSetup\Logging\ApplicationLogger.cs" />
     <Compile Include="TestHelpers\CommonSetup\Logging\EpochConverter.cs" />
@@ -444,18 +469,36 @@
     <Compile Include="TestHelpers\CommonSetup\Logging\InlineJsonFormatter.cs" />
     <Compile Include="TestHelpers\CommonSetup\Logging\LogInitializer.cs" />
     <Compile Include="TestHelpers\CommonSetup\Logging\SensuAlert.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Logging\SensuAlertExtensions.cs" />
     <Compile Include="TestHelpers\CommonSetup\Logging\SensuClientAdapter.cs" />
     <Compile Include="TestHelpers\CommonSetup\Logging\SensuClientSink.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Models\Aggregate.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Models\AppliedEventSequenceType.cs" />
     <Compile Include="TestHelpers\CommonSetup\Runtime\IVersionTracker.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\BasicCredentials.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\Extensions\StringSecurityExtensions.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\ICredentialsProvider.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\ILoadCredentials.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\KeyServer\CredentialsProviderBase.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\KeyServer\IAmendmentsSqlDbCredentialsProvider.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\KeyServer\IKeyServerAdapter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\KeyServer\IReadOnlySqlDbCredentialsProvider.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\KeyServer\IUteSqlDbCredentialsProvider.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\KeyServer\KeyServerAdapter.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\KeyServer\ReadOnlySqlDbCredentialsProvider.cs" />
+    <Compile Include="TestHelpers\CommonSetup\Security\KeyServer\UteSqlDbCredentialsProvider.cs" />
     <Compile Include="TestHelpers\DataAccess\BulkCreateResults.cs" />
-    <Compile Include="TestHelpers\DataAccess\FilterCollection.cs" />
-    <Compile Include="TestHelpers\DataAccess\FilterParameters.cs" />
+    <Compile Include="TestHelpers\DataAccess\DbConnectivityProvider.cs" />
     <Compile Include="TestHelpers\DataAccess\IBulkOperations.cs" />
+    <Compile Include="TestHelpers\DataAccess\IConnectionStringBuilder.cs" />
+    <Compile Include="TestHelpers\DataAccess\IDatabaseConnectivityProvider.cs" />
+    <Compile Include="TestHelpers\DataAccess\IMongoDbCredentialsProvider.cs" />
     <Compile Include="TestHelpers\DataAccess\IRepository.cs" />
     <Compile Include="TestHelpers\DataAccess\ISimpleRepository.cs" />
-    <Compile Include="TestHelpers\DataAccess\PagedDataParameters.cs" />
-    <Compile Include="TestHelpers\DataAccess\SortDirection.cs" />
-    <Compile Include="TestHelpers\DataAccess\SortParameter.cs" />
+    <Compile Include="TestHelpers\DataAccess\SqlDataStore\IDbContextFactory.cs" />
+    <Compile Include="TestHelpers\DataAccess\SqlDataStore\IReportingEntityMap.cs" />
+    <Compile Include="TestHelpers\DataAccess\SqlDataStore\QueryableExtensions.cs" />
+    <Compile Include="TestHelpers\DataAccess\SqlDataStore\SqlConnectionStringBuilder.cs" />
     <Compile Include="TestHelpers\DataAccess\SqlDataStore\SqlServerBaseRepository.cs" />
     <Compile Include="TestHelpers\DataAccess\SqlDataStore\SqlServerGuidRepository.cs" />
     <Compile Include="TestHelpers\DataAccess\SqlDataStore\SqlServerSimpleRepository.cs" />
@@ -478,7 +521,7 @@
     <Compile Include="IntegrationTests\Models\Statistics.cs" />
     <Compile Include="IntegrationTests\Models\TempARow.cs" />
     <Compile Include="IntegrationTests\OfflineRunTests.cs" />
-    <Compile Include="IntegrationTests\OfflineRunTestsHelper.cs" />
+    <Compile Include="TestHelpers\OfflineRunTestsHelper.cs" />
     <Compile Include="IntegrationTests\SqlIndexJobBaseTest.cs" />
     <Compile Include="IntegrationTests\StatisticsTests.cs" />
     <Compile Include="IntegrationTests\StorageContainersTests.cs" />
@@ -487,11 +530,11 @@
     <Compile Include="IntegrationTests\TablePartitioningTests\ApplicationLockTestsHelper.cs" />
     <Compile Include="IntegrationTests\TablePartitioningTests\TablePartitioningSqlStatements.cs" />
     <Compile Include="IntegrationTests\TablePartitioningTests\TablePartitioningTest.cs" />
+    <Compile Include="TestHelpers\EventTypeExtensions.cs" />
     <Compile Include="TestHelpers\GenericDictionaryExtensions.cs" />
     <Compile Include="TestHelpers\ResourceLoader.cs" />
     <Compile Include="TestHelpers\TempARepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestHelpers\bin\Debug\IBLCheckPayee.cs" />
     <Compile Include="TestHelpers\CommonSetup\BaseDataSetup.cs" />
     <Compile Include="TestHelpers\CommonSetup\SetupRepository.cs" />
     <Compile Include="TestHelpers\CommonSetup\SqlDataReaderExtensions.cs" />
@@ -503,7 +546,9 @@
     <Compile Include="TestHelpers\Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\SqlHelper.cs" />
     <Compile Include="TestHelpers\TestConfiguration.cs" />
+    <Compile Include="TestHelpers\TestConfigurationHelper.cs" />
     <Compile Include="TestHelpers\WaitHelper.cs" />
+    <Compile Include="TestHelpers\WindowsServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
@@ -512,56 +557,6 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Source\Reporting.Ingestion\Reporting.Ingestion.csproj">
-      <Project>{ade1f458-b7a5-49d9-b789-b9e6cca9c05c}</Project>
-      <Name>Reporting.Ingestion</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.Common.Logging\TaxHub.Common.Logging.csproj">
-      <Project>{47BB4EE0-385D-4115-8918-30F4F568E7FC}</Project>
-      <Name>TaxHub.Common.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.CommonServices\TaxHub.CommonServices.csproj">
-      <Project>{2EE55C8E-B66B-4691-B972-F34B329DAF22}</Project>
-      <Name>TaxHub.CommonServices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.Common\TaxHub.Common.csproj">
-      <Project>{E7928680-3FE2-452C-8420-1F339898C473}</Project>
-      <Name>TaxHub.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.Configuration\TaxHub.Configuration.csproj">
-      <Project>{c383a44d-4260-4031-9349-7543ad810329}</Project>
-      <Name>TaxHub.Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.CoreServices\TaxHub.CoreServices.csproj">
-      <Project>{ef99edc2-8fa0-4e76-a24b-4e48673e328c}</Project>
-      <Name>TaxHub.CoreServices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.Hosting\TaxHub.Hosting.csproj">
-      <Project>{e7928680-3fe2-452c-8420-1f339898c583}</Project>
-      <Name>TaxHub.Hosting</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.Messaging\TaxHub.Messaging.csproj">
-      <Project>{10ab01b9-ae01-479e-8504-b5331df4325f}</Project>
-      <Name>TaxHub.Messaging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.Models\TaxHub.Models.csproj">
-      <Project>{16e5a7cd-59c9-451e-918c-77a86bf04001}</Project>
-      <Name>TaxHub.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Source\TaxHub.ObjectStorage.Integration\TaxHub.ObjectStorage.Integration.csproj">
-      <Project>{13337094-2cda-4541-ba15-e96db46710bc}</Project>
-      <Name>TaxHub.ObjectStorage.Integration</Name>
-    </ProjectReference>
-    <ProjectReference Include="Reporting.TestHelpers\TestHelpers.csproj">
-      <Project>{f26cb940-a2ad-4e36-a94d-7f83364fdbe7}</Project>
-      <Name>TestHelpers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\TaxHub.TestHelpers\TaxHub.TestHelpers.csproj">
-      <Project>{8E3FA9EA-2E3A-4BA5-AF2D-425990D1F910}</Project>
-      <Name>TaxHub.TestHelpers</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -1033,7 +1028,8 @@
     <Error Condition="!Exists('..\..\packages\Microsoft.ApplicationInsights.WindowsServer.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.ApplicationInsights.WindowsServer.2.10.0\build\Microsoft.ApplicationInsights.WindowsServer.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy $(SolutionDir)Source\Reporting.ReportDefinitions\*.rdl $(TargetDir)Reports /V /C /Y /I</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

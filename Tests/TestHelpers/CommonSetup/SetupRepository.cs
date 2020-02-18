@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading;
-using DDI.Tests.Integration.Models;
-using TaxHub.Common.DataAccess.SqlDataStore;
-using TaxHub.Common.Logging;
-using TaxHub.Hosting.DataAccess;
+using DDI.Tests.Integration.IntegrationTests.Models;
+using DDI.Tests.TestHelpers.CommonSetup.Logging;
+using DDI.Tests.TestHelpers.DataAccess.SqlDataStore;
+using DDI.Tests.TestHelpers.CommonSetup.Hosting.DataAccess;
 
-namespace DDI.TestHelpers.CommonSetup
+namespace DDI.Tests.TestHelpers.CommonSetup
 {
     public class SetupRepository<TSource> : SqlServerGuidRepository<TSource>
         where TSource : AggregateViewBase<TSource>

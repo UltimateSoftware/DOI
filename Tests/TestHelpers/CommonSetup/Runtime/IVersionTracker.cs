@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Runtime
+namespace DDI.Tests.TestHelpers.CommonSetup.Runtime
 {
     public interface IVersionTracker
     {

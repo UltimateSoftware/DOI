@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using DDI.Tests.Integration.TestHelpers.CommonSetup;
+using DDI.Tests.TestHelpers.CommonSetup.EventStore;
+using SmartHub.Hosting.DataAccess;
 
-namespace DDI.Tests.Integration.TestHelpers.DataAccess
+namespace DDI.Tests.TestHelpers.DataAccess
 {
     /// <summary>
     /// The interface implemented by a repository providing standard tenant-based CRUD operations for a generic entity/aggregate.

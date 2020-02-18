@@ -5,7 +5,7 @@ using System.Linq;
 using Serilog.Events;
 using Serilog.Formatting.Json;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DDI.Tests.TestHelpers.CommonSetup.Logging
 {
     //spec ref: http://devgit01.dev.us.corp:7990/projects/DOCS/repos/docs/browse/Logs.md
     internal class InlineJsonFormatter : JsonFormatter

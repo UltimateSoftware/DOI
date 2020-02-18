@@ -5,12 +5,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using DDI.Tests.Integration.TestHelpers;
+using DDI.Tests.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using Reporting.TestHelpers;
-using TaxHub.TestHelpers;
-using SqlHelper = Reporting.TestHelpers.SqlHelper;
+using SqlHelper = DDI.Tests.TestHelpers.SqlHelper;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
 {

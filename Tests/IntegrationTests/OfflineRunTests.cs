@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DDI.TestHelpers;
 using NUnit.Framework;
-using TaxHub.TestHelpers;
-using TestHelper = Reporting.TestHelpers;
+using TestHelper = DDI.Tests.TestHelpers;
 
-namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
+namespace DDI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -28,8 +28,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
          */
 
         protected TestHelper.SqlHelper sqlHelper;
-        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        protected OfflineRunTestsHelper offlineRunTestsHelper;
+        protected TestHelper.DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
+        protected TestHelper.OfflineRunTestsHelper offlineRunTestsHelper;
 
         protected const string TempTableName = "TempA";
         protected const string SchemaName = "dbo";
@@ -40,10 +40,10 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         public virtual void Setup()
         {
             this.sqlHelper = new TestHelper.SqlHelper();
-            this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
-            this.offlineRunTestsHelper = new OfflineRunTestsHelper();
+            this.dataDrivenIndexTestHelper = new TestHelper.DataDrivenIndexTestHelper(sqlHelper);
+            this.offlineRunTestsHelper = new TestHelper.OfflineRunTestsHelper();
             this.TearDown();
-            sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
+            sqlHelper.Execute(string.Format(TestHelper.ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
             sqlHelper.Execute($@"
             INSERT INTO Utility.IndexesRowStore (SchemaName, TableName, IndexName, IsUnique, IsPrimaryKey, IsUniqueConstraint, IsClustered, KeyColumnList, IncludedColumnList, IsFiltered, FilterPredicate,[Fillfactor], OptionPadIndex, OptionStatisticsNoRecompute, OptionStatisticsIncremental, OptionIgnoreDupKey, OptionResumable, OptionMaxDuration, OptionAllowRowLocks, OptionAllowPageLocks, OptionDataCompression, NewStorage, PartitionColumn)
             VALUES(N'{SchemaName}', N'{TempTableName}', N'{IndexName}', 1, 1, 0, 0, N'TempAId ASC', NULL, 0, NULL, 80, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, 'NONE', 'PRIMARY', NULL)");
@@ -97,7 +97,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         [TearDown]
         public virtual void TearDown()
         {
-            sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
+            sqlHelper.Execute(string.Format(TestHelper.ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
             sqlHelper.Execute("TRUNCATE TABLE Utility.RefreshIndexStructuresQueue");
             sqlHelper.Execute("TRUNCATE TABLE Utility.RefreshIndexStructuresLog");
             sqlHelper.Execute("EXEC Utility.spDDI_RefreshMetadata_SystemSettings");
@@ -124,15 +124,15 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 
             //build queue, and assert that it was populated
             dataDrivenIndexTestHelper.ExecuteSPQueue(false, false);
-            int actualQueueEntryCount = OfflineRunTestsHelper.GetOfflineQueueCountPKOnly();
+            int actualQueueEntryCount = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountPKOnly();
             Assert.AreEqual(2, actualQueueEntryCount);
 
             //run queue
-            this.sqlHelper.Execute(OfflineRunTestsHelper.SetToNonBusinessHoursSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.SetToNonBusinessHoursSql);
             this.dataDrivenIndexTestHelper.ExecuteSPRun(false, SchemaName, TempTableName);
 
             //assert that queue is now empty
-            int queueCount = OfflineRunTestsHelper.GetOfflineQueueCountSQL();
+            int queueCount = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, queueCount);
 
             //assert that no errors occurred...
@@ -150,15 +150,15 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             // Arrange
             
             //set schedule to business hours
-            this.sqlHelper.Execute(OfflineRunTestsHelper.SetToBusinessHoursSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.SetToBusinessHoursSql);
             
             // insert into index metadata
-            this.sqlHelper.Execute(OfflineRunTestsHelper.IndexInsertSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.IndexInsertSql);
                 
             // populate queue
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(false, false);
             
-            var countOfItemsInQueueBefore = OfflineRunTestsHelper.GetOfflineQueueCountPKOnly();
+            var countOfItemsInQueueBefore = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountPKOnly();
             Assert.AreEqual(2, countOfItemsInQueueBefore);
 
             // Act
@@ -169,7 +169,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             // Validate
 
             // assert that the count of items in queue is now empty.
-            var countOfItemsInQueueAfter = OfflineRunTestsHelper.GetOfflineQueueCountSQL();
+            var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
             // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the Utility.RefreshIndexStructuresLog table.
@@ -184,18 +184,18 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         public void RunIntoBusinessHoursLogsError_StopAtBeginningOfQueue()
         {
             // Arrange
-            this.sqlHelper.Execute(OfflineRunTestsHelper.SetToNonBusinessHoursSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.SetToNonBusinessHoursSql);
 
             // insert into index metadata
-            this.sqlHelper.Execute(OfflineRunTestsHelper.IndexInsertSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.IndexInsertSql);
 
             // populate queue
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(false, false);
 
             // insert step in the beginning of the queue to cause business hours error.
-            this.offlineRunTestsHelper.InsertSqlCommandInQueue(SchemaName, TempTableName, 1, OfflineRunTestsHelper.SetToBusinessHoursSql);
+            this.offlineRunTestsHelper.InsertSqlCommandInQueue(SchemaName, TempTableName, 1, TestHelper.OfflineRunTestsHelper.SetToBusinessHoursSql);
 
-            var countOfItemsInQueueBefore = OfflineRunTestsHelper.GetOfflineQueueCountPKOnly();
+            var countOfItemsInQueueBefore = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountPKOnly();
             Assert.AreEqual(2, countOfItemsInQueueBefore);
 
 
@@ -207,7 +207,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             // Validate
 
             // assert that the count of items in queue.
-            var countOfItemsInQueueAfter = OfflineRunTestsHelper.GetOfflineQueueCountSQL();
+            var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
             // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the Utility.RefreshIndexStructuresLog table.
@@ -222,19 +222,19 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         public void RunIntoBusinessHoursLogsError_StopInsideTransaction()
         {
             // Arrange
-            this.sqlHelper.Execute(OfflineRunTestsHelper.SetToNonBusinessHoursSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.SetToNonBusinessHoursSql);
 
             // insert into index metadata
-            this.sqlHelper.Execute(OfflineRunTestsHelper.IndexInsertSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.IndexInsertSql);
 
             // populate queue
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(false, false);
 
             // insert step in the beginning of the queue to cause business hours error.
-            var queueRowNumber = OfflineRunTestsHelper.GetSeqNoForIndexOperationSql("Create Index");
-            this.offlineRunTestsHelper.InsertSqlCommandInQueue(SchemaName, TempTableName, queueRowNumber, OfflineRunTestsHelper.SetToBusinessHoursSql);
+            var queueRowNumber = TestHelper.OfflineRunTestsHelper.GetSeqNoForIndexOperationSql("Create Index");
+            this.offlineRunTestsHelper.InsertSqlCommandInQueue(SchemaName, TempTableName, queueRowNumber, TestHelper.OfflineRunTestsHelper.SetToBusinessHoursSql);
 
-            var countOfItemsInQueueBefore = OfflineRunTestsHelper.GetOfflineQueueCountPKOnly();
+            var countOfItemsInQueueBefore = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountPKOnly();
             Assert.AreEqual(2, countOfItemsInQueueBefore);
 
             // Act
@@ -245,7 +245,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             // Validate
 
             // assert that the count of items in queue is now empty.
-            var countOfItemsInQueueAfter = OfflineRunTestsHelper.GetOfflineQueueCountSQL();
+            var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
             // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the Utility.RefreshIndexStructuresLog table.
@@ -260,20 +260,20 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         public void RunIntoBusinessHoursLogsError_StopOutsideTransaction()
         {
             // Arrange
-            this.sqlHelper.Execute(OfflineRunTestsHelper.SetToNonBusinessHoursSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.SetToNonBusinessHoursSql);
 
             // change index metadata
-            this.sqlHelper.Execute(OfflineRunTestsHelper.IntroduceNonTransactionalChange);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.IntroduceNonTransactionalChange);
 
             // populate queue
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(false, false);
 
             // insert step in the middle of the queue to cause business hours error.
-            var queueRowNumber = OfflineRunTestsHelper.GetSeqNoForIndexOperationSql("Alter Index");
-            this.offlineRunTestsHelper.InsertSqlCommandInQueue(SchemaName, TempTableName, queueRowNumber, OfflineRunTestsHelper.SetToBusinessHoursSql);
+            var queueRowNumber = TestHelper.OfflineRunTestsHelper.GetSeqNoForIndexOperationSql("Alter Index");
+            this.offlineRunTestsHelper.InsertSqlCommandInQueue(SchemaName, TempTableName, queueRowNumber, TestHelper.OfflineRunTestsHelper.SetToBusinessHoursSql);
 
             //get count of items in queue
-            var countOfItemsInQueueBefore = OfflineRunTestsHelper.GetOfflineQueueCountNCCIOnly();
+            var countOfItemsInQueueBefore = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountNCCIOnly();
             Assert.AreEqual(1, countOfItemsInQueueBefore);
 
             // Act
@@ -283,7 +283,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             // Validate
 
             // assert that the count of items in queue is now empty.
-            var countOfItemsInQueueAfter = OfflineRunTestsHelper.GetOfflineQueueCountSQL();
+            var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
             // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the Utility.RefreshIndexStructuresLog table.
@@ -298,20 +298,20 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         public void RunIntoBusinessHoursLogsError_StopAtTheEndOfQueue()
         {
             // Arrange
-            this.sqlHelper.Execute(OfflineRunTestsHelper.SetToNonBusinessHoursSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.SetToNonBusinessHoursSql);
 
             // change index metadata
-            this.sqlHelper.Execute(OfflineRunTestsHelper.IntroduceNonTransactionalChange);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.IntroduceNonTransactionalChange);
 
             // populate queue
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(false, false);
 
             // insert step in the end of the queue to cause business hours error.
-            var queueRowNumber = OfflineRunTestsHelper.GetSeqNoForIndexOperationSql("Release Application Lock");
-            this.offlineRunTestsHelper.InsertSqlCommandInQueue(SchemaName, TempTableName, queueRowNumber, OfflineRunTestsHelper.SetToBusinessHoursSql);
+            var queueRowNumber = TestHelper.OfflineRunTestsHelper.GetSeqNoForIndexOperationSql("Release Application Lock");
+            this.offlineRunTestsHelper.InsertSqlCommandInQueue(SchemaName, TempTableName, queueRowNumber, TestHelper.OfflineRunTestsHelper.SetToBusinessHoursSql);
 
             //get count of items in queue
-            var countOfItemsInQueueBefore = OfflineRunTestsHelper.GetOfflineQueueCountNCCIOnly();
+            var countOfItemsInQueueBefore = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountNCCIOnly();
             Assert.AreEqual(1, countOfItemsInQueueBefore);
 
             // Act
@@ -321,7 +321,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             // Validate
 
             // assert that the count of items in queue is now empty.
-            var countOfItemsInQueueAfter = OfflineRunTestsHelper.GetOfflineQueueCountSQL();
+            var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
             // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the Utility.RefreshIndexStructuresLog table.
@@ -335,7 +335,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         [Test]
         public virtual void StoppedRun()
         {
-            this.sqlHelper.Execute(OfflineRunTestsHelper.SetToNonBusinessHoursSql);
+            this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.SetToNonBusinessHoursSql);
 
             //make change to rebuild NCCI...
             sqlHelper.Execute($@"
@@ -349,11 +349,11 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             dataDrivenIndexTestHelper.ExecuteSPQueue(false, false);
 
             //assert that there are items in the queue
-            var offlineQueueCount = OfflineRunTestsHelper.GetOfflineQueueCountSQL();
+            var offlineQueueCount = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreNotEqual(0, offlineQueueCount);
 
             //insert delay of 1 minute into queue
-            var alterIndexSeqNo = OfflineRunTestsHelper.GetSeqNoForIndexOperationSql("Alter Index");
+            var alterIndexSeqNo = TestHelper.OfflineRunTestsHelper.GetSeqNoForIndexOperationSql("Alter Index");
             TimeSpan lengthOfdelay = new TimeSpan(0, 0, 1, 0);
             offlineRunTestsHelper.InsertDelayInQueue(SchemaName, TempTableName, alterIndexSeqNo, lengthOfdelay);
 

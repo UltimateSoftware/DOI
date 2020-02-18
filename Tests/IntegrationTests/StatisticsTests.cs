@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using DDI.TestHelpers;
+using DDI.Tests.Integration.Models;
+using DDI.Tests.TestHelpers;
 using NUnit.Framework;
 using PaymentSolutions.TestHelpers.Attributes;
-using TaxHub.TestHelpers;
-using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
-using TestHelper = Reporting.TestHelpers;
+using TestHelper = DDI.Tests.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {

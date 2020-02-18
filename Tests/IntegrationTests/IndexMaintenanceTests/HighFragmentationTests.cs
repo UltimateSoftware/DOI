@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using DDI.TestHelpers;
 using DDI.Tests.Integration.Models;
+using DDI.Tests.TestHelpers;
 using NUnit.Framework;
 
 namespace DDI.Tests.Integration

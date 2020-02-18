@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DDI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// Class represents the Sensu alert object.

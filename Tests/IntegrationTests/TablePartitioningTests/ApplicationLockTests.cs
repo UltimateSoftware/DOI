@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
+using DDI.Tests.Integration;
+using DDI.Tests.Integration.Tests.TablePartitioning;
 using NUnit.Framework;
 
 
@@ -31,7 +33,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
         public void Setup()
         {
             sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock());
-            connection = new SqlConnection(sqlHelper.ConnectionString);
+            connection = new SqlConnection(sqlHelper.GetConnectionString());
             connectionInfoMessage = String.Empty;
 
             connection.InfoMessage += (s, e) =>

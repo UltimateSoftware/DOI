@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DDI.Tests.Integration.TestHelpers.DataAccess
+namespace DDI.Tests.TestHelpers.DataAccess
 {
     public interface IBulkOperations<TSource, TKey>
     {

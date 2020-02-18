@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using DDI.Tests.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using  NUnit.Framework;
-using Reporting.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database
 {

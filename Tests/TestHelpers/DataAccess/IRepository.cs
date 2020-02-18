@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SmartHub.Hosting.DataAccess;
 
-namespace DDI.Tests.Integration.TestHelpers.DataAccess
+namespace DDI.Tests.TestHelpers.DataAccess
 {
     /// <summary>
     /// The interface implemented by repository providing standard CRUD operations for a generic entity/aggregate.

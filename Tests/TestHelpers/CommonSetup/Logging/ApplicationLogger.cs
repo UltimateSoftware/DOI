@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DDI.Tests.Integration.TestHelpers.CommonSetup.Logging;
 using Microsoft.Practices.ObjectBuilder2;
 using Serilog.Core;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DDI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// The logging API, used for writing log events.
@@ -714,7 +715,7 @@ namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
             return Serilog.Events.LogEventLevel.Information;
         }
 
-        internal static TaxHub.Common.Logging.LogEventLevel ConvertFromSerilogLevel(Serilog.Events.LogEventLevel level)
+        internal static LogEventLevel ConvertFromSerilogLevel(Serilog.Events.LogEventLevel level)
         {
             switch (level)
             {

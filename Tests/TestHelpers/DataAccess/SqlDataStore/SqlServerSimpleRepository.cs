@@ -10,9 +10,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using LinqKit;
 using Microsoft.Practices.ObjectBuilder2;
+using SmartHub.Hosting.DataAccess;
+using DDI.Tests.TestHelpers.CommonSetup.EventStore;
+using DDI.Tests.TestHelpers.CommonSetup.Extensions;
+using DDI.Tests.TestHelpers.CommonSetup.Helpers;
+using DDI.Tests.TestHelpers.CommonSetup.Logging;
 using DDI.Tests.Integration.IntegrationTests.Models;
+using DDI.Tests.TestHelpers.CommonSetup.Hosting.DataAccess;
+using DDI.Tests.TestHelpers.CommonSetup.Hosting;
+#pragma warning disable 618
 
-namespace DDI.Tests.Integration.TestHelpers.DataAccess.SqlDataStore
+namespace DDI.Tests.TestHelpers.DataAccess.SqlDataStore
 {
     public abstract class SqlServerSimpleRepository<TSource, TKey> : ISimpleRepository<TSource, TKey>, IDisposable
         where TSource : Entity<TKey>

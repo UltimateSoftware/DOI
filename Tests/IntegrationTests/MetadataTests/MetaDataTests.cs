@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Reporting.Ingestion.DataAccess.SqlDataStore.EntityMappings;
+using DDI.TestHelpers;
+using DDI.Tests.TestHelpers;
+using DDI.Tests.TestHelpers.DataAccess.SqlDataStore;
 using NUnit.Framework;
-using Reporting.TestHelpers;
 
 namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 {

@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace DDI.TestHelpers
+namespace DDI.Tests.TestHelpers
 {
     using System;
     using System.Collections.Generic;
@@ -61,6 +61,22 @@ namespace DDI.TestHelpers
             {
                 command?.Dispose();
                 connection?.Dispose();
+            }
+
+            return retVal;
+        }
+
+        public int Execute(SqlConnection connection, string sqlStatement)
+        {
+            int retVal;
+
+            using (SqlCommand command = new SqlCommand(sqlStatement, connection))
+            {
+                command.CommandTimeout = 0;
+                command.CommandType = CommandType.Text;
+                connection.RetrieveStatistics();
+
+                retVal = command.ExecuteNonQuery();
             }
 
             return retVal;
@@ -144,6 +160,31 @@ namespace DDI.TestHelpers
             {
                 command?.Dispose();
                 connection?.Dispose();
+            }
+
+            return retVal;
+        }
+
+        public T ExecuteScalar<T>(SqlConnection connection, string sql)
+        {
+            T retVal = default(T);
+
+            using (SqlCommand command = new SqlCommand(sql, connection))
+            {
+                try
+                {
+                    command.CommandTimeout = 0;
+                    command.CommandType = CommandType.Text;
+                    object obj = command.ExecuteScalar();
+                    if (obj != null && obj != DBNull.Value)
+                    {
+                        retVal = (T)obj;
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
             }
 
             return retVal;

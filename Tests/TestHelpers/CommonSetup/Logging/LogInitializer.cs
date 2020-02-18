@@ -4,7 +4,7 @@ using System.IO;
 using Serilog;
 using Serilog.Sinks.IOFile;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DDI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// LogInitializer

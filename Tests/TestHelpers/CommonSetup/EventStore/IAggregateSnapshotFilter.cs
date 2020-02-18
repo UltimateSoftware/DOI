@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.EventStore
+namespace DDI.Tests.TestHelpers.CommonSetup.EventStore
 {
     public interface IAggregateSnapshotFilter
     {

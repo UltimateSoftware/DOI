@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using DDI.Tests.Integration.TestHelpers.CommonSetup;
+using DDI.Tests.TestHelpers.CommonSetup.Runtime;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using SmartHub.Hosting.Formatters;

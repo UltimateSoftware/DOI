@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using DDI.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using NUnit.Framework;
 using DDI.Tests.Integration.Models;
-using TestHelper = DDI.TestHelpers.SqlHelper;
+using TestHelper = DDI.Tests.TestHelpers.SqlHelper;
 
-namespace DDI.TestHelpers
+namespace DDI.Tests.TestHelpers
 {
     public class DataDrivenIndexTestHelper
     {

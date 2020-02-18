@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using Reporting.TestHelpers;
+using DDI.TestHelpers;
+using DDI.Tests.TestHelpers;
 using NUnit.Framework;
 
 namespace Reporting.Ingestion.Integration.Tests.Database

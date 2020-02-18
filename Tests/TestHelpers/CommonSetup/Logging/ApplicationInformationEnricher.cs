@@ -8,7 +8,7 @@ using System.Reflection;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DDI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// The application information enricher.

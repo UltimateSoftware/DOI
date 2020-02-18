@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDI.Tests.Integration.TestHelpers.DataAccess
+namespace DDI.Tests.TestHelpers.DataAccess
 {
     public class BulkCreateResults
     {

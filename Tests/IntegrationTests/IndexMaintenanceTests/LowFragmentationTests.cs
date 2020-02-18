@@ -3,6 +3,7 @@ using System.Diagnostics;
 using DDI.Tests.Integration.Models;
 using NUnit.Framework;
 using DDI.TestHelpers;
+using DDI.Tests.TestHelpers;
 
 namespace DDI.Tests.Integration
 {

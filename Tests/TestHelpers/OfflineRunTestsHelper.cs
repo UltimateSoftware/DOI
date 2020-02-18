@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TestHelper = Reporting.TestHelpers;
+using System.Data.SqlClient;
+using DDI.TestHelpers;
+using TestHelper = DDI.Tests.TestHelpers;
 
-namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
+namespace DDI.Tests.TestHelpers
 {
-    using System.Data.SqlClient;
-    using System.Runtime.CompilerServices;
-
     public class OfflineRunTestsHelper
     {
         protected static TestHelper.SqlHelper sqlHelper = new TestHelper.SqlHelper();

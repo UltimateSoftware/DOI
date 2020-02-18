@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace DDI.TestHelpers
+namespace DDI.Tests.TestHelpers
 {
     public class WaitHelper
     {
