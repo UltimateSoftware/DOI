@@ -13,7 +13,7 @@ namespace DDI.Tests.TestHelpers
 
         public void UpdateBusinessHours(bool isBusinessHours)
         {
-            string sqlCommand = $@"UPDATE Utility.BusinessHoursSchedule SET IsBusinessHours = '{isBusinessHours}'";
+            string sqlCommand = $@"UPDATE DDI.BusinessHoursSchedule SET IsBusinessHours = '{isBusinessHours}'";
             sqlHelper.Execute(sqlCommand);
         }
 
@@ -23,7 +23,7 @@ namespace DDI.Tests.TestHelpers
 
             int errorsCount = sqlHelper.ExecuteScalar<int>($@"
                 SELECT COUNT(*)
-                FROM Utility.RefreshIndexStructuresLog
+                FROM DDI.Log
                 WHERE SchemaName = '{schemaName}'
                     AND TableName = '{tableName}'
                     AND ErrorText IS NOT NULL");
@@ -37,7 +37,7 @@ namespace DDI.Tests.TestHelpers
 
             int killLogCount = sqlHelper.ExecuteScalar<int>($@"
                 SELECT COUNT(*) 
-                FROM Utility.RefreshIndexStructuresLog 
+                FROM DDI.Log 
                 WHERE SchemaName = '{schemaName}'
                     AND TableName = '{tableName}'
                     AND IndexOperation = 'Kill'");
@@ -51,7 +51,7 @@ namespace DDI.Tests.TestHelpers
 
             int offlineQueueCountPKOnly = sqlHelper.ExecuteScalar<int>($@"
                 SELECT COUNT(*) 
-                FROM Utility.RefreshIndexStructuresQueue
+                FROM DDI.Queue
                 WHERE SchemaName = '{schemaName}'
                     AND TableName = '{tableName}'
                     AND IndexName = '{indexName}'
@@ -66,7 +66,7 @@ namespace DDI.Tests.TestHelpers
 
             int indexesToUpdateCount = sqlHelper.ExecuteScalar<int>($@"
                 SELECT COUNT(*)
-                FROM Utility.vwIndexes
+                FROM DDI.vwIndexes
                 WHERE SchemaName = '{schemaName}'
                     AND TableName = '{tableName}'
                     AND IndexUpdateType <> 'None'");
@@ -81,7 +81,7 @@ namespace DDI.Tests.TestHelpers
             int businessHoursErrorCount =
                 sqlHelper.ExecuteScalar<int>(
                     $@" SELECT COUNT(*) 
-                        FROM Utility.RefreshIndexStructuresLog 
+                        FROM DDI.Log 
                         WHERE SchemaName = '{schemaName}' 
                             AND TableName = '{tableName}' 
                             AND ErrorText = 'Stopping Offline DDI.  Business hours are here.'");
@@ -95,7 +95,7 @@ namespace DDI.Tests.TestHelpers
 
             string indexUpdateType = sqlHelper.ExecuteScalar<string>($@"
                 SELECT IndexUpdateType
-                FROM Utility.vwIndexes
+                FROM DDI.vwIndexes
                 WHERE SchemaName = '{schemaName}'
                     AND TableName = '{tableName}'
                     AND IndexName = '{indexName}'");
@@ -109,7 +109,7 @@ namespace DDI.Tests.TestHelpers
 
             bool isDelayInProgress = sqlHelper.ExecuteScalar<bool>($@"
                 SELECT 1
-                FROM Utility.RefreshIndexStructuresQueue
+                FROM DDI.Queue
                 WHERE SchemaName = '{schemaName}'
                     AND TableName = '{tableName}'
                     AND IndexOperation = 'Delay'
@@ -128,7 +128,7 @@ namespace DDI.Tests.TestHelpers
                 WHERE  resource_type = 'APPLICATION'
                     AND request_mode = 'X'
                     AND request_status = 'GRANT'
-                    AND resource_description LIKE '%:\[RefreshIndexStructures\]:%' ESCAPE '\' ");
+                    AND resource_description LIKE '%:\[\]:%' ESCAPE '\' ");
 
             return applicationLock;
         }
@@ -138,7 +138,7 @@ namespace DDI.Tests.TestHelpers
         //    sqlHelper = new TestHelper.SqlHelper();
 
         //    sqlHelper.Execute($@"
-        //        EXEC Utility.spDDI_RefreshIndexStructures_InsertDelay
+        //        EXEC DDI.spInsertDelay
         //            @ParentTableName = '{tableName}',
         //            @ParentSchemaName = '{schemaName}',
         //            @SeqNoJustAfterDelay = {seqNo},
@@ -155,7 +155,7 @@ namespace DDI.Tests.TestHelpers
         public void InsertSqlCommandInQueue(string schemaName, string tableName, int seqNo, string sql)
         {
             sqlHelper = new TestHelper.SqlHelper();
-            SqlCommand command = new SqlCommand(@"EXEC Utility.spDDI_RefreshIndexStructures_InsertSQLCommand
+            SqlCommand command = new SqlCommand(@"EXEC DDI.spInsertSQLCommand
                                                     @ParentTableName = @table,
                                                     @ParentSchemaName = @schema,
                                                     @SeqNoJustAfterSQLCommand = @seq,
@@ -173,7 +173,7 @@ namespace DDI.Tests.TestHelpers
         {
             return new TestHelper.SqlHelper().ExecuteScalar<int>($@"
                         SELECT SeqNo
-                        FROM Utility.RefreshIndexStructuresQueue 
+                        FROM DDI.Queue 
                         WHERE SchemaName = 'dbo' 
                             AND TableName = 'TempA'
                             AND IndexOperation = '{indexOperation}'");
@@ -181,34 +181,34 @@ namespace DDI.Tests.TestHelpers
 
         public static readonly string SeqNoForIndexOperationSql = @"
                         SELECT SeqNo
-                        FROM Utility.RefreshIndexStructuresQueue 
+                        FROM DDI.Queue 
                         WHERE SchemaName = 'dbo' 
                             AND TableName = 'TempA'
                             AND IndexOperation = 'Create Index'";
 
         public static readonly string IndexInsertSql =
-            @"UPDATE Utility.IndexesRowStore SET KeyColumnList = 'TempAId ASC,TransactionUtcDt ASC' 
+            @"UPDATE DDI.IndexesRowStore SET KeyColumnList = 'TempAId ASC,TransactionUtcDt ASC' 
                 WHERE SchemaName = 'dbo' 
                     AND TableName = 'TempA '
                     AND IndexName = 'PK_TempA'";
 
         public static string IntroduceNonTransactionalChange = $@"
-                UPDATE Utility.IndexesColumnStore 
+                UPDATE DDI.IndexesColumnStore 
                 SET OptionDataCompression = 'COLUMNSTORE_ARCHIVE' 
                 WHERE SchemaName = 'dbo' 
                     AND TableName = 'TempA' 
                     AND IndexName = 'NCCI_TempA'";
 
 
-        public static readonly string SetToBusinessHoursSql = "UPDATE Utility.BusinessHoursSchedule SET IsBusinessHours = 1";
+        public static readonly string SetToBusinessHoursSql = "UPDATE DDI.BusinessHoursSchedule SET IsBusinessHours = 1";
 
-        public static readonly string SetToNonBusinessHoursSql = "UPDATE Utility.BusinessHoursSchedule SET IsBusinessHours = 0";
+        public static readonly string SetToNonBusinessHoursSql = "UPDATE DDI.BusinessHoursSchedule SET IsBusinessHours = 0";
 
 
         public static int GetOfflineQueueCountPKOnly()
         {
             return new TestHelper.SqlHelper().ExecuteScalar<int>(@"SELECT COUNT(*) 
-            FROM Utility.RefreshIndexStructuresQueue
+            FROM DDI.Queue
             WHERE SchemaName = 'dbo'
             AND TableName = 'TempA'
             AND IndexName = 'PK_TempA'");
@@ -218,7 +218,7 @@ namespace DDI.Tests.TestHelpers
         {
             return new TestHelper.SqlHelper().ExecuteScalar<int>(@"
             SELECT COUNT(*) 
-            FROM Utility.RefreshIndexStructuresQueue
+            FROM DDI.Queue
             WHERE SchemaName = 'dbo'
             AND TableName = 'TempA'
             AND IndexName = 'NCCI_TempA'");
@@ -229,7 +229,7 @@ namespace DDI.Tests.TestHelpers
         {
             return sqlHelper.ExecuteScalar<int>(
                 @"  SELECT COUNT(*) 
-                    FROM Utility.RefreshIndexStructuresQueue 
+                    FROM DDI.Queue 
                     WHERE SchemaName = 'dbo' AND TableName = 'TempA' AND IsOnlineOperation = 0");
         }
     }

@@ -8,7 +8,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE     PROCEDURE [DDI].[spEnableDisableAllFKs]
-    @DatabaseName sysname,
+    @DatabaseName SYSNAME,
 	@Action VARCHAR(10) ,
 	@Debug BIT = 0
 
@@ -20,9 +20,9 @@ AS
 
 */
 BEGIN TRY 
-	DECLARE @SQL NVARCHAR(MAX) = ''
+	DECLARE @SQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
 
-	select @SQL += 'ALTER TABLE ' + ps.name + '.[' + pt.name + ']' + CASE WHEN @Action = 'Enable' THEN ' ' ELSE ' NO' END + 'CHECK CONSTRAINT ' + FK.name + CHAR(13) + CHAR(10)
+	SELECT @SQL += 'ALTER TABLE ' + ps.name + '.[' + pt.name + ']' + CASE WHEN @Action = 'Enable' THEN ' ' ELSE ' NO' END + 'CHECK CONSTRAINT ' + FK.name + CHAR(13) + CHAR(10)
     --SELECT fk.*
 	FROM DDI.SysForeignKeys fk
         INNER JOIN DDI.SysDatabases D ON D.database_id = fk.database_id

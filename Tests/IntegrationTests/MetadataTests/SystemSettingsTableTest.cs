@@ -32,7 +32,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database
                     new Pair<string, string>("UTEBCP Filepath", @"c:\tmp\user-management\utebcp\")
                 };
             var sqlHelper = new SqlHelper();
-            sqlHelper.Execute($"EXEC Utility.spDDI_RefreshMetadata_SystemSettings");
+            sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_3_DDISettings");
         }
 
         [Test]
@@ -46,13 +46,13 @@ namespace Reporting.Ingestion.Integration.Tests.Database
                 actualSettingList.Add(new Pair<string, string>(Convert.ToString(reader["SettingName"]), Convert.ToString(reader["SettingValue"])));
             }
 
-            Assert.IsNotEmpty(actualSettingList, "The PaymentReporting.dbo.SystemSettings table must have settings.");
-            Assert.True(actualSettingList.Count == expectedSettingList.Count, $"The PaymentReporting.dbo.SystemSettings table must have {expectedSettingList.Count} settings.");
+            Assert.IsNotEmpty(actualSettingList, "The PaymentReporting.DDI.DDISettings table must have settings.");
+            Assert.True(actualSettingList.Count == expectedSettingList.Count, $"The PaymentReporting.DDI.DDISettings table must have {expectedSettingList.Count} settings.");
 
             foreach (Pair<string, string> expectedSetting in expectedSettingList)
             {
                 Pair<string, string> actualSetting = actualSettingList.Find(x => x.First == expectedSetting.First);
-                Assert.IsNotNull(actualSetting, $"Missing setting [{expectedSetting.First}] in table dbo.SystemSettings");
+                Assert.IsNotNull(actualSetting, $"Missing setting [{expectedSetting.First}] in table DDI.DDISettings");
                 Assert.AreEqual(expectedSetting.Second, actualSetting.Second, $"Incorrect setting: {expectedSetting.First}.");
                 actualSettingList.Remove(actualSetting); // to be more efficient
             }

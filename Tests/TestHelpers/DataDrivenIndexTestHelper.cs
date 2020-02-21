@@ -13,6 +13,7 @@ namespace DDI.Tests.TestHelpers
 {
     public class DataDrivenIndexTestHelper
     {
+        protected const string DatabaseName = "PaymentReporting";
         private TestHelper sqlHelper;
         private TempARepository tempARepository;
 
@@ -27,20 +28,21 @@ namespace DDI.Tests.TestHelpers
             return $@"
             SELECT COUNT(*) 
             FROM DDI.Queue 
-            WHERE SchemaName = '{schemaName}' 
+            WHERE DatabaseName = '{DatabaseName}'
+                AND SchemaName = '{schemaName}' 
                 AND TableName = '{tableName}' 
                 AND IsOnlineOperation = 0";
         }
 
         public List<IndexView> GetIndexViews(string tableName)
         {
-            return this.sqlHelper.GetList<IndexView>($"select * FROM DDI.vwIndexes WHERE TableName = '{tableName}'");
+            return this.sqlHelper.GetList<IndexView>($"select * FROM DDI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND TableName = '{tableName}'");
         }
 
         public void ExecuteSPQueue(bool onlineOperations, bool isBeingRunDuringADeployment = false)
         {
             var sql = $"DECLARE @BatchId UNIQUEIDENTIFIER " +
-                      $"EXEC [Utility].[spQueue]  " +
+                      $"EXEC [DDI].[spQueue]  " +
                         $"@OnlineOperations = {(onlineOperations ? "1" : "0")}" +
                         $",@IsBeingRunDuringADeployment = {(isBeingRunDuringADeployment ? "1" : "0")}" +
                         $",@BatchIdOUT = @BatchId";
@@ -50,7 +52,7 @@ namespace DDI.Tests.TestHelpers
 
         public void ExecuteSPRun(bool onlineOperations, string schemaName = null, string tableName = null)
         {
-            var sql = $"EXEC [Utility].[spRun]  " +
+            var sql = $"EXEC [DDI].[spRun]  " +
                       $"@OnlineOperations = {(onlineOperations ? "1" : "0")}";
             sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
             sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
@@ -60,7 +62,7 @@ namespace DDI.Tests.TestHelpers
 
         public async Task ExecuteSPRunAsync(bool onlineOperations, string schemaName = null, string tableName = null)
         {
-            var sql = $"EXEC [Utility].[sp_Run]  " +
+            var sql = $"EXEC [DDI].[spRun]  " +
                       $"@OnlineOperations = {(onlineOperations ? "1" : "0")}";
             sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
             sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
@@ -70,16 +72,18 @@ namespace DDI.Tests.TestHelpers
 
         public void ExecuteSPCreateNewPartitionFunction(string partitionFunctionName)
         {
-            var sql = $@"EXEC [Utility].[spPartitionFunctionCreate] 
-                            @PartitionFunctionName = {partitionFunctionName}";
+            var sql = $@"EXEC [DDI].[spRefreshStorageContainers_PartitionFunctions] 
+                            @DatabaseName = '{DatabaseName}',
+                            @PartitionFunctionName = '{partitionFunctionName}'";
 
             this.sqlHelper.Execute(sql);
         }
 
         public void ExecuteSPCreateNewPartitionScheme(string partitionFunctionName)
         {
-            var sql = $@"EXEC [Utility].[spPartitionSchemeCreate] 
-                            @PartitionFunctionName = {partitionFunctionName}";
+            var sql = $@"EXEC [DDI].[spRefreshStorageContainers_PartitionSchemes] 
+                            @DatabaseName = '{DatabaseName}',
+                            @PartitionFunctionName = '{partitionFunctionName}'";
 
             this.sqlHelper.Execute(sql);
         }
@@ -87,6 +91,7 @@ namespace DDI.Tests.TestHelpers
         public List<PartitionFunctionBoundary> GetExistingPartitionFunctionBoundaries(string partitionFunctionName)
         {
             return this.sqlHelper.GetList<PartitionFunctionBoundary>($@"
+                USE {DatabaseName}
                	SELECT name, type, boundary_value_on_right AS BoundaryValueOnRight, boundary_id AS BoundaryId, value
             	FROM sys.partition_functions pf 
             		INNER JOIN sys.partition_range_values prv ON prv.function_id = pf.function_id
@@ -96,6 +101,7 @@ namespace DDI.Tests.TestHelpers
         public List<PartitionSchemeFilegroup> GetExistingPartitionSchemeFilegroups(string partitionFunctionName)
         {
             return this.sqlHelper.GetList<PartitionSchemeFilegroup>($@"
+                USE {DatabaseName}
             SELECT destination_id AS DestinationFilegroupId, ps.name AS PartitionSchemeName, f.type AS DataSpaceType, f.name AS FilegroupName
             FROM SYS.partition_schemes ps
                 INNER JOIN sys.destination_data_spaces dds on dds.partition_scheme_id = ps.data_space_id
@@ -108,9 +114,10 @@ namespace DDI.Tests.TestHelpers
         {
             if (partitionFunctionName == null)
             {
-                return this.sqlHelper.GetList<PrepTable>(@"
+                return this.sqlHelper.GetList<PrepTable>($@"
                	SELECT PrepTableName
-            	FROM DDI.fnDataDrivenIndexes_GetPrepTableSQL()
+            	FROM DDI.vwTables_PrepTables()
+                WHERE DatabaseName = '{DatabaseName}'
                 GROUP BY PrepTableName
             	HAVING COUNT(*) > 1");
             }
@@ -118,8 +125,9 @@ namespace DDI.Tests.TestHelpers
             {
                 return this.sqlHelper.GetList<PrepTable>($@"
                	SELECT PrepTableName
-            	FROM DDI.fnDataDrivenIndexes_GetPrepTableSQL()
-                WHERE PartitionFunctionName = '{partitionFunctionName}'
+            	FROM DDI.vwTables_PrepTables()
+                WHERE DatabaseName = '{DatabaseName}'
+                    AND PartitionFunctionName = '{partitionFunctionName}'
                 GROUP BY PrepTableName
             	HAVING COUNT(*) > 1");
             }
@@ -149,7 +157,8 @@ namespace DDI.Tests.TestHelpers
             List<List<Pair<string, object>>> rows = this.sqlHelper.ExecuteQuery(new SqlCommand($@"
                 SELECT InitialDate, NumOfTotalPartitionFunctionIntervals
                 FROM DDI.PartitionFunctions 
-                WHERE PartitionFunctionName = '{partitionFunctionName}'"));
+                WHERE DatabaseName = '{DatabaseName}'
+                    AND PartitionFunctionName = '{partitionFunctionName}'"));
 
             var initialDate = rows[0].Find(x => x.First == "InitialDate").Second.ObjectToDateTime();
             var boundaryDate = initialDate;
@@ -179,7 +188,8 @@ namespace DDI.Tests.TestHelpers
             List<List<Pair<string, object>>> rows = this.sqlHelper.ExecuteQuery(new SqlCommand($@"
                 SELECT InitialDate, NumOfTotalPartitionSchemeIntervals, PartitionSchemeName
                 FROM DDI.PartitionFunctions 
-                WHERE PartitionFunctionName = '{partitionFunctionName}'"));
+                WHERE DatabaseName = '{DatabaseName}'
+                    AND PartitionFunctionName = '{partitionFunctionName}'"));
 
             var initialDate = rows[0].Find(x => x.First == "InitialDate").Second.ObjectToDateTime();
             var totalPartitionSchemeIntervals = rows[0].Find(x => x.First == "NumOfTotalPartitionSchemeIntervals").Second.ObjectToInteger();
@@ -218,29 +228,30 @@ namespace DDI.Tests.TestHelpers
 
         public void ExecuteSPAddFuturePartitions(string partitionFunctionName, int commandTimeoutSec = 30)
         {
-            var sql = $"EXEC [Utility].[spDDI_AddNewPartition] @PartitionFunctionName = '{partitionFunctionName}'";
+            var sql = $"EXEC [DDI].[sp_AddNewPartition] @PartitionFunctionName = '{partitionFunctionName}'";
 
             this.sqlHelper.Execute(sql, commandTimeoutSec);
         }
 
         public List<MetaDataTable> GetTablesInMetaData()
         {
-            return this.sqlHelper.GetList<MetaDataTable>("select * FROM DDI.Tables");
+            return this.sqlHelper.GetList<MetaDataTable>($"select * FROM DDI.Tables WHERE DatabaseName = '{DatabaseName}'");
         }
 
         public List<MetaDataTable> GetTablesReadytoQueue()
         {
-            return this.sqlHelper.GetList<MetaDataTable>("select * FROM DDI.Tables where ReadyToQueue = 1 ");
+            return this.sqlHelper.GetList<MetaDataTable>($"select * FROM DDI.Tables WHERE DatabaseName = '{DatabaseName}' AND ReadyToQueue = 1 ");
         }
 
         public List<LogTableRow> GetErrorsFromLogTables(Guid batchId)
         {
-            return this.sqlHelper.GetList<LogTableRow>($"select * FROM DDI.Log WHERE BatchId = '{batchId}");
+            return this.sqlHelper.GetList<LogTableRow>($"select * FROM DDI.Log WHERE DatabaseName = '{DatabaseName}' AND BatchId = '{batchId}");
         }
 
         public List<Index> GetExistingIndexes()
         {
-            return this.sqlHelper.GetList<Index>(@"
+            return this.sqlHelper.GetList<Index>($@"
+                USE {DatabaseName}
                 SELECT S.NAME AS SchemaName, T.NAME AS TableName, I.NAME AS IndexName
 	            FROM SYS.INDEXES I
 		        INNER JOIN SYS.TABLES T ON T.object_id = I.object_id
@@ -250,21 +261,24 @@ namespace DDI.Tests.TestHelpers
 
         public List<Index> GetIndexInMetaData()
         {
-            return this.sqlHelper.GetList<Index>(@"
+            return this.sqlHelper.GetList<Index>($@"
                 SELECT SchemaName, TableName, IndexName
                 FROM DDI.IndexesColumnStore 
+                WHERE DatabaseName = '{DatabaseName}'
                 UNION 
                 SELECT UIRS.SchemaName, UIRS.TableName, IndexName
                 FROM DDI.IndexesRowStore UIRS
-				inner join DDI.Tables UT
-				on UIRS.SchemaName = UT.SchemaName
-				and UIRS.TableName = UT.TableName
-				Where UT.ReadyToQueue =1");
+				    INNER JOIN DDI.Tables UT ON UIRS.DatabaseName = UT.DatabaseName
+                        AND UIRS.SchemaName = UT.SchemaName
+				        AND UIRS.TableName = UT.TableName
+				WHERE DatabaseName = '{DatabaseName}'
+                    AND UT.ReadyToQueue =1");
         }
 
         public List<Statistics> GetActualStatisticsDetails(string statisticsName)
         {
             return this.sqlHelper.GetList<Statistics>($@"
+                USE {DatabaseName}
                 SELECT  s.name AS SchemaName, 
                         t.name AS TableName, 
                         st.name AS StatisticsName, 
@@ -301,17 +315,18 @@ namespace DDI.Tests.TestHelpers
                         st.IsIncremental,
                         st.NoRecompute 
                 FROM DDI.[Statistics] st
-                WHERE st.StatisticsName = '{statisticsName}'");
+                WHERE DatabaseName = '{DatabaseName}'
+                    AND st.StatisticsName = '{statisticsName}'");
         }
 
         public List<ForeignKey> GetForeignKeys(string parentTableName)
         {
-            return this.sqlHelper.GetList<ForeignKey>($"select * FROM DDI.ForeignKeys WHERE ReferencedTableName = '{parentTableName}'");
+            return this.sqlHelper.GetList<ForeignKey>($"select * FROM DDI.ForeignKeys WHERE DatabaseName = '{DatabaseName}' AND ReferencedTableName = '{parentTableName}'");
         }
 
         public List<string> GetExistingForeignKeyNames(string parentTableName)
         {
-            return this.sqlHelper.ExecuteList<string>($"SELECT name as Name FROM SYS.foreign_keys fk WHERE OBJECT_NAME(fk.referenced_object_id) = '{parentTableName}'");
+            return this.sqlHelper.ExecuteList<string>($"SELECT name as Name FROM SYS.foreign_keys fk WHERE DatabaseName = '{DatabaseName}' AND OBJECT_NAME(fk.referenced_object_id) = '{parentTableName}'");
         }
 
         public void CreateIndex(string indexName)
@@ -344,9 +359,10 @@ namespace DDI.Tests.TestHelpers
 
         public void CreateForeignKeys()
         {
-            this.sqlHelper.Execute(@"INSERT INTO [Utility].[ForeignKeys]    ([ParentSchemaName]	,[ParentTableName]	,[ParentColumnList]	,[ReferencedSchemaName]	,[ReferencedTableName]	,[ReferencedColumnList])
-                                                                     VALUES ('dbo'				,'TempB'			,'TempAId'			,'dbo'					,'TempA'				,'TempAId')");
-            this.sqlHelper.Execute(@"EXEC DDI.spForeignKeysAdd 
+            this.sqlHelper.Execute($@"INSERT INTO [DDI].[ForeignKeys]    (DatabaseName, [ParentSchemaName]	,[ParentTableName]	,[ParentColumnList_Desired]	,[ReferencedSchemaName]	,[ReferencedTableName]	,[ReferencedColumnList_Desired])
+                                                                 VALUES ('{DatabaseName}', 'dbo'				,'TempB'			,'TempAId'			,'dbo'					,'TempA'				,'TempAId')");
+            this.sqlHelper.Execute($@"EXEC DDI.spForeignKeysAdd 
+                                       @DatabaseName = '{DatabaseName}',
                                        @ReferencedSchemaName = 'dbo'
                                       ,@ReferencedTableName = 'TempA'
                                       ,@ParentSchemaName = 'dbo'
@@ -379,7 +395,7 @@ namespace DDI.Tests.TestHelpers
 
         public void SeedDataAndDefrag(int numberOfRowsToInsertPerLoop)
         {
-            var pageSize = this.sqlHelper.ExecuteScalar<int>("SELECT CAST(SettingValue AS INT) FROM dbo.SystemSettings WHERE SettingName = 'MinNumPagesForIndexDefrag'");
+            var pageSize = this.sqlHelper.ExecuteScalar<int>($"SELECT CAST(SettingValue AS INT) FROM DDI.DDISettings WHERE DatabaseName = '{DatabaseName}' AND SettingName = 'MinNumPagesForIndexDefrag'");
             var indexRows = new List<IndexView>();
             var watch = Stopwatch.StartNew();
 
@@ -405,76 +421,76 @@ namespace DDI.Tests.TestHelpers
 
         private void CreatePKTempA()
         {
-            this.sqlHelper.Execute(@"ALTER TABLE dbo.TempA ADD CONSTRAINT PK_TempA PRIMARY KEY NONCLUSTERED (
+            this.sqlHelper.Execute($@"USE {DatabaseName} ALTER TABLE dbo.TempA ADD CONSTRAINT PK_TempA PRIMARY KEY NONCLUSTERED (
                                         TempAId ASC
                                     ) WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 
-            this.sqlHelper.Execute(@"INSERT INTO DDI.IndexesRowStore    (	SchemaName	,TableName	,IndexName		,IsUnique	,IsPrimaryKey	, IsUniqueConstraint, IsClustered	,KeyColumnList	    ,IncludedColumnList	,IsFiltered ,FilterPredicate	,[Fillfactor]	    ,OptionPadIndex ,OptionStatisticsNoRecompute	,OptionStatisticsIncremental	,OptionIgnoreDupKey ,OptionResumable	,OptionMaxDuration	,OptionAllowRowLocks	,OptionAllowPageLocks	,OptionDataCompression	, NewStorage	, PartitionColumn	)
-                                                                VALUES	    (	N'dbo'		, N'TempA'	, N'PK_TempA'	, 1			, 1				, 0					, 0				, N'TempAId ASC'    , NULL				, 0			, NULL				, 90				, 1				, 0								, 0								, 0					, DEFAULT			, 0					, 1						, 1						, 'NONE'				, 'PRIMARY'		, NULL				)");
+            this.sqlHelper.Execute($@"INSERT INTO DDI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+                                                                VALUES  (	'{DatabaseName}', N'dbo'		, N'TempA'	, N'PK_TempA'	, 1			        , 1				        , 0					        , 0				        , N'TempAId ASC'            , NULL				        , 0			        , NULL				        , 90				        , 1				        , 0								        , 0								        , 0					        , DEFAULT			        , 0					        , 1						        , 1						        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
         private void CreateCDXTempA()
         {
-            this.sqlHelper.Execute(@"CREATE CLUSTERED INDEX [CDX_TempA] ON dbo.TempA
+            this.sqlHelper.Execute($@"USE {DatabaseName} CREATE CLUSTERED INDEX [CDX_TempA] ON dbo.TempA
                                     (
 	                                    TempAId ASC,
 	                                    TransactionUtcDt ASC
                                     )WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 
-            this.sqlHelper.Execute(@"INSERT INTO DDI.IndexesRowStore    (	SchemaName	,TableName	,IndexName		,IsUnique	,IsPrimaryKey	, IsUniqueConstraint, IsClustered	,KeyColumnList							,IncludedColumnList	,IsFiltered ,FilterPredicate	,[Fillfactor]	    ,OptionPadIndex ,OptionStatisticsNoRecompute	,OptionStatisticsIncremental	,OptionIgnoreDupKey ,OptionResumable	,OptionMaxDuration	,OptionAllowRowLocks	,OptionAllowPageLocks	,OptionDataCompression	, NewStorage	, PartitionColumn	)
-                                                                VALUES	    (	N'dbo'		, N'TempA'	, N'CDX_TempA'	, 0			, 0				, 0					, 1				, N'TempAId ASC,TransactionUtcDt ASC'	, NULL				, 0			, NULL				, 90			    , DEFAULT		, DEFAULT						, DEFAULT						, DEFAULT			, DEFAULT			, DEFAULT			, DEFAULT				, DEFAULT				, 'NONE'				, 'PRIMARY'		, NULL				)");
+            this.sqlHelper.Execute($@"INSERT INTO DDI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	                ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+                                                                VALUES   (	'{DatabaseName}', N'dbo'		, N'TempA'	, N'CDX_TempA'	, 0			        , 0				        , 0					        , 1				        , N'TempAId ASC,TransactionUtcDt ASC'	, NULL				        , 0			        , NULL				        , 90			            , DEFAULT		        , DEFAULT						        , DEFAULT						        , DEFAULT			        , DEFAULT			        , DEFAULT			        , DEFAULT				        , DEFAULT				        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
         private void CreateNIDXTempAReport()
         {
-            this.sqlHelper.Execute(@"CREATE NONCLUSTERED INDEX [NIDX_TempA_Report] ON dbo.TempA
+            this.sqlHelper.Execute($@"USE {DatabaseName} CREATE NONCLUSTERED INDEX [NIDX_TempA_Report] ON dbo.TempA
                                     (
 	                                    TransactionUtcDt ASC
                                     ) INCLUDE(TextCol) WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80)");
 
-            this.sqlHelper.Execute(@"INSERT INTO DDI.IndexesRowStore    (	SchemaName	,TableName	,IndexName				,IsUnique	,IsPrimaryKey	, IsUniqueConstraint, IsClustered	,KeyColumnList				,IncludedColumnList	,IsFiltered ,FilterPredicate	,[Fillfactor]	    ,OptionPadIndex ,OptionStatisticsNoRecompute	,OptionStatisticsIncremental	,OptionIgnoreDupKey ,OptionResumable	,OptionMaxDuration	,OptionAllowRowLocks	,OptionAllowPageLocks	,OptionDataCompression	, NewStorage	, PartitionColumn	)
-                                                                VALUES	    (	N'dbo'		, N'TempA'	, N'NIDX_TempA_Report'	, 0			, 0				, 0					, 0				, N'TransactionUtcDt ASC'	,N'TextCol'			, 0			, NULL				, 80			    , DEFAULT		, DEFAULT						, DEFAULT						, DEFAULT			, DEFAULT			, DEFAULT			, DEFAULT				, DEFAULT				, 'NONE'				, 'PRIMARY'		, NULL				)");
+            this.sqlHelper.Execute($@"INSERT INTO DDI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		        ,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+                                                                VALUES   (	'{DatabaseName}', N'dbo'		, N'TempA'	, N'NIDX_TempA_Report'	, 0			        , 0				        , 0					        , 0				        , N'TransactionUtcDt ASC'	,N'TextCol'			        , 0			        , NULL				        , 80			            , DEFAULT		        , DEFAULT						        , DEFAULT						        , DEFAULT			        , DEFAULT			        , DEFAULT			        , DEFAULT				        , DEFAULT				        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
         private void CreateNIDXTempAReport2()
         {
-            this.sqlHelper.Execute(@"CREATE NONCLUSTERED INDEX [NIDX_TempA_Report2] ON dbo.TempA
+            this.sqlHelper.Execute($@"USE {DatabaseName} CREATE NONCLUSTERED INDEX [NIDX_TempA_Report2] ON dbo.TempA
                                     (
 	                                    TransactionUtcDt ASC
                                     )WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 
-            this.sqlHelper.Execute(@"INSERT INTO DDI.IndexesRowStore    (	SchemaName	,TableName	,IndexName				,IsUnique	,IsPrimaryKey	, IsUniqueConstraint, IsClustered	,KeyColumnList				,IncludedColumnList	,IsFiltered ,FilterPredicate	,[Fillfactor]	    ,OptionPadIndex ,OptionStatisticsNoRecompute	,OptionStatisticsIncremental	,OptionIgnoreDupKey ,OptionResumable	,OptionMaxDuration	,OptionAllowRowLocks	,OptionAllowPageLocks	,OptionDataCompression	, NewStorage	, PartitionColumn	)
-                                                                VALUES	    (	N'dbo'		, N'TempA'	, N'NIDX_TempA_Report2'	, 0			, 0				, 0					, 0				, N'TransactionUtcDt ASC'	, NULL				, 0			, NULL				, 90			    , DEFAULT		, DEFAULT						, DEFAULT						, DEFAULT			, DEFAULT			, DEFAULT			, DEFAULT				, DEFAULT				, 'NONE'				, 'PRIMARY'		, NULL				)");
+            this.sqlHelper.Execute($@"INSERT INTO DDI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		        ,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+                                                                VALUES	  (	'{DatabaseName}', N'dbo'		, N'TempA'	, N'NIDX_TempA_Report2'	, 0			        , 0				        , 0					        , 0				        , N'TransactionUtcDt ASC'	, NULL				        , 0			        , NULL				        , 90			            , DEFAULT		        , DEFAULT						        , DEFAULT						        , DEFAULT			        , DEFAULT			        , DEFAULT			        , DEFAULT				        , DEFAULT				        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
         private void CreatePKTempB()
         {
-            this.sqlHelper.Execute(@"ALTER TABLE dbo.TempB ADD CONSTRAINT PK_TempB PRIMARY KEY NONCLUSTERED (
+            this.sqlHelper.Execute($@"USE {DatabaseName} ALTER TABLE dbo.TempB ADD CONSTRAINT PK_TempB PRIMARY KEY NONCLUSTERED (
                                         TempBId ASC
                                     ) WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 
-            this.sqlHelper.Execute(@"INSERT INTO DDI.IndexesRowStore    (	SchemaName	,TableName	,IndexName		,IsUnique	,IsPrimaryKey	, IsUniqueConstraint, IsClustered	,KeyColumnList	    ,IncludedColumnList	,IsFiltered ,FilterPredicate	,[Fillfactor]	    ,OptionPadIndex ,OptionStatisticsNoRecompute	,OptionStatisticsIncremental	,OptionIgnoreDupKey ,OptionResumable	,OptionMaxDuration	,OptionAllowRowLocks	,OptionAllowPageLocks	,OptionDataCompression	, NewStorage	, PartitionColumn	)
-                                                                VALUES	    (	N'dbo'		, N'TempB'	, N'PK_TempB'	, 1			, 1				, 0					, 0				, N'TempBId ASC'    , NULL				, 0			, NULL				, 90			    , DEFAULT		, DEFAULT						, DEFAULT						, DEFAULT			, DEFAULT			, DEFAULT			, DEFAULT				, DEFAULT				, 'NONE'				, 'PRIMARY'		, NULL				)");
+            this.sqlHelper.Execute($@"INSERT INTO DDI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+                                                                VALUES	  (	'{DatabaseName}', N'dbo'		, N'TempB'	, N'PK_TempB'	, 1			        , 1				        , 0					        , 0				        , N'TempBId ASC'            , NULL				        , 0			        , NULL				        , 90			            , DEFAULT		        , DEFAULT						        , DEFAULT						        , DEFAULT			        , DEFAULT			        , DEFAULT			        , DEFAULT				        , DEFAULT				        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
         private void CreateNCCITempAReport()
         {
-            this.sqlHelper.Execute(@"CREATE NONCLUSTERED COLUMNSTORE INDEX [NCCI_TempA_Report] ON dbo.TempA
+            this.sqlHelper.Execute($@"USE {DatabaseName} CREATE NONCLUSTERED COLUMNSTORE INDEX [NCCI_TempA_Report] ON dbo.TempA
                                     (
 	                                    TransactionUtcDt
                                     )WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)");
 
-            this.sqlHelper.Execute(@"INSERT [Utility].[IndexesColumnStore]  ([SchemaName]	, [TableName]   , [IndexName]			, [IsClustered]	, [ColumnList]			, [IsFiltered]	, [FilterPredicate]	, [OptionDataCompression]	, [OptionCompressionDelay]	, NewStorage    , PartitionColumn		) 
-                                                                    VALUES	(N'dbo'			, N'TempA'	    , N'NCCI_TempA_Report'	, 0				, N'TransactionUtcDt'	, 0				, NULL				, N'COLUMNSTORE'			, 0							, 'PRIMARY'	    , NULL					)");
+            this.sqlHelper.Execute($@"INSERT [DDI].[IndexesColumnStore]  (DatabaseName, [SchemaName]	, [TableName]   , [IndexName]			, [IsClustered_Desired]	, [ColumnList_Desired]			, [IsFiltered_Desired]	, [FilterPredicate_Desired]	, [OptionDataCompression_Desired]	, [OptionDataCompressionDelay_Desired]	, Storage_Desired    , PartitionColumn_Desired		) 
+                                                                    VALUES	('{DatabaseName}', N'dbo'			, N'TempA'	    , N'NCCI_TempA_Report'	, 0				        , N'TransactionUtcDt'	        , 0				        , NULL				        , N'COLUMNSTORE'			        , 0							        , 'PRIMARY'	         , NULL					)");
         }
 
         private void CreateCCITempBReport()
         {
-            this.sqlHelper.Execute(@"CREATE CLUSTERED COLUMNSTORE INDEX CCI_TempB_Report     ON dbo.TempB          
+            this.sqlHelper.Execute($@"USE {DatabaseName} CREATE CLUSTERED COLUMNSTORE INDEX CCI_TempB_Report     ON dbo.TempB          
                                     WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, MAXDOP = 0, DATA_COMPRESSION = COLUMNSTORE) ");
 
-            this.sqlHelper.Execute(@"INSERT [Utility].[IndexesColumnStore]  ([SchemaName]	, [TableName]   , [IndexName]			, [IsClustered]	, [ColumnList]			, [IsFiltered]	, [FilterPredicate]	, [OptionDataCompression]	, [OptionCompressionDelay]	, NewStorage    , PartitionColumn		) 
-                                                                    VALUES	(N'dbo'			, N'TempB'		, N'CCI_TempB_Report'	, 1				, NULL					, 0				, NULL				, N'COLUMNSTORE'			, 0							, 'PRIMARY'	    , NULL					)");
+            this.sqlHelper.Execute($@"INSERT [DDI].[IndexesColumnStore]  (DatabaseName, [SchemaName]	, [TableName]   , [IndexName]			, [IsClustered_Desired]	, [ColumnList_Desired]			, [IsFiltered_Desired]	, [FilterPredicate_Desired]	, [OptionDataCompression_Desired]	, [OptionDataCompressionDelay_Desired]	, Storage_Desired    , PartitionColumn_Desired		) 
+                                                                 VALUES	('{DatabaseName}', N'dbo'		, N'TempB'		, N'CCI_TempB_Report'	, 1				, NULL					, 0				, NULL				, N'COLUMNSTORE'			, 0							, 'PRIMARY'	    , NULL					)");
         }
     }
 }

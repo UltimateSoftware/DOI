@@ -29,13 +29,13 @@ namespace Reporting.Ingestion.Integration.Tests.Database
        [SetUp]
         public void Setup()
         {
-            this.sqlHelper.Execute($"EXEC Utility.spDDI_RefreshMetadata_SystemSettings");
+            this.sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_3_DDISettings");
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            this.sqlHelper.Execute($"EXEC Utility.spRefreshMetadata_BusinessHoursSchedule");
+            this.sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database
 
         private void AssertScheduleIsAsExpected(List<BusinessHoursScheduleResult> actualSchedules)
         {
-            Assert.AreEqual(this.expectedSchedules.Count, actualSchedules.Count, $"Failure: Expecting {this.expectedSchedules.Count} records in utility.BusinessHoursSchedule table.");
+            Assert.AreEqual(this.expectedSchedules.Count, actualSchedules.Count, $"Failure: Expecting {this.expectedSchedules.Count} records in DDI.BusinessHoursSchedule table.");
 
             this.expectedSchedules.Sort();
             actualSchedules.Sort();
@@ -57,7 +57,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database
                 foreach (var expected in this.expectedSchedules)
                 {
                     itr.MoveNext();
-                    Assert.AreEqual(expected, itr.Current, "Failure: Unexpected row found in utility.BusinessHoursSchedule table.");
+                    Assert.AreEqual(expected, itr.Current, "Failure: Unexpected row found in DDI.BusinessHoursSchedule table.");
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database
                 new SqlCommand(
                     @"   Select 
                                 DayOfWeekId, DayOfWeekName, StartUtcMilitaryTime, IsBusinessHours
-                                From Utility.BusinessHoursSchedule "));
+                                From DDI.BusinessHoursSchedule "));
             var result = new List<BusinessHoursScheduleResult>();
             foreach (var row in rows)
             {

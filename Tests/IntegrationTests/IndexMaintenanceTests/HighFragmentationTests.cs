@@ -34,7 +34,7 @@ namespace DDI.Tests.Integration
         public void OneTimeTearDown()
         {
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            this.sqlHelper.Execute($"EXEC Utility.spDDI_RefreshMetadata_SystemSettings");
+            this.sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_3_DDISettings");
         }
 
         [SetUp]
@@ -53,7 +53,7 @@ namespace DDI.Tests.Integration
         public void HighFragmentationShouldTriggerAlterIndexRebuild(int minimumNumPages)
         {
             // Fragmentation needs to be above 30% and TotalPages is configurable
-            this.sqlHelper.Execute($"UPDATE dbo.SystemSettings SET SettingValue = {minimumNumPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
+            this.sqlHelper.Execute($"UPDATE DDI.DDISettings SET SettingValue = {minimumNumPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
             IndexView indexToReorganize = null;
             var watch = Stopwatch.StartNew();
 

@@ -33,7 +33,7 @@ AS
 		@Debug = 1
 */
 BEGIN TRY 
-	DECLARE @SQL NVARCHAR(MAX) = ''
+	DECLARE @SQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
 
 	SELECT @SQL += '
 IF EXISTS(  SELECT ''True''

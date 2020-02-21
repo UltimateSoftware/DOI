@@ -22,14 +22,14 @@ namespace DDI.Tests.Integration
         public void OneTimeSetUp()
         {
             // set schedule table to Non Business hours so that job can run
-            this.sqlHelper.Execute("UPDATE Utility.BusinessHoursSchedule SET IsBusinessHours = 0");
+            this.sqlHelper.Execute("UPDATE DDI.BusinessHoursSchedule SET IsBusinessHours = 0");
         }
 
         [OneTimeTearDown]
         public void OneTimeTeardown()
         {
             // restore schedule table to original settings
-            this.sqlHelper.Execute("EXEC Utility.spRefreshMetadata_BusinessHoursSchedule");
+            this.sqlHelper.Execute("EXEC DDI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
     }
 }

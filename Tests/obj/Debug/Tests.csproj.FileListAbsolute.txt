@@ -248,3 +248,4 @@ C:\Projects\ddi\Tests\bin\Debug\YamlDotNet.xml
 C:\Projects\ddi\Tests\obj\Debug\Tests.csproj.CopyComplete
 C:\Projects\ddi\Tests\obj\Debug\DDI.Tests.dll
 C:\Projects\ddi\Tests\obj\Debug\DDI.Tests.pdb
+C:\Projects\ddi\Tests\obj\Debug\Tests.csprojAssemblyReference.cache

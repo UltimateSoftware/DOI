@@ -30,7 +30,7 @@ namespace DDI.Tests.Integration
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
             this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(sqlHelper);
             this.tempARepository = new TempARepository(sqlHelper);
-            this.sqlHelper.Execute($"UPDATE dbo.SystemSettings SET SettingValue = {MinimumIndexPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
+            this.sqlHelper.Execute($"UPDATE DDI.DDISettings SET SettingValue = {MinimumIndexPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
 
             this.dataDrivenIndexTestHelper.CreateIndex("NIDX_TempA_Report");
             var watch = Stopwatch.StartNew();
@@ -41,7 +41,7 @@ namespace DDI.Tests.Integration
                 this.dataDrivenIndexTestHelper.AddRowsToTempA(700);
 
                 var indexName = "NIDX_TempA_Report";
-                var minimumPageSize = sqlHelper.ExecuteScalar<int>("SELECT CAST(SettingValue AS INT) FROM dbo.SystemSettings WHERE SettingName = 'MinNumPagesForIndexDefrag'");
+                var minimumPageSize = sqlHelper.ExecuteScalar<int>("SELECT CAST(SettingValue AS INT) FROM DDI.DDISettings WHERE SettingName = 'MinNumPagesForIndexDefrag'");
 
                 if (this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Exists(i => i.IndexFragmentation >= MinimumFragmentation && i.IndexFragmentation < MaximumFragmentation && i.TotalPages > minimumPageSize && i.IndexName == indexName))
                 {
@@ -57,7 +57,7 @@ namespace DDI.Tests.Integration
         public void OneTimeTearDown()
         {
             sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            sqlHelper.Execute($"EXEC Utility.spDDI_RefreshMetadata_SystemSettings");
+            sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_3_DDISettings");
         }
 
         [SetUp]
@@ -82,7 +82,7 @@ namespace DDI.Tests.Integration
             // Update property
             if (!string.IsNullOrEmpty(propertyName))
             {
-                sqlHelper.Execute($"UPDATE Utility.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
+                sqlHelper.Execute($"UPDATE DDI.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
                 indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.IndexFragmentation >= MinimumFragmentation && i.TotalPages > MinimumIndexPages && i.IndexName == indexName);
             }
 

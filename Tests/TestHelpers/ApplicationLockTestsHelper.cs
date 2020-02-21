@@ -1,87 +1,98 @@
 ﻿using NUnit.Framework;
 using DDI.Tests.TestHelpers;
+using MongoDB.Driver;
 
 namespace DDI.Tests.Integration.Tests.TablePartitioning
 {
     public class ApplicationLockTestsHelper
     {
-        public static string GetApplicationLockSql()
+        public static string GetApplicationLockSql(string databaseName)
         {
-            return @"
-                EXEC Utility.spRefreshIndexStructures_GetApplicationLock
+            return $@"
+                EXEC DDI.spRun_GetApplicationLock
+                    @DatabaseName = '{databaseName}',
                     @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
                     @IsOnlineOperation = 1,
                     @LockTimeout = 1000";
         }
-        public static string ReleaseApplicationLockSql()
+        public static string ReleaseApplicationLockSql(string databaseName)
         {
-            return @"
-                EXEC Utility.spRefreshIndexStructures_ReleaseApplicationLock
+            return $@"
+                EXEC DDI.spRun_ReleaseApplicationLock
+                    @DatabaseName = '{databaseName}',
                     @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
                     @IsOnlineOperation = 1";
         }
 
-        public static string IsAppLockGrantedInSysDmTranLocks()
+        public static string IsAppLockGrantedInSysDmTranLocks(string databaseName)
         {
-            return @"
+            return $@"
                     SELECT ISNULL(( SELECT 1
-			                        FROM   sys.dm_tran_locks
+			                        FROM   {databaseName}.sys.dm_tran_locks
 			                        WHERE  resource_type = 'APPLICATION'
 				                        AND request_mode = 'X'
 				                        AND request_status = 'GRANT'
                                         AND request_owner_type = 'SESSION'
-				                        AND resource_description LIKE '%:\[RefreshIndexStructures\]:%' ESCAPE '\'
+				                        AND resource_description LIKE '%:\[\]:%' ESCAPE '\'
                                         AND request_reference_count = 1), 0)";
         }
 
-        public static string VerifyThatAppLockGetWasLogged()
+        public static string VerifyThatAppLockGetWasLogged(string databaseName)
         {
-            return @"
+            return $@"
                     SELECT ISNULL(( SELECT TOP 1 1
-                                    FROM Utility.RefreshIndexStructuresLog
-                                    WHERE IndexOperation = 'Get Application Lock'
+                                    FROM DDI.Log
+                                    WHERE DatabaseName = {databaseName}
+                                        AND IndexOperation = 'Get Application Lock'
                                         AND RunStatus = 'Info'
                                         AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'), 0)";
         }
-        public static string VerifyThatAppLockReleaseWasLogged()
+        public static string VerifyThatAppLockReleaseWasLogged(string databaseName)
         {
-            return @"
+            return $@"
                     SELECT ISNULL(( SELECT TOP 1 1
-                                    FROM Utility.RefreshIndexStructuresLog
-                                    WHERE IndexOperation = 'Release Application Lock'
+                                    FROM DDI.Log
+                                    WHERE DatabaseName = {databaseName}
+                                        AND IndexOperation = 'Release Application Lock'
                                         AND RunStatus = 'Info'
                                         AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'), 0)";
         }
 
-        public static string IsAppLockGrantableInAppLock_Test()
+        public static string IsAppLockGrantableInAppLock_Test(string databaseName)
         {
             return 
-                @"SELECT APPLOCK_TEST('dbo', 'RefreshIndexStructures', 'Exclusive', 'Session')";
+                $@" USE {databaseName}
+                    SELECT APPLOCK_TEST('dbo', '', 'Exclusive', 'Session')
+                    USE DDI";
         }
-        public static string DoesLogHaveErrors()
+        public static string DoesLogHaveErrors(string databaseName)
         {
-            return @"
+            return $@"
                     SELECT ISNULL(( SELECT 1
-                                    FROM Utility.RefreshIndexStructuresLog
-                                    WHERE RunStatus = 'Error'
+                                    FROM DDI.Log
+                                    WHERE DatabaseName = {databaseName}
+                                        AND RunStatus = 'Error'
                                         AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'), 0)";
         }
 
-        public static string RunAppLockStatementsThroughQueue(int isOnlineOperation)
+        public static string RunAppLockStatementsThroughQueue(int isOnlineOperation, string databaseName)
         {
             return $@"
             DECLARE @GetApplicationLockSQL      NVARCHAR(300) = '
-                            EXEC Utility.spRefreshIndexStructures_GetApplicationLock
+                            EXEC DDI.spRun_GetApplicationLock
+                                @DatabaseName = '{databaseName}',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation},
                                 @LockTimeout = 1000',
 
         			@ReleaseApplicationLockSQL	NVARCHAR(300) = '
-                            EXEC Utility.spRefreshIndexStructures_ReleaseApplicationLock
+                            EXEC DDI.spRun_ReleaseApplicationLock
+                                @DatabaseName = '{databaseName}',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation}'
 
-            EXEC Utility.spRefreshIndexStructuresQueueInsert
+            EXEC DDI.spQueueInsert
+                @DatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
                 @CurrentIndexName = 'N/A', 
@@ -98,7 +109,8 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
                 @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
                 @ExitTableLoopOnError = 1
 
-            EXEC Utility.spRefreshIndexStructuresQueueInsert
+            EXEC DDI.spQueueInsert
+                @DatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
                 @CurrentIndexName = 'N/A', 
@@ -116,15 +128,17 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
                 @ExitTableLoopOnError = 1";
         }
 
-        public static string RunAppLockStatementsThroughQueueWithError(int isOnlineOperation)
+        public static string RunAppLockStatementsThroughQueueWithError(int isOnlineOperation, string databaseName)
         {
             return $@"
             DECLARE @GetApplicationLockSQL      NVARCHAR(300) = '
-                            EXEC Utility.spRefreshIndexStructures_ReleaseApplicationLock
+                            EXEC DDI.spRun_ReleaseApplicationLock
+                                @DatabaseName = '{databaseName}',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation}'
 
-            EXEC Utility.spRefreshIndexStructuresQueueInsert
+            EXEC DDI.spQueueInsert
+                @DatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
                 @CurrentIndexName = 'N/A', 
@@ -142,27 +156,27 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
                 @ExitTableLoopOnError = 1";
         }
 
-        public static string KillSessionHoldingAppLock()
+        public static string KillSessionHoldingAppLock(string databaseName)
         {
-            return @"  
+            return $@"  
                 DECLARE @SQL VARCHAR(100) = ''
 
                 SELECT @SQL += 'KILL ' + CAST(request_session_id AS VARCHAR(5))
-                FROM   sys.dm_tran_locks
+                FROM   {databaseName}.sys.dm_tran_locks
                 WHERE  resource_type = 'APPLICATION'
 	                AND request_mode = 'X'
 	                AND request_status = 'GRANT'
-	                AND resource_description LIKE '%:\[RefreshIndexStructures\]:%' ESCAPE '\'
+	                AND resource_description LIKE '%:\[\]:%' ESCAPE '\'
 
                 EXEC(@SQL)";
         }
 
-        public static void AssertAppLockOperation(string operationType, bool shouldSucceed, int isAppLockGrantableInAppLock_Test_Expected, int isAppLockGrantableInAppLock_Test_Actual, int isAppLockGrantedInSysDmTranLocks_Expected, string message_Expected, string message_Actual, int spid)
+        public static void AssertAppLockOperation(string operationType, bool shouldSucceed, int isAppLockGrantableInAppLock_Test_Expected, int isAppLockGrantableInAppLock_Test_Actual, int isAppLockGrantedInSysDmTranLocks_Expected, string message_Expected, string message_Actual, int spid, string databaseName)
         {
             string whichMessageToUse = shouldSucceed ? "Info" : "Error";
             string whichColumnToSelect = shouldSucceed ? "InfoMessage" : "ErrorText";
 
-            var isAppLockGrantedInSysDmTranLocks_Actual = new SqlHelper().ExecuteScalar<int>(IsAppLockGrantedInSysDmTranLocks());
+            var isAppLockGrantedInSysDmTranLocks_Actual = new SqlHelper().ExecuteScalar<int>(IsAppLockGrantedInSysDmTranLocks("PaymentReporting"));
 
             //Assert if lock is grant-able in APPLOCK_TEST
             Assert.AreEqual(isAppLockGrantableInAppLock_Test_Expected, isAppLockGrantableInAppLock_Test_Actual);
@@ -176,8 +190,9 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
             //Assert if message was logged
             var wasAppLockOperationLogged = new SqlHelper().ExecuteScalar<int>($@"
                                                                         SELECT ISNULL((SELECT TOP 1 1
-                                                                        FROM Utility.RefreshIndexStructuresLog
-                                                                        WHERE IndexOperation = '{operationType} Application Lock'
+                                                                        FROM DDI.Log
+                                                                        WHERE DatabaseName = '{databaseName}'
+                                                                            AND IndexOperation = '{operationType} Application Lock'
                                                                             AND RunStatus = '{whichMessageToUse}'
                                                                             AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'
                                                                             AND {whichColumnToSelect} LIKE '%{message_Expected}%'), 0)");

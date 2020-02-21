@@ -16,7 +16,7 @@ namespace DDI.Tests.TestHelpers
     {
         public string GetConnectionString()
         {
-            return @"Provider = SQLOLEDB.1; Password = Password01; Persist Security Info = True; User ID = sa; Initial Catalog = DDI; Data Source =.";
+            return @"server=localhost;database=DDI;Trusted_Connection = True;";
         }
 
         public int Execute(SqlCommand command)

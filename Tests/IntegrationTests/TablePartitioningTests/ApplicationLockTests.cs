@@ -32,7 +32,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
         [SetUp]
         public void Setup()
         {
-            sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock());
+            sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock("PaymentReporting"));
             connection = new SqlConnection(sqlHelper.GetConnectionString());
             connectionInfoMessage = String.Empty;
 
@@ -41,22 +41,22 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
                 connectionInfoMessage += e.Message;
             };
             connection.Open();
-            sqlHelper.Execute("TRUNCATE TABLE Utility.RefreshIndexStructuresLog");
-            sqlHelper.Execute("TRUNCATE TABLE Utility.RefreshIndexStructuresQueue");
+            sqlHelper.Execute("TRUNCATE TABLE DDI.Log");
+            sqlHelper.Execute("TRUNCATE TABLE DDI.Queue");
         }
 
         [TearDown]
         public void TearDown()
         {
-            sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock());
+            sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock("PaymentReporting"));
             if (connection != null)
             {
                 connection.Close();
                 connection.Dispose();
             }
-            sqlHelper.Execute("TRUNCATE TABLE Utility.RefreshIndexStructuresLog");
-            sqlHelper.Execute("TRUNCATE TABLE Utility.RefreshIndexStructuresQueue");
-            sqlHelper.Execute("EXEC Utility.spRefreshMetadata_BusinessHoursSchedule");
+            sqlHelper.Execute("TRUNCATE TABLE DDI.Log");
+            sqlHelper.Execute("TRUNCATE TABLE DDI.Queue");
+            sqlHelper.Execute("EXEC DDI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
 
         [Test]
@@ -116,82 +116,96 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
         }
 
         [Test]
-        public void RunApplicationLocksThroughQueue()
+        public void RunApplicationLocksThroughQueue(string databaseName)
         {
             //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(1));
+            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(1, "PaymentReporting"));
             
             //Run Queue
-            sqlHelper.Execute("EXEC Utility.spRefreshIndexStructures_Run @OnlineOperations = 1");
+            sqlHelper.Execute($@"   EXEC DDI.spRun 
+                                        @DatabaseName = '{databaseName}',
+                                        @OnlineOperations = 1");
 
             //Assertions
             //Start, info, and finish messages for Get
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Get Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Get Application Lock' AND RunStatus = 'Info' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Get Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Info' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
             //Start, info, and finish messages for Release
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Release Application Lock' AND RunStatus = 'Info' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Info' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
             //No error messages
-            Assert.AreEqual(0, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(0, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
         }
 
         [Test]
-        public void RunApplicationLocksThroughQueueWithError()
+        public void RunApplicationLocksThroughQueueWithError(string databaseName)
         {
             var spid = sqlHelper.ExecuteScalar<int>(connection, "SELECT CAST(@@SPID AS INT)");
 
             //Populate Queue
-            sqlHelper.Execute(connection, ApplicationLockTestsHelper.RunAppLockStatementsThroughQueueWithError(1));
+            sqlHelper.Execute(connection, ApplicationLockTestsHelper.RunAppLockStatementsThroughQueueWithError(1, "PaymentReporting"));
 
             //Run Queue
-            sqlHelper.Execute(connection, "EXEC Utility.spRefreshIndexStructures_Run @OnlineOperations = 1");
+            sqlHelper.Execute($@"   EXEC DDI.spRun 
+                                        @DatabaseName = '{databaseName}',
+                                        @OnlineOperations = 1");
 
             //Assertions
             //Start, info, and finish messages for Release
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73' AND ErrorText LIKE '%Unable to release Application Lock.  There is no lock to release for this SPID ({spid}).  The lock is currently being held by no one.%'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>(@"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73' AND ErrorText LIKE '%Unable to release Application Lock.  There is no lock to release for this SPID ({spid}).  The lock is currently being held by no one.%'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
         }
 
         [Test]
-        public void KilledByBusinessHoursCheckBeforeRun()
+        public void KilledByBusinessHoursCheckBeforeRun(string databaseName)
         {
             //Make sure Business Hours are set so that it will fail and kill the job.
-            sqlHelper.Execute("UPDATE Utility.BusinessHoursSchedule SET IsBusinessHours = 1");
+            sqlHelper.Execute($@"   UPDATE DDI.BusinessHoursSchedule 
+                                    SET IsBusinessHours = 1 
+                                    WHERE DatabaseName = '{databaseName}'");
 
             //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0));
+            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, "PaymentReporting"));
 
             //Run Queue
-            sqlHelper.Execute("EXEC Utility.spRefreshIndexStructures_Run @OnlineOperations = 0");
+            sqlHelper.Execute($@"   EXEC DDI.spRun 
+                                        @DatabaseName = '{databaseName}',
+                                        @OnlineOperations = 0");
 
             //Assert
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>("SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE RunStatus = 'Error' AND ErrorText = 'Stopping Offline DDI, before run started.  Business hours are here.'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND RunStatus = 'Error' AND ErrorText = 'Stopping Offline DDI, before run started.  Business hours are here.'"));
         }
 
         [Test]
-        public void KilledByBusinessHoursCheckDuringRun()
+        public void KilledByBusinessHoursCheckDuringRun(string databaseName)
         {
             //Make sure Business Hours are set so that it will start the run.
-            sqlHelper.Execute("UPDATE Utility.BusinessHoursSchedule SET IsBusinessHours = 0");
+            sqlHelper.Execute($@"   UPDATE DDI.BusinessHoursSchedule 
+                                    SET IsBusinessHours = 0
+                                    WHERE DatabaseName = '{databaseName}'");
+
 
             //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0));
+            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, "PaymentReporting"));
 
             //insert command in queue to update business hours
-            sqlHelper.Execute(@"EXEC Utility.spDDI_RefreshIndexStructures_InsertSQLCommand
+            sqlHelper.Execute($@"EXEC DDI.spInsertSQLCommand
+                                    @DatabaseName = '{databaseName}',
                                     @ParentTableName = 'N/A',
                                     @ParentSchemaName = 'N/A',
                                     @SeqNoJustAfterSQLCommand = 2,
-                                    @SQLCommand = 'UPDATE Utility.BusinessHoursSchedule SET IsBusinessHours = 1'");
+                                    @SQLCommand = 'UPDATE DDI.BusinessHoursSchedule SET IsBusinessHours = 1 WHERE DatabaseName = '{databaseName}'");
 
             //Run Queue
-            sqlHelper.Execute("EXEC Utility.spRefreshIndexStructures_Run @OnlineOperations = 0");
+            sqlHelper.Execute($@"   EXEC DDI.spRun 
+                                        @DatabaseName = '{databaseName}',
+                                        @OnlineOperations = 0");
 
             //Assert
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>("SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE RunStatus = 'Error' AND ErrorText = 'Stopping Offline DDI, after run started.  Business hours are here.'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND RunStatus = 'Error' AND ErrorText = 'Stopping Offline DDI, after run started.  Business hours are here.'"));
         }
 
         private void ReleaseLock(int spId, bool shouldSucceed, byte isAppLockGrantedInSysDmTranLocksExpected, byte isAppLockGrantableInAppLockTestExpected, string messageExpected)
@@ -200,11 +214,11 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
             var operationType = "Release";
 
             this.connectionInfoMessage = "";
-            sqlHelper.Execute(connection, ApplicationLockTestsHelper.ReleaseApplicationLockSql());
+            sqlHelper.Execute(connection, ApplicationLockTestsHelper.ReleaseApplicationLockSql("PaymentReporting"));
 
             //Assert
             var messageActual = this.connectionInfoMessage;
-            var isAppLockGrantableInAppLockTestActual = sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test());
+            var isAppLockGrantableInAppLockTestActual = sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test("PaymentReporting"));
             ApplicationLockTestsHelper.AssertAppLockOperation(
                 operationType,
                 shouldSucceed,
@@ -213,7 +227,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
                 isAppLockGrantedInSysDmTranLocksExpected,
                 messageExpected,
                 messageActual,
-                spId);
+                spId,
+                "PaymentReporting");
         }
         private void GetLock(SqlConnection connection, int spId, bool shouldSucceed, byte isAppLockGrantedInSysDmTranLocksExpected, byte isAppLockGrantableInAppLockTestExpected, string messageExpected)
         {
@@ -221,12 +236,12 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
             var operationType = "Get";
 
             this.connectionInfoMessage = "";
-            sqlHelper.Execute(connection, ApplicationLockTestsHelper.GetApplicationLockSql());
+            sqlHelper.Execute(connection, ApplicationLockTestsHelper.GetApplicationLockSql("PaymentReporting"));
 
             //Assert
             var messageActual = this.connectionInfoMessage;
             var isAppLockGrantableInAppLockTestActual =
-                sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test());
+                sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test("PaymentReporting"));
             ApplicationLockTestsHelper.AssertAppLockOperation(
                 operationType,
                 shouldSucceed,
@@ -235,19 +250,20 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
                 isAppLockGrantedInSysDmTranLocksExpected,
                 messageExpected,
                 messageActual,
-                spId);
+                spId,
+                "PaymentReporting");
         }
         private void GetLock(int spId, bool shouldSucceed, byte isAppLockGrantedInSysDmTranLocksExpected, byte isAppLockGrantableInAppLockTestExpected, string messageExpected)
         {
             //Get Lock
             var operationType = "Get";
 
-            string infoMessage = sqlHelper.ExecuteGetInfoMessageOnly(ApplicationLockTestsHelper.GetApplicationLockSql());
+            string infoMessage = sqlHelper.ExecuteGetInfoMessageOnly(ApplicationLockTestsHelper.GetApplicationLockSql("PaymentReporting"));
 
             //Assert
             var messageActual = infoMessage;
             var isAppLockGrantableInAppLockTestActual =
-                sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test());
+                sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test("PaymentReporting"));
             ApplicationLockTestsHelper.AssertAppLockOperation(
                 operationType,
                 shouldSucceed,
@@ -256,13 +272,14 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.T
                 isAppLockGrantedInSysDmTranLocksExpected,
                 messageExpected,
                 messageActual,
-                spId);
+                spId,
+                "PaymentReporting");
         }
         private void CheckForGrantableLock()
         {
             //Lock should be grant-able
             var isAppLockGrantableInAppLockTest =
-                sqlHelper.ExecuteScalar<int>(connection, ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test());
+                sqlHelper.ExecuteScalar<int>(connection, ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test("PaymentReporting"));
             Assert.AreEqual(1, isAppLockGrantableInAppLockTest);
         }
     }

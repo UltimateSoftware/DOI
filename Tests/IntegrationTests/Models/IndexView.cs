@@ -8,6 +8,8 @@ namespace DDI.Tests.Integration.Models
 {
     public class IndexView
     {
+        public string DatabaseName { get; set; }
+
         public string SchemaName { get; set; }
 
         public string TableName { get; set; }

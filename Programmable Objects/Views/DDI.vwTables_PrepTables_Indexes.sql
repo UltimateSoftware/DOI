@@ -12,6 +12,7 @@ GO
 
 
 
+
 CREATE   VIEW [DDI].[vwTables_PrepTables_Indexes]
 
 AS
@@ -20,13 +21,6 @@ AS
 	SELECT	PrepTableIndexCreateSQL
 	FROM  DDI.vwTables_PrepTables_Indexes
 	WHERE preptableindexname = 'CDX_Bai2BankTransactions_NewPartitionedTableFromPrep'
-
-select * from utility.vwindexes where tablename = 'JournalEntries'
-select * from ddi.vwtables_preptables where tablename = 'journalentries'
-select * from paymentreporting.utility.fndatadrivenindexes_getpreptablesql()
-
-kill 56
-
 */ 
 
 SELECT  PT.DatabaseName, 
@@ -215,5 +209,6 @@ FROM DDI.vwTables_PrepTables PT
     INNER JOIN DDI.vwIndexes I ON I.DatabaseName = PT.DatabaseName
         AND I.SchemaName = PT.SchemaName
         AND I.TableName = PT.TableName
+
 
 GO

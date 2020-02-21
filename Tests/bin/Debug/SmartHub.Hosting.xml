@@ -2643,28 +2643,28 @@
             <param name="hash">The hash to convert.</param>
             <returns>Returns hash as a byte array.</returns>
         </member>
-        <member name="M:SmartHub.Hosting.Runtime.HttpInternalUtility.HtmlDecode(System.String)">
+        <member name="M:SmartHub.Hosting.Runtime.HttpInternalDDI.HtmlDecode(System.String)">
             <summary>
             Decodes an HTML-encoded string and returns the decoded string.
             </summary>
             <param name="s">The HTML string to decode. </param>
             <returns>The decoded text.</returns>
         </member>
-        <member name="M:SmartHub.Hosting.Runtime.HttpInternalUtility.HtmlDecode(System.String,System.IO.TextWriter)">
+        <member name="M:SmartHub.Hosting.Runtime.HttpInternalDDI.HtmlDecode(System.String,System.IO.TextWriter)">
             <summary>
             Decodes an HTML-encoded string and sends the resulting output to a TextWriter output stream.
             </summary>
             <param name="s">The HTML string to decode</param>
             <param name="output">The TextWriter output stream containing the decoded string. </param>
         </member>
-        <member name="M:SmartHub.Hosting.Runtime.HttpInternalUtility.HtmlEncode(System.String)">
+        <member name="M:SmartHub.Hosting.Runtime.HttpInternalDDI.HtmlEncode(System.String)">
             <summary>
             HTML-encodes a string and returns the encoded string.
             </summary>
             <param name="s">The text string to encode. </param>
             <returns>The HTML-encoded text.</returns>
         </member>
-        <member name="M:SmartHub.Hosting.Runtime.HttpInternalUtility.HtmlEncode(System.String,System.IO.TextWriter)">
+        <member name="M:SmartHub.Hosting.Runtime.HttpInternalDDI.HtmlEncode(System.String,System.IO.TextWriter)">
             <summary>
             HTML-encodes a string and sends the resulting output to a TextWriter output stream.
             </summary>

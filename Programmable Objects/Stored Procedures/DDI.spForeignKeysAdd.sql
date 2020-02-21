@@ -9,6 +9,7 @@ GO
 
 
 CREATE   PROCEDURE [DDI].[spForeignKeysAdd]
+    @DatabaseName           SYSNAME,
 	@ReferencedSchemaName	SYSNAME = NULL,
 	@ReferencedTableName	SYSNAME = NULL,
 	@ParentSchemaName		SYSNAME = NULL,
@@ -20,6 +21,7 @@ AS
 
 /*
 	EXEC DDI.spForeignKeysAdd
+        @DatabaseName = 'PaymentReporting',
 		@ReferencedSchemaName = 'dbo',
 		@ReferencedTableName = 'PayGarnishments',
 		@Debug = 1
@@ -46,15 +48,17 @@ BEGIN TRY
     END
     
 	EXEC DDI.spForeignKeysDrop
+        @DatabaseName = @DatabaseName,
 		@ReferencedSchemaName = @ReferencedSchemaName,
 		@ReferencedTableName = @ReferencedTableName
 
-	DECLARE @AddFKsSQL VARCHAR(MAX) = ''
+	DECLARE @AddFKsSQL VARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
 
 	SELECT @AddFKsSQL += CASE WHEN @UseExistenceCheck = 1 THEN CreateFKWithExistenceCheckSQL ELSE CreateFKSQL END + CHAR(13) + CHAR(10)
 	--select *
 	FROM DDI.vwForeignKeys
-	WHERE ParentSchemaName <> 'DDI'
+	WHERE DatabaseName = @DatabaseName
+        AND ParentSchemaName <> 'DDI'
         AND ReferencedSchemaName <> 'DDI'
         AND ReferencedSchemaName = CASE WHEN @ReferencedSchemaName IS NOT NULL THEN @ReferencedSchemaName ELSE ReferencedSchemaName END
 		AND ReferencedTableName = CASE WHEN @ReferencedTableName IS NOT NULL THEN @ReferencedTableName ELSE ReferencedTableName END

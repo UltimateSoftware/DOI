@@ -13,17 +13,17 @@ AS
 DELETE DDI.DDISettings
 
 INSERT INTO DDI.DDISettings 
-         ( SettingName                                      , SettingValue )
-VALUES   ( 'LargeTableCutoffValue'                          , '1000')
-        ,( 'ReindexingMilitaryTimeToStopJob'                , '10:00:00.0000000') --this is in UTC
-        ,( 'DBFileInitialSizeMB'                            , '100') 
-        ,( 'DBFileGrowthMB'                                 , '10') 
-        ,( 'UTEBCP Filepath'                                , 'c:\tmp\user-management\utebcp\')
-        ,( 'DefaultStatsSampleSizePct'                      , '20') 
-        ,( 'FreeSpaceCheckerTestMultiplierForDataFiles'     , '1') 
-        ,( 'FreeSpaceCheckerTestMultiplierForLogFiles'      , '1') 
-        ,( 'FreeSpaceCheckerTestMultiplierForTempDBFiles'   , '1') 
-        ,( 'MinNumPagesForIndexDefrag'                      , '500') 
-        ,( 'FreeSpaceCheckerPercentBuffer'                  , '10') 
+         ( DatabaseName         , SettingName                                      , SettingValue )
+VALUES   ( 'PaymentReporting'   , 'LargeTableCutoffValue'                          , '1000')
+        ,( 'PaymentReporting'   , 'ReindexingMilitaryTimeToStopJob'                , '10:00:00.0000000') --this is in UTC
+        ,( 'PaymentReporting'   , 'DBFileInitialSizeMB'                            , '100') 
+        ,( 'PaymentReporting'   , 'DBFileGrowthMB'                                 , '10') 
+        ,( 'PaymentReporting'   , 'UTEBCP Filepath'                                , 'c:\tmp\user-management\utebcp\')
+        ,( 'PaymentReporting'   , 'DefaultStatsSampleSizePct'                      , '20') 
+        ,( 'PaymentReporting'   , 'FreeSpaceCheckerTestMultiplierForDataFiles'     , '1') 
+        ,( 'PaymentReporting'   , 'FreeSpaceCheckerTestMultiplierForLogFiles'      , '1') 
+        ,( 'PaymentReporting'   , 'FreeSpaceCheckerTestMultiplierForTempDBFiles'   , '1') 
+        ,( 'PaymentReporting'   , 'MinNumPagesForIndexDefrag'                      , '500') 
+        ,( 'PaymentReporting'   , 'FreeSpaceCheckerPercentBuffer'                  , '10') 
 
 GO

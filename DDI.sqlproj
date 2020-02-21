@@ -455,4 +455,10 @@
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\Utility.spDDI_GetIndexCreationProgress.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\007_BusinessHoursSchedule_Table.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_User_96_BusinessHoursSchedule.sql" />
+    <None Include="Programmable Objects\Views\DDI.vwBusinessHoursSchedule.sql" />
+    <None Include="Schema-Model\Tables\DDI.BusinessHoursSchedule.sql" />
+  </ItemGroup>
 </Project>

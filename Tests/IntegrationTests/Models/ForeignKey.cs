@@ -8,6 +8,8 @@ namespace DDI.Tests.Integration.Models
 {
     public class ForeignKey
     {
+        public string DatabaseName { get; set; }
+
         public string ParentSchemaName { get; set; }
 
         public string ParentTableName { get; set; }

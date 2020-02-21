@@ -53,13 +53,13 @@
             The build plan.
             </returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.TypeReflectionExtensions">
+        <member name="T:Microsoft.Practices.Unity.DDI.TypeReflectionExtensions">
             <summary>
             Provides extension methods to the <see cref="T:System.Type"/> class due to the introduction 
             of <see cref="T:System.Reflection.TypeInfo"/> class in the .NET for Windows Store apps.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.TypeReflectionExtensions.GetConstructor(System.Type,System.Type[])">
+        <member name="M:Microsoft.Practices.Unity.DDI.TypeReflectionExtensions.GetConstructor(System.Type,System.Type[])">
             <summary>
             Returns the constructor in <paramref name="type"/> that matches the specified constructor parameter types.
             </summary>
@@ -67,14 +67,14 @@
             <param name="constructorParameters">The constructor parameter types.</param>
             <returns>The constructor that matches the specified parameter types.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.TypeReflectionExtensions.GetMethodsHierarchical(System.Type)">
+        <member name="M:Microsoft.Practices.Unity.DDI.TypeReflectionExtensions.GetMethodsHierarchical(System.Type)">
             <summary>
             Returns the non-static declared methods of a type or its base types.
             </summary>
             <param name="type">The type to inspect</param>
             <returns>An enumerable of the <see cref="T:System.Reflection.MethodInfo"/> objects.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.TypeReflectionExtensions.GetMethodHierarchical(System.Type,System.String,System.Type[])">
+        <member name="M:Microsoft.Practices.Unity.DDI.TypeReflectionExtensions.GetMethodHierarchical(System.Type,System.String,System.Type[])">
             <summary>
             Returns the non-static method of a type or its based type.
             </summary>
@@ -83,14 +83,14 @@
             <param name="closedParameters">The (closed) parameter type signature of the method.</param>
             <returns>The discovered <see cref="T:System.Reflection.MethodInfo"/></returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.TypeReflectionExtensions.GetPropertiesHierarchical(System.Type)">
+        <member name="M:Microsoft.Practices.Unity.DDI.TypeReflectionExtensions.GetPropertiesHierarchical(System.Type)">
             <summary>
             Returns the declared properties of a type or its base types.
             </summary>
             <param name="type">The type to inspect</param>
             <returns>An enumerable of the <see cref="T:System.Reflection.PropertyInfo"/> objects.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.TypeReflectionExtensions.ParametersMatch(System.Reflection.ParameterInfo[],System.Type[])">
+        <member name="M:Microsoft.Practices.Unity.DDI.TypeReflectionExtensions.ParametersMatch(System.Reflection.ParameterInfo[],System.Type[])">
             <summary>
             Determines if the types in a parameter set ordinally matches the set of supplied types.
             </summary>
@@ -5059,12 +5059,12 @@
             Sequence of service instance objects.
             </returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.Guard">
+        <member name="T:Microsoft.Practices.Unity.DDI.Guard">
             <summary>
             A static helper class that includes various parameter checking routines.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Guard.ArgumentNotNull(System.Object,System.String)">
+        <member name="M:Microsoft.Practices.Unity.DDI.Guard.ArgumentNotNull(System.Object,System.String)">
             <summary>
             Throws <see cref="T:System.ArgumentNullException"/> if the given argument is null.
             </summary>
@@ -5072,7 +5072,7 @@
             <param name="argumentValue">Argument value to test.</param>
             <param name="argumentName">Name of the argument being tested.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Guard.ArgumentNotNullOrEmpty(System.String,System.String)">
+        <member name="M:Microsoft.Practices.Unity.DDI.Guard.ArgumentNotNullOrEmpty(System.String,System.String)">
             <summary>
             Throws an exception if the tested string argument is null or the empty string.
             </summary>
@@ -5081,7 +5081,7 @@
             <param name="argumentValue">Argument value to check.</param>
             <param name="argumentName">Name of argument being checked.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Guard.TypeIsAssignable(System.Type,System.Type,System.String)">
+        <member name="M:Microsoft.Practices.Unity.DDI.Guard.TypeIsAssignable(System.Type,System.Type,System.String)">
             <summary>
             Verifies that an argument type is assignable from the provided type (meaning
             interfaces are implemented, or classes exist in the base class hierarchy).
@@ -5090,7 +5090,7 @@
             <param name="assignmentValueType">The type of the value being assigned.</param>
             <param name="argumentName">Argument name.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Guard.InstanceIsAssignable(System.Type,System.Object,System.String)">
+        <member name="M:Microsoft.Practices.Unity.DDI.Guard.InstanceIsAssignable(System.Type,System.Object,System.String)">
             <summary>
             Verifies that an argument instance is assignable from the provided type (meaning
             interfaces are implemented, or classes exist in the base class hierarchy, or instance can be 
@@ -5654,33 +5654,33 @@
             Add the default ObjectBuilder strategies &amp; policies to the container.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.MethodReflectionHelper">
+        <member name="T:Microsoft.Practices.Unity.DDI.MethodReflectionHelper">
             <summary>
             Helper class to wrap common reflection stuff dealing with
             methods.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.MethodReflectionHelper.#ctor(System.Reflection.MethodBase)">
+        <member name="M:Microsoft.Practices.Unity.DDI.MethodReflectionHelper.#ctor(System.Reflection.MethodBase)">
             <summary>
-            Create a new <see cref="T:Microsoft.Practices.Unity.Utility.MethodReflectionHelper"/> instance that
+            Create a new <see cref="T:Microsoft.Practices.Unity.DDI.MethodReflectionHelper"/> instance that
             lets us do more reflection stuff on that method.
             </summary>
             <param name="method">The method to reflect on.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.MethodReflectionHelper.GetClosedParameterTypes(System.Type[])">
+        <member name="M:Microsoft.Practices.Unity.DDI.MethodReflectionHelper.GetClosedParameterTypes(System.Type[])">
             <summary>
             Given our set of generic type arguments, 
             </summary>
             <param name="genericTypeArguments">The generic type arguments.</param>
             <returns>An array with closed parameter types. </returns>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.MethodReflectionHelper.MethodHasOpenGenericParameters">
+        <member name="P:Microsoft.Practices.Unity.DDI.MethodReflectionHelper.MethodHasOpenGenericParameters">
             <summary>
             Returns true if any of the parameters of this method
             are open generics.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.MethodReflectionHelper.ParameterTypes">
+        <member name="P:Microsoft.Practices.Unity.DDI.MethodReflectionHelper.ParameterTypes">
             <summary>
             Return the <see cref="T:System.Type"/> of each parameter for this
             method.
@@ -5688,36 +5688,36 @@
             <returns>Sequence of <see cref="T:System.Type"/> objects, one for
             each parameter in order.</returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.Pair`2">
+        <member name="T:Microsoft.Practices.Unity.DDI.Pair`2">
             <summary>
             A helper class that encapsulates two different
             data items together into a a single item.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Pair`2.#ctor(`0,`1)">
+        <member name="M:Microsoft.Practices.Unity.DDI.Pair`2.#ctor(`0,`1)">
             <summary>
-            Create a new <see cref="T:Microsoft.Practices.Unity.Utility.Pair`2"/> containing
+            Create a new <see cref="T:Microsoft.Practices.Unity.DDI.Pair`2"/> containing
             the two values give.
             </summary>
             <param name="first">First value</param>
             <param name="second">Second value</param>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.Pair`2.First">
+        <member name="P:Microsoft.Practices.Unity.DDI.Pair`2.First">
             <summary>
             The first value of the pair.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.Pair`2.Second">
+        <member name="P:Microsoft.Practices.Unity.DDI.Pair`2.Second">
             <summary>
             The second value of the pair.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.Pair">
+        <member name="T:Microsoft.Practices.Unity.DDI.Pair">
             <summary>
             Container for a Pair helper method.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.Pair.Make``2(``0,``1)">
+        <member name="M:Microsoft.Practices.Unity.DDI.Pair.Make``2(``0,``1)">
             <summary>
             A helper factory method that lets users take advantage of type inference.
             </summary>
@@ -5725,22 +5725,22 @@
             <typeparam name="TSecondParameter">Type of second value.</typeparam>
             <param name="first">First value.</param>
             <param name="second">Second value.</param>
-            <returns>A new <see cref="T:Microsoft.Practices.Unity.Utility.Pair`2"/> instance.</returns>
+            <returns>A new <see cref="T:Microsoft.Practices.Unity.DDI.Pair`2"/> instance.</returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.ParameterMatcher">
+        <member name="T:Microsoft.Practices.Unity.DDI.ParameterMatcher">
             <summary>
             A utility class that handles the logic of matching parameter
             lists, so we can find the right constructor and method overloads.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.ParameterMatcher.#ctor(System.Collections.Generic.IEnumerable{Microsoft.Practices.Unity.InjectionParameterValue})">
+        <member name="M:Microsoft.Practices.Unity.DDI.ParameterMatcher.#ctor(System.Collections.Generic.IEnumerable{Microsoft.Practices.Unity.InjectionParameterValue})">
             <summary>
-            Create a new <see cref="T:Microsoft.Practices.Unity.Utility.ParameterMatcher"/> that will attempt to
+            Create a new <see cref="T:Microsoft.Practices.Unity.DDI.ParameterMatcher"/> that will attempt to
             match the given parameter types.
             </summary>
             <param name="parametersToMatch">Target parameters to match against.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.ParameterMatcher.Matches(System.Collections.Generic.IEnumerable{System.Type})">
+        <member name="M:Microsoft.Practices.Unity.DDI.ParameterMatcher.Matches(System.Collections.Generic.IEnumerable{System.Type})">
             <summary>
             Tests to see if the given set of types matches the ones
             we're looking for.
@@ -5748,33 +5748,33 @@
             <param name="candidate">parameter list to look for.</param>
             <returns>true if they match, false if they don't.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.ParameterMatcher.Matches(System.Collections.Generic.IEnumerable{System.Reflection.ParameterInfo})">
+        <member name="M:Microsoft.Practices.Unity.DDI.ParameterMatcher.Matches(System.Collections.Generic.IEnumerable{System.Reflection.ParameterInfo})">
             <summary>
             Tests to see if the given set of types matches the ones we're looking for.
             </summary>
             <param name="candidate">Candidate method signature to look for.</param>
             <returns>True if they match, false if they don't.</returns>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.ParameterReflectionHelper">
+        <member name="T:Microsoft.Practices.Unity.DDI.ParameterReflectionHelper">
             <summary>
             Another reflection helper class that has extra methods
             for dealing with ParameterInfo.
             </summary>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.ReflectionHelper">
+        <member name="T:Microsoft.Practices.Unity.DDI.ReflectionHelper">
             <summary>
             A small helper class to encapsulate details of the
             reflection API, particularly around generics.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.ReflectionHelper.#ctor(System.Type)">
+        <member name="M:Microsoft.Practices.Unity.DDI.ReflectionHelper.#ctor(System.Type)">
             <summary>
-            Create a new <see cref="T:Microsoft.Practices.Unity.Utility.ReflectionHelper"/> instance that
+            Create a new <see cref="T:Microsoft.Practices.Unity.DDI.ReflectionHelper"/> instance that
             lets you look at information about the given type.
             </summary>
             <param name="typeToReflect">Type to do reflection on.</param>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.ReflectionHelper.MethodHasOpenGenericParameters(System.Reflection.MethodBase)">
+        <member name="M:Microsoft.Practices.Unity.DDI.ReflectionHelper.MethodHasOpenGenericParameters(System.Reflection.MethodBase)">
             <summary>
             Test the given <see cref="T:System.Reflection.MethodBase"/> object, looking at
             the parameters. Determine if any of the parameters are
@@ -5783,7 +5783,7 @@
             <param name="method">The method to check.</param>
             <returns>True if any of the parameters are open generics. False if not.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.ReflectionHelper.GetClosedParameterType(System.Type[])">
+        <member name="M:Microsoft.Practices.Unity.DDI.ReflectionHelper.GetClosedParameterType(System.Type[])">
             <summary>
             If this type is an open generic, use the
             given <paramref name="genericArguments"/> array to
@@ -5795,7 +5795,7 @@
             the open type parameters.</param>
             <returns>Corresponding closed type of this parameter.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.ReflectionHelper.GetNamedGenericParameter(System.String)">
+        <member name="M:Microsoft.Practices.Unity.DDI.ReflectionHelper.GetNamedGenericParameter(System.String)">
             <summary>
             Given a generic argument name, return the corresponding type for this
             closed type. For example, if the current type is SomeType&lt;User&gt;, and the
@@ -5806,59 +5806,59 @@
             <returns>Type of the corresponding generic parameter, or null if there
             is no matching name.</returns>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.Type">
+        <member name="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.Type">
             <summary>
-            The <see cref="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.Type"/> object we're reflecting over.
+            The <see cref="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.Type"/> object we're reflecting over.
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.IsGenericType">
+        <member name="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.IsGenericType">
             <summary>
             Is this type generic?
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.IsOpenGeneric">
+        <member name="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.IsOpenGeneric">
             <summary>
             Is this type an open generic (no type parameter specified)
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.IsArray">
+        <member name="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.IsArray">
             <summary>
             Is this type an array type?
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.IsGenericArray">
+        <member name="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.IsGenericArray">
             <summary>
             Is this type an array of generic elements?
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.ArrayElementType">
+        <member name="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.ArrayElementType">
             <summary>
             The type of the elements in this type (if it's an array).
             </summary>
         </member>
-        <member name="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.InstanceConstructors">
+        <member name="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.InstanceConstructors">
             <summary>
-            Returns all the public constructors defined for the current reflected <see cref="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.Type"/>.
+            Returns all the public constructors defined for the current reflected <see cref="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.Type"/>.
             </summary>
             <value>
             An enumeration of <see cref="T:System.Reflection.ConstructorInfo"/> ConstructorInfo objects representing all the public instance constructors defined for the 
-            current reflected <see cref="P:Microsoft.Practices.Unity.Utility.ReflectionHelper.Type"/>, but not including the type initializer (static constructor).
+            current reflected <see cref="P:Microsoft.Practices.Unity.DDI.ReflectionHelper.Type"/>, but not including the type initializer (static constructor).
             </value>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.ParameterReflectionHelper.#ctor(System.Reflection.ParameterInfo)">
+        <member name="M:Microsoft.Practices.Unity.DDI.ParameterReflectionHelper.#ctor(System.Reflection.ParameterInfo)">
             <summary>
-            Create a new instance of <see cref="T:Microsoft.Practices.Unity.Utility.ParameterReflectionHelper"/> that
+            Create a new instance of <see cref="T:Microsoft.Practices.Unity.DDI.ParameterReflectionHelper"/> that
             lets you query information about the given ParameterInfo object.
             </summary>
             <param name="parameter">Parameter to query.</param>
         </member>
-        <member name="T:Microsoft.Practices.Unity.Utility.StaticReflection">
+        <member name="T:Microsoft.Practices.Unity.DDI.StaticReflection">
             <summary>
             A set of helper methods to pick through lambdas and pull out
             <see cref="T:System.Reflection.MethodInfo"/> from them.
             </summary>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetMethodInfo(System.Linq.Expressions.Expression{System.Action})">
+        <member name="M:Microsoft.Practices.Unity.DDI.StaticReflection.GetMethodInfo(System.Linq.Expressions.Expression{System.Action})">
             <summary>
             Pull out a <see cref="T:System.Reflection.MethodInfo"/> object from an expression of the form
             () =&gt; SomeClass.SomeMethod()
@@ -5866,7 +5866,7 @@
             <param name="expression">Expression describing the method to call.</param>
             <returns>Corresponding <see cref="T:System.Reflection.MethodInfo"/>.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetMethodInfo``1(System.Linq.Expressions.Expression{System.Action{``0}})">
+        <member name="M:Microsoft.Practices.Unity.DDI.StaticReflection.GetMethodInfo``1(System.Linq.Expressions.Expression{System.Action{``0}})">
             <summary>
             Pull out a <see cref="T:System.Reflection.MethodInfo"/> object from an expression of the form
             x =&gt; x.SomeMethod()
@@ -5875,7 +5875,7 @@
             <param name="expression">Expression describing the method to call.</param>
             <returns>Corresponding <see cref="T:System.Reflection.MethodInfo"/>.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetPropertyGetMethodInfo``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+        <member name="M:Microsoft.Practices.Unity.DDI.StaticReflection.GetPropertyGetMethodInfo``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
             <summary>
             Pull out a <see cref="T:System.Reflection.MethodInfo"/> object for the get method from an expression of the form
             x =&gt; x.SomeProperty
@@ -5885,7 +5885,7 @@
             <param name="expression">Expression describing the property for which the get method is to be extracted.</param>
             <returns>Corresponding <see cref="T:System.Reflection.MethodInfo"/>.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetPropertySetMethodInfo``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+        <member name="M:Microsoft.Practices.Unity.DDI.StaticReflection.GetPropertySetMethodInfo``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
             <summary>
             Pull out a <see cref="T:System.Reflection.MethodInfo"/> object for the set method from an expression of the form
             x =&gt; x.SomeProperty
@@ -5895,7 +5895,7 @@
             <param name="expression">Expression describing the property for which the set method is to be extracted.</param>
             <returns>Corresponding <see cref="T:System.Reflection.MethodInfo"/>.</returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetMemberInfo``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
+        <member name="M:Microsoft.Practices.Unity.DDI.StaticReflection.GetMemberInfo``2(System.Linq.Expressions.Expression{System.Func{``0,``1}})">
             <summary>
             
             </summary>
@@ -5904,7 +5904,7 @@
             <param name="expression"></param>
             <returns></returns>
         </member>
-        <member name="M:Microsoft.Practices.Unity.Utility.StaticReflection.GetConstructorInfo``1(System.Linq.Expressions.Expression{System.Func{``0}})">
+        <member name="M:Microsoft.Practices.Unity.DDI.StaticReflection.GetConstructorInfo``1(System.Linq.Expressions.Expression{System.Func{``0}})">
             <summary>
             Pull out a <see cref="T:System.Reflection.ConstructorInfo"/> object from an expression of the form () =&gt; new SomeType()
             </summary>

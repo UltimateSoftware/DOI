@@ -23,6 +23,8 @@ namespace DDI.Tests.Integration
          * 6. Prep tables and objects should be dropped on failure.
 
          */
+        protected const string DatabaseName = "PaymentReporting";
+        protected const string SchemaName = "dbo";
         protected const string TempTableName = "TempA";
         protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
         protected TempARepository tempARepository;
@@ -49,7 +51,7 @@ namespace DDI.Tests.Integration
         public virtual void TearDown()
         {
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            this.sqlHelper.Execute($"UPDATE dbo.SystemSettings SET SettingValue = '1' WHERE SettingName LIKE 'FreeSpaceCheckerTestMultiplier%'");
+            this.sqlHelper.Execute($"UPDATE DDI.DDISettings SET SettingValue = '1' WHERE DatabaseName = '{DatabaseName}' AND SettingName LIKE 'FreeSpaceCheckerTestMultiplier%'");
             this.sqlHelper.Execute("ALTER RESOURCE GOVERNOR RECONFIGURE");
         }
 
@@ -66,7 +68,8 @@ namespace DDI.Tests.Integration
              */
 
             // setup the space error table.
-            this.sqlHelper.Execute(@"
+            this.sqlHelper.Execute($@"
+            USE {DatabaseName}
             CREATE TABLE dbo.AAA_SpaceError(
                 SpaceErrorId INT IDENTITY(1,1) NOT NULL, 
 	            BogusColumn INT NOT NULL 
@@ -80,23 +83,24 @@ namespace DDI.Tests.Integration
             CREATE INDEX IDX_AAA_SpaceError_SenselessTextOnlineRebuild ON dbo.AAA_SpaceError(SenselessText)
             CREATE INDEX IDX_AAA_SpaceError_SenselessTextOfflineRebuild ON dbo.AAA_SpaceError(SenselessText) INCLUDE (SenselessText2)");
 
-            this.sqlHelper.Execute(@"
-            INSERT INTO [Utility].[Tables]
-                    ([SchemaName]	,[TableName]	,[PartitionColumn]	,[NewStorage]	,[UseBCPStrategy]	,[IntendToPartition]	,[EnableRunPartitioning]	,[ReadyToQueue])
-            VALUES  ('dbo'			,'AAA_SpaceError'	, NULL				,'PRIMARY'		,0					,0						,0							,1)");
+            this.sqlHelper.Execute($@"
+            INSERT INTO [DDI].[Tables]
+                    (DatabaseName, [SchemaName]	,[TableName]	,[PartitionColumn]	,[Storage_Desired]	,[IntendToPartition]	,[ReadyToQueue])
+            VALUES  ('{DatabaseName}','dbo'			,'AAA_SpaceError'	, NULL				,'PRIMARY'		,0						,1)");
 
-            this.sqlHelper.Execute(@"
-            INSERT INTO Utility.IndexesRowStore(SchemaName, TableName, IndexName, IsUnique, IsPrimaryKey, IsUniqueConstraint, IsClustered, KeyColumnList, IncludedColumnList, IsFiltered, FilterPredicate, [Fillfactor], OptionPadIndex, OptionStatisticsNoRecompute, OptionStatisticsIncremental, OptionIgnoreDupKey, OptionResumable, OptionMaxDuration, OptionAllowRowLocks, OptionAllowPageLocks, OptionDataCompression, NewStorage, PartitionColumn)
-            VALUES(N'dbo', N'AAA_SpaceError', N'PK_AAA_SpaceError', 1, 1, 0, 1, N'SpaceErrorId ASC, BogusColumn ASC', NULL, 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)
-                ,(N'dbo', N'AAA_SpaceError', N'IDX_AAA_SpaceError_SenselessTextOnlineRebuild', 0, 0, 0, 0, N'SenselessText ASC', NULL, 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)
-                ,(N'dbo', N'AAA_SpaceError', N'IDX_AAA_SpaceError_SenselessTextOfflineRebuild', 0, 0, 0, 0, N'SenselessText ASC', N'SenselessText2', 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)");
+            this.sqlHelper.Execute($@"
+            INSERT INTO DDI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired, [Fillfactor_Desired], OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
+            VALUES('{DatabaseName}', N'dbo', N'AAA_SpaceError', N'PK_AAA_SpaceError', 1, 1, 0, 1, N'SpaceErrorId ASC, BogusColumn ASC', NULL, 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)
+                ,('{DatabaseName}', N'dbo', N'AAA_SpaceError', N'IDX_AAA_SpaceError_SenselessTextOnlineRebuild', 0, 0, 0, 0, N'SenselessText ASC', NULL, 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)
+                ,('{DatabaseName}', N'dbo', N'AAA_SpaceError', N'IDX_AAA_SpaceError_SenselessTextOfflineRebuild', 0, 0, 0, 0, N'SenselessText ASC', N'SenselessText2', 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)");
 
-            this.sqlHelper.Execute(@"
-            INSERT INTO Utility.DefaultConstraints(SchemaName, TableName, ColumnName, DefaultDefinition)
-            VALUES(N'dbo', N'AAA_SpaceError', N'BogusColumn', N'((0))')");
+            this.sqlHelper.Execute($@"
+            INSERT INTO DDI.DefaultConstraints(DatabaseName, SchemaName, TableName, ColumnName, DefaultDefinition)
+            VALUES('{DatabaseName}',N'dbo', N'AAA_SpaceError', N'BogusColumn', N'((0))')");
 
             var indexRow = new IndexView()
             {
+                DatabaseName = DatabaseName,
                 SchemaName = "dbo",
                 TableName = "TempA",
                 IndexName = "CDX_TempA",
@@ -111,7 +115,7 @@ namespace DDI.Tests.Integration
                 IsIndexMissing = false,
                 IsClustered = true,
                 DropStatement = "DROP INDEX IF EXISTS dbo.TempA.CDX_TempA",
-                CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'CDX_TempA')  BEGIN   CREATE  CLUSTERED INDEX CDX_TempA     ON dbo.TempA(TempAId ASC,TransactionUtcDt ASC)               WITH (           PAD_INDEX = ON,          FILLFACTOR = 90,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = OFF,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
+                CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'CDX_TempA')  BEGIN   CREATE  CLUSTERED INDEX CDX_TempA     ON dbo.TempA(TempAId ASC,TransactionUtcDt ASC)               WITH (           PAD_INDEX = ON,          FILLFACTOR = 90,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = OFF,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
                 AlterSetStatement = "ALTER INDEX CDX_TempA ON dbo.TempA   SET ( IGNORE_DUP_KEY = OFF,     STATISTICS_NORECOMPUTE = OFF,     ALLOW_ROW_LOCKS = ON,     ALLOW_PAGE_LOCKS = ON)",
                 AlterRebuildStatement = "ALTER INDEX CDX_TempA ON dbo.TempA   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 90,      SORT_IN_TEMPDB = OFF,      IGNORE_DUP_KEY = OFF,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)",
                 AlterReorganizeStatement = "ALTER INDEX CDX_TempA ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)",
@@ -122,17 +126,23 @@ namespace DDI.Tests.Integration
             // set up the changes in the other table(s)
             var tableName = "TempA";
             var indexName = "CDX_TempA";
-            this.sqlHelper.Execute($"UPDATE IRS SET OptionPadIndex = CASE WHEN OptionPadIndex = 0 THEN 1 ELSE 0 END FROM Utility.IndexesRowStore IRS WHERE SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'");
+            this.sqlHelper.Execute($@"  UPDATE IRS 
+                                        SET OptionPadIndex_Desired = CASE WHEN OptionPadIndex_Desired = 0 THEN 1 ELSE 0 END 
+                                        FROM DDI.IndexesRowStore IRS 
+                                        WHERE DatabaseName = '{DatabaseName}'
+                                            AND SchemaName = '{SchemaName}' 
+                                            AND TableName = '{tableName}' 
+                                            AND IndexName = '{indexName}'");
             indexRow.AreRebuildOptionsChanging = true;
             indexRow.IndexUpdateType = "AlterRebuild";
 
             // add data to fail on space issue
-            this.sqlHelper.Execute("INSERT INTO dbo.AAA_SpaceError(SenselessText, SenselessText2) SELECT TOP 5000 CONVERT(char(255), NEWID()), CONVERT(char(255), NEWID()) FROM sys.objects a CROSS JOIN sys.objects b");
+            this.sqlHelper.Execute($"USE {DatabaseName} INSERT INTO dbo.AAA_SpaceError(SenselessText, SenselessText2) SELECT TOP 5000 CONVERT(char(255), NEWID()), CONVERT(char(255), NEWID()) FROM sys.objects a CROSS JOIN sys.objects b");
 
             // set multiplier setting to always guarantee a space failure.
             string dbName = fileType == "TempDB" ? "tempdb" : "PaymentReporting";
             string vwFreeSpaceOnDiskFileType = fileType == "log" ? "log" : "data";
-            var dbMetadataReader = this.sqlHelper.ExecuteReader($@"SELECT * FROM Utility.vwFreeSpaceOnDisk WHERE DBName = '{dbName}' AND FileType = '{vwFreeSpaceOnDiskFileType}'");
+            var dbMetadataReader = this.sqlHelper.ExecuteReader($@"SELECT * FROM DDI.vwFreeSpaceOnDisk WHERE DBName = '{dbName}' AND FileType = '{vwFreeSpaceOnDiskFileType}'");
 
             var driveLetterWhereIndexesAreStored = string.Empty;
             var freeSpaceOnDisk = 0;
@@ -142,9 +152,9 @@ namespace DDI.Tests.Integration
                 freeSpaceOnDisk = Convert.ToInt32(dbMetadataReader["available_MB"]);
             }
 
-            int indexSize = this.sqlHelper.ExecuteScalar<int>($"SELECT IndexSizeMB FROM Utility.vwIndexes WHERE IndexName = 'IDX_AAA_SpaceError_SenselessTextOnlineRebuild'");
+            int indexSize = this.sqlHelper.ExecuteScalar<int>($"SELECT IndexSizeMB FROM DDI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND IndexName = 'IDX_AAA_SpaceError_SenselessTextOnlineRebuild'");
             int multiplierSetting = (freeSpaceOnDisk / indexSize) + 1;
-            this.sqlHelper.Execute($"UPDATE dbo.SystemSettings SET SettingValue = '{multiplierSetting}' WHERE SettingName = 'FreeSpaceCheckerTestMultiplierFor{fileType}Files'");
+            this.sqlHelper.Execute($"UPDATE DDI.DDISettings SET SettingValue = '{multiplierSetting}' WHERE DatabaseName = '{DatabaseName}' AND SettingName = 'FreeSpaceCheckerTestMultiplierFor{fileType}Files'");
 
             var indexChangesReader = this.sqlHelper.ExecuteReader($@"
                 SELECT  IndexUpdateType, 
@@ -156,8 +166,9 @@ namespace DDI.Tests.Integration
                         AreSetOptionsChanging, 
                         IndexType, 
                         IsClustered 
-                FROM Utility.vwIndexes 
-                WHERE SchemaName = 'dbo' 
+                FROM DDI.vwIndexes 
+                WHERE DatabaseName = '{DatabaseName}' 
+                    AND SchemaName = '{SchemaName}' 
                     AND TableName = '{tableName}' 
                     AND IndexName = '{indexName}'");
 
@@ -182,8 +193,9 @@ namespace DDI.Tests.Integration
             // Assert - Check that index for AAA_SpaceError failed due to insufficient space error
             var errorLogReader = this.sqlHelper.ExecuteReader($@"
                 SELECT RunStatus, ErrorText 
-                FROM Utility.RefreshIndexStructuresLog 
-                WHERE SchemaName = 'dbo' 
+                FROM DDI.Log 
+                WHERE DatabaseName = '{DatabaseName}' 
+                    AND SchemaName = '{SchemaName}' 
                     AND TableName = 'AAA_SpaceError' 
                     AND IndexOperation = 'Free {fileType} Space Validation' 
                     AND RunStatus <> 'Start'");
@@ -213,8 +225,9 @@ namespace DDI.Tests.Integration
                     AreSetOptionsChanging, 
                     IndexType, 
                     IsClustered 
-            FROM Utility.vwIndexes 
-            WHERE SchemaName = 'dbo' 
+            FROM DDI.vwIndexes 
+            WHERE DatabaseName = '{DatabaseName}' 
+                AND SchemaName = '{SchemaName}' 
                 AND TableName = '{tableName}' 
                 AND IndexName = '{indexName}'");
 
@@ -239,7 +252,7 @@ namespace DDI.Tests.Integration
             this.sqlHelper.Execute("ALTER RESOURCE GOVERNOR DISABLE;");
 
             // 2. Make index change.
-            this.sqlHelper.Execute($"UPDATE IRS SET OptionPadIndex = CASE WHEN OptionPadIndex = 0 THEN 1 ELSE 0 END FROM Utility.IndexesRowStore IRS WHERE SchemaName = 'dbo' AND TableName = 'TempA' AND IndexName = 'CDX_TempA'");
+            this.sqlHelper.Execute($"UPDATE IRS SET OptionPadIndex_Desired = CASE WHEN OptionPadIndex_Desired = 0 THEN 1 ELSE 0 END FROM DDI.IndexesRowStore IRS WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = 'TempA' AND IndexName = 'CDX_TempA'");
 
             // 3. Run queue and Run SPs.
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(true);
@@ -253,34 +266,40 @@ namespace DDI.Tests.Integration
             }
 
             // 4.Check for Resource Gov error and NO OTHER ACTIVITY in the log table.
-            var logErrorCount = this.sqlHelper.ExecuteScalar<int>("SELECT ErrorText FROM Utility.RefreshIndexStructuresLog WHERE ErrorText = 'Resource Governor is not turned on.  Aborting';");
+            var logErrorCount = this.sqlHelper.ExecuteScalar<int>("SELECT ErrorText FROM DDI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Resource Governor is not turned on.  Aborting';");
         }
 
         [Test]
         public void LogRowsPreservedOnRollbackTest()
         {
             // 1. Make a DropRecreate change to an index.
-            this.sqlHelper.Execute($"UPDATE IRS SET IsClustered = 0 FROM Utility.IndexesRowStore IRS WHERE SchemaName = 'dbo' AND TableName = 'TempA' AND IndexName = 'CDX_TempA'");
+            this.sqlHelper.Execute($@"  UPDATE IRS 
+                                        SET IsClustered_Desired = 0 
+                                        FROM DDI.IndexesRowStore IRS 
+                                        WHERE DatabaseName = '{DatabaseName}' 
+                                            AND SchemaName = '{SchemaName}' 
+                                            AND TableName = 'TempA' 
+                                            AND IndexName = 'CDX_TempA'");
 
             // 2. Run Queue SP.
-            this.sqlHelper.Execute($"TRUNCATE TABLE Utility.RefreshIndexStructuresQueue");
-            this.sqlHelper.Execute($"TRUNCATE TABLE Utility.RefreshIndexStructuresLog");
+            this.sqlHelper.Execute($"TRUNCATE TABLE DDI.Queue");
+            this.sqlHelper.Execute($"TRUNCATE TABLE DDI.Log");
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(false);
-            var transactionId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 TransactionId FROM Utility.RefreshIndexStructuresQueue WHERE TableName = '{TempTableName}' AND TransactionId IS NOT NULL");
-            var batchId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 BatchId FROM Utility.RefreshIndexStructuresQueue WHERE TableName = '{TempTableName}'");
-            var seqNo = this.sqlHelper.ExecuteScalar<int>($"SELECT TOP 1 SeqNo FROM Utility.RefreshIndexStructuresQueue WHERE TableName = '{TempTableName}' AND IndexName = 'CDX_TempA' AND IndexOperation = 'Drop Index'");
+            var transactionId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 TransactionId FROM DDI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}' AND TransactionId IS NOT NULL");
+            var batchId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 BatchId FROM DDI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}'");
+            var seqNo = this.sqlHelper.ExecuteScalar<int>($"SELECT TOP 1 SeqNo FROM DDI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}' AND IndexName = 'CDX_TempA' AND IndexOperation = 'Drop Index'");
 
             // 3. Introduce an error into the Queue while the transaction is open.
-            this.sqlHelper.ExecuteScalar<int>($"UPDATE Q SET SeqNo = SeqNo + 1 FROM Utility.RefreshIndexStructuresQueue Q WHERE SeqNo > {seqNo}");
+            this.sqlHelper.ExecuteScalar<int>($"UPDATE Q SET SeqNo = SeqNo + 1 FROM DDI.Queue Q WHERE DatabaseName = '{DatabaseName}' AND SeqNo > {seqNo}");
             this.sqlHelper.Execute($@"
-                INSERT INTO Utility.RefreshIndexStructuresQueue ( SchemaName ,TableName ,IndexName ,PartitionNumber ,IndexSizeInMB ,ParentSchemaName ,ParentTableName ,ParentIndexName ,IndexOperation ,IsOnlineOperation ,TableChildOperationId ,SQLStatement ,SeqNo ,DateTimeInserted ,InProgress ,RunStatus ,ErrorMessage ,TransactionId ,BatchId ,ExitTableLoopOnError )
-                VALUES(N'dbo', N'{TempTableName}', N'CDX_TempA', 0, 0, N'dbo', N'{TempTableName}', N'CDX_TempA', 'Stop Processing', 0, 0, 'SELECT 1/0', {seqNo + 1}, SYSDATETIME(), 0, 'Start', '', '{transactionId}', '{batchId}', 0)");
+                INSERT INTO DDI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName ,PartitionNumber ,IndexSizeInMB ,ParentSchemaName ,ParentTableName ,ParentIndexName ,IndexOperation ,IsOnlineOperation ,TableChildOperationId ,SQLStatement ,SeqNo ,DateTimeInserted ,InProgress ,RunStatus ,ErrorMessage ,TransactionId ,BatchId ,ExitTableLoopOnError )
+                VALUES('{DatabaseName}', N'dbo', N'{TempTableName}', N'CDX_TempA', 0, 0, N'dbo', N'{TempTableName}', N'CDX_TempA', 'Stop Processing', 0, 0, 'SELECT 1/0', {seqNo + 1}, SYSDATETIME(), 0, 'Start', '', '{transactionId}', '{batchId}', 0)");
 
             // 4. Run the Run SP.
-            dataDrivenIndexTestHelper.ExecuteSPRun(false, "dbo", "TempA");
+            dataDrivenIndexTestHelper.ExecuteSPRun(false, "dbo", TempTableName);
 
             // 5. Check that the Logged rows are still in the Log table.
-            var countOfLogRows = this.sqlHelper.ExecuteScalar<int>($"SELECT COUNT(*) FROM Utility.RefreshIndexStructuresLog WHERE ErrorText = 'Divide by zero error encountered.'");
+            var countOfLogRows = this.sqlHelper.ExecuteScalar<int>($"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Divide by zero error encountered.'");
             Assert.AreEqual(1, countOfLogRows);
         }
     }

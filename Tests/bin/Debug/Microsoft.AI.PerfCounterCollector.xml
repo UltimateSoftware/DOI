@@ -192,42 +192,42 @@
             Utility functionality for performance counter collection.
             </summary>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.FormatPerformanceCounter(System.Diagnostics.PerformanceCounter)">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.FormatPerformanceCounter(System.Diagnostics.PerformanceCounter)">
             <summary>
             Formats a counter into a readable string.
             </summary>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.FormatPerformanceCounter(Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterStructure)">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.FormatPerformanceCounter(Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterStructure)">
             <summary>
             Formats a counter into a readable string.
             </summary>
             <param name="pc">Performance counter structure.</param>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.IsWebAppRunningInAzure">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.IsWebAppRunningInAzure">
             <summary>
             Searches for the environment variable specific to Azure web applications and confirms if the current application is a web application or not.
             </summary>
             <returns>Boolean, which is true if the current application is an Azure web application.</returns>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.GetProcessorCount(System.Boolean)">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.GetProcessorCount(System.Boolean)">
             <summary>
             Gets the processor count from the appropriate environment variable depending on whether the app is a WebApp or not.
             </summary>
             <param name="isWebApp">Indicates whether the application is a WebApp or not.</param>
             <returns>The number of processors in the system or null if failed to determine.</returns>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.SDKVersionPrefix">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.SDKVersionPrefix">
             <summary>
             Differentiates the SDK version prefix for azure web applications with standard applications.
             </summary>
             <returns>Returns the SDK version prefix based on the platform.</returns>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.FormatPerformanceCounter(System.String,System.String,System.String)">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.FormatPerformanceCounter(System.String,System.String,System.String)">
             <summary>
             Formats a counter into a readable string.
             </summary>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.CreateAndValidateCounter(System.String,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Boolean@,System.String@)">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.CreateAndValidateCounter(System.String,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Boolean@,System.String@)">
             <summary>
             Validates the counter by parsing.
             </summary>
@@ -238,18 +238,18 @@
             <param name="error">Error message.</param>
             <returns>Performance counter.</returns>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.ParsePerformanceCounter(System.String,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Boolean@)">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.ParsePerformanceCounter(System.String,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Boolean@)">
             <summary>
             Parses a performance counter canonical string into a PerformanceCounter object.
             </summary>
             <remarks>This method also performs placeholder expansion.</remarks>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.InvalidatePlaceholderCache">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.InvalidatePlaceholderCache">
             <summary>
             Invalidates placeholder cache.
             </summary>
         </member>
-        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterUtility.MatchInstancePlaceholder(System.String)">
+        <member name="M:Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.Implementation.PerformanceCounterDDI.MatchInstancePlaceholder(System.String)">
             <summary>
             Matches an instance name against the placeholder regex.
             </summary>

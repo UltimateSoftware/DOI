@@ -1,3 +1,19 @@
+USE DDI
+
+
+INSERT INTO [DDI].[Tables]
+           (DatabaseName		, [SchemaName]	,[TableName]	,[PartitionColumn]	,[Storage_Desired]	,[IntendToPartition]	,[ReadyToQueue])
+     VALUES
+           ('PaymentReporting'	, 'dbo'			,'TempA'		, NULL				,'PRIMARY'			,0						,1)
+		  ,('PaymentReporting'	, 'dbo'			,'TempB'		, NULL				,'PRIMARY'			,0						,1)
+
+INSERT INTO DDI.[Statistics] (DatabaseName		, SchemaName, TableName, StatisticsName		, StatisticsColumnList_Desired	, SampleSizePct_Desired	, IsFiltered_Desired, FilterPredicate_Desired	, IsIncremental_Desired	,NoRecompute_Desired,LowerSampleSizeToDesired	, ReadyToQueue)
+VALUES						 ('PaymentReporting', 'dbo'		, 'TempA'  , 'ST_TempA_TempAId' , 'TempAId'						, 0						, 0					, NULL						, 0						,0					,0							, 1)
+
+
+USE PaymentReporting
+
+
 SET ANSI_NULLS ON
 
 SET QUOTED_IDENTIFIER ON
@@ -16,15 +32,6 @@ CREATE TABLE dbo.TempB(
 	TempAId uniqueidentifier NOT NULL,
 	TransactionUtcDt datetime2(7) NOT NULL,
 )
-
-INSERT INTO [Utility].[Tables]
-           ([SchemaName]	,[TableName]	,[PartitionColumn]	,[NewStorage]	,[UseBCPStrategy]	,[IntendToPartition]	,[EnableRunPartitioning]	,[ReadyToQueue])
-     VALUES
-           ('dbo'			,'TempA'			, NULL				,'PRIMARY'		,0					,0						,0							,1)
-		  ,('dbo'			,'TempB'			, NULL				,'PRIMARY'		,0					,0						,0							,1)
-
-INSERT INTO Utility.[Statistics] (SchemaName, TableName, StatisticsName		, StatisticsColumnList	, SampleSizePct	, IsFiltered, FilterPredicate	, IsIncremental	,NoRecompute,LowerSampleSizeToDesired, ReadyToQueue)
-VALUES							 ('dbo'		, 'TempA'  , 'ST_TempA_TempAId' , 'TempAId'				, 0				, 0			, NULL				, 0				,0			,0			, 1)
 
 CREATE STATISTICS ST_TempA_TempAId
     ON dbo.TempA ( TempAId )

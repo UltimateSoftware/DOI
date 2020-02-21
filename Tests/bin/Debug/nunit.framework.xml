@@ -18732,30 +18732,30 @@
             for working with threads.
             </summary>
         </member>
-        <member name="M:NUnit.Framework.Internal.ThreadUtility.Delay(System.Int32,System.Threading.WaitCallback,System.Object)">
+        <member name="M:NUnit.Framework.Internal.ThreadDDI.Delay(System.Int32,System.Threading.WaitCallback,System.Object)">
             <summary>
             Pre-Task compatibility
             </summary>
         </member>
-        <member name="M:NUnit.Framework.Internal.ThreadUtility.Abort(System.Threading.Thread,System.Int32)">
+        <member name="M:NUnit.Framework.Internal.ThreadDDI.Abort(System.Threading.Thread,System.Int32)">
             <summary>
             Abort a thread, helping to dislodging it if it is blocked in native code
             </summary>
             <param name="thread">The thread to abort</param>
             <param name="nativeId">The native thread id (if known), otherwise 0.
             If provided, allows the thread to be killed if it's in a message pump native blocking wait.
-            This must have previously been captured by calling <see cref="M:NUnit.Framework.Internal.ThreadUtility.GetCurrentThreadNativeId"/> from the running thread itself.</param>
+            This must have previously been captured by calling <see cref="M:NUnit.Framework.Internal.ThreadDDI.GetCurrentThreadNativeId"/> from the running thread itself.</param>
         </member>
-        <member name="M:NUnit.Framework.Internal.ThreadUtility.Kill(System.Threading.Thread,System.Int32)">
+        <member name="M:NUnit.Framework.Internal.ThreadDDI.Kill(System.Threading.Thread,System.Int32)">
             <summary>
             Do our best to kill a thread
             </summary>
             <param name="thread">The thread to kill</param>
             <param name="nativeId">The native thread id (if known), otherwise 0.
             If provided, allows the thread to be killed if it's in a message pump native blocking wait.
-            This must have previously been captured by calling <see cref="M:NUnit.Framework.Internal.ThreadUtility.GetCurrentThreadNativeId"/> from the running thread itself.</param>
+            This must have previously been captured by calling <see cref="M:NUnit.Framework.Internal.ThreadDDI.GetCurrentThreadNativeId"/> from the running thread itself.</param>
         </member>
-        <member name="M:NUnit.Framework.Internal.ThreadUtility.Kill(System.Threading.Thread,System.Object,System.Int32)">
+        <member name="M:NUnit.Framework.Internal.ThreadDDI.Kill(System.Threading.Thread,System.Object,System.Int32)">
             <summary>
             Do our best to kill a thread, passing state info
             </summary>
@@ -18763,19 +18763,19 @@
             <param name="stateInfo">Info for the ThreadAbortException handler</param>
             <param name="nativeId">The native thread id (if known), otherwise 0.
             If provided, allows the thread to be killed if it's in a message pump native blocking wait.
-            This must have previously been captured by calling <see cref="M:NUnit.Framework.Internal.ThreadUtility.GetCurrentThreadNativeId"/> from the running thread itself.</param>
+            This must have previously been captured by calling <see cref="M:NUnit.Framework.Internal.ThreadDDI.GetCurrentThreadNativeId"/> from the running thread itself.</param>
         </member>
-        <member name="M:NUnit.Framework.Internal.ThreadUtility.DislodgeThreadInNativeMessageWait(System.Threading.Thread,System.Int32)">
+        <member name="M:NUnit.Framework.Internal.ThreadDDI.DislodgeThreadInNativeMessageWait(System.Threading.Thread,System.Int32)">
             <summary>
             Schedule a threadpool thread to check on the aborting thread in case it's in a message pump native blocking wait
             </summary>
         </member>
-        <member name="M:NUnit.Framework.Internal.ThreadUtility.GetCurrentThreadNativeId">
+        <member name="M:NUnit.Framework.Internal.ThreadDDI.GetCurrentThreadNativeId">
             <summary>
-            Captures the current thread's native id. If provided to <see cref="M:NUnit.Framework.Internal.ThreadUtility.Kill(System.Threading.Thread,System.Int32)"/> later, allows the thread to be killed if it's in a message pump native blocking wait.
+            Captures the current thread's native id. If provided to <see cref="M:NUnit.Framework.Internal.ThreadDDI.Kill(System.Threading.Thread,System.Int32)"/> later, allows the thread to be killed if it's in a message pump native blocking wait.
             </summary>
         </member>
-        <member name="M:NUnit.Framework.Internal.ThreadUtility.PostThreadCloseMessage(System.Int32)">
+        <member name="M:NUnit.Framework.Internal.ThreadDDI.PostThreadCloseMessage(System.Int32)">
             <summary>
             Sends a message to the thread to dislodge it from native code and allow a return to managed code, where a ThreadAbortException can be generated.
             The message is meaningless (WM_CLOSE without a window handle) but it will end any blocking message wait.

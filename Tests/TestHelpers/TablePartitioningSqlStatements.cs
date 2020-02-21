@@ -6,14 +6,14 @@ namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
     public static class TablePartitioningSqlStatements
     {
         public static string PartitionFunctionCreation = @"
-INSERT INTO Utility.PartitionFunctions ( 
+INSERT INTO DDI.PartitionFunctions ( 
 				PartitionFunctionName			,PartitionFunctionDataType	,BoundaryInterval	,NumOfFutureIntervals	, InitialDate	, UsesSlidingWindow	, SlidingWindowSize	, IsDeprecated)
 VALUES		(	'pfMonthlyTest'					, 'DATETIME2'				, 'Monthly'			, 1					    , '2019-08-01'	, 0					, NULL				, 0);
 
-EXEC Utility.spPartitionFunctionCreate
+EXEC DDI.spRefreshStorageContainers_PartitionFunctions
 	@PartitionFunctionName = 'pfMonthlyTest';
 
-EXEC Utility.spPartitionSchemeCreate
+EXEC DDI.spRefreshStorageContainers_PartitionSchemes
     @PartitionFunctionName = 'pfMonthlyTest';
 ";
 
@@ -98,7 +98,7 @@ EXEC Utility.spPartitionSchemeCreate
                                             END;";
 
         public static string RowStoreIndexes = @"            
-    INSERT INTO Utility.IndexesRowStore (SchemaName,TableName,IndexName,IsUnique,IsPrimaryKey,IsUniqueConstraint,IsClustered,KeyColumnList,IncludedColumnList,IsFiltered,FilterPredicate,[Fillfactor],OptionPadIndex,OptionStatisticsNoRecompute,OptionStatisticsIncremental,OptionIgnoreDupKey,OptionResumable,OptionMaxDuration,OptionAllowRowLocks,OptionAllowPageLocks,OptionDataCompression,NewStorage,PartitionColumn)
+    INSERT INTO DDI.IndexesRowStore (DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
                       
     Select 
         SchemaName					 = N'dbo'
@@ -182,9 +182,10 @@ EXEC Utility.spPartitionSchemeCreate
                     ";
 
         public static string ColumnStoreIndexes = @"
-                    INSERT [Utility].[IndexesColumnStore] ([SchemaName], [TableName], [IndexName], [IsClustered], [ColumnList], [IsFiltered], [FilterPredicate], [OptionDataCompression], [OptionCompressionDelay], NewStorage, PartitionColumn) 
+            INSERT INTO DDI.IndexesColumnStore ( SchemaName ,TableName ,IndexName ,IsClustered_Desired,ColumnList_Desired,IsFiltered_Desired,FilterPredicate_Desired,OptionDataCompression_Desired,OptionDataCompressionDelay_Desired_Desired,NewStorage_Desired,PartitionColumn_Desired )
                     SELECT 
-                      [SchemaName]              = N'dbo'
+                      [DatabaseName]            = N'PaymentReporting'
+                    , [SchemaName]              = N'dbo'
                     , [TableName]               = N'PartitioningTestAutomationTable'	
                     , [IndexName]               = N'NCCI_PartitioningTestAutomationTable_Comments'	
                     , [IsClustered]             = 0
@@ -192,7 +193,7 @@ EXEC Utility.spPartitionSchemeCreate
                     , [IsFiltered]              = 0
                     , [FilterPredicate]         = NULL
                     , [OptionDataCompression]   = N'COLUMNSTORE'
-                    , [OptionCompressionDelay]  = 0
+                    , [OptionDataCompressionDelay]  = 0
                     , NewStorage                = 'psMonthlyTest'
                     , PartitionColumn           = 'MyDatetime'
                     ";
@@ -202,12 +203,12 @@ EXEC Utility.spPartitionSchemeCreate
         public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'Refresh Index Structures - Online'";
 
         public static string DropTableAndDeleteMetadata = @"
-                        DELETE FROM  [Utility].[Statistics] WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [Utility].[CheckConstraints] WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [Utility].[DefaultConstraints] WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [Utility].[IndexesColumnStore] WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [Utility].[IndexesRowStore]    WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [Utility].[Tables]		    WHERE TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DDI].[Statistics]         WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DDI].[CheckConstraints]   WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DDI].[DefaultConstraints] WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DDI].[IndexesColumnStore] WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DDI].[IndexesRowStore]    WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DDI].[Tables]		        WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
 
                         DECLARE @sql VARCHAR(MAX) = SPACE(0)
                         SELECT @sql += 'DROP TABLE IF EXISTS ' + s.name + '.' + t.name + CHAR(13) + CHAR(10)
@@ -217,12 +218,12 @@ EXEC Utility.spPartitionSchemeCreate
 
                         EXEC(@sql)
 
-                        TRUNCATE TABLE Utility.RefreshIndexStructuresLog;
-                        TRUNCATE TABLE Utility.RefreshIndexStructuresQueue
-                        DELETE PT FROM Utility.RefreshIndexStructures_PartitionState pt WHERE pt.ParentTableName = 'PartitioningTestAutomationTable';
-                        EXEC Utility.spDDI_RefreshMetadata_Tables;
-                        EXEC Utility.spDDI_RefreshMetadata_PartitionFunctions;
-                        DELETE Utility.PartitionFunctions WHERE PartitionFunctionName = 'pfMonthlyTest';
+                        TRUNCATE TABLE DDI.Log;
+                        TRUNCATE TABLE DDI.Queue
+                        DELETE PT FROM DDI.Run_PartitionState pt WHERE DatabaseName = 'PaymentReporting' AND pt.ParentTableName = 'PartitioningTestAutomationTable';
+                        EXEC DDI.spRefreshMetadata_Tables;
+                        EXEC DDI.spRefreshMetadata_PartitionFunctions;
+                        DELETE DDI.PartitionFunctions WHERE PartitionFunctionName = 'pfMonthlyTest';
                         IF EXISTS(SELECT 'True' FROM sys.partition_schemes WHERE name = 'psMonthlyTest')
                         BEGIN
                             DROP PARTITION SCHEME psMonthlyTest
@@ -234,43 +235,38 @@ EXEC Utility.spPartitionSchemeCreate
 
 
         public static string TableToMetadata = @"
-                                INSERT INTO Utility.Tables
-                                (SchemaName,
+                                INSERT INTO DDI.Tables
+                                (DatabaseName,
+                                 SchemaName,
                                  TableName,
-                                 PartitionColumn,
-                                 NewStorage,
-                                 UseBCPStrategy,
+                                 PartitionColumn_Desired,
+                                 Storage_Desired,
                                  IntendToPartition,
-                                 EnableRunPartitioning,
                                  ReadyToQueue
                                 )
                                 VALUES
-                                ('dbo',
+                                ('PaymentReporting',
+                                 'dbo',
                                  'PartitioningTestAutomationTable',
                                  'MyDateTime',
                                  'psMonthlyTest',
                                  1,
-                                 1,
-                                 0,
                                  1
                                 );  ";
 
         public static string StatisticsToMetadata = @"
-                                INSERT INTO Utility.[Statistics] ( SchemaName, TableName, StatisticsName, StatisticsColumnList, SampleSizePct, IsFiltered, FilterPredicate, IsIncremental, NoRecompute, LowerSampleSizeToDesired, ReadyToQueue )
-                                VALUES ( N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_id', 'id', 20, 0, NULL, 1, 0, 0, 1)
-                                INSERT INTO Utility.[Statistics] ( SchemaName, TableName, StatisticsName, StatisticsColumnList, SampleSizePct, IsFiltered, FilterPredicate, IsIncremental, NoRecompute, LowerSampleSizeToDesired, ReadyToQueue )
-                                VALUES ( N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_myDateTime', 'myDateTime', 20, 0, NULL, 1, 0, 0, 1)
-                                INSERT INTO Utility.[Statistics] ( SchemaName, TableName, StatisticsName, StatisticsColumnList, SampleSizePct, IsFiltered, FilterPredicate, IsIncremental, NoRecompute, LowerSampleSizeToDesired, ReadyToQueue )
-                                VALUES ( N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_Comments', 'Comments', 20, 0, NULL, 1, 0, 0, 1)
-                                INSERT INTO Utility.[Statistics] ( SchemaName, TableName, StatisticsName, StatisticsColumnList, SampleSizePct, IsFiltered, FilterPredicate, IsIncremental, NoRecompute, LowerSampleSizeToDesired, ReadyToQueue )
-                                VALUES ( N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_updatedUtcDt', 'updatedUtcDt', 20, 0, NULL, 1, 0, 0, 1)";
+                                INSERT INTO DDI.[Statistics] ( DatabaseName, SchemaName, TableName, StatisticsName, StatisticsColumnList_Desired, SampleSizePct_Desired, IsFiltered_Desired, FilterPredicate_Desired, IsIncremental_Desired, NoRecompute_Desired, LowerSampleSizeToDesired, ReadyToQueue)
+                                VALUES   ( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_id', 'id', 20, 0, NULL, 1, 0, 0, 1)
+                                        ,( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_myDateTime', 'myDateTime', 20, 0, NULL, 1, 0, 0, 1)
+                                        ,( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_Comments', 'Comments', 20, 0, NULL, 1, 0, 0, 1)
+                                        ,( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_updatedUtcDt', 'updatedUtcDt', 20, 0, NULL, 1, 0, 0, 1)";
 
         public static string ConstraintsToMetadata = @"
-                                INSERT INTO Utility.CheckConstraints ( SchemaName ,TableName ,ColumnName ,CheckDefinition ,IsDisabled ,CheckConstraintName )
-                                VALUES (N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(updatedUtcDt > ''0001-01-01'')', 0, N'Chk_PartitioningTestAutomationTable_updatedUtcDt')
+                                INSERT INTO DDI.CheckConstraints ( DatabaseName, SchemaName ,TableName ,ColumnName ,CheckDefinition ,IsDisabled ,CheckConstraintName )
+                                VALUES ( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(updatedUtcDt > ''0001-01-01'')', 0, N'Chk_PartitioningTestAutomationTable_updatedUtcDt')
 
-                                INSERT INTO Utility.DefaultConstraints ( SchemaName ,TableName ,ColumnName ,DefaultDefinition )
-                                VALUES (N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(SYSDATETIME())')";
+                                INSERT INTO DDI.DefaultConstraints ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition )
+                                VALUES ( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(SYSDATETIME())')";
 
 
         public static string DataInsert => GenerateDataInsertScript();
@@ -302,7 +298,7 @@ EXEC Utility.spPartitionSchemeCreate
 
         private static string GenerateTableExistenceCheckScript(string tablename, string schemaname)
         {
-            return $@"
+            return $@"USE PaymentReporting
                         SELECT 1
                         FROM sys.tables t 
                         JOIN sys.schemas s on s.schema_id = t.schema_id
@@ -311,7 +307,7 @@ EXEC Utility.spPartitionSchemeCreate
                         AND	s.name = '{schemaname}' ";
         }
 
-        public static string DataMismatchValidation = @"
+        public static string DataMismatchValidation = @"USE PaymentReporting
                         IF EXISTS(
 	                           Select * FROM [dbo].[PartitioningTestAutomationTable]
 	                           EXCEPT
@@ -327,7 +323,7 @@ EXEC Utility.spPartitionSchemeCreate
                         END ";
 
 
-        public static string RowsInFileGroupsProcedureCall = @"
+        public static string RowsInFileGroupsProcedureCall = @"USE PaymentReporting
                                         SELECT
                                          TableName = t.name
                                         ,IndexName = i.name
@@ -347,7 +343,7 @@ EXEC Utility.spPartitionSchemeCreate
                                         AND  i.name = 'CDX_PartitioningTestAutomationTable' ";
 
 
-        public static string TotalRowsInFileGroups = @"
+        public static string TotalRowsInFileGroups = @"USE PaymentReporting
                                      SELECT
                                      TotalRowsInPartition = Sum(p.rows)
                                     FROM sys.dm_db_partition_stats pts
@@ -372,8 +368,8 @@ EXEC Utility.spPartitionSchemeCreate
                                                     ,@command = N' 
                                                            DECLARE @BatchId UNIQUEIDENTIFIER
                                                            
-	                                                       TRUNCATE TABLE Utility.RefreshIndexStructuresQueue
-	                                                       EXEC Utility.spRefreshIndexStructures_Queue 
+	                                                       TRUNCATE TABLE DDI.Queue
+	                                                       EXEC DDI.spQueue 
 			                                                    @OnlineOperations = 1,
 			                                                    @IsBeingRunDuringADeployment = 0,
                                                                 @BatchIdOUT = @BatchId OUTPUT'
@@ -387,17 +383,17 @@ EXEC Utility.spPartitionSchemeCreate
                                                     ,@command = N' 
 	                                                       DECLARE @BatchId UNIQUEIDENTIFIER
                                                            
-	                                                       TRUNCATE TABLE Utility.RefreshIndexStructuresQueue
-	                                                       EXEC Utility.spRefreshIndexStructures_Queue 
+	                                                       TRUNCATE TABLE DDI.Queue
+	                                                       EXEC DDI.spQueue 
 			                                                    @OnlineOperations = 1,
 			                                                    @IsBeingRunDuringADeployment = 0,
                                                                 @BatchIdOUT = @BatchId OUTPUT '
                                                     ";
 
-        public static string DataInPartitionedTable = @" Select * from dbo.PartitioningTestAutomationTable";
+        public static string DataInPartitionedTable = @" USE PaymentReporting Select * from dbo.PartitioningTestAutomationTable";
 
 
-        public static string AllPartitionsHaveData = @"
+        public static string AllPartitionsHaveData = @"USE PaymentReporting
                                                         SELECT TOP 1 val = 1
                                                         FROM sys.dm_db_partition_stats pts
                                                         JOIN sys.tables t ON t.object_id = pts.object_id
@@ -413,23 +409,25 @@ EXEC Utility.spPartitionSchemeCreate
                                                             AND  i.name = 'CDX_PartitioningTestAutomationTable'
                                                             AND p.rows = 0";
 
-        public static string IndexesAfterPartitioningNewTable = @"SELECT IndexName = ix.Name
+        public static string IndexesAfterPartitioningNewTable = @"USE PaymentReporting
+                                                        SELECT IndexName = ix.Name
                                                         FROM sys.indexes ix 
-                                                        JOIN sys.tables t  on ix.object_id = t.object_id
-                                                        JOIN sys.schemas s  on s.schema_id = t.schema_id
-                                                        where 1=1
-                                                        AND t.name = 'PartitioningTestAutomationTable'
-                                                        AND s.name = 'dbo'";
+                                                            JOIN sys.tables t  on ix.object_id = t.object_id
+                                                            JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                        WHERE 1=1
+                                                            AND t.name = 'PartitioningTestAutomationTable'
+                                                            AND s.name = 'dbo'";
 
-        public static string IndexesAfterPartitioningOldTable = @"SELECT IndexName = ix.Name
+        public static string IndexesAfterPartitioningOldTable = @"USE PaymentReporting
+                                                        SELECT IndexName = ix.Name
                                                         FROM sys.indexes ix 
-                                                        JOIN sys.tables t  on ix.object_id = t.object_id
-                                                        JOIN sys.schemas s  on s.schema_id = t.schema_id
-                                                        where 1=1
-                                                        AND t.name = 'PartitioningTestAutomationTable_OLD'
-                                                        AND s.name = 'dbo'";
+                                                            JOIN sys.tables t  on ix.object_id = t.object_id
+                                                            JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                        WHERE 1=1
+                                                            AND t.name = 'PartitioningTestAutomationTable_OLD'
+                                                            AND s.name = 'dbo'";
 
-        public static string ConstraintsAfterPartitioningNewTable = @"
+        public static string ConstraintsAfterPartitioningNewTable = @"USE PaymentReporting
                                                             SELECT ConstraintName = x.Name
                                                             FROM (  SELECT parent_object_id, name
                                                                     FROM sys.check_constraints c
@@ -441,7 +439,7 @@ EXEC Utility.spPartitionSchemeCreate
                                                             WHERE t.name = 'PartitioningTestAutomationTable'
                                                                 AND s.name = 'dbo'";
 
-        public static string ConstraintsAfterPartitioningOldTable = @"
+        public static string ConstraintsAfterPartitioningOldTable = @"USE PaymentReporting
                                                             SELECT ConstraintName = x.Name
                                                             FROM (  SELECT parent_object_id, name
                                                                     FROM sys.check_constraints c
@@ -453,39 +451,41 @@ EXEC Utility.spPartitionSchemeCreate
                                                             WHERE t.name = 'PartitioningTestAutomationTable_OLD'
                                                                 AND s.name = 'dbo'";
 
-        public static string StatisticsAfterPartitioningNewTable = @"SELECT StatisticsName = st.Name
+        public static string StatisticsAfterPartitioningNewTable = @"USE PaymentReporting
+                                                            SELECT StatisticsName = st.Name
                                                             FROM sys.stats st
                                                                 INNER JOIN sys.tables t  on st.object_id = t.object_id
                                                                 INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
-                                                            where t.name = 'PartitioningTestAutomationTable'
+                                                            WHERE t.name = 'PartitioningTestAutomationTable'
                                                                 AND s.name = 'dbo'";
 
-        public static string StatisticsAfterPartitioningOldTable = @"SELECT StatisticsName = st.Name
+        public static string StatisticsAfterPartitioningOldTable = @"USE PaymentReporting
+                                                            SELECT StatisticsName = st.Name
                                                             FROM sys.stats st
                                                                 INNER JOIN sys.tables t  on st.object_id = t.object_id
                                                                 INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
-                                                            where t.name = 'PartitioningTestAutomationTable_OLD'
+                                                            WHERE t.name = 'PartitioningTestAutomationTable_OLD'
                                                                 AND s.name = 'dbo'";
 
-        public static string RecordsInTheQueue = @"Select * FROM  utility.RefreshIndexStructuresQueue WHERE IsOnlineOperation = 1";
+        public static string RecordsInTheQueue = @"Select * FROM  DDI.Queue WHERE IsOnlineOperation = 1";
 
-        public static string LogHasNoErrors = @"SELECT * FROM Utility.RefreshIndexStructuresLog WHERE SchemaName = 'dbo' and TableName = 'PartitioningTestAutomationTable' and ErrorText IS NOT NULL";
+        public static string LogHasNoErrors = @"SELECT * FROM DDI.Log WHERE SchemaName = 'dbo' and TableName = 'PartitioningTestAutomationTable' and ErrorText IS NOT NULL";
 
         public static string PartitionStateMetadata = @"
-                                                    INSERT INTO Utility.RefreshIndexStructures_PartitionState ( SchemaName ,ParentTableName , PrepTableName, PartitionFromValue ,PartitionToValue ,DataSynchState ,LastUpdateDateTime )
+                                                    INSERT INTO DDI._PartitionState ( SchemaName ,ParentTableName , PrepTableName, PartitionFromValue ,PartitionToValue ,DataSynchState ,LastUpdateDateTime )
                                                     SELECT SchemaName, ParentTableName, UnPartitionedPrepTableName, PartitionFunctionValue, NextPartitionFunctionValue, 0, GETDATE()
-                                                    FROM Utility.fnDataDrivenIndexes_GetPartitionSQL () FN
+                                                    FROM DDI.fnDataDrivenIndexes_GetPartitionSQL () FN
                                                     WHERE ParentTableName IN ('PartitioningTestAutomationTable')
 	                                                    AND NOT EXISTS (SELECT 'True' 
-					                                                    FROM Utility.RefreshIndexStructures_PartitionState PS 
+					                                                    FROM DDI._PartitionState PS 
 					                                                    WHERE PS.SchemaName = FN.SchemaName
 						                                                    AND PS.ParentTableName = FN.ParentTableName
 						                                                    AND PS.PrepTableName = FN.UnPartitionedPrepTableName)
 
                                                     DELETE PS
-                                                    FROM Utility.RefreshIndexStructures_PartitionState PS
+                                                    FROM DDI._PartitionState PS
                                                     WHERE NOT EXISTS(	SELECT 'True' 
-					                                                    FROM Utility.RefreshIndexStructures_PartitionState PS2
+					                                                    FROM DDI._PartitionState PS2
 					                                                    WHERE PS.SchemaName = PS2.SchemaName
 						                                                    AND PS.ParentTableName = PS2.ParentTableName
 						                                                    AND PS.PrepTableName = PS2.PrepTableName)";
@@ -511,7 +511,7 @@ EXEC Utility.spPartitionSchemeCreate
         public static string CheckForEmptyPartitionStateMetadata(string schemaName, string tableName)
         {
             return $@"
-            SELECT 1 FROM Utility.RefreshIndexStructures_PartitionState
+            SELECT 1 FROM DDI._PartitionState
             WHERE SchemaName = '{schemaName}'
             AND ParentTableName = '{tableName}'";   
         }
