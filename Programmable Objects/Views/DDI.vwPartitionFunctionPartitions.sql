@@ -10,11 +10,13 @@ GO
 
 
 
+
+
 CREATE   VIEW [DDI].[vwPartitionFunctionPartitions]
 AS
 
 /*
-	select * from DDI.vwPartitionFunctionPartitions where partitionfunctionname = 'pfyearly'
+	select addfilesql from DDI.vwPartitionFunctionPartitions where partitionfunctionname = 'PfMonthlyUnitTest'
 */
 
 SELECT  *,         
@@ -67,11 +69,11 @@ BEGIN
     		FILENAME = ''' + DBFilePath.DBFilePath + '' + DBFilePath.DatabaseName + '_' +  PFI.Suffix + '.ndf'', 
 			SIZE = ' + CAST(DBFilePath.InitialSizeMB AS NVARCHAR(20)) + ' MB, 
 			MAXSIZE = UNLIMITED, 
-			FILEGROWTH = ' + CAST(DBFilePath.FileGrowth AS NVARCHAR(20)) + ' MB
+			FILEGROWTH = ' + CAST(DBFilePath.FileGrowth AS NVARCHAR(20)) + '
 		) 
 			TO FILEGROUP ' + DBFilePath.DatabaseName + '_' + PFI.Suffix + '
 END' AS AddFileSQL,
-'
+'USE ' + DBFilePath.DatabaseName + '
 BEGIN TRY
 	BEGIN TRAN
 		ALTER PARTITION SCHEME ' + PFI.PartitionSchemeName + ' NEXT USED [' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ']
@@ -83,10 +85,11 @@ BEGIN CATCH
 	IF @@TRANCOUNT > 0 ROLLBACK TRAN;
 	THROW;
 END CATCH' AS PartitionFunctionSplitSQL,
-'		ALTER PARTITION SCHEME ' + PFI.PartitionSchemeName + ' NEXT USED [' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ']' 
+'USE ' + DBFilePath.DatabaseName + '
+		ALTER PARTITION SCHEME ' + PFI.PartitionSchemeName + ' NEXT USED [' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ']' 
 AS SetFilegroupToNextUsedSQL
         --SELECT count(*)
-        FROM (  SELECT	TOP (2147483647) *
+        FROM (  SELECT	TOP (1234567890987) *
                 FROM (SELECT DISTINCT
 		                PFM.*,
 		                CASE  
@@ -119,7 +122,7 @@ AS SetFilegroupToNextUsedSQL
 		                1 AS IncludeInPartitionScheme
                 --select count(*)
                 FROM DDI.PartitionFunctions PFM
-	                CROSS APPLY DDI.fnNumberTable(NumOfTotalPartitionFunctionIntervals) PSN
+	                CROSS APPLY DDI.fnNumberTable(ISNULL(NumOfTotalPartitionFunctionIntervals, 0)) PSN
                 UNION ALL
                 SELECT	PFM.*,
 		                MinInterval.MinValueOfDataType AS BoundaryValue,
@@ -165,6 +168,8 @@ AS SetFilegroupToNextUsedSQL
 								        AND prv.Value IS NULL) x
 					        WHERE x.dest_rank = 2) AS NUF
     )X
+
+
 
 
 

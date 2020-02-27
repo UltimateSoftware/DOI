@@ -4,7 +4,7 @@ using DDI.Tests.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using  NUnit.Framework;
 
-namespace Reporting.Ingestion.Integration.Tests.Database
+namespace DDI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -19,7 +19,6 @@ namespace Reporting.Ingestion.Integration.Tests.Database
         {
             expectedSettingList = new List<Pair<string, string>>()
                 {
-                    new Pair<string, string>("CollectionDetailsNetOutCutoffDate", "2018-06-30"),
                     new Pair<string, string>("DBFileGrowthMB", "10"),
                     new Pair<string, string>("DBFileInitialSizeMB", "100"),
                     new Pair<string, string>("DefaultStatsSampleSizePct", "20"),
@@ -29,7 +28,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database
                     new Pair<string, string>("FreeSpaceCheckerTestMultiplierForTempDBFiles", "1"),
                     new Pair<string, string>("MinNumPagesForIndexDefrag", "500"),
                     new Pair<string, string>("ReindexingMilitaryTimeToStopJob", "10:00:00.0000000"),
-                    new Pair<string, string>("UTEBCP Filepath", @"c:\tmp\user-management\utebcp\")
+                    new Pair<string, string>("UTEBCP Filepath", @"c:\tmp\user-management\utebcp\"),
+                    new Pair<string, string>("FreeSpaceCheckerPercentBuffer", @"10")
                 };
             var sqlHelper = new SqlHelper();
             sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_3_DDISettings");
@@ -38,7 +38,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database
         [Test]
         public void ValidateSystemSettings()
         {
-            var reader = new SqlHelper().ExecuteReader(" SELECT SettingName, SettingValue FROM SystemSettings ORDER BY SettingName ");
+            var reader = new SqlHelper().ExecuteReader(" SELECT SettingName, SettingValue FROM DDI.DDISettings ORDER BY SettingName ");
             var actualSettingList = new List<Pair<string, string>>();
 
             while (reader.Read())

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
+namespace DDI.Tests.TestHelpers
 {
     public static class TablePartitioningSqlStatements
     {

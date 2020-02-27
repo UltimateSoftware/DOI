@@ -17,6 +17,10 @@ AS
 	EXEC DDI.spRefreshStorageContainers_PartitionFunctions
         @DatabaseName = 'PaymentReporting',
 		@Debug = 1
+
+EXEC [DDI].[spRefreshStorageContainers_PartitionFunctions] 
+                            @DatabaseName = 'PaymentReporting',
+                            @PartitionFunctionName = 'PfMonthlyUnitTest'
 */
 
 BEGIN TRY
@@ -30,9 +34,10 @@ BEGIN TRY
 	DECLARE @CreatePartitionFunctionSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
 
 
-	SELECT @CreatePartitionFunctionSQL += CreatePartitionFunctionSQL + CHAR(13) + CHAR(10)
-	FROM DDI.vwPartitionFunctions
-	WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END 
+	SET @CreatePartitionFunctionSQL += (SELECT CreatePartitionFunctionSQL + CHAR(13) + CHAR(10)
+	                                    FROM DDI.vwPartitionFunctions
+	                                    WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END 
+                                        FOR XML PATH, TYPE).value('.', 'varchar(max)')
 
 	IF @Debug = 1
 	BEGIN

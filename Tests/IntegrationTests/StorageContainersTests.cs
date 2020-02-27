@@ -10,7 +10,7 @@ using SmartHub.Hosting.Extensions;
 using PaymentSolutions.TestHelpers.Attributes;
 using TestHelper = DDI.Tests.TestHelpers;
 
-namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
+namespace DDI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -27,6 +27,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         private const string PartitionFunctionNameMonthly = "PfMonthlyUnitTest";
         private const string PartitionSchemeNameMonthly = "psMonthlyUnitTest";
         private const string TableTestFuturePartitionFailsDueToLocking = "TestFuturePartitionFailsDueToLocking";
+        private const string DatabaseName = "PaymentReporting";
 
         private TestHelper.DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
         private List<PartitionFunctionBoundary> expectedPartitionFunctionBoundaries;
@@ -41,6 +42,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 
             this.expectedPartitionFunctionBoundaries = new List<PartitionFunctionBoundary>();
             this.expectedPartitionSchemeFilegroups = new List<PartitionSchemeFilegroup>();
+            //disable the following job or it will wipe out the metadata we insert in this test.
+            sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DDI - Refresh Metadata',@enabled = 0");
         }
 
         [TearDown]
@@ -82,6 +85,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 
             this.sqlHelper.Execute($@"
             DELETE DDI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameMonthly}'");
+            //re-enable job
+            sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DDI - Refresh Metadata',@enabled = 1");
         }
 
         [Test]
@@ -98,6 +103,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 
             this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
             {
+                DatabaseName = DatabaseName,
                 DestinationFilegroupId = 1,
                 PartitionSchemeName = PartitionSchemeName,
                 DataSpaceType = "FG",
@@ -108,6 +114,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             {
                 this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
                 {
+                    DatabaseName = DatabaseName,
                     Name = PartitionFunctionName,
                     Type = "R",
                     BoundaryValueOnRight = true,
@@ -117,6 +124,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
 
                 this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
                 {
+                    DatabaseName = DatabaseName,
                     DestinationFilegroupId = boundaryId + 1,
                     PartitionSchemeName = PartitionSchemeName,
                     DataSpaceType = "FG",
@@ -133,6 +141,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 case 2:
                     this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
                     {
+                        DatabaseName = DatabaseName,
                         Name = PartitionFunctionName,
                         Type = "R",
                         BoundaryValueOnRight = true,
@@ -141,6 +150,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                     });
                     this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
                     {
+                        DatabaseName = DatabaseName,
                         Name = PartitionFunctionName,
                         Type = "R",
                         BoundaryValueOnRight = true,
@@ -149,6 +159,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                     });
                     this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
                     {
+                        DatabaseName = DatabaseName,
                         DestinationFilegroupId = 5,
                         PartitionSchemeName = PartitionSchemeName,
                         DataSpaceType = "FG",
@@ -165,6 +176,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 default:
                     this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
                     {
+                        DatabaseName = DatabaseName,
                         Name = PartitionFunctionName,
                         Type = "R",
                         BoundaryValueOnRight = true,
@@ -173,6 +185,7 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                     });
                     this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
                     {
+                        DatabaseName = DatabaseName,
                         DestinationFilegroupId = 5,
                         PartitionSchemeName = PartitionSchemeName,
                         DataSpaceType = "FG",
@@ -318,8 +331,10 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
         {
             //setup
             this.sqlHelper.Execute($@"
-            INSERT INTO DDI.PartitionFunctions ( PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
-            VALUES ( '{PartitionFunctionNameMonthly}', 'DATETIME2', 'Monthly', 13, '2018-01-01', 0, NULL, 0)");
+            INSERT INTO DDI.PartitionFunctions ( DatabaseName, PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
+            VALUES ( '{DatabaseName}', '{PartitionFunctionNameMonthly}', 'DATETIME2', 'Monthly', 13, '2018-01-01', 0, NULL, 0)");
+
+            this.sqlHelper.Execute($@"EXEC DDI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
 
             this.expectedPartitionFunctionBoundaries = new List<PartitionFunctionBoundary>();
 
@@ -340,24 +355,37 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
             //ADD FUTURE PARTITIONS
             if (nextUsedFilegroupAlreadyExists)
             {
-                var setFilegroupToNextUsedSQL = this.sqlHelper.ExecuteScalar<string>($"SELECT TOP 1 SetFilegroupToNextUsedSQL FROM DDI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{PartitionFunctionNameMonthly}' ORDER BY BoundaryValue ASC");
+                var setFilegroupToNextUsedSQL = this.sqlHelper.ExecuteScalar<string>($@"SELECT TOP 1 SetFilegroupToNextUsedSQL 
+                                                                                        FROM DDI.vwPartitionFunctionPartitions 
+                                                                                        WHERE DatabaseName = '{DatabaseName}'
+                                                                                            AND PartitionFunctionName = '{PartitionFunctionNameMonthly}' 
+                                                                                        ORDER BY BoundaryValue ASC");
 
                 //set Filegroup to "NextUsed"
                 this.sqlHelper.Execute(setFilegroupToNextUsedSQL);
 
                 //Assert that there are no missing partitions
-                Assert.IsNull(this.sqlHelper.ExecuteScalar<string>($"SELECT 'True' FROM DDI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{PartitionFunctionNameMonthly}' AND IsPartitionMissing = 1"));
+                Assert.IsNull(this.sqlHelper.ExecuteScalar<string>($@"  SELECT 'True' 
+                                                                        FROM DDI.vwPartitionFunctionPartitions 
+                                                                        WHERE DatabaseName = '{DatabaseName}'
+                                                                            AND PartitionFunctionName = '{PartitionFunctionNameMonthly}' 
+                                                                            AND IsPartitionMissing = 1"));
             }
 
 
             this.sqlHelper.Execute($@"
-            DISABLE TRIGGER DDI.trUpdPartitionFunctions ON DDI.PartitionFunctions
-            UPDATE DDI.PartitionFunctions SET NumOfFutureIntervals = 14 WHERE PartitionFunctionName = '{
-                    PartitionFunctionNameMonthly
-                }'");
+            --DISABLE TRIGGER DDI.trUpdPartitionFunctions ON DDI.PartitionFunctions
 
+            UPDATE DDI.PartitionFunctions 
+            SET NumOfFutureIntervals = 14 
+            WHERE DatabaseName = '{DatabaseName}'
+                AND PartitionFunctionName = '{PartitionFunctionNameMonthly}'");
+
+            this.sqlHelper.Execute(@"EXEC DDI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
+            this.sqlHelper.Execute(@"EXEC DDI.spRefreshMetadata_System_SysPartitionFunctions");
 
             dataDrivenIndexTestHelper.ExecuteSPAddFuturePartitions(PartitionFunctionNameMonthly);
+            this.sqlHelper.Execute(@"EXEC DDI.spRefreshMetadata_System_PartitionFunctions");
 
             //add new expected value
             var maxBoundaryId = this.expectedPartitionFunctionBoundaries.Max(x => x.BoundaryId);
@@ -426,7 +454,8 @@ namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
                 $@" UPDATE PF 
                     SET NumOfFutureIntervals = NumOfFutureIntervals + 1 
                     FROM DDI.PartitionFunctions PF 
-                    WHERE PF.PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
+                    WHERE DatabaseName = '{DatabaseName}'
+                        AND PF.PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
 
             this.sqlHelper.Execute(" ENABLE TRIGGER DDI.trUpdPartitionFunctions ON DDI.PartitionFunctions"); //re-enable trigger.
 

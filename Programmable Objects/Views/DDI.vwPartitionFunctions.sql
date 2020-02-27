@@ -9,11 +9,12 @@ GO
 
 
 
+
 CREATE   VIEW [DDI].[vwPartitionFunctions]
 AS
 
 /*
-	select * from DDI.vwPartitionFunctions
+	select * from DDI.vwPartitionFunctions where partitionfunctionname = 'PfMonthlyUnitTest'
 */
 
 SELECT	PartitionFunctionName,
@@ -82,6 +83,7 @@ FROM DDI.PartitionFunctions PFM
 					WHERE DDS.partition_scheme_id = ps.data_space_id
                         AND prv.value > GETDATE()
                     GROUP BY PRV.function_id)FI
+
 
 
 

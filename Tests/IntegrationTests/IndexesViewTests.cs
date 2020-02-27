@@ -5,7 +5,7 @@ using DDI.Tests.Integration.Models;
 using NUnit.Framework;
 using TestHelper = DDI.Tests.TestHelpers;
 
-namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
+namespace DDI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]

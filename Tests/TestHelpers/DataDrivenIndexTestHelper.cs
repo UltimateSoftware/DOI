@@ -72,20 +72,21 @@ namespace DDI.Tests.TestHelpers
 
         public void ExecuteSPCreateNewPartitionFunction(string partitionFunctionName)
         {
-            var sql = $@"EXEC [DDI].[spRefreshStorageContainers_PartitionFunctions] 
-                            @DatabaseName = '{DatabaseName}',
-                            @PartitionFunctionName = '{partitionFunctionName}'";
+            this.sqlHelper.Execute($@"EXEC [DDI].[spRefreshStorageContainers_PartitionFunctions] 
+                                        @DatabaseName = '{DatabaseName}',
+                                        @PartitionFunctionName = '{partitionFunctionName}'");
 
-            this.sqlHelper.Execute(sql);
+            this.sqlHelper.Execute(@"EXEC DDI.spRefreshMetadata_System_PartitionFunctionsAndSchemes");
+            this.sqlHelper.Execute($@"EXEC DDI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
         }
 
         public void ExecuteSPCreateNewPartitionScheme(string partitionFunctionName)
         {
-            var sql = $@"EXEC [DDI].[spRefreshStorageContainers_PartitionSchemes] 
-                            @DatabaseName = '{DatabaseName}',
-                            @PartitionFunctionName = '{partitionFunctionName}'";
+            this.sqlHelper.Execute($@"EXEC [DDI].[spRefreshStorageContainers_PartitionSchemes] 
+                                        @DatabaseName = '{DatabaseName}',
+                                        @PartitionFunctionName = '{partitionFunctionName}'");
 
-            this.sqlHelper.Execute(sql);
+            this.sqlHelper.Execute(@"EXEC [DDI].[spRefreshMetadata_System_PartitionFunctionsAndSchemes]");
         }
 
         public List<PartitionFunctionBoundary> GetExistingPartitionFunctionBoundaries(string partitionFunctionName)
@@ -116,7 +117,7 @@ namespace DDI.Tests.TestHelpers
             {
                 return this.sqlHelper.GetList<PrepTable>($@"
                	SELECT PrepTableName
-            	FROM DDI.vwTables_PrepTables()
+            	FROM DDI.vwTables_PrepTables)
                 WHERE DatabaseName = '{DatabaseName}'
                 GROUP BY PrepTableName
             	HAVING COUNT(*) > 1");
@@ -125,7 +126,7 @@ namespace DDI.Tests.TestHelpers
             {
                 return this.sqlHelper.GetList<PrepTable>($@"
                	SELECT PrepTableName
-            	FROM DDI.vwTables_PrepTables()
+            	FROM DDI.vwTables_PrepTables
                 WHERE DatabaseName = '{DatabaseName}'
                     AND PartitionFunctionName = '{partitionFunctionName}'
                 GROUP BY PrepTableName
@@ -228,7 +229,9 @@ namespace DDI.Tests.TestHelpers
 
         public void ExecuteSPAddFuturePartitions(string partitionFunctionName, int commandTimeoutSec = 30)
         {
-            var sql = $"EXEC [DDI].[sp_AddNewPartition] @PartitionFunctionName = '{partitionFunctionName}'";
+            var sql = $@"EXEC [DDI].[spRefreshStorageContainers_AddNewPartition] 
+                            @DatabaseName = '{DatabaseName}',
+                            @PartitionFunctionName = '{partitionFunctionName}'";
 
             this.sqlHelper.Execute(sql, commandTimeoutSec);
         }

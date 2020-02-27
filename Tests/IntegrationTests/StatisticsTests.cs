@@ -6,7 +6,7 @@ using NUnit.Framework;
 using PaymentSolutions.TestHelpers.Attributes;
 using TestHelper = DDI.Tests.TestHelpers;
 
-namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine
+namespace DDI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]

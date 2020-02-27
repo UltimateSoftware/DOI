@@ -8,6 +8,7 @@ namespace DDI.Tests.Integration.Models
 {
     public class PartitionFunctionBoundary
     {
+        public string DatabaseName { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
         public bool BoundaryValueOnRight { get; set; }

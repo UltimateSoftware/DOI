@@ -11,9 +11,8 @@ CREATE   PROCEDURE [DDI].[spRefreshMetadata_System_SysPartitionFunctions]
 
 AS
 
-DELETE DDI.SysDestinationDataSpaces
+DELETE DDI.SysPartitionFunctions
 
 EXEC DDI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysDestinationDataSpaces'
-
+    @TableName = 'SysPartitionFunctions'
 GO

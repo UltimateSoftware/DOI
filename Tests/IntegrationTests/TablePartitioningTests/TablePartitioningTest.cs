@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SqlHelper = DDI.Tests.TestHelpers.SqlHelper;
 
-namespace Reporting.Ingestion.Integration.Tests.Database.TablePartitioning
+namespace DDI.Tests.Integration.TablePartitioning
 {
     [TestFixture]
     [Category("Integration")]

@@ -5,7 +5,7 @@ using DDI.Tests.Integration.Tests.TablePartitioning;
 using NUnit.Framework;
 
 
-namespace Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.TablePartitioning
+namespace DDI.Tests.Integration.TablePartitioning
 {
     [TestFixture]
     [Category("Integration")]
