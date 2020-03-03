@@ -463,11 +463,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DDI.spInsertMetadata_PartitionFunctions.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadata_System_PartitionFunctionsAndSchemes.sql" />
     <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshStorageContainers_AddNewPartition.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Functions\DDI.fnGetRefreshMetadataSPsForView.sql" />
-    <None Include="Programmable Objects\Functions\DDI.fnRefreshMetadataForView.sql" />
+    <None Include="Migrations\008_20200303-1721_SamuelBe.sql" />
+    <None Include="Programmable Objects\Functions\DDI.fnRefreshMetadataForViewSQL.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DDI.spRefreshMetadataForView.sql" />
   </ItemGroup>
 </Project>
