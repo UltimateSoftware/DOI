@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysDatabaseFiles]
+CREATE TABLE [DOI].[SysDatabaseFiles]
 (
 [database_id] [int] NOT NULL,
 [file_id] [int] NOT NULL,

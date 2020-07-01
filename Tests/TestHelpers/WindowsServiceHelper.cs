@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceProcess;
 
-namespace DDI.Tests.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     public class WindowsServiceHelper
     {

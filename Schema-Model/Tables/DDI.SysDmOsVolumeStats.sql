@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysDmOsVolumeStats]
+CREATE TABLE [DOI].[SysDmOsVolumeStats]
 (
 [database_id] [int] NOT NULL,
 [file_id] [int] NOT NULL,

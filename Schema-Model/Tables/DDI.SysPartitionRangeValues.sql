@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysPartitionRangeValues]
+CREATE TABLE [DOI].[SysPartitionRangeValues]
 (
 [database_id] [sys].[sysname] NOT NULL,
 [function_id] [int] NOT NULL,

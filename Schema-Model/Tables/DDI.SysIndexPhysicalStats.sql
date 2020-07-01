@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysIndexPhysicalStats]
+CREATE TABLE [DOI].[SysIndexPhysicalStats]
 (
 [database_id] [smallint] NOT NULL,
 [object_id] [int] NOT NULL,

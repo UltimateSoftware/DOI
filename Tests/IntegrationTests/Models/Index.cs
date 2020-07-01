@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDI.Tests.Integration.Models
+namespace DOI.Tests.Integration.Models
 {
     public class Index
     {

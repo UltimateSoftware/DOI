@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[PartitionFunctions]
+CREATE TABLE [DOI].[PartitionFunctions]
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [PartitionFunctionName] [sys].[sysname] NOT NULL,
@@ -22,11 +22,11 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-ALTER TABLE [DDI].[PartitionFunctions] ADD CONSTRAINT [Chk_PartitionFunctions_BoundaryInterval] CHECK (([BoundaryInterval]='Monthly' OR [BoundaryInterval]='Yearly'))
+ALTER TABLE [DOI].[PartitionFunctions] ADD CONSTRAINT [Chk_PartitionFunctions_BoundaryInterval] CHECK (([BoundaryInterval]='Monthly' OR [BoundaryInterval]='Yearly'))
 GO
-ALTER TABLE [DDI].[PartitionFunctions] ADD CONSTRAINT [Chk_PartitionFunctions_SlidingWindow] CHECK (([UsesSlidingWindow]=(1) AND [SlidingWindowSize] IS NOT NULL OR [UsesSlidingWindow]=(0) AND [SlidingWindowSize] IS NULL))
+ALTER TABLE [DOI].[PartitionFunctions] ADD CONSTRAINT [Chk_PartitionFunctions_SlidingWindow] CHECK (([UsesSlidingWindow]=(1) AND [SlidingWindowSize] IS NOT NULL OR [UsesSlidingWindow]=(0) AND [SlidingWindowSize] IS NULL))
 GO
-ALTER TABLE [DDI].[PartitionFunctions] ADD CONSTRAINT [FK_PartitionFunctions_Databases] FOREIGN KEY ([DatabaseName]) REFERENCES [DDI].[Databases] ([DatabaseName])
+ALTER TABLE [DOI].[PartitionFunctions] ADD CONSTRAINT [FK_PartitionFunctions_Databases] FOREIGN KEY ([DatabaseName]) REFERENCES [DOI].[Databases] ([DatabaseName])
 GO
-ALTER TABLE [DDI].[PartitionFunctions] NOCHECK CONSTRAINT [FK_PartitionFunctions_Databases]
+ALTER TABLE [DOI].[PartitionFunctions] NOCHECK CONSTRAINT [FK_PartitionFunctions_Databases]
 GO

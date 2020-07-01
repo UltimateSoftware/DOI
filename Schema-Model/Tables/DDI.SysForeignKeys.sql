@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysForeignKeys]
+CREATE TABLE [DOI].[SysForeignKeys]
 (
 [database_id] [int] NOT NULL,
 [name] [sys].[sysname] NOT NULL,
@@ -33,5 +33,5 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-ALTER TABLE [DDI].[SysForeignKeys] ADD CONSTRAINT [Chk_SysForeignKeys_DeploymentTime] CHECK (([DeploymentTime]='Deployment' OR [DeploymentTime]='Job'))
+ALTER TABLE [DOI].[SysForeignKeys] ADD CONSTRAINT [Chk_SysForeignKeys_DeploymentTime] CHECK (([DeploymentTime]='Deployment' OR [DeploymentTime]='Job'))
 GO

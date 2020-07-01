@@ -5,10 +5,10 @@ C:\Projects\tax-management-core\Reporting\Tools\utebcp\utebcp\obj\Debug\utebcp.c
 C:\Projects\tax-management-core\Reporting\Tools\utebcp\utebcp\obj\Debug\utebcp.csproj.CoreCompileInputs.cache
 C:\Projects\tax-management-core\Reporting\Tools\utebcp\utebcp\obj\Debug\utebcp.exe
 C:\Projects\tax-management-core\Reporting\Tools\utebcp\utebcp\obj\Debug\utebcp.pdb
-C:\Projects\ddi\utebcp\bin\Debug\utebcp.exe.config
-C:\Projects\ddi\utebcp\bin\Debug\utebcp.exe
-C:\Projects\ddi\utebcp\bin\Debug\utebcp.pdb
-C:\Projects\ddi\utebcp\obj\Debug\utebcp.csprojAssemblyReference.cache
-C:\Projects\ddi\utebcp\obj\Debug\utebcp.csproj.CoreCompileInputs.cache
-C:\Projects\ddi\utebcp\obj\Debug\utebcp.exe
-C:\Projects\ddi\utebcp\obj\Debug\utebcp.pdb
+C:\Projects\DOI\utebcp\bin\Debug\utebcp.exe.config
+C:\Projects\DOI\utebcp\bin\Debug\utebcp.exe
+C:\Projects\DOI\utebcp\bin\Debug\utebcp.pdb
+C:\Projects\DOI\utebcp\obj\Debug\utebcp.csprojAssemblyReference.cache
+C:\Projects\DOI\utebcp\obj\Debug\utebcp.csproj.CoreCompileInputs.cache
+C:\Projects\DOI\utebcp\obj\Debug\utebcp.exe
+C:\Projects\DOI\utebcp\obj\Debug\utebcp.pdb

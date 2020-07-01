@@ -1,5 +1,5 @@
 --4. needs to be run on new month or new year...ADD SQLAgent Job.
-IF NOT EXISTS(SELECT 'True' FROM msdb.dbo.sysjobs WHERE name = 'DDI-Add New Partitions On Calendar Switch')
+IF NOT EXISTS(SELECT 'True' FROM msdb.dbo.sysjobs WHERE name = 'DOI-Add New Partitions On Calendar Switch')
 BEGIN
 	DECLARE @SQL VARCHAR(MAX) = '',
 			@Debug BIT = 0,
@@ -8,7 +8,7 @@ BEGIN
 		SET @SQL = '
 		USE [msdb]
 
-		/****** Object:  Job [DDI-Add New Partitions On Calendar Switch]    Script Date: 7/25/2014 4:08:45 PM ******/
+		/****** Object:  Job [DOI-Add New Partitions On Calendar Switch]    Script Date: 7/25/2014 4:08:45 PM ******/
 		BEGIN TRY
 			BEGIN TRANSACTION
 				DECLARE @ReturnCode INT
@@ -26,7 +26,7 @@ BEGIN
 				DECLARE @jobId BINARY(16)
 
 				EXEC @ReturnCode =  msdb.dbo.sp_add_job 
-					@job_name=N''DDI-Add New Partitions On Calendar Switch'', 
+					@job_name=N''DOI-Add New Partitions On Calendar Switch'', 
 					@enabled=1, 
 					@notify_level_eventlog=0, 
 					@notify_level_email=0, 
@@ -37,7 +37,7 @@ BEGIN
 					@category_name=N''DB Maintenance'', 
 					@owner_login_name=N''sa'', 
 					@job_id = @jobId OUTPUT
-				PRINT ''Created job DDI-Add New Partitions On Calendar Switch''
+				PRINT ''Created job DOI-Add New Partitions On Calendar Switch''
 
 				/****** Object:  Step [Add New Partitions On Calendar Switch]    Script Date: 7/25/2014 4:08:45 PM ******/
 				EXEC @ReturnCode = msdb.dbo.sp_add_jobstep 
@@ -54,9 +54,9 @@ BEGIN
 					@os_run_priority=0, 
 					@subsystem=N''TSQL'', 
 					@command=N''
-EXEC DDI.spDDI_AddNewPartition
+EXEC DOI.spDOI_AddNewPartition
 					
-EXEC DDI.spIndexRowStorePartitionsNotInMetadata'', 
+EXEC DOI.spIndexRowStorePartitionsNotInMetadata'', 
 	@database_name=N''PaymentReporting'', 
 	@flags=0
 
@@ -104,17 +104,17 @@ EXEC DDI.spIndexRowStorePartitionsNotInMetadata'',
 END
 GO
 
-IF EXISTS (SELECT * FROM msdb.dbo.sysjobs j INNER JOIN msdb.dbo.sysjobsteps js ON js.job_id = j.job_id WHERE j.name = 'DDI-Add New Partitions On Calendar Switch' AND js.step_name = 'Add New Partitions' AND js.command LIKE '%spIndexRowStorePartitionsNotInMetadata%')
+IF EXISTS (SELECT * FROM msdb.dbo.sysjobs j INNER JOIN msdb.dbo.sysjobsteps js ON js.job_id = j.job_id WHERE j.name = 'DOI-Add New Partitions On Calendar Switch' AND js.step_name = 'Add New Partitions' AND js.command LIKE '%spIndexRowStorePartitionsNotInMetadata%')
 BEGIN
-    DECLARE @StepId INT = (SELECT js.step_id FROM msdb.dbo.sysjobs j INNER JOIN msdb.dbo.sysjobsteps js ON js.job_id = j.job_id WHERE j.name = 'DDI-Add New Partitions On Calendar Switch' AND js.step_name = 'Add New Partitions' AND js.command LIKE '%spIndexRowStorePartitionsNotInMetadata%')
+    DECLARE @StepId INT = (SELECT js.step_id FROM msdb.dbo.sysjobs j INNER JOIN msdb.dbo.sysjobsteps js ON js.job_id = j.job_id WHERE j.name = 'DOI-Add New Partitions On Calendar Switch' AND js.step_name = 'Add New Partitions' AND js.command LIKE '%spIndexRowStorePartitionsNotInMetadata%')
 
     EXEC msdb.dbo.sp_update_jobstep 
-        @job_name = 'DDI-Add New Partitions On Calendar Switch' ,
+        @job_name = 'DOI-Add New Partitions On Calendar Switch' ,
         @step_id = @StepId,
         @command = N'
-EXEC DDI.spDDI_AddNewPartition
+EXEC DOI.spDOI_AddNewPartition
 					
-EXEC DDI.spIndexPartitionsNotInMetadata'
+EXEC DOI.spIndexPartitionsNotInMetadata'
 
     PRINT 'Updated Add New Partitions step.'
 END

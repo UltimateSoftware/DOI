@@ -1,8 +1,8 @@
-IF TYPE_ID('[DDI].[SysPartitionRangeValuesTT]') IS NOT NULL
-	DROP TYPE [DDI].[SysPartitionRangeValuesTT];
+IF TYPE_ID('[DOI].[SysPartitionRangeValuesTT]') IS NOT NULL
+	DROP TYPE [DOI].[SysPartitionRangeValuesTT];
 
 GO
-CREATE TYPE [DDI].[SysPartitionRangeValuesTT] AS TABLE
+CREATE TYPE [DOI].[SysPartitionRangeValuesTT] AS TABLE
 (
 [database_id] [sys].[sysname] NOT NULL,
 [function_id] [int] NOT NULL,

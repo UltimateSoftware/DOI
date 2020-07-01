@@ -2,7 +2,7 @@
 using System.Net.Http;
 using SmartHub.Hosting.Extensions;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Hosting.Runtime
+namespace DOI.Tests.TestHelpers.CommonSetup.Hosting.Runtime
 {
     using System.Net;
 

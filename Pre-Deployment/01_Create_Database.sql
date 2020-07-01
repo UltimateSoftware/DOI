@@ -1,3 +1,8 @@
+EXEC sp_configure 'contained database authentication', 1
+RECONFIGURE WITH OVERRIDE
+GO
+
+
 IF (DB_ID(N'$(DatabaseName)') IS NULL)
 BEGIN
 	PRINT N'Creating $(DatabaseName)...';

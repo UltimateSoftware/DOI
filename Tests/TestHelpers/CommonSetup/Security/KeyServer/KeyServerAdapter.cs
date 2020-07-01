@@ -6,11 +6,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DDI.Tests.TestHelpers.CommonSetup.Hosting;
-using DDI.Tests.TestHelpers.CommonSetup.Hosting.Runtime;
-using DDI.Tests.TestHelpers.CommonSetup.Logging;
+using DOI.Tests.TestHelpers.CommonSetup.Hosting;
+using DOI.Tests.TestHelpers.CommonSetup.Hosting.Runtime;
+using DOI.Tests.TestHelpers.CommonSetup.Logging;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Security.KeyServer
+namespace DOI.Tests.TestHelpers.CommonSetup.Security.KeyServer
 {
     /// <summary>
     /// This class is responsible for retrieving data from the key server.

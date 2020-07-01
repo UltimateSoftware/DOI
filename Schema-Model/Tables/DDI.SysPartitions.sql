@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysPartitions]
+CREATE TABLE [DOI].[SysPartitions]
 (
 [database_id] [int] NOT NULL,
 [partition_id] [bigint] NOT NULL,

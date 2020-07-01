@@ -141,10 +141,10 @@
                               <Style>Solid</Style>
                             </TopBorder>
                             <BackgroundColor>#e6e6e6</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -181,10 +181,10 @@
                               <Style>Solid</Style>
                             </TopBorder>
                             <BackgroundColor>#e6e6e6</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -221,10 +221,10 @@
                               <Style>Solid</Style>
                             </TopBorder>
                             <BackgroundColor>#e6e6e6</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -260,10 +260,10 @@
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) Mod 2 = 0, "#e6e6e6", "#cfcfcf")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -294,10 +294,10 @@
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) Mod 2 = 0, "#e6e6e6", "#cfcfcf")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -329,10 +329,10 @@
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) Mod 2 = 0, "#e6e6e6", "#cfcfcf")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                             <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                           </Style>
                         </Textbox>
@@ -394,7 +394,7 @@
               <FontSize>8pt</FontSize>
               <FontWeight>Bold</FontWeight>
               <TextAlign>Center</TextAlign>
-              <PaddingTop>7pt</PaddingTop>
+              <PaDOIngTop>7pt</PaDOIngTop>
             </Style>
           </Tablix>
         </ReportItems>
@@ -438,10 +438,10 @@
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox17">
@@ -473,10 +473,10 @@
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox18">
@@ -508,10 +508,10 @@
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox47">
@@ -539,10 +539,10 @@
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox48">
@@ -572,10 +572,10 @@
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox49">
@@ -605,10 +605,10 @@
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Rectangle Name="Rectangle2">
@@ -640,10 +640,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox31">
@@ -675,10 +675,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox33">
@@ -710,10 +710,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox9">
@@ -745,10 +745,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox10">
@@ -780,10 +780,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox7">
@@ -815,10 +815,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox12">
@@ -847,10 +847,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox4">
@@ -882,10 +882,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox11">
@@ -916,10 +916,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox15">
@@ -951,10 +951,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox19">
@@ -985,10 +985,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox21">
@@ -1020,10 +1020,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox22">
@@ -1054,10 +1054,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox25">
@@ -1089,10 +1089,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="CollectionType">
@@ -1123,10 +1123,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="GroupName">
@@ -1155,10 +1155,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox64">
@@ -1190,10 +1190,10 @@
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                   </ReportItems>
@@ -1248,10 +1248,10 @@
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
               </ReportItems>

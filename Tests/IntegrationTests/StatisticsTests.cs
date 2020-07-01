@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using DDI.TestHelpers;
-using DDI.Tests.Integration.Models;
-using DDI.Tests.TestHelpers;
+using DOI.TestHelpers;
+using DOI.Tests.Integration.Models;
+using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 using PaymentSolutions.TestHelpers.Attributes;
-using TestHelper = DDI.Tests.TestHelpers;
+using TestHelper = DOI.Tests.TestHelpers;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -32,8 +32,8 @@ namespace DDI.Tests.Integration
         public virtual void TearDown()
         {
             sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            sqlHelper.Execute("TRUNCATE TABLE DDI.Queue");
-            sqlHelper.Execute("TRUNCATE TABLE DDI.Log");
+            sqlHelper.Execute("TRUNCATE TABLE DOI.Queue");
+            sqlHelper.Execute("TRUNCATE TABLE DOI.Log");
         }
 
 
@@ -90,19 +90,19 @@ namespace DDI.Tests.Integration
             //UpdateTypes do not match
             string actualUpdateType =
                 sqlHelper.ExecuteScalar<string>(
-                    $@"SELECT StatisticsUpdateType FROM DDI.vwStatistics WHERE SchemaName = '{
+                    $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
                             SchemaName
                         }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
             Assert.AreNotEqual(expectedUpdateType, actualUpdateType);
 
             //change metadata
             sqlHelper.Execute(
-                $@"UPDATE DDI.[Statistics] SET {optionUpdateList} WHERE StatisticsName = '{StatisticsName}'");
+                $@"UPDATE DOI.[Statistics] SET {optionUpdateList} WHERE StatisticsName = '{StatisticsName}'");
 
             //UpdateTypes now match
             actualUpdateType =
                 sqlHelper.ExecuteScalar<string>(
-                    $@"SELECT StatisticsUpdateType FROM DDI.vwStatistics WHERE SchemaName = '{
+                    $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
                             SchemaName
                         }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
 
@@ -132,13 +132,13 @@ namespace DDI.Tests.Integration
             Statistics actualStatisticsDetail;
 
             sqlHelper.Execute(@"
-            INSERT INTO DDI.IndexesRowStore
+            INSERT INTO DOI.IndexesRowStore
             (SchemaName, TableName, IndexName, IsUnique_Desired,IsPrimaryKey_Desired,IsUniqueConstraint_Desired,IsClustered_Desired,KeyColumnList_Desired,IncludedColumnList_Desired,IsFiltered_Desired,FilterPredicate,Fillfactor_Desired,OptionPadIndex_Desired,OptionStatisticsNoRecompute_Desired,OptionStatisticsIncremental_Desired,OptionIgnoreDupKey_Desired,OptionResumable_Desired,OptionMaxDuration_Desired,OptionAllowRowLocks_Desired,OptionAllowPageLocks_Desired,OptionDataCompression_Desired,Storage_Desired,PartitionColumn_Desired)
             VALUES(N'dbo', N'TempA', N'NIDX_TempA_Report2', 0, 0, 0, 0, N'TransactionUtcDt ASC', NULL, 0, NULL, 90, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, 'NONE', 'PRIMARY', NULL)");
 
             string actualUpdateType =
                 sqlHelper.ExecuteScalar<string>(
-                    $@"SELECT StatisticsUpdateType FROM DDI.vwStatistics WHERE SchemaName = '{
+                    $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
                             SchemaName
                         }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
             Assert.AreNotEqual(statisticsUpdateType, actualUpdateType);
@@ -146,14 +146,14 @@ namespace DDI.Tests.Integration
             if (statisticsUpdateType == "DropRecreate Statistics")
             {
                 sqlHelper.Execute(
-                    $@"UPDATE DDI.[Statistics] SET IsFiltered = 1, FilterPredicate = 'TempAId <> 0' WHERE StatisticsName = '{
+                    $@"UPDATE DOI.[Statistics] SET IsFiltered = 1, FilterPredicate = 'TempAId <> 0' WHERE StatisticsName = '{
                             StatisticsName
                         }'");
 
                 if (readyToQueue == false)
                 {
                     sqlHelper.Execute(
-                        $@"UPDATE DDI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
+                        $@"UPDATE DOI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
 
                     expectedStatisticsDetails =
                         new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName); //if the table is not ready to queue, then we expect to see no changes.
@@ -169,7 +169,7 @@ namespace DDI.Tests.Integration
 
                 actualUpdateType =
                     sqlHelper.ExecuteScalar<string>(
-                        $@"SELECT StatisticsUpdateType FROM DDI.vwStatistics WHERE SchemaName = '{
+                        $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
                                 SchemaName
                             }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
 
@@ -177,12 +177,12 @@ namespace DDI.Tests.Integration
 
                 sqlHelper.Execute(
                     $@" DECLARE @BatchIdOUT UNIQUEIDENTIFIER;
-                        EXEC DDI.spQueue 
+                        EXEC DOI.spQueue 
                             @OnlineOperations = 0,
                             @IsBeingRunDuringADeployment = 1,
                             @BatchIdOUT = @BatchIdOUT OUTPUT
 
-                        EXEC DDI.spRun
+                        EXEC DOI.spRun
                             @OnlineOperations = 0,
                             @SchemaName = N'{SchemaName}',
                             @TableName = N'{TempTableName}',
@@ -202,7 +202,7 @@ namespace DDI.Tests.Integration
                 if (readyToQueue == false)
                 {
                     sqlHelper.Execute(
-                        $@"UPDATE DDI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
+                        $@"UPDATE DOI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
 
                     expectedStatisticsDetails =
                         new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName); //if the table is not ready to queue, then we expect to see no changes.
@@ -218,7 +218,7 @@ namespace DDI.Tests.Integration
 
                 actualUpdateType =
                     sqlHelper.ExecuteScalar<string>(
-                        $@"SELECT StatisticsUpdateType FROM DDI.vwStatistics WHERE SchemaName = '{
+                        $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
                                 SchemaName
                             }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
 
@@ -226,12 +226,12 @@ namespace DDI.Tests.Integration
 
                 sqlHelper.Execute(
                     $@" DECLARE @BatchIdOUT UNIQUEIDENTIFIER;
-                        EXEC DDI.spQueue 
+                        EXEC DOI.spQueue 
                             @OnlineOperations = 1,
                             @IsBeingRunDuringADeployment = 0,
                             @BatchIdOUT = @BatchIdOUT OUTPUT
 
-                        EXEC DDI.spRun
+                        EXEC DOI.spRun
                             @OnlineOperations = 1,
                             @SchemaName = N'{SchemaName}',
                             @TableName = N'{TempTableName}',
@@ -247,14 +247,14 @@ namespace DDI.Tests.Integration
             else if (statisticsUpdateType == "Update Statistics")
             {
                 sqlHelper.Execute(
-                    $@"UPDATE DDI.[Statistics] SET NoRecompute = 1 WHERE StatisticsName = '{
+                    $@"UPDATE DOI.[Statistics] SET NoRecompute = 1 WHERE StatisticsName = '{
                             StatisticsName
                         }'");
 
                 if (readyToQueue == false)
                 {
                     sqlHelper.Execute(
-                        $@"UPDATE DDI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
+                        $@"UPDATE DOI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
 
                     expectedStatisticsDetails =
                         new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName); //if the table is not ready to queue, then we expect to see no changes.
@@ -270,7 +270,7 @@ namespace DDI.Tests.Integration
 
                 actualUpdateType =
                     sqlHelper.ExecuteScalar<string>(
-                        $@"SELECT StatisticsUpdateType FROM DDI.vwStatistics WHERE SchemaName = '{
+                        $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
                                 SchemaName
                             }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
 
@@ -278,12 +278,12 @@ namespace DDI.Tests.Integration
 
                 sqlHelper.Execute(
                     $@" DECLARE @BatchIdOUT UNIQUEIDENTIFIER;
-                        EXEC DDI.spQueue 
+                        EXEC DOI.spQueue 
                             @OnlineOperations = 1,
                             @IsBeingRunDuringADeployment = 0,
                             @BatchIdOUT = @BatchIdOUT OUTPUT
 
-                        EXEC DDI.spRun
+                        EXEC DOI.spRun
                             @OnlineOperations = 1,
                             @SchemaName = N'{SchemaName}',
                             @TableName = N'{TempTableName}',

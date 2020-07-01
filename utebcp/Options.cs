@@ -457,7 +457,7 @@ namespace Mono.Options
             this.count = maxValueCount;
             this.names = (this is OptionSet.Category)
                 // append GetHashCode() so that "duplicate" categories have distinct
-                // names, e.g. adding multiple "" categories should be valid.
+                // names, e.g. aDOIng multiple "" categories should be valid.
                 ? new[] { prototype + this.GetHashCode() }
                 : prototype.Split('|');
 
@@ -870,7 +870,7 @@ namespace Mono.Options
         protected override void InsertItem(int index, Option item)
         {
             base.InsertItem(index, item);
-            AddImpl(item);
+            ADOImpl(item);
         }
 
         protected override void RemoveItem(int index)
@@ -887,10 +887,10 @@ namespace Mono.Options
         protected override void SetItem(int index, Option item)
         {
             base.SetItem(index, item);
-            AddImpl(item);
+            ADOImpl(item);
         }
 
-        private void AddImpl(Option option)
+        private void ADOImpl(Option option)
         {
             if (option == null)
                 throw new ArgumentNullException("option");

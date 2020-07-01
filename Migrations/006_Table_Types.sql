@@ -3,8 +3,8 @@ GO
 
 PRINT N'Creating types'
 GO
-IF TYPE_ID(N'[DDI].[LogTT]') IS NULL
-CREATE TYPE [DDI].[LogTT] AS TABLE
+IF TYPE_ID(N'[DOI].[LogTT]') IS NULL
+CREATE TYPE [DOI].[LogTT] AS TABLE
 (
 [LogID] [int] NOT NULL,
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -36,8 +36,8 @@ MEMORY_OPTIMIZED = ON
 GO
 PRINT N'Creating types'
 GO
-IF TYPE_ID(N'[DDI].[FilteredRowCountsTT]') IS NULL
-CREATE TYPE [DDI].[FilteredRowCountsTT] AS TABLE
+IF TYPE_ID(N'[DOI].[FilteredRowCountsTT]') IS NULL
+CREATE TYPE [DOI].[FilteredRowCountsTT] AS TABLE
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [SchemaName] [sys].[sysname] NOT NULL,
@@ -51,8 +51,8 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-IF TYPE_ID(N'[DDI].[IndexColumnsTT]') IS NULL
-CREATE TYPE [DDI].[IndexColumnsTT] AS TABLE
+IF TYPE_ID(N'[DOI].[IndexColumnsTT]') IS NULL
+CREATE TYPE [DOI].[IndexColumnsTT] AS TABLE
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [SchemaName] [sys].[sysname] NOT NULL,
@@ -63,8 +63,8 @@ CREATE TYPE [DDI].[IndexColumnsTT] AS TABLE
 PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName])
 )
 GO
-IF TYPE_ID(N'[DDI].[SysPartitionRangeValuesTT]') IS NULL
-CREATE TYPE [DDI].[SysPartitionRangeValuesTT] AS TABLE
+IF TYPE_ID(N'[DOI].[SysPartitionRangeValuesTT]') IS NULL
+CREATE TYPE [DOI].[SysPartitionRangeValuesTT] AS TABLE
 (
 [database_id] [sys].[sysname] NOT NULL,
 [function_id] [int] NOT NULL,

@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[ForeignKeys]
+CREATE TABLE [DOI].[ForeignKeys]
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [ParentSchemaName] [sys].[sysname] NOT NULL,
@@ -17,11 +17,11 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-ALTER TABLE [DDI].[ForeignKeys] ADD CONSTRAINT [FK_ForeignKeys_ParentTables] FOREIGN KEY ([DatabaseName], [ParentSchemaName], [ParentTableName]) REFERENCES [DDI].[Tables] ([DatabaseName], [SchemaName], [TableName])
+ALTER TABLE [DOI].[ForeignKeys] ADD CONSTRAINT [FK_ForeignKeys_ParentTables] FOREIGN KEY ([DatabaseName], [ParentSchemaName], [ParentTableName]) REFERENCES [DOI].[Tables] ([DatabaseName], [SchemaName], [TableName])
 GO
-ALTER TABLE [DDI].[ForeignKeys] ADD CONSTRAINT [FK_ForeignKeys_ReferencedTables] FOREIGN KEY ([DatabaseName], [ReferencedSchemaName], [ReferencedTableName]) REFERENCES [DDI].[Tables] ([DatabaseName], [SchemaName], [TableName])
+ALTER TABLE [DOI].[ForeignKeys] ADD CONSTRAINT [FK_ForeignKeys_ReferencedTables] FOREIGN KEY ([DatabaseName], [ReferencedSchemaName], [ReferencedTableName]) REFERENCES [DOI].[Tables] ([DatabaseName], [SchemaName], [TableName])
 GO
-ALTER TABLE [DDI].[ForeignKeys] NOCHECK CONSTRAINT [FK_ForeignKeys_ParentTables]
+ALTER TABLE [DOI].[ForeignKeys] NOCHECK CONSTRAINT [FK_ForeignKeys_ParentTables]
 GO
-ALTER TABLE [DDI].[ForeignKeys] NOCHECK CONSTRAINT [FK_ForeignKeys_ReferencedTables]
+ALTER TABLE [DOI].[ForeignKeys] NOCHECK CONSTRAINT [FK_ForeignKeys_ReferencedTables]
 GO

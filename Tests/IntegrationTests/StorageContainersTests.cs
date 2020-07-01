@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using DDI.TestHelpers;
-using DDI.Tests.Integration.Models;
+using DOI.TestHelpers;
+using DOI.Tests.Integration.Models;
 using FluentAssertions;
 using NUnit.Framework;
 using SmartHub.Hosting.Extensions;
 using PaymentSolutions.TestHelpers.Attributes;
-using TestHelper = DDI.Tests.TestHelpers;
+using TestHelper = DOI.Tests.TestHelpers;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -43,7 +43,7 @@ namespace DDI.Tests.Integration
             this.expectedPartitionFunctionBoundaries = new List<PartitionFunctionBoundary>();
             this.expectedPartitionSchemeFilegroups = new List<PartitionSchemeFilegroup>();
             //disable the following job or it will wipe out the metadata we insert in this test.
-            sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DDI - Refresh Metadata',@enabled = 0");
+            sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DOI - Refresh Metadata',@enabled = 0");
         }
 
         [TearDown]
@@ -62,7 +62,7 @@ namespace DDI.Tests.Integration
             DROP PARTITION FUNCTION {PartitionFunctionName}");
 
             this.sqlHelper.Execute($@"
-            DELETE DDI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionName}'");
+            DELETE DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionName}'");
 
             this.sqlHelper.Execute($@"
             IF EXISTS(SELECT * FROM sys.partition_schemes ps WHERE ps.name = '{PartitionSchemeNameNoSlidingWindow}')
@@ -73,7 +73,7 @@ namespace DDI.Tests.Integration
             DROP PARTITION FUNCTION {PartitionFunctionNameNoSlidingWindow}");
 
             this.sqlHelper.Execute($@"
-            DELETE DDI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
+            DELETE DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
 
             this.sqlHelper.Execute($@"
             IF EXISTS(SELECT * FROM sys.partition_schemes ps WHERE ps.name = '{PartitionSchemeNameMonthly}')
@@ -84,9 +84,9 @@ namespace DDI.Tests.Integration
             DROP PARTITION FUNCTION {PartitionFunctionNameMonthly}");
 
             this.sqlHelper.Execute($@"
-            DELETE DDI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameMonthly}'");
+            DELETE DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameMonthly}'");
             //re-enable job
-            sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DDI - Refresh Metadata',@enabled = 1");
+            sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DOI - Refresh Metadata',@enabled = 1");
         }
 
         [Test]
@@ -197,7 +197,7 @@ namespace DDI.Tests.Integration
             this.sqlHelper.Execute($@"
             DECLARE @DayOfYear INT = (SELECT datename(dy, SYSDATETIME())) - {numToSubtract}
 
-            INSERT INTO DDI.PartitionFunctions ( PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
+            INSERT INTO DOI.PartitionFunctions ( PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
             VALUES ( '{PartitionFunctionName}', 'DATETIME2', 'Yearly', 5, '2016-01-01', 1, @DayOfYear, 0)");
 
             // Act
@@ -225,18 +225,18 @@ namespace DDI.Tests.Integration
             // Setup future partitions
             if (nextUsedFilegroupAlreadyExists)
             {
-                var setFilegroupToNextUsedSQL = this.sqlHelper.ExecuteScalar<string>($"SELECT TOP 1 SetFilegroupToNextUsedSQL FROM DDI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}' ORDER BY BoundaryValue ASC");
+                var setFilegroupToNextUsedSQL = this.sqlHelper.ExecuteScalar<string>($"SELECT TOP 1 SetFilegroupToNextUsedSQL FROM DOI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}' ORDER BY BoundaryValue ASC");
 
                 //set Filegroup to "NextUsed"
                 this.sqlHelper.Execute(setFilegroupToNextUsedSQL);
 
                 //Assert that there are no missing partitions
-                Assert.IsNull(this.sqlHelper.ExecuteScalar<string>($"SELECT 'True' FROM DDI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}' AND IsPartitionMissing = 1"));
+                Assert.IsNull(this.sqlHelper.ExecuteScalar<string>($"SELECT 'True' FROM DOI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}' AND IsPartitionMissing = 1"));
             }
 
             this.sqlHelper.Execute($@"
-            DISABLE TRIGGER DDI.trUpdPartitionFunctions ON DDI.PartitionFunctions
-            UPDATE DDI.PartitionFunctions SET NumOfFutureIntervals = {numOfFutureIntervals} WHERE PartitionFunctionName = '{
+            DISABLE TRIGGER DOI.trUpdPartitionFunctions ON DOI.PartitionFunctions
+            UPDATE DOI.PartitionFunctions SET NumOfFutureIntervals = {numOfFutureIntervals} WHERE PartitionFunctionName = '{
                     PartitionFunctionNameNoSlidingWindow
                 }'");
 
@@ -276,7 +276,7 @@ namespace DDI.Tests.Integration
         {
             // Arrange (Initial state - Only 1 future interval)
             this.sqlHelper.Execute($@"
-            INSERT INTO DDI.PartitionFunctions ( PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
+            INSERT INTO DOI.PartitionFunctions ( PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
             VALUES ( '{PartitionFunctionNameNoSlidingWindow}', 'DATETIME2', 'Yearly', 1, '2016-01-01', 0, NULL, 0)");
 
             var boundaryId = 1;
@@ -331,10 +331,10 @@ namespace DDI.Tests.Integration
         {
             //setup
             this.sqlHelper.Execute($@"
-            INSERT INTO DDI.PartitionFunctions ( DatabaseName, PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
+            INSERT INTO DOI.PartitionFunctions ( DatabaseName, PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
             VALUES ( '{DatabaseName}', '{PartitionFunctionNameMonthly}', 'DATETIME2', 'Monthly', 13, '2018-01-01', 0, NULL, 0)");
 
-            this.sqlHelper.Execute($@"EXEC DDI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
+            this.sqlHelper.Execute($@"EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
 
             this.expectedPartitionFunctionBoundaries = new List<PartitionFunctionBoundary>();
 
@@ -356,7 +356,7 @@ namespace DDI.Tests.Integration
             if (nextUsedFilegroupAlreadyExists)
             {
                 var setFilegroupToNextUsedSQL = this.sqlHelper.ExecuteScalar<string>($@"SELECT TOP 1 SetFilegroupToNextUsedSQL 
-                                                                                        FROM DDI.vwPartitionFunctionPartitions 
+                                                                                        FROM DOI.vwPartitionFunctionPartitions 
                                                                                         WHERE DatabaseName = '{DatabaseName}'
                                                                                             AND PartitionFunctionName = '{PartitionFunctionNameMonthly}' 
                                                                                         ORDER BY BoundaryValue ASC");
@@ -366,7 +366,7 @@ namespace DDI.Tests.Integration
 
                 //Assert that there are no missing partitions
                 Assert.IsNull(this.sqlHelper.ExecuteScalar<string>($@"  SELECT 'True' 
-                                                                        FROM DDI.vwPartitionFunctionPartitions 
+                                                                        FROM DOI.vwPartitionFunctionPartitions 
                                                                         WHERE DatabaseName = '{DatabaseName}'
                                                                             AND PartitionFunctionName = '{PartitionFunctionNameMonthly}' 
                                                                             AND IsPartitionMissing = 1"));
@@ -374,18 +374,18 @@ namespace DDI.Tests.Integration
 
 
             this.sqlHelper.Execute($@"
-            --DISABLE TRIGGER DDI.trUpdPartitionFunctions ON DDI.PartitionFunctions
+            --DISABLE TRIGGER DOI.trUpdPartitionFunctions ON DOI.PartitionFunctions
 
-            UPDATE DDI.PartitionFunctions 
+            UPDATE DOI.PartitionFunctions 
             SET NumOfFutureIntervals = 14 
             WHERE DatabaseName = '{DatabaseName}'
                 AND PartitionFunctionName = '{PartitionFunctionNameMonthly}'");
 
-            this.sqlHelper.Execute(@"EXEC DDI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
-            this.sqlHelper.Execute(@"EXEC DDI.spRefreshMetadata_System_SysPartitionFunctions");
+            this.sqlHelper.Execute(@"EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
+            this.sqlHelper.Execute(@"EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions");
 
             dataDrivenIndexTestHelper.ExecuteSPAddFuturePartitions(PartitionFunctionNameMonthly);
-            this.sqlHelper.Execute(@"EXEC DDI.spRefreshMetadata_System_PartitionFunctions");
+            this.sqlHelper.Execute(@"EXEC DOI.spRefreshMetadata_System_PartitionFunctions");
 
             //add new expected value
             var maxBoundaryId = this.expectedPartitionFunctionBoundaries.Max(x => x.BoundaryId);
@@ -448,16 +448,16 @@ namespace DDI.Tests.Integration
                                         ) ");
 
             // Add future interval to metadata so that job has something to do
-            this.sqlHelper.Execute(" DISABLE TRIGGER DDI.trUpdPartitionFunctions ON DDI.PartitionFunctions"); //disable this trigger or we will not be able to update table.
+            this.sqlHelper.Execute(" DISABLE TRIGGER DOI.trUpdPartitionFunctions ON DOI.PartitionFunctions"); //disable this trigger or we will not be able to update table.
 
             this.sqlHelper.Execute(
                 $@" UPDATE PF 
                     SET NumOfFutureIntervals = NumOfFutureIntervals + 1 
-                    FROM DDI.PartitionFunctions PF 
+                    FROM DOI.PartitionFunctions PF 
                     WHERE DatabaseName = '{DatabaseName}'
                         AND PF.PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
 
-            this.sqlHelper.Execute(" ENABLE TRIGGER DDI.trUpdPartitionFunctions ON DDI.PartitionFunctions"); //re-enable trigger.
+            this.sqlHelper.Execute(" ENABLE TRIGGER DOI.trUpdPartitionFunctions ON DOI.PartitionFunctions"); //re-enable trigger.
 
             // Insert into the table with open transaction for 5 seconds.  This will serve as the "blocking" operation for this test.
             var task1 = this.sqlHelper.ExecuteAsync(
@@ -485,7 +485,7 @@ namespace DDI.Tests.Integration
             // NextUsed FileGroup should not exist, because above operation should have rolled back.
             var nextUsedFilegroupName =
                 this.sqlHelper.ExecuteScalar<string>(
-                    $"SELECT NextUsedFileGroupName FROM DDI.vwPartitionFunctions WITH (NOLOCK) WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
+                    $"SELECT NextUsedFileGroupName FROM DOI.vwPartitionFunctions WITH (NOLOCK) WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
             Assert.IsNull(nextUsedFilegroupName);
 
             // Make sure that the process really failed and that no future partitions were created.
@@ -524,7 +524,7 @@ namespace DDI.Tests.Integration
             Assert.AreEqual(this.expectedPartitionSchemeFilegroups.Count, actualPartitionSchemeFilegroupsAddFuturePartitions.Count, "FileGroup Count");
             Assert.AreEqual(this.expectedPartitionFunctionBoundaries.Count, actualPartitionFunctionBoundariesAddFuturePartitions.Count, "Boundaries Count");
 
-            //assert before adding future partitions
+            //assert before aDOIng future partitions
             //ASSERT 1:  MATCH PARTITION FUNCTION BOUNDARIES TO EXPECTED
             foreach (var expectedPartitionFunctionBoundaryAddFuturePartitions in this.expectedPartitionFunctionBoundaries)
             {

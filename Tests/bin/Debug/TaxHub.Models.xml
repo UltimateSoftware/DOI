@@ -6102,7 +6102,7 @@
         </member>
         <member name="T:TaxHub.Models.Dto.YearEndGeneratedTaxFileGroup">
             <summary>
-            The tax file and the additional Summary and Exception files
+            The tax file and the aDOItional Summary and Exception files
             </summary>
         </member>
         <member name="M:TaxHub.Models.Dto.YearEndGeneratedTaxFileGroup.#ctor(System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String},System.Byte[],TaxHub.Common.Enums.YearEndTaxFileType)">
@@ -14382,12 +14382,12 @@
             The ca sui wage.
             </value>
         </member>
-        <member name="P:TaxHub.Models.Events.TaxInputTaxInstanceCreatedEvent.AdditionalAmount">
+        <member name="P:TaxHub.Models.Events.TaxInputTaxInstanceCreatedEvent.ADOItionalAmount">
             <summary>
-            Gets or sets the additional amount.
+            Gets or sets the aDOItional amount.
             </summary>
             <value>
-            The additional amount.
+            The aDOItional amount.
             </value>
         </member>
         <member name="P:TaxHub.Models.Events.TaxInputTaxInstanceCreatedEvent.CaEtt">
@@ -16799,7 +16799,7 @@
             <summary>
             Adds up all amount fields
             
-            In addition it updates the corresponding EEMISC record MO values for the
+            In aDOItion it updates the corresponding EEMISC record MO values for the
             employees state / local / entity code.The intention is to OR the values together.For example,
             if the current record is 0,0,1 and the command is 1,0,1 the resulting update should be 1,0,1
             
@@ -21917,7 +21917,7 @@
         </member>
         <member name="M:TaxHub.Models.Helpers.RtsFieldTypeHelper.SetVariantSection(System.String,System.Int32,System.Int32,System.Decimal)">
             <summary>
-            Returns a string based on the given variant with a section updated to hold the given decimal amount. The first character may be '-' (based on the sign followed) then there is 0 padding and then the amount.
+            Returns a string based on the given variant with a section updated to hold the given decimal amount. The first character may be '-' (based on the sign followed) then there is 0 paDOIng and then the amount.
             </summary>
             <param name="variant">variant to update</param>
             <param name="startingPos">1 based start position in string</param>
@@ -22204,7 +22204,7 @@
             Delimiter between company code and numeric number to generate client Id.
             </summary>
         </member>
-        <member name="F:TaxHub.Models.Helpers.ClientCompanyHelper.ClientIdNumericDelimiterPadding">
+        <member name="F:TaxHub.Models.Helpers.ClientCompanyHelper.ClientIdNumericDelimiterPaDOIng">
             <summary>
             Delimiter between company code and numeric number to generate client Id.
             </summary>
@@ -26510,7 +26510,7 @@
         </member>
         <member name="M:TaxHub.Models.MappedTaxPay.IsGenNumberGreaterThanOrEqualTo(System.String)">
             <summary>
-            Compares GenNumbers (after padding to the GenNumber max length)
+            Compares GenNumbers (after paDOIng to the GenNumber max length)
             </summary>
             <param name="genNumber">The GenNumber.</param>
             <returns>Returns false if the genNumber is less than passed gennumber, true if the genNumber is greater or equal to passed gennumber.</returns>
@@ -28479,9 +28479,9 @@
             The unknown
             </summary>
         </member>
-        <member name="F:TaxHub.Models.CheckAddMode.AdditionalCheck">
+        <member name="F:TaxHub.Models.CheckAddMode.ADOItionalCheck">
             <summary>
-            The additional check
+            The aDOItional check
             </summary>
         </member>
         <member name="F:TaxHub.Models.CheckAddMode.DedNoDirDep">
@@ -30519,7 +30519,7 @@
             <summary>
             Adds up all amount fields
             
-            In addition it updates the corresponding EEMISC record MO values for the
+            In aDOItion it updates the corresponding EEMISC record MO values for the
             employees state / local / entity code.The intention is to OR the values together.For example,
             if the current record is 0,0,1 and the command is 1,0,1 the resulting update should be 1,0,1
             
@@ -32716,9 +32716,9 @@
             The California SUI wage
             </summary>
         </member>
-        <member name="P:TaxHub.Models.InputTaxInstance.AdditionalAmount">
+        <member name="P:TaxHub.Models.InputTaxInstance.ADOItionalAmount">
             <summary>
-            The additional amount
+            The aDOItional amount
             </summary>
         </member>
         <member name="P:TaxHub.Models.InputTaxInstance.IsBalance">

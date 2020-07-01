@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Security.KeyServer
+namespace DOI.Tests.TestHelpers.CommonSetup.Security.KeyServer
 {
     /// <summary>
     /// This class is responsible for retrieving data from the key server.

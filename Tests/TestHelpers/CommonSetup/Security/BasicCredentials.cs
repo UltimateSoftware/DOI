@@ -1,6 +1,6 @@
 ﻿using System.Security;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Security
+namespace DOI.Tests.TestHelpers.CommonSetup.Security
 {
     /// <summary>
     /// Class holds credentials basic user credentials.

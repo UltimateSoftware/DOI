@@ -1,13 +1,13 @@
-USE DDI
+USE DOI
 
 
-INSERT INTO [DDI].[Tables]
+INSERT INTO [DOI].[Tables]
            (DatabaseName		, [SchemaName]	,[TableName]	,[PartitionColumn]	,[Storage_Desired]	,[IntendToPartition]	,[ReadyToQueue])
      VALUES
            ('PaymentReporting'	, 'dbo'			,'TempA'		, NULL				,'PRIMARY'			,0						,1)
 		  ,('PaymentReporting'	, 'dbo'			,'TempB'		, NULL				,'PRIMARY'			,0						,1)
 
-INSERT INTO DDI.[Statistics] (DatabaseName		, SchemaName, TableName, StatisticsName		, StatisticsColumnList_Desired	, SampleSizePct_Desired	, IsFiltered_Desired, FilterPredicate_Desired	, IsIncremental_Desired	,NoRecompute_Desired,LowerSampleSizeToDesired	, ReadyToQueue)
+INSERT INTO DOI.[Statistics] (DatabaseName		, SchemaName, TableName, StatisticsName		, StatisticsColumnList_Desired	, SampleSizePct_Desired	, IsFiltered_Desired, FilterPredicate_Desired	, IsIncremental_Desired	,NoRecompute_Desired,LowerSampleSizeToDesired	, ReadyToQueue)
 VALUES						 ('PaymentReporting', 'dbo'		, 'TempA'  , 'ST_TempA_TempAId' , 'TempAId'						, 0						, 0					, NULL						, 0						,0					,0							, 1)
 
 

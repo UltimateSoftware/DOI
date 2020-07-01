@@ -32,7 +32,7 @@
             <summary>
             Indicates that the ITargetBlock declined the message. 
             The ISourceBlock still owns the message.
-            Additionally, the ITargetblock will decline all future messages sent by the source
+            ADOItionally, the ITargetblock will decline all future messages sent by the source
             </summary>
         </member>
         <member name="P:TaxHub.DataflowManager.DataflowLinkOptions.Append">
@@ -527,7 +527,7 @@
             Initializes a new instance of the <see cref="T:TaxHub.DataflowManager.Section`1"/> class.
             </summary>
         </member>
-        <member name="M:TaxHub.DataflowManager.Section`1.AddItem(`0)">
+        <member name="M:TaxHub.DataflowManager.Section`1.ADOItem(`0)">
             <summary>
             Adds the item.
             </summary>

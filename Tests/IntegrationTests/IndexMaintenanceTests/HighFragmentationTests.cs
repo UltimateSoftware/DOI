@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
-using DDI.TestHelpers;
-using DDI.Tests.Integration.Models;
-using DDI.Tests.TestHelpers;
+using DOI.TestHelpers;
+using DOI.Tests.Integration.Models;
+using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -34,7 +34,7 @@ namespace DDI.Tests.Integration
         public void OneTimeTearDown()
         {
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            this.sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_3_DDISettings");
+            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
         }
 
         [SetUp]
@@ -53,7 +53,7 @@ namespace DDI.Tests.Integration
         public void HighFragmentationShouldTriggerAlterIndexRebuild(int minimumNumPages)
         {
             // Fragmentation needs to be above 30% and TotalPages is configurable
-            this.sqlHelper.Execute($"UPDATE DDI.DDISettings SET SettingValue = {minimumNumPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
+            this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = {minimumNumPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
             IndexView indexToReorganize = null;
             var watch = Stopwatch.StartNew();
 

@@ -2,11 +2,11 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using DDI.Tests.TestHelpers;
+using DOI.Tests.TestHelpers;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
-    using DDI.TestHelpers;
+    using DOI.TestHelpers;
     using NUnit.Framework;
 
     public class SqlIndexJobBaseTest
@@ -22,14 +22,14 @@ namespace DDI.Tests.Integration
         public void OneTimeSetUp()
         {
             // set schedule table to Non Business hours so that job can run
-            this.sqlHelper.Execute("UPDATE DDI.BusinessHoursSchedule SET IsBusinessHours = 0");
+            this.sqlHelper.Execute("UPDATE DOI.BusinessHoursSchedule SET IsBusinessHours = 0");
         }
 
         [OneTimeTearDown]
         public void OneTimeTeardown()
         {
             // restore schedule table to original settings
-            this.sqlHelper.Execute("EXEC DDI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            this.sqlHelper.Execute("EXEC DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
     }
 }

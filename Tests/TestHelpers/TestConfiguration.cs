@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DDI.TestHelpers
+namespace DOI.TestHelpers
 {
     public class TestConfiguration : Dictionary<string, Dictionary<string, string>>
     {

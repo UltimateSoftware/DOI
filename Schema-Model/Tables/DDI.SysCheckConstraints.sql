@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysCheckConstraints]
+CREATE TABLE [DOI].[SysCheckConstraints]
 (
 [database_id] [int] NOT NULL,
 [name] [sys].[sysname] NOT NULL,

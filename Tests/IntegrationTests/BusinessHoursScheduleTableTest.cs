@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using DDI.TestHelpers;
-using DDI.Tests.TestHelpers;
+using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -29,13 +29,13 @@ namespace DDI.Tests.Integration
        [SetUp]
         public void Setup()
         {
-            this.sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_3_DDISettings");
+            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            this.sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace DDI.Tests.Integration
 
         private void AssertScheduleIsAsExpected(List<BusinessHoursScheduleResult> actualSchedules)
         {
-            Assert.AreEqual(this.expectedSchedules.Count, actualSchedules.Count, $"Failure: Expecting {this.expectedSchedules.Count} records in DDI.BusinessHoursSchedule table.");
+            Assert.AreEqual(this.expectedSchedules.Count, actualSchedules.Count, $"Failure: Expecting {this.expectedSchedules.Count} records in DOI.BusinessHoursSchedule table.");
 
             this.expectedSchedules.Sort();
             actualSchedules.Sort();
@@ -57,7 +57,7 @@ namespace DDI.Tests.Integration
                 foreach (var expected in this.expectedSchedules)
                 {
                     itr.MoveNext();
-                    Assert.AreEqual(expected, itr.Current, "Failure: Unexpected row found in DDI.BusinessHoursSchedule table.");
+                    Assert.AreEqual(expected, itr.Current, "Failure: Unexpected row found in DOI.BusinessHoursSchedule table.");
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace DDI.Tests.Integration
                 new SqlCommand(
                     @"   Select 
                                 DayOfWeekId, DayOfWeekName, StartUtcMilitaryTime, IsBusinessHours
-                                From DDI.BusinessHoursSchedule "));
+                                From DOI.BusinessHoursSchedule "));
             var result = new List<BusinessHoursScheduleResult>();
             foreach (var row in rows)
             {

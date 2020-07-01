@@ -2283,8 +2283,8 @@
             <param name="client">client id</param>
             <param name="quarter">quarter</param>
             <param name="year">year</param>
-            <param name="additionalTags">any additional tags</param>
-            <param name="additionalTagValues">values for the additional tags</param>
+            <param name="aDOItionalTags">any aDOItional tags</param>
+            <param name="aDOItionalTagValues">values for the aDOItional tags</param>
             <returns>returns a new instance of the <see cref="T:SmartHub.Metrics.Tags"/></returns>
         </member>
         <member name="T:TaxHub.Amendments.Messaging.TaxPriorQuarterQrfProcessingCompletedMessageSubscriber">

@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace DDI.Tests.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     using System;
     using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace DDI.Tests.TestHelpers
     {
         public string GetConnectionString()
         {
-            return @"server=localhost;database=DDI;Trusted_Connection = True;";
+            return @"server=localhost;database=DOI;Trusted_Connection = True;";
         }
 
         public int Execute(SqlCommand command)

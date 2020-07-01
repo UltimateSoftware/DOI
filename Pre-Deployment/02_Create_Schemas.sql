@@ -1,7 +1,7 @@
 ﻿PRINT N'Creating schemas'
 GO
-IF SCHEMA_ID(N'DDI') IS NULL
-EXEC sp_executesql N'CREATE SCHEMA [DDI]
+IF SCHEMA_ID(N'DOI') IS NULL
+EXEC sp_executesql N'CREATE SCHEMA [DOI]
 AUTHORIZATION [dbo]'
 GO
 IF SCHEMA_ID(N'Utility') IS NULL

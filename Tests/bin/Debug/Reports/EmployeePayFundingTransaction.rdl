@@ -176,10 +176,10 @@
                               <Style>None</Style>
                             </RightBorder>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -231,10 +231,10 @@
                               <Style>None</Style>
                             </RightBorder>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -272,10 +272,10 @@
                               <Style>None</Style>
                             </RightBorder>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -313,10 +313,10 @@
                               <Style>None</Style>
                             </RightBorder>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -354,10 +354,10 @@
                               <Style>None</Style>
                             </RightBorder>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -393,10 +393,10 @@
                               <Style>None</Style>
                             </RightBorder>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <PaddingLeft>5pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>5pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -448,10 +448,10 @@
                               <Style>None</Style>
                             </RightBorder>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -489,10 +489,10 @@
                               <Style>None</Style>
                             </RightBorder>
                             <BackgroundColor>LightGrey</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -537,10 +537,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group: ")</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
@@ -581,10 +581,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", Fields!PayGroup.Value)</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>4</ColSpan>
@@ -622,10 +622,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", Fields!PayGroup.Value)</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -654,10 +654,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", Fields!PayGroup.Value)</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -698,10 +698,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Check Date: ")</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
@@ -739,10 +739,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", Format(Fields!CheckDate.Value,
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>4</ColSpan>
@@ -777,10 +777,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", Format(Fields!CheckDate.Value,
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -806,10 +806,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", Format(Fields!CheckDate.Value,
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -848,10 +848,10 @@ Parameters!GroupName.Value = "CheckDateBank", "Customer Bank Acct. Name: ")</Val
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
@@ -887,10 +887,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>4</ColSpan>
@@ -925,10 +925,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -956,10 +956,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -996,10 +996,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
@@ -1033,10 +1033,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>4</ColSpan>
@@ -1071,10 +1071,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1102,10 +1102,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1140,10 +1140,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) MOD 2, "WhiteSmoke", "#e6e6e6")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1175,10 +1175,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) MOD 2, "WhiteSmoke", "#e6e6e6")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1211,10 +1211,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) MOD 2, "WhiteSmoke", "#e6e6e6")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1247,10 +1247,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) MOD 2, "WhiteSmoke", "#e6e6e6")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1283,10 +1283,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) MOD 2, "WhiteSmoke", "#e6e6e6")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1316,10 +1316,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) MOD 2, "WhiteSmoke", "#e6e6e6")</BackgroundColor>
-                            <PaddingLeft>5pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>5pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1367,10 +1367,10 @@ Parameters!GroupName.Value = "CheckDateBank", Fields!CustomerBankAccountName.Val
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) MOD 2, "WhiteSmoke", "#e6e6e6")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1404,10 +1404,10 @@ Fields!CollectionID.Value)</Value>
                               <Style>None</Style>
                             </Border>
                             <BackgroundColor>=IIf(RowNumber(Nothing) MOD 2, "WhiteSmoke", "#e6e6e6")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1443,10 +1443,10 @@ Fields!CollectionID.Value)</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
@@ -1480,10 +1480,10 @@ Fields!CollectionID.Value)</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1515,10 +1515,10 @@ Fields!CollectionID.Value)</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1550,10 +1550,10 @@ Fields!CollectionID.Value)</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1582,10 +1582,10 @@ Fields!CollectionID.Value)</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>5pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>5pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1616,10 +1616,10 @@ Fields!CollectionID.Value)</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1650,10 +1650,10 @@ Fields!CollectionID.Value)</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1693,10 +1693,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
@@ -1729,10 +1729,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1763,10 +1763,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1797,10 +1797,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1831,10 +1831,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>5pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>5pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1865,10 +1865,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1894,10 +1894,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -1935,10 +1935,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                         <ColSpan>2</ColSpan>
@@ -1974,10 +1974,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2011,10 +2011,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2048,10 +2048,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2083,10 +2083,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>5pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>5pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2120,10 +2120,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2152,10 +2152,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", "Pay Group Totals: ")</Value>
                             <TopBorder>
                               <Style>Solid</Style>
                             </TopBorder>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
+                            <PaDOIngLeft>2pt</PaDOIngLeft>
+                            <PaDOIngRight>2pt</PaDOIngRight>
+                            <PaDOIngTop>2pt</PaDOIngTop>
+                            <PaDOIngBottom>2pt</PaDOIngBottom>
                           </Style>
                         </Textbox>
                       </CellContents>
@@ -2320,9 +2320,9 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
               <FontSize>8pt</FontSize>
               <FontWeight>Bold</FontWeight>
               <TextAlign>Center</TextAlign>
-              <PaddingLeft>130pt</PaddingLeft>
-              <PaddingRight>130pt</PaddingRight>
-              <PaddingTop>30pt</PaddingTop>
+              <PaDOIngLeft>130pt</PaDOIngLeft>
+              <PaDOIngRight>130pt</PaDOIngRight>
+              <PaDOIngTop>30pt</PaDOIngTop>
             </Style>
           </Tablix>
         </ReportItems>
@@ -2366,10 +2366,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox17">
@@ -2401,10 +2401,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox18">
@@ -2436,10 +2436,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox47">
@@ -2468,10 +2468,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox48">
@@ -2503,10 +2503,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox49">
@@ -2538,10 +2538,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Textbox Name="Textbox4">
@@ -2582,10 +2582,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                     <Border>
                       <Style>None</Style>
                     </Border>
-                    <PaddingLeft>2pt</PaddingLeft>
-                    <PaddingRight>2pt</PaddingRight>
-                    <PaddingTop>2pt</PaddingTop>
-                    <PaddingBottom>2pt</PaddingBottom>
+                    <PaDOIngLeft>2pt</PaDOIngLeft>
+                    <PaDOIngRight>2pt</PaDOIngRight>
+                    <PaDOIngTop>2pt</PaDOIngTop>
+                    <PaDOIngBottom>2pt</PaDOIngBottom>
                   </Style>
                 </Textbox>
                 <Rectangle Name="Rectangle2">
@@ -2619,10 +2619,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                           <Style>None</Style>
                         </Border>
                         <VerticalAlign>Top</VerticalAlign>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox31">
@@ -2654,10 +2654,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox9">
@@ -2689,10 +2689,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox7">
@@ -2723,10 +2723,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox12">
@@ -2755,10 +2755,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox13">
@@ -2790,10 +2790,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox14">
@@ -2826,10 +2826,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="GroupName">
@@ -2858,10 +2858,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox64">
@@ -2893,10 +2893,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox22">
@@ -2927,10 +2927,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox3">
@@ -2962,10 +2962,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox2">
@@ -2996,10 +2996,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox1">
@@ -3031,10 +3031,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                     <Textbox Name="Textbox38">
@@ -3066,10 +3066,10 @@ Parameters!GroupName.Value = "CheckDatePayGroup", false)</Hidden>
                         <Border>
                           <Style>None</Style>
                         </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
+                        <PaDOIngLeft>2pt</PaDOIngLeft>
+                        <PaDOIngRight>2pt</PaDOIngRight>
+                        <PaDOIngTop>2pt</PaDOIngTop>
+                        <PaDOIngBottom>2pt</PaDOIngBottom>
                       </Style>
                     </Textbox>
                   </ReportItems>

@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysAllocationUnits]
+CREATE TABLE [DOI].[SysAllocationUnits]
 (
 [database_id] [int] NOT NULL,
 [allocation_unit_id] [bigint] NOT NULL,

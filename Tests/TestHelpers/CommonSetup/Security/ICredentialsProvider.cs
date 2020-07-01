@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Security
+namespace DOI.Tests.TestHelpers.CommonSetup.Security
 {
     public interface ICredentialsProvider : ILoadCredentials
     {

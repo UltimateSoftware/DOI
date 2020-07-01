@@ -960,7 +960,7 @@
         <member name="P:TaxHub.TestHelpers.Cognos.definitionTypeMdQuery.sources">
             <remarks/>
         </member>
-        <member name="P:TaxHub.TestHelpers.Cognos.definitionTypeMdQuery.mdDimension">
+        <member name="P:TaxHub.TestHelpers.Cognos.definitionTypeMdQuery.mDOImension">
             <remarks/>
         </member>
         <member name="P:TaxHub.TestHelpers.Cognos.definitionTypeMdQuery.filters">
@@ -2526,12 +2526,12 @@
             A document that describes the child stage, which provides the documents or index keys to its parent. The field is present if the parent stage has only one child.
             </summary>
         </member>
-        <member name="P:TaxHub.TestHelpers.ExecutionStats.AdditionalData">
+        <member name="P:TaxHub.TestHelpers.ExecutionStats.ADOItionalData">
             <summary>
-            Gets or sets the additional data.
+            Gets or sets the aDOItional data.
             </summary>
             <value>
-            The additional data.
+            The aDOItional data.
             </value>
         </member>
         <member name="T:TaxHub.TestHelpers.ExplainMongoDbRepositoryTestHelper`1">
@@ -2556,12 +2556,12 @@
             The returned executionStats information details the execution of the winning plan.
             </summary>
         </member>
-        <member name="P:TaxHub.TestHelpers.ExplainResult.AdditionalData">
+        <member name="P:TaxHub.TestHelpers.ExplainResult.ADOItionalData">
             <summary>
-            Gets or sets the additional data.
+            Gets or sets the aDOItional data.
             </summary>
             <value>
-            The additional data.
+            The aDOItional data.
             </value>
         </member>
         <member name="M:TaxHub.TestHelpers.FakeCacheRevocationService.#ctor(TaxHub.Common.Logging.IAppLogger,TaxHub.Messaging.IMessageHub,SmartHub.Hosting.Caching.IObjectCacheManager)">
@@ -2619,12 +2619,12 @@
             A string that denotes the name of the stage
             </summary>
         </member>
-        <member name="P:TaxHub.TestHelpers.InputStage.AdditionalData">
+        <member name="P:TaxHub.TestHelpers.InputStage.ADOItionalData">
             <summary>
-            Gets or sets the additional data.
+            Gets or sets the aDOItional data.
             </summary>
             <value>
-            The additional data.
+            The aDOItional data.
             </value>
         </member>
         <member name="P:TaxHub.TestHelpers.InputStage.ChildInputStage">
@@ -2749,7 +2749,7 @@
         </member>
         <member name="M:TaxHub.TestHelpers.Integration.UnityContainerIntegrationTest.RegisterTestClasses">
             <summary>
-            Method to override for registering fakes and additional classes needed.
+            Method to override for registering fakes and aDOItional classes needed.
             </summary>
         </member>
         <member name="M:TaxHub.TestHelpers.Integration.UnityContainerIntegrationTest.InsertAndTrackTenant">
@@ -2796,12 +2796,12 @@
             An array of documents describing the child stages. Child stages provide the documents or index keys to the parent stage. The field is present if the parent stage has multiple child nodes. For example, stages for $or expressions or index intersection consume input from multiple sources.
             </summary>
         </member>
-        <member name="P:TaxHub.TestHelpers.QueryPlan.AdditionalData">
+        <member name="P:TaxHub.TestHelpers.QueryPlan.ADOItionalData">
             <summary>
-            Gets or sets the additional data.
+            Gets or sets the aDOItional data.
             </summary>
             <value>
-            The additional data.
+            The aDOItional data.
             </value>
         </member>
         <member name="P:TaxHub.TestHelpers.QueryPlanner.PlannerVersion">
@@ -2829,12 +2829,12 @@
             Array of candidate plans considered and rejected by the query optimizer. The array can be empty if there were no other candidate plans.
             </summary>
         </member>
-        <member name="P:TaxHub.TestHelpers.QueryPlanner.AdditionalData">
+        <member name="P:TaxHub.TestHelpers.QueryPlanner.ADOItionalData">
             <summary>
-            Gets or sets the additional data.
+            Gets or sets the aDOItional data.
             </summary>
             <value>
-            The additional data.
+            The aDOItional data.
             </value>
         </member>
         <member name="P:TaxHub.TestHelpers.FakeMessageHub.CanStartConsumers">

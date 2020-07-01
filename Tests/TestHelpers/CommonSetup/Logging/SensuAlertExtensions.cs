@@ -1,7 +1,7 @@
 ﻿using System;
-using DDI.Tests.TestHelpers.CommonSetup.Logging;
+using DOI.Tests.TestHelpers.CommonSetup.Logging;
 
-namespace DDI.Tests.Integration.TestHelpers.CommonSetup.Logging
+namespace DOI.Tests.Integration.TestHelpers.CommonSetup.Logging
 {
     public static class SensuAlertExtensions
     {

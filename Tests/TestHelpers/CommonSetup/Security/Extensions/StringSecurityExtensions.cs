@@ -1,6 +1,6 @@
 ﻿using System.Security;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Security.Extensions
+namespace DOI.Tests.TestHelpers.CommonSetup.Security.Extensions
 {
     public static class StringSecurityExtensions
     {

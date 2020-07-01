@@ -1,10 +1,10 @@
 ﻿using System;
-using DDI.Tests.Integration.Models;
-using DDI.TestHelpers;
-using DDI.Tests.TestHelpers;
+using DOI.Tests.Integration.Models;
+using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -51,7 +51,7 @@ namespace DDI.Tests.Integration
         public virtual void TearDown()
         {
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            this.sqlHelper.Execute($"UPDATE DDI.DDISettings SET SettingValue = '1' WHERE DatabaseName = '{DatabaseName}' AND SettingName LIKE 'FreeSpaceCheckerTestMultiplier%'");
+            this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = '1' WHERE DatabaseName = '{DatabaseName}' AND SettingName LIKE 'FreeSpaceCheckerTestMultiplier%'");
             this.sqlHelper.Execute("ALTER RESOURCE GOVERNOR RECONFIGURE");
         }
 
@@ -84,18 +84,18 @@ namespace DDI.Tests.Integration
             CREATE INDEX IDX_AAA_SpaceError_SenselessTextOfflineRebuild ON dbo.AAA_SpaceError(SenselessText) INCLUDE (SenselessText2)");
 
             this.sqlHelper.Execute($@"
-            INSERT INTO [DDI].[Tables]
+            INSERT INTO [DOI].[Tables]
                     (DatabaseName, [SchemaName]	,[TableName]	,[PartitionColumn]	,[Storage_Desired]	,[IntendToPartition]	,[ReadyToQueue])
             VALUES  ('{DatabaseName}','dbo'			,'AAA_SpaceError'	, NULL				,'PRIMARY'		,0						,1)");
 
             this.sqlHelper.Execute($@"
-            INSERT INTO DDI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired, [Fillfactor_Desired], OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
+            INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired, [Fillfactor_Desired], OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
             VALUES('{DatabaseName}', N'dbo', N'AAA_SpaceError', N'PK_AAA_SpaceError', 1, 1, 0, 1, N'SpaceErrorId ASC, BogusColumn ASC', NULL, 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)
                 ,('{DatabaseName}', N'dbo', N'AAA_SpaceError', N'IDX_AAA_SpaceError_SenselessTextOnlineRebuild', 0, 0, 0, 0, N'SenselessText ASC', NULL, 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)
                 ,('{DatabaseName}', N'dbo', N'AAA_SpaceError', N'IDX_AAA_SpaceError_SenselessTextOfflineRebuild', 0, 0, 0, 0, N'SenselessText ASC', N'SenselessText2', 0, NULL, 0, 1, 0, 0, 0, DEFAULT, 0, 1, 1, 'PAGE', 'PRIMARY', NULL)");
 
             this.sqlHelper.Execute($@"
-            INSERT INTO DDI.DefaultConstraints(DatabaseName, SchemaName, TableName, ColumnName, DefaultDefinition)
+            INSERT INTO DOI.DefaultConstraints(DatabaseName, SchemaName, TableName, ColumnName, DefaultDefinition)
             VALUES('{DatabaseName}',N'dbo', N'AAA_SpaceError', N'BogusColumn', N'((0))')");
 
             var indexRow = new IndexView()
@@ -128,7 +128,7 @@ namespace DDI.Tests.Integration
             var indexName = "CDX_TempA";
             this.sqlHelper.Execute($@"  UPDATE IRS 
                                         SET OptionPadIndex_Desired = CASE WHEN OptionPadIndex_Desired = 0 THEN 1 ELSE 0 END 
-                                        FROM DDI.IndexesRowStore IRS 
+                                        FROM DOI.IndexesRowStore IRS 
                                         WHERE DatabaseName = '{DatabaseName}'
                                             AND SchemaName = '{SchemaName}' 
                                             AND TableName = '{tableName}' 
@@ -142,7 +142,7 @@ namespace DDI.Tests.Integration
             // set multiplier setting to always guarantee a space failure.
             string dbName = fileType == "TempDB" ? "tempdb" : "PaymentReporting";
             string vwFreeSpaceOnDiskFileType = fileType == "log" ? "log" : "data";
-            var dbMetadataReader = this.sqlHelper.ExecuteReader($@"SELECT * FROM DDI.vwFreeSpaceOnDisk WHERE DBName = '{dbName}' AND FileType = '{vwFreeSpaceOnDiskFileType}'");
+            var dbMetadataReader = this.sqlHelper.ExecuteReader($@"SELECT * FROM DOI.vwFreeSpaceOnDisk WHERE DBName = '{dbName}' AND FileType = '{vwFreeSpaceOnDiskFileType}'");
 
             var driveLetterWhereIndexesAreStored = string.Empty;
             var freeSpaceOnDisk = 0;
@@ -152,9 +152,9 @@ namespace DDI.Tests.Integration
                 freeSpaceOnDisk = Convert.ToInt32(dbMetadataReader["available_MB"]);
             }
 
-            int indexSize = this.sqlHelper.ExecuteScalar<int>($"SELECT IndexSizeMB FROM DDI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND IndexName = 'IDX_AAA_SpaceError_SenselessTextOnlineRebuild'");
+            int indexSize = this.sqlHelper.ExecuteScalar<int>($"SELECT IndexSizeMB FROM DOI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND IndexName = 'IDX_AAA_SpaceError_SenselessTextOnlineRebuild'");
             int multiplierSetting = (freeSpaceOnDisk / indexSize) + 1;
-            this.sqlHelper.Execute($"UPDATE DDI.DDISettings SET SettingValue = '{multiplierSetting}' WHERE DatabaseName = '{DatabaseName}' AND SettingName = 'FreeSpaceCheckerTestMultiplierFor{fileType}Files'");
+            this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = '{multiplierSetting}' WHERE DatabaseName = '{DatabaseName}' AND SettingName = 'FreeSpaceCheckerTestMultiplierFor{fileType}Files'");
 
             var indexChangesReader = this.sqlHelper.ExecuteReader($@"
                 SELECT  IndexUpdateType, 
@@ -166,7 +166,7 @@ namespace DDI.Tests.Integration
                         AreSetOptionsChanging, 
                         IndexType, 
                         IsClustered 
-                FROM DDI.vwIndexes 
+                FROM DOI.vwIndexes 
                 WHERE DatabaseName = '{DatabaseName}' 
                     AND SchemaName = '{SchemaName}' 
                     AND TableName = '{tableName}' 
@@ -193,7 +193,7 @@ namespace DDI.Tests.Integration
             // Assert - Check that index for AAA_SpaceError failed due to insufficient space error
             var errorLogReader = this.sqlHelper.ExecuteReader($@"
                 SELECT RunStatus, ErrorText 
-                FROM DDI.Log 
+                FROM DOI.Log 
                 WHERE DatabaseName = '{DatabaseName}' 
                     AND SchemaName = '{SchemaName}' 
                     AND TableName = 'AAA_SpaceError' 
@@ -225,7 +225,7 @@ namespace DDI.Tests.Integration
                     AreSetOptionsChanging, 
                     IndexType, 
                     IsClustered 
-            FROM DDI.vwIndexes 
+            FROM DOI.vwIndexes 
             WHERE DatabaseName = '{DatabaseName}' 
                 AND SchemaName = '{SchemaName}' 
                 AND TableName = '{tableName}' 
@@ -252,7 +252,7 @@ namespace DDI.Tests.Integration
             this.sqlHelper.Execute("ALTER RESOURCE GOVERNOR DISABLE;");
 
             // 2. Make index change.
-            this.sqlHelper.Execute($"UPDATE IRS SET OptionPadIndex_Desired = CASE WHEN OptionPadIndex_Desired = 0 THEN 1 ELSE 0 END FROM DDI.IndexesRowStore IRS WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = 'TempA' AND IndexName = 'CDX_TempA'");
+            this.sqlHelper.Execute($"UPDATE IRS SET OptionPadIndex_Desired = CASE WHEN OptionPadIndex_Desired = 0 THEN 1 ELSE 0 END FROM DOI.IndexesRowStore IRS WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = 'TempA' AND IndexName = 'CDX_TempA'");
 
             // 3. Run queue and Run SPs.
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(true);
@@ -266,7 +266,7 @@ namespace DDI.Tests.Integration
             }
 
             // 4.Check for Resource Gov error and NO OTHER ACTIVITY in the log table.
-            var logErrorCount = this.sqlHelper.ExecuteScalar<int>("SELECT ErrorText FROM DDI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Resource Governor is not turned on.  Aborting';");
+            var logErrorCount = this.sqlHelper.ExecuteScalar<int>("SELECT ErrorText FROM DOI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Resource Governor is not turned on.  Aborting';");
         }
 
         [Test]
@@ -275,31 +275,31 @@ namespace DDI.Tests.Integration
             // 1. Make a DropRecreate change to an index.
             this.sqlHelper.Execute($@"  UPDATE IRS 
                                         SET IsClustered_Desired = 0 
-                                        FROM DDI.IndexesRowStore IRS 
+                                        FROM DOI.IndexesRowStore IRS 
                                         WHERE DatabaseName = '{DatabaseName}' 
                                             AND SchemaName = '{SchemaName}' 
                                             AND TableName = 'TempA' 
                                             AND IndexName = 'CDX_TempA'");
 
             // 2. Run Queue SP.
-            this.sqlHelper.Execute($"TRUNCATE TABLE DDI.Queue");
-            this.sqlHelper.Execute($"TRUNCATE TABLE DDI.Log");
+            this.sqlHelper.Execute($"TRUNCATE TABLE DOI.Queue");
+            this.sqlHelper.Execute($"TRUNCATE TABLE DOI.Log");
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(false);
-            var transactionId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 TransactionId FROM DDI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}' AND TransactionId IS NOT NULL");
-            var batchId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 BatchId FROM DDI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}'");
-            var seqNo = this.sqlHelper.ExecuteScalar<int>($"SELECT TOP 1 SeqNo FROM DDI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}' AND IndexName = 'CDX_TempA' AND IndexOperation = 'Drop Index'");
+            var transactionId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 TransactionId FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}' AND TransactionId IS NOT NULL");
+            var batchId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 BatchId FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}'");
+            var seqNo = this.sqlHelper.ExecuteScalar<int>($"SELECT TOP 1 SeqNo FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TempTableName}' AND IndexName = 'CDX_TempA' AND IndexOperation = 'Drop Index'");
 
             // 3. Introduce an error into the Queue while the transaction is open.
-            this.sqlHelper.ExecuteScalar<int>($"UPDATE Q SET SeqNo = SeqNo + 1 FROM DDI.Queue Q WHERE DatabaseName = '{DatabaseName}' AND SeqNo > {seqNo}");
+            this.sqlHelper.ExecuteScalar<int>($"UPDATE Q SET SeqNo = SeqNo + 1 FROM DOI.Queue Q WHERE DatabaseName = '{DatabaseName}' AND SeqNo > {seqNo}");
             this.sqlHelper.Execute($@"
-                INSERT INTO DDI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName ,PartitionNumber ,IndexSizeInMB ,ParentSchemaName ,ParentTableName ,ParentIndexName ,IndexOperation ,IsOnlineOperation ,TableChildOperationId ,SQLStatement ,SeqNo ,DateTimeInserted ,InProgress ,RunStatus ,ErrorMessage ,TransactionId ,BatchId ,ExitTableLoopOnError )
+                INSERT INTO DOI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName ,PartitionNumber ,IndexSizeInMB ,ParentSchemaName ,ParentTableName ,ParentIndexName ,IndexOperation ,IsOnlineOperation ,TableChildOperationId ,SQLStatement ,SeqNo ,DateTimeInserted ,InProgress ,RunStatus ,ErrorMessage ,TransactionId ,BatchId ,ExitTableLoopOnError )
                 VALUES('{DatabaseName}', N'dbo', N'{TempTableName}', N'CDX_TempA', 0, 0, N'dbo', N'{TempTableName}', N'CDX_TempA', 'Stop Processing', 0, 0, 'SELECT 1/0', {seqNo + 1}, SYSDATETIME(), 0, 'Start', '', '{transactionId}', '{batchId}', 0)");
 
             // 4. Run the Run SP.
             dataDrivenIndexTestHelper.ExecuteSPRun(false, "dbo", TempTableName);
 
             // 5. Check that the Logged rows are still in the Log table.
-            var countOfLogRows = this.sqlHelper.ExecuteScalar<int>($"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Divide by zero error encountered.'");
+            var countOfLogRows = this.sqlHelper.ExecuteScalar<int>($"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Divide by zero error encountered.'");
             Assert.AreEqual(1, countOfLogRows);
         }
     }

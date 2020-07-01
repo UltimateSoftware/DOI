@@ -1,6 +1,6 @@
-﻿using DDI.Tests.TestHelpers.CommonSetup.Logging;
+﻿using DOI.Tests.TestHelpers.CommonSetup.Logging;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Security.KeyServer
+namespace DOI.Tests.TestHelpers.CommonSetup.Security.KeyServer
 {
     /// <summary>
     /// Read Only Credentials Provider for UltiPro Tax Engine and Reporting SQL store

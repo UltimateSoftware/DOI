@@ -1,15 +1,15 @@
 ﻿using NUnit.Framework;
-using DDI.Tests.TestHelpers;
+using DOI.Tests.TestHelpers;
 using MongoDB.Driver;
 
-namespace DDI.Tests.Integration.Tests.TablePartitioning
+namespace DOI.Tests.Integration.Tests.TablePartitioning
 {
     public class ApplicationLockTestsHelper
     {
         public static string GetApplicationLockSql(string databaseName)
         {
             return $@"
-                EXEC DDI.spRun_GetApplicationLock
+                EXEC DOI.spRun_GetApplicationLock
                     @DatabaseName = '{databaseName}',
                     @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
                     @IsOnlineOperation = 1,
@@ -18,7 +18,7 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
         public static string ReleaseApplicationLockSql(string databaseName)
         {
             return $@"
-                EXEC DDI.spRun_ReleaseApplicationLock
+                EXEC DOI.spRun_ReleaseApplicationLock
                     @DatabaseName = '{databaseName}',
                     @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
                     @IsOnlineOperation = 1";
@@ -41,7 +41,7 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
         {
             return $@"
                     SELECT ISNULL(( SELECT TOP 1 1
-                                    FROM DDI.Log
+                                    FROM DOI.Log
                                     WHERE DatabaseName = {databaseName}
                                         AND IndexOperation = 'Get Application Lock'
                                         AND RunStatus = 'Info'
@@ -51,7 +51,7 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
         {
             return $@"
                     SELECT ISNULL(( SELECT TOP 1 1
-                                    FROM DDI.Log
+                                    FROM DOI.Log
                                     WHERE DatabaseName = {databaseName}
                                         AND IndexOperation = 'Release Application Lock'
                                         AND RunStatus = 'Info'
@@ -63,13 +63,13 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
             return 
                 $@" USE {databaseName}
                     SELECT APPLOCK_TEST('dbo', '', 'Exclusive', 'Session')
-                    USE DDI";
+                    USE DOI";
         }
         public static string DoesLogHaveErrors(string databaseName)
         {
             return $@"
                     SELECT ISNULL(( SELECT 1
-                                    FROM DDI.Log
+                                    FROM DOI.Log
                                     WHERE DatabaseName = {databaseName}
                                         AND RunStatus = 'Error'
                                         AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'), 0)";
@@ -79,19 +79,19 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
         {
             return $@"
             DECLARE @GetApplicationLockSQL      NVARCHAR(300) = '
-                            EXEC DDI.spRun_GetApplicationLock
+                            EXEC DOI.spRun_GetApplicationLock
                                 @DatabaseName = '{databaseName}',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation},
                                 @LockTimeout = 1000',
 
         			@ReleaseApplicationLockSQL	NVARCHAR(300) = '
-                            EXEC DDI.spRun_ReleaseApplicationLock
+                            EXEC DOI.spRun_ReleaseApplicationLock
                                 @DatabaseName = '{databaseName}',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation}'
 
-            EXEC DDI.spQueueInsert
+            EXEC DOI.spQueueInsert
                 @DatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
@@ -109,7 +109,7 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
                 @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
                 @ExitTableLoopOnError = 1
 
-            EXEC DDI.spQueueInsert
+            EXEC DOI.spQueueInsert
                 @DatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
@@ -132,12 +132,12 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
         {
             return $@"
             DECLARE @GetApplicationLockSQL      NVARCHAR(300) = '
-                            EXEC DDI.spRun_ReleaseApplicationLock
+                            EXEC DOI.spRun_ReleaseApplicationLock
                                 @DatabaseName = '{databaseName}',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation}'
 
-            EXEC DDI.spQueueInsert
+            EXEC DOI.spQueueInsert
                 @DatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
@@ -190,7 +190,7 @@ namespace DDI.Tests.Integration.Tests.TablePartitioning
             //Assert if message was logged
             var wasAppLockOperationLogged = new SqlHelper().ExecuteScalar<int>($@"
                                                                         SELECT ISNULL((SELECT TOP 1 1
-                                                                        FROM DDI.Log
+                                                                        FROM DOI.Log
                                                                         WHERE DatabaseName = '{databaseName}'
                                                                             AND IndexOperation = '{operationType} Application Lock'
                                                                             AND RunStatus = '{whichMessageToUse}'

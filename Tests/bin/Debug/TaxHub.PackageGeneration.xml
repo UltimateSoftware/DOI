@@ -1559,7 +1559,7 @@
         </member>
         <member name="T:TaxHub.PackageGeneration.Models.LegacyYePackageGenerationParameters">
             <summary>
-            The Legacy Year End typed Additional Parameters class.
+            The Legacy Year End typed ADOItional Parameters class.
             </summary>
         </member>
         <member name="T:TaxHub.PackageGeneration.Models.PackageType">
@@ -1866,7 +1866,7 @@
         </member>
         <member name="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationParameters">
             <summary>
-            The Legacy Quarter End typed Additional Parameters class.
+            The Legacy Quarter End typed ADOItional Parameters class.
             </summary>
         </member>
         <member name="T:TaxHub.PackageGeneration.Models.LegacyQePackageGenerationCheckpointInfo">

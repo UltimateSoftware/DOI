@@ -4,10 +4,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
-using DDI.Tests.TestHelpers.CommonSetup.Hosting;
+using DOI.Tests.TestHelpers.CommonSetup.Hosting;
 using SmartHub.Hosting.Formatters;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.EventStore
+namespace DOI.Tests.TestHelpers.CommonSetup.EventStore
 {
     /// <summary>
     /// Domain event data. This is used for application and aggregate level of events.

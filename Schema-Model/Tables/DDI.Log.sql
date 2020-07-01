@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[Log]
+CREATE TABLE [DOI].[Log]
 (
 [LogID] [int] NOT NULL IDENTITY(1, 1),
 [DatabaseName] [nvarchar] (128) NOT NULL,
@@ -24,9 +24,9 @@ CREATE TABLE [DDI].[Log]
 [InfoMessage] [varchar] (max) NULL
 )
 GO
-ALTER TABLE [DDI].[Log] ADD CONSTRAINT [Chk_Log_RunStatus] CHECK (([RunStatus]='Error - Skipping...' OR [RunStatus]='Error - Retrying...' OR [RunStatus]='Error' OR [RunStatus]='Finish' OR [RunStatus]='Running' OR [RunStatus]='Start' OR [RunStatus]='Info'))
+ALTER TABLE [DOI].[Log] ADD CONSTRAINT [Chk_Log_RunStatus] CHECK (([RunStatus]='Error - Skipping...' OR [RunStatus]='Error - Retrying...' OR [RunStatus]='Error' OR [RunStatus]='Finish' OR [RunStatus]='Running' OR [RunStatus]='Start' OR [RunStatus]='Info'))
 GO
-ALTER TABLE [DDI].[Log] ADD CONSTRAINT [PK_Log] PRIMARY KEY CLUSTERED  ([LogID])
+ALTER TABLE [DOI].[Log] ADD CONSTRAINT [PK_Log] PRIMARY KEY CLUSTERED  ([LogID])
 GO
-ALTER TABLE [DDI].[Log] ADD CONSTRAINT [UQ_Log] UNIQUE NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [PartitionNumber], [IndexOperation], [RunStatus], [TableChildOperationId], [LogDateTime])
+ALTER TABLE [DOI].[Log] ADD CONSTRAINT [UQ_Log] UNIQUE NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [PartitionNumber], [IndexOperation], [RunStatus], [TableChildOperationId], [LogDateTime])
 GO

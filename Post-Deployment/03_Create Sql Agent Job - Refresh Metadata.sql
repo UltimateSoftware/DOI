@@ -1,11 +1,11 @@
 USE msdb
 GO
 
-IF EXISTS(SELECT 'True' FROM dbo.sysjobs WHERE name = 'DDI - Refresh Metadata')
+IF EXISTS(SELECT 'True' FROM dbo.sysjobs WHERE name = 'DOI - Refresh Metadata')
 BEGIN
-	EXEC sp_delete_job @job_name = N'DDI - Refresh Metadata' ;  
+	EXEC sp_delete_job @job_name = N'DOI - Refresh Metadata' ;  
 
-	PRINT 'Deleted Job DDI - Refresh Metadata.'
+	PRINT 'Deleted Job DOI - Refresh Metadata.'
 END
 GO
 
@@ -27,7 +27,7 @@ BEGIN TRY
 		DECLARE @jobId BINARY(16)
 
 		EXEC @ReturnCode =  dbo.sp_add_job 
-			@job_name=N'DDI - Refresh Metadata', 
+			@job_name=N'DOI - Refresh Metadata', 
 			@enabled=1, 
 			@notify_level_eventlog=0, 
 			@notify_level_email=0, 
@@ -38,10 +38,10 @@ BEGIN TRY
 			@category_name=N'DB Maintenance', 
 			@owner_login_name=N'sa', 
 			@job_id = @jobId OUTPUT
-		PRINT 'Created job DDI - Refresh Metadata'
+		PRINT 'Created job DOI - Refresh Metadata'
 
 
-		/****** Object:  Step [DDI - Refresh Metadata]    Script Date: 7/25/2014 4:08:45 PM ******/
+		/****** Object:  Step [DOI - Refresh Metadata]    Script Date: 7/25/2014 4:08:45 PM ******/
 		EXEC @ReturnCode = dbo.sp_add_jobstep 
 			@job_id=@jobId, 
 			@step_name=N'Refresh Metadata', 
@@ -55,13 +55,13 @@ BEGIN TRY
 			@retry_interval=0, 
 			@os_run_priority=0, 
 			@subsystem=N'TSQL', 
-			@command=N'EXEC DDI.spRefreshMetadata_Run_All', 
-			@database_name=N'DDI', 
+			@command=N'EXEC DOI.spRefreshMetadata_Run_All', 
+			@database_name=N'DOI', 
 			@flags=0
 
 		EXEC @ReturnCode = msdb.dbo.sp_add_jobschedule 
 			@job_id=@jobId, 
-			@name=N'DDI-Every 5 Minutes', 
+			@name=N'DOI-Every 5 Minutes', 
 			@enabled=1, 
 			@freq_type=4, 
 			@freq_interval=1, 
@@ -95,16 +95,16 @@ END CATCH
 
 SELECT @jobid = job_id 
 FROM dbo.sysjobs j 
-WHERE j.name = 'DDI - Refresh Metadata'
+WHERE j.name = 'DOI - Refresh Metadata'
 
-IF EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DDI - Refresh Metadata')
+IF EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DOI - Refresh Metadata')
 BEGIN
-	DELETE master.dbo.JobsToGovern WHERE JobName = 'DDI - Refresh Metadata'
+	DELETE master.dbo.JobsToGovern WHERE JobName = 'DOI - Refresh Metadata'
 END
 
-IF NOT EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DDI - Refresh Metadata')
+IF NOT EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DOI - Refresh Metadata')
 BEGIN
 	INSERT INTO master.dbo.JobsToGovern ( JobID ,JobName ,MatchString )
-	VALUES ( @jobid , N'DDI - Refresh Metadata' , N'SQLAgent - TSQL JobStep (Job ' + CONVERT(VARCHAR(36), CONVERT(BINARY(16), @jobid), 1) + '%')
+	VALUES ( @jobid , N'DOI - Refresh Metadata' , N'SQLAgent - TSQL JobStep (Job ' + CONVERT(VARCHAR(36), CONVERT(BINARY(16), @jobid), 1) + '%')
 END
 GO

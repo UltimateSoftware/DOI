@@ -7,7 +7,7 @@ using System.Reflection;
 using Serilog.Events;
 using Serilog.Parsing;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Logging
+namespace DOI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// Class is designed to log an error message into a file when main logger fails to start. 
@@ -30,13 +30,13 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Logging
         }
 
         /// <summary>
-        /// Method attempts to write a log file with exception and additional details which will be prepended to message.
+        /// Method attempts to write a log file with exception and aDOItional details which will be prepended to message.
         /// It suppresses any exceptions encountered during the process.
         /// </summary>
         /// <param name="exception">The exception to write.</param>
-        /// <param name="additionalDetails">additional details which will be prepended to message</param>
+        /// <param name="aDOItionalDetails">aDOItional details which will be prepended to message</param>
         /// <returns>Returns boolean indicator of success.</returns>
-        public bool TryWriteException(Exception exception, string additionalDetails)
+        public bool TryWriteException(Exception exception, string aDOItionalDetails)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Logging
                     appService = ConfigurationManager.AppSettings["appService"].ToUpper().Trim();
                 }
 
-                LogEvent logData = new LogEvent(DateTimeOffset.Now, Serilog.Events.LogEventLevel.Fatal, exception, new MessageTemplate($"{additionalDetails ?? string.Empty} {exception.Message}", new List<MessageTemplateToken>()), new List<LogEventProperty>());
+                LogEvent logData = new LogEvent(DateTimeOffset.Now, Serilog.Events.LogEventLevel.Fatal, exception, new MessageTemplate($"{aDOItionalDetails ?? string.Empty} {exception.Message}", new List<MessageTemplateToken>()), new List<LogEventProperty>());
                 logData.AddPropertyIfAbsent(new LogEventProperty("ApplicationName", new ScalarValue(assembly.Name)));
                 logData.AddPropertyIfAbsent(new LogEventProperty("ServiceName", new ScalarValue(appService)));
                 logData.AddPropertyIfAbsent(new LogEventProperty("Version", new ScalarValue(assembly.Version.ToString())));

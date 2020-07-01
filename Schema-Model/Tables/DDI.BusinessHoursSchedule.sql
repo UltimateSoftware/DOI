@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[BusinessHoursSchedule]
+CREATE TABLE [DOI].[BusinessHoursSchedule]
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [DayOfWeekId] [tinyint] NOT NULL,
@@ -8,5 +8,5 @@ CREATE TABLE [DDI].[BusinessHoursSchedule]
 [IsEnabled] [bit] NOT NULL
 )
 GO
-ALTER TABLE [DDI].[BusinessHoursSchedule] ADD CONSTRAINT [PK_BusinessHoursSchedule] PRIMARY KEY CLUSTERED  ([DatabaseName], [DayOfWeekId], [StartUtcMilitaryTime])
+ALTER TABLE [DOI].[BusinessHoursSchedule] ADD CONSTRAINT [PK_BusinessHoursSchedule] PRIMARY KEY CLUSTERED  ([DatabaseName], [DayOfWeekId], [StartUtcMilitaryTime])
 GO

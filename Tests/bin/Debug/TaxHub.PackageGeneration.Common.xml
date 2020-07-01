@@ -241,7 +241,7 @@
         <member name="M:TaxHub.PackageGeneration.Common.Application.Forms.IFed941.ReplaceAmountsWithZeroIfNegative(TaxHub.PackageGeneration.Common.Models.Forms941AmountModel,System.String,System.Text.StringBuilder)">
             <summary>
             Replaces the amount fields with zeroes if they are negative
-            while also adding a warning to the message.
+            while also aDOIng a warning to the message.
             </summary>
             <param name="model">The form containing the amounts.</param>
             <param name="clientId">The ID of the client being processed.</param>
@@ -250,7 +250,7 @@
         <member name="M:TaxHub.PackageGeneration.Common.Application.Forms.IFed941.ReplaceTotalSocialSecurityAndMedicareTaxAmountWithZeroIfNegative(TaxHub.PackageGeneration.Common.Models.Forms941AmountModel,System.String,System.Text.StringBuilder)">
             <summary>
             Replaces the Total Social Security And Medicare Tax amount fields with zero if it is negative
-            while also adding a warning to the message.
+            while also aDOIng a warning to the message.
             </summary>
             <param name="model">The form containing the amounts.</param>
             <param name="clientId">The ID of the client being processed.</param>
@@ -259,7 +259,7 @@
         <member name="M:TaxHub.PackageGeneration.Common.Application.Forms.IFed941.ReplaceTotalTaxBeforeAdjustmentAmountWithZeroIfNegative(TaxHub.PackageGeneration.Common.Models.Forms941AmountModel,System.String,System.Text.StringBuilder)">
             <summary>
             Replaces the Total Tax Before Adjustment amount fields with zero if it is negative
-            while also adding a warning to the message.
+            while also aDOIng a warning to the message.
             </summary>
             <param name="model">The form containing the amounts.</param>
             <param name="clientId">The ID of the client being processed.</param>
@@ -268,7 +268,7 @@
         <member name="M:TaxHub.PackageGeneration.Common.Application.Forms.IFed941.ReplaceTotalTaxAfterAdjustmentAmountWithZeroIfNegative(TaxHub.PackageGeneration.Common.Models.Forms941AmountModel,System.String,System.Text.StringBuilder)">
             <summary>
             Replaces the Total Tax After Adjustment amount fields with zero if it is negative
-            while also adding a warning to the message.
+            while also aDOIng a warning to the message.
             </summary>
             <param name="model">The form containing the amounts.</param>
             <param name="clientId">The ID of the client being processed.</param>
@@ -506,7 +506,7 @@
         </member>
         <member name="T:TaxHub.PackageGeneration.Common.Models.IPayrollTaxUnitsMap">
             <summary>
-            Interface used by PostPayrollModel and InputPayrollAdditionalLiabilitiesModel 
+            Interface used by PostPayrollModel and InputPayrollADOItionalLiabilitiesModel 
             </summary>
         </member>
         <member name="T:TaxHub.PackageGeneration.Common.Models.PackageGenerationStatus">

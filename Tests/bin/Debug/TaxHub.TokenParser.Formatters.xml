@@ -96,9 +96,9 @@
             Token describes a literal string key that needs to be replaced, how to format it xor pad it
             </summary>
         </member>
-        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaddingLength">
+        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaDOIngLength">
             <summary>
-            Amount of times padding character should be repeated after key has been replaced
+            Amount of times paDOIng character should be repeated after key has been replaced
             </summary>
         </member>
         <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.Format">
@@ -106,19 +106,19 @@
             Custom format
             </summary>
         </member>
-        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaddingCharacter">
+        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaDOIngCharacter">
             <summary>
             Character to pad left or the right of the value to replace the key with
             </summary>
         </member>
-        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaddDirection">
+        <member name="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PadDOIrection">
             <summary>
-            Describes left or right. See <see cref="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PaddDirection" />
+            Describes left or right. See <see cref="P:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.PadDOIrection" />
             </summary>
         </member>
         <member name="M:TaxHub.TokenParser.Formatters.Legacy.V1FormatOperation.V1Format.#ctor">
             <summary>
-            Constructor w/ default format options w/ space character as padding character, and padding direction set to be left.
+            Constructor w/ default format options w/ space character as paDOIng character, and paDOIng direction set to be left.
             </summary>
         </member>
         <member name="T:TaxHub.TokenParser.Formatters.Math.UpperRangeOperation">
@@ -126,24 +126,24 @@
             Returns the minimum between "number" and the "max value" of the [0..maxValue] range.
             </summary>
         </member>
-        <member name="T:TaxHub.TokenParser.Formatters.Strings.PaddingDirection">
+        <member name="T:TaxHub.TokenParser.Formatters.Strings.PaDOIngDirection">
             <summary>
-            Indicates the padding direction
+            Indicates the paDOIng direction
             </summary>
         </member>
-        <member name="F:TaxHub.TokenParser.Formatters.Strings.PaddingDirection.Left">
+        <member name="F:TaxHub.TokenParser.Formatters.Strings.PaDOIngDirection.Left">
             <summary>
-            Padding Left
+            PaDOIng Left
             </summary>
         </member>
-        <member name="F:TaxHub.TokenParser.Formatters.Strings.PaddingDirection.Right">
+        <member name="F:TaxHub.TokenParser.Formatters.Strings.PaDOIngDirection.Right">
             <summary>
-            Padding right
+            PaDOIng right
             </summary>
         </member>
         <member name="T:TaxHub.TokenParser.Formatters.Strings.FormatOperation">
             <summary>
-            The Format operation class, will format according to a padding direction
+            The Format operation class, will format according to a paDOIng direction
             </summary>
         </member>
         <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.Execute(System.Object,System.String)">
@@ -154,23 +154,23 @@
             <param name="format">The format to apply</param>
             <returns>A formatted string</returns>
         </member>
-        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.Execute(System.Object,System.String,TaxHub.TokenParser.Formatters.Strings.PaddingDirection)">
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.Execute(System.Object,System.String,TaxHub.TokenParser.Formatters.Strings.PaDOIngDirection)">
             <summary>
-            Executes the formatting operation with padding
+            Executes the formatting operation with paDOIng
             </summary>
             <param name="value">The value to format</param>
             <param name="format">The format to apply</param>
-            <param name="padDirection">The padding direction</param>
+            <param name="paDOIrection">The paDOIng direction</param>
             <returns>A formatted string</returns>
         </member>
-        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.Execute(System.Object,System.String,TaxHub.TokenParser.Formatters.Strings.PaddingDirection,System.Char)">
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.Execute(System.Object,System.String,TaxHub.TokenParser.Formatters.Strings.PaDOIngDirection,System.Char)">
             <summary>
-            Executes the formatting operation with padding
+            Executes the formatting operation with paDOIng
             </summary>
             <param name="value">The value to format</param>
             <param name="format">The format to apply</param>
-            <param name="padDirection">The padding direction</param>
-            <param name="padCharacter">The padding character</param>
+            <param name="paDOIrection">The paDOIng direction</param>
+            <param name="padCharacter">The paDOIng character</param>
             <returns>A formatted string</returns>
         </member>
         <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.FormatDate(System.DateTime,System.String)">
@@ -214,7 +214,7 @@
             <param name="format">The token format</param>
             <returns>Formatted integer value</returns>
         </member>
-        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.FormatString(System.String,System.String,TaxHub.TokenParser.Formatters.Strings.PaddingDirection,System.Char)">
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.FormatOperation.FormatString(System.String,System.String,TaxHub.TokenParser.Formatters.Strings.PaDOIngDirection,System.Char)">
             <summary>
             Custom implementation of formatting string.
             It treats "#" as mask symbol and everything else as literal.
@@ -227,18 +227,18 @@
             </summary>
             <param name="value">The value to format</param>
             <param name="format">The token format</param>
-            <param name="padDirection">The padding direction</param>
-            <param name="padCharacter">The padding character</param>
+            <param name="paDOIrection">The paDOIng direction</param>
+            <param name="padCharacter">The paDOIng character</param>
             <returns></returns>
         </member>
-        <member name="M:TaxHub.TokenParser.Formatters.Strings.PadOperation.Execute(System.Object,System.Int32,TaxHub.TokenParser.Formatters.Strings.PaddingDirection,System.Char)">
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.PadOperation.Execute(System.Object,System.Int32,TaxHub.TokenParser.Formatters.Strings.PaDOIngDirection,System.Char)">
             <summary>
             Sample: data | pad 9, Left, " "
             </summary>
             <param name="input"></param>
             <param name="length"></param>
             <param name="direction"></param>
-            <param name="paddingChar"></param>
+            <param name="paDOIngChar"></param>
             <returns></returns>
         </member>
         <member name="M:TaxHub.TokenParser.Formatters.Strings.PadOperation.Execute(System.Object,System.Int32)">
@@ -249,7 +249,7 @@
             <param name="length"></param>
             <returns></returns>
         </member>
-        <member name="M:TaxHub.TokenParser.Formatters.Strings.PadOperation.Execute(System.Object,System.Int32,TaxHub.TokenParser.Formatters.Strings.PaddingDirection)">
+        <member name="M:TaxHub.TokenParser.Formatters.Strings.PadOperation.Execute(System.Object,System.Int32,TaxHub.TokenParser.Formatters.Strings.PaDOIngDirection)">
             <summary>
             Sample: data | pad 9, Left, " "
             </summary>

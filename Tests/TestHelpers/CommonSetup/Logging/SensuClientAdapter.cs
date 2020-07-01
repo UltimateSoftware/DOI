@@ -3,9 +3,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
-using DDI.Tests.TestHelpers.CommonSetup.Hosting;
+using DOI.Tests.TestHelpers.CommonSetup.Hosting;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Logging
+namespace DOI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// Class provides connectivity over TCP to the Sense client locally installed on a server.

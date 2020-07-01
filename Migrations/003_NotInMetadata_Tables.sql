@@ -1,6 +1,6 @@
 ﻿-- <Migration ID="b24fe523-c6f3-4b5c-b70c-b41d635e0248" TransactionHandling="Custom" />
-IF OBJECT_ID('[DDI].[IndexesNotInMetadata]') IS NULL
-CREATE TABLE [DDI].[IndexesNotInMetadata]
+IF OBJECT_ID('[DOI].[IndexesNotInMetadata]') IS NULL
+CREATE TABLE [DOI].[IndexesNotInMetadata]
 (
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SchemaName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -16,8 +16,8 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
-IF OBJECT_ID('[DDI].[DefaultConstraintsNotInMetadata]') IS NULL
-CREATE TABLE [DDI].[DefaultConstraintsNotInMetadata]
+IF OBJECT_ID('[DOI].[DefaultConstraintsNotInMetadata]') IS NULL
+CREATE TABLE [DOI].[DefaultConstraintsNotInMetadata]
 (
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SchemaName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -33,8 +33,8 @@ MEMORY_OPTIMIZED = ON
 )
 GO
 
-IF OBJECT_ID('[DDI].[CheckConstraintsNotInMetadata]') IS NULL
-CREATE TABLE [DDI].[CheckConstraintsNotInMetadata]
+IF OBJECT_ID('[DOI].[CheckConstraintsNotInMetadata]') IS NULL
+CREATE TABLE [DOI].[CheckConstraintsNotInMetadata]
 (
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SchemaName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,

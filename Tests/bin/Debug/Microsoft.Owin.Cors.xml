@@ -6,7 +6,7 @@
     <members>
         <member name="T:Owin.CorsExtensions">
             <summary>
-            Extension methods for adding CorsMiddleware to an application pipeline.
+            Extension methods for aDOIng CorsMiddleware to an application pipeline.
             </summary>
         </member>
         <member name="M:Owin.CorsExtensions.UseCors(Owin.IAppBuilder,Microsoft.Owin.Cors.CorsOptions)">

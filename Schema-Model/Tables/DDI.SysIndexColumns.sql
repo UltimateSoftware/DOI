@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysIndexColumns]
+CREATE TABLE [DOI].[SysIndexColumns]
 (
 [database_id] [int] NOT NULL,
 [object_id] [int] NOT NULL,

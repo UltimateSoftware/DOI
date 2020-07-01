@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace DDI.TestHelpers
+namespace DOI.TestHelpers
 {
     [TestFixture]
     [Category("Unit")]

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using DDI.Tests.Integration.Models;
+using DOI.Tests.Integration.Models;
 
-namespace DDI.Tests.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     public class TempARepository
     {

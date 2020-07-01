@@ -1441,11 +1441,11 @@
         <member name="M:TaxHub.Common.DataAccess.MongoDbStore.MongoDbRepository`2.FindAll(System.Guid,SmartHub.Hosting.DataAccess.PagedDataParameters,MongoDB.Driver.FilterDefinition{`0},System.Threading.CancellationToken)">
             <summary>
             Method finds all aggregate instances for particular tenantId, but returns only part of it based on page parameters (page number, size, sorting order)
-            and additional query, if supplied.
+            and aDOItional query, if supplied.
             </summary>
             <param name="tenantId">The tenantId.</param>
             <param name="pageParams">The page parameters object.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns an IEnumerable containing the aggregates.</returns>
         </member>
@@ -1459,10 +1459,10 @@
         </member>
         <member name="M:TaxHub.Common.DataAccess.MongoDbStore.MongoDbRepository`2.Count(System.Guid,MongoDB.Driver.FilterDefinition{`0},System.Threading.CancellationToken)">
             <summary>
-            Method returns the total count of aggregates for particular tenantId and additional query, if supplied.
+            Method returns the total count of aggregates for particular tenantId and aDOItional query, if supplied.
             </summary>
             <param name="tenantId">The tenantId.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns a long value.</returns>
         </member>
@@ -1769,7 +1769,7 @@
             Updates an aggregates in the repository with pre-condition query. Method validates versioning and would raise DataVersioningException if version does not match.
             </summary>
             <param name="item">The aggregate to update to.</param>
-            <param name="filter">The additional update pre-condition query.</param>
+            <param name="filter">The aDOItional update pre-condition query.</param>
             <param name="suppressException">The boolean indicator to suppress versioning exception.</param>
             <param name="writeConcern">The WriteConcern to use for this operation.</param>
             <param name="cancellationToken">Cancellation token</param>
@@ -1807,7 +1807,7 @@
             <summary>
             Method finds all aggregate instances for all tenants filtered by query, if supplied.
             </summary>
-            <param name="filter">Additional query to filter data.</param>
+            <param name="filter">ADOItional query to filter data.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns an IEnumerable containing the aggregates.</returns>
         </member>
@@ -1822,10 +1822,10 @@
         <member name="M:TaxHub.Common.DataAccess.MongoDbStore.MongoDbSimpleRepository`2.FindAll(SmartHub.Hosting.DataAccess.PagedDataParameters,MongoDB.Driver.FilterDefinition{`0},System.Threading.CancellationToken)">
             <summary>
             Method finds all aggregate instances for all tenants, but returns only part of it based on page parameters (page number, size, sorting order)
-            and additional query, if supplied.
+            and aDOItional query, if supplied.
             </summary>
             <param name="pageParams">The page parameters object.</param>
-            <param name="filter">Additional query to filter data.</param>
+            <param name="filter">ADOItional query to filter data.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns an IEnumerable containing the aggregates.</returns>
         </member>
@@ -1838,9 +1838,9 @@
         </member>
         <member name="M:TaxHub.Common.DataAccess.MongoDbStore.MongoDbSimpleRepository`2.Count(MongoDB.Driver.FilterDefinition{`0},System.Threading.CancellationToken)">
             <summary>
-            Method returns the total count of aggregates for all tenants, filtered by additional query, if supplied.
+            Method returns the total count of aggregates for all tenants, filtered by aDOItional query, if supplied.
             </summary>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns a long value.</returns>
         </member>
@@ -3274,7 +3274,7 @@
             </summary>
             <param name="tenantId">The tenant id.</param>
             <param name="pageParams">The page parameters.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
@@ -3300,7 +3300,7 @@
         <member name="M:TaxHub.Common.EventStore.IEventStoreRepository.FindAllFailedToPublish(System.Guid,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
             <summary>
             Methods returns the list of incomplete (failed to queue) events filtered by specific tenant and page parameters. 
-            It returns only part of it based on page parameters (page number, size, sorting order) and additional query, if supplied.
+            It returns only part of it based on page parameters (page number, size, sorting order) and aDOItional query, if supplied.
             </summary>
             <param name="tenantId">The tenant id.</param>
             <param name="pageParams">The page parameters.</param>
@@ -3593,13 +3593,13 @@
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
-        <member name="M:TaxHub.Common.EventStore.IEventStoreRepository.RetrieveFailedDiagnostics(System.Threading.CancellationToken)">
+        <member name="M:TaxHub.Common.EventStore.IEventStoreRepository.RetrieveFaileDOIagnostics(System.Threading.CancellationToken)">
             <summary>
             Methods returns the diagnostics information about failed events collections. It returns 2 counts - failed to published and consumed. 
             The counts are limited by 10, therefore if collection contains more than 10 events, it still returns value of 10.
             </summary>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FailedDiagnosticsData"/>.</returns>
+            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FaileDOIagnosticsData"/>.</returns>
         </member>
         <member name="M:TaxHub.Common.EventStore.IEventStoreRepository.FindAllFailedToPublishByPartialBeginningEventName(System.String,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
             <summary>
@@ -3610,13 +3610,13 @@
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
-        <member name="M:TaxHub.Common.EventStore.IEventStoreRepository.RetrieveFailedDetailedDiagnostics(System.Threading.CancellationToken)">
+        <member name="M:TaxHub.Common.EventStore.IEventStoreRepository.RetrieveFailedDetaileDOIagnostics(System.Threading.CancellationToken)">
             <summary>
             Methods returns the diagnostics information about failed events collections. It returns 2 dictionaries - failed to published and consumed. 
             Each contains the list of event names with their total counts.
             </summary>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FailedDiagnosticsDetailedData"/>.</returns>
+            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FaileDOIagnosticsDetailedData"/>.</returns>
         </member>
         <member name="M:TaxHub.Common.EventStore.IEventStoreRepository.FindAllFailedToPublishByEventName(System.String,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
             <summary>
@@ -3657,14 +3657,14 @@
             </summary>
             <param name="tenantId">The tenant id.</param>
             <param name="pageParams">The page parameters.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
         <member name="M:TaxHub.Common.EventStore.MongoDbEventStoreRepository.FindAllFailedToConsume(System.Guid,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
             <summary>
             Methods returns the list of events filtered by specific tenant and page parameters. 
-            It returns only part of it based on page parameters (page number, size, sorting order) and additional query, if supplied.
+            It returns only part of it based on page parameters (page number, size, sorting order) and aDOItional query, if supplied.
             </summary>
             <param name="tenantId">The tenant id.</param>
             <param name="pageParams">The page parameters.</param>
@@ -3674,7 +3674,7 @@
         <member name="M:TaxHub.Common.EventStore.MongoDbEventStoreRepository.FindAllFailedToPublish(System.Guid,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
             <summary>
             Methods returns the list of incomplete (failed to queue) events filtered by specific tenant and page parameters. 
-            It returns only part of it based on page parameters (page number, size, sorting order) and additional query, if supplied.
+            It returns only part of it based on page parameters (page number, size, sorting order) and aDOItional query, if supplied.
             </summary>
             <param name="tenantId">The tenant id.</param>
             <param name="pageParams">The page parameters.</param>
@@ -3684,12 +3684,12 @@
         <member name="M:TaxHub.Common.EventStore.MongoDbEventStoreRepository.FindAll(System.Guid,TaxHub.Common.EventStore.MongoDbEventStoreRepository.EventStoreDestination,SmartHub.Hosting.DataAccess.PagedDataParameters,MongoDB.Driver.FilterDefinition{TaxHub.Common.EventStore.DomainEventData},System.Threading.CancellationToken)">
             <summary>
             Methods returns the list of events filtered by specific tenant and page parameters. 
-            It returns only part of it based on page parameters (page number, size, sorting order) and additional query, if supplied.
+            It returns only part of it based on page parameters (page number, size, sorting order) and aDOItional query, if supplied.
             </summary>
             <param name="tenantId">The tenant id.</param>
             <param name="destination">Destination part of the event store.</param>
             <param name="pageParams">The page parameters.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
@@ -3915,21 +3915,21 @@
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns boolean indicator of success.</returns>
         </member>
-        <member name="M:TaxHub.Common.EventStore.MongoDbEventStoreRepository.RetrieveFailedDiagnostics(System.Threading.CancellationToken)">
+        <member name="M:TaxHub.Common.EventStore.MongoDbEventStoreRepository.RetrieveFaileDOIagnostics(System.Threading.CancellationToken)">
             <summary>
             Methods returns the diagnostics information about failed events collections. It returns 2 counts - failed to published and consumed. 
             The counts are limited by 10, therefore if collection contains more than 10 events, it still returns value of 10.
             </summary>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FailedDiagnosticsData"/>.</returns>
+            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FaileDOIagnosticsData"/>.</returns>
         </member>
-        <member name="M:TaxHub.Common.EventStore.MongoDbEventStoreRepository.RetrieveFailedDetailedDiagnostics(System.Threading.CancellationToken)">
+        <member name="M:TaxHub.Common.EventStore.MongoDbEventStoreRepository.RetrieveFailedDetaileDOIagnostics(System.Threading.CancellationToken)">
             <summary>
             Methods returns the diagnostics information about failed events collections. It returns 2 dictionaries - failed to published and consumed. 
             Each contains the list of event names with their total counts.
             </summary>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FailedDiagnosticsDetailedData"/>.</returns>
+            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FaileDOIagnosticsDetailedData"/>.</returns>
         </member>
         <member name="M:TaxHub.Common.EventStore.MongoDbEventStoreRepository.FindAllFailedToPublishByEventName(System.String,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
             <inheritdoc />
@@ -4169,7 +4169,7 @@
         <member name="M:TaxHub.Common.EventStore.EventStore.FindAllFailedToPublish(System.Guid,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
             <summary>
             Methods returns the list of incomplete (failed to queue) events filtered by specific tenant and page parameters. 
-            It returns only part of it based on page parameters (page number, size, sorting order) and additional query, if supplied.
+            It returns only part of it based on page parameters (page number, size, sorting order) and aDOItional query, if supplied.
             </summary>
             <param name="tenantId">The tenant id.</param>
             <param name="pageParams">The page parameters.</param>
@@ -4286,21 +4286,21 @@
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns boolean indicator of success.</returns>
         </member>
-        <member name="M:TaxHub.Common.EventStore.EventStore.RetrieveFailedDiagnostics(System.Threading.CancellationToken)">
+        <member name="M:TaxHub.Common.EventStore.EventStore.RetrieveFaileDOIagnostics(System.Threading.CancellationToken)">
             <summary>
             Methods returns the diagnostics information about failed events collections. It returns 2 counts - failed to published and consumed. 
             The counts are limited by 10, therefore if collection contains more than 10 events, it still returns value of 10.
             </summary>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FailedDiagnosticsData"/>.</returns>
+            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FaileDOIagnosticsData"/>.</returns>
         </member>
-        <member name="M:TaxHub.Common.EventStore.EventStore.RetrieveFailedDetailedDiagnostics(System.Threading.CancellationToken)">
+        <member name="M:TaxHub.Common.EventStore.EventStore.RetrieveFailedDetaileDOIagnostics(System.Threading.CancellationToken)">
             <summary>
             Methods returns the diagnostics information about failed events collections. It returns 2 dictionaries - failed to published and consumed. 
             Each contains the list of event names with their total counts.
             </summary>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FailedDiagnosticsDetailedData"/>.</returns>
+            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FaileDOIagnosticsDetailedData"/>.</returns>
         </member>
         <member name="M:TaxHub.Common.EventStore.EventStore.DeleteManyFailedToConsumeEventsByEventNameForMigration(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
             <inheritdoc />
@@ -4331,9 +4331,9 @@
             Gets or sets the end date and time (in UTC) message filter to apply; this is an optional parameter.
             </summary>
         </member>
-        <member name="P:TaxHub.Common.EventStore.IAggregateSnapshotFilter.AdditionalFilters">
+        <member name="P:TaxHub.Common.EventStore.IAggregateSnapshotFilter.ADOItionalFilters">
             <summary>
-            Gets or sets additional filters specific to particular aggregate to apply; these are optional parameters.
+            Gets or sets aDOItional filters specific to particular aggregate to apply; these are optional parameters.
             </summary>
         </member>
         <member name="M:TaxHub.Common.EventStore.IAggregateSnapshotFilter.HasTenantId">
@@ -4719,7 +4719,7 @@
         <member name="M:TaxHub.Common.EventStore.IQueryableEventStore.FindAllFailedToPublish(System.Guid,SmartHub.Hosting.DataAccess.PagedDataParameters,System.Threading.CancellationToken)">
             <summary>
             Methods returns the list of incomplete (failed to queue) events filtered by specific tenant and page parameters. 
-            It returns only part of it based on page parameters (page number, size, sorting order) and additional query, if supplied.
+            It returns only part of it based on page parameters (page number, size, sorting order) and aDOItional query, if supplied.
             </summary>
             <param name="tenantId">The tenant id.</param>
             <param name="pageParams">The page parameters.</param>
@@ -4843,21 +4843,21 @@
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
-        <member name="M:TaxHub.Common.EventStore.IQueryableEventStore.RetrieveFailedDiagnostics(System.Threading.CancellationToken)">
+        <member name="M:TaxHub.Common.EventStore.IQueryableEventStore.RetrieveFaileDOIagnostics(System.Threading.CancellationToken)">
             <summary>
             Methods returns the diagnostics information about failed events collections. It returns 2 counts - failed to published and consumed. 
             The counts are limited by 10, therefore if collection contains more than 10 events, it still returns value of 10.
             </summary>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FailedDiagnosticsData"/>.</returns>
+            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FaileDOIagnosticsData"/>.</returns>
         </member>
-        <member name="M:TaxHub.Common.EventStore.IQueryableEventStore.RetrieveFailedDetailedDiagnostics(System.Threading.CancellationToken)">
+        <member name="M:TaxHub.Common.EventStore.IQueryableEventStore.RetrieveFailedDetaileDOIagnostics(System.Threading.CancellationToken)">
             <summary>
             Methods returns the diagnostics information about failed events collections. It returns 2 dictionaries - failed to published and consumed. 
             Each contains the list of event names with their total counts.
             </summary>
             <param name="cancellationToken">Cancellation token</param>
-            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FailedDiagnosticsDetailedData"/>.</returns>
+            <returns>Returns instance of <see cref="T:TaxHub.Common.EventStore.FaileDOIagnosticsDetailedData"/>.</returns>
         </member>
         <member name="M:TaxHub.Common.Extensions.DecimalExtensions.RoundDecimalAwayFromZero(System.Decimal,System.Int32)">
             <summary>
@@ -5005,7 +5005,7 @@
             <typeparam name="T"></typeparam>
             <param name="list">List</param>
         </member>
-        <member name="M:TaxHub.Common.Extensions.ListExtensions.AddIfNotNull``1(System.Collections.Generic.List{``0},``0)">
+        <member name="M:TaxHub.Common.Extensions.ListExtensions.ADOIfNotNull``1(System.Collections.Generic.List{``0},``0)">
             <summary>
             Add the value to the list if it's not null.
             </summary>
@@ -5565,41 +5565,41 @@
             Original Source: http://www.blackbeltcoder.com/Articles/strings/converting-numbers-to-words
             </remarks>
         </member>
-        <member name="M:TaxHub.Common.GlobalServices.HumanReadableCurrencyHelper.Convert(System.Decimal,TaxHub.Common.GlobalServices.PadDirection,System.Int32)">
+        <member name="M:TaxHub.Common.GlobalServices.HumanReadableCurrencyHelper.Convert(System.Decimal,TaxHub.Common.GlobalServices.PaDOIrection,System.Int32)">
             <summary>
             Converts the specified number to a variable length character string representation
             that could be printed on a check.
             </summary>
             <param name="value">The number to convert</param>
-            <param name="padDirection">Whether to pad the left or right side of the string with asterisks.</param>
-            <param name="paddingLength">If the string representation is less than this number, it will be padded 
+            <param name="paDOIrection">Whether to pad the left or right side of the string with asterisks.</param>
+            <param name="paDOIngLength">If the string representation is less than this number, it will be padded 
             with asterisks to this length.</param>
-            <returns>A string representation of the specified number padded in the specified padding direction with asterisks
-            up to 'paddingLength' characters.</returns>
+            <returns>A string representation of the specified number padded in the specified paDOIng direction with asterisks
+            up to 'paDOIngLength' characters.</returns>
         </member>
-        <member name="M:TaxHub.Common.GlobalServices.HumanReadableCurrencyHelper.ToHumanReadable(System.Decimal,TaxHub.Common.GlobalServices.PadDirection,System.Int32)">
+        <member name="M:TaxHub.Common.GlobalServices.HumanReadableCurrencyHelper.ToHumanReadable(System.Decimal,TaxHub.Common.GlobalServices.PaDOIrection,System.Int32)">
             <summary>
             Converts this number to a variable length character string representation
             that could be printed on a check.
             </summary>
             <param name="value">The number to convert</param>
-            <param name="padDirection">Whether to pad the left or right side of the string with asterisks.</param>
-            <param name="paddingLength">If the string representation is less than this number, it will be padded 
+            <param name="paDOIrection">Whether to pad the left or right side of the string with asterisks.</param>
+            <param name="paDOIngLength">If the string representation is less than this number, it will be padded 
             with asterisks to this length.</param>
-            <returns>A string representation of the specified number padded in the specified padding direction with asterisks
-            up to 'paddingLength' characters.</returns>
+            <returns>A string representation of the specified number padded in the specified paDOIng direction with asterisks
+            up to 'paDOIngLength' characters.</returns>
         </member>
-        <member name="M:TaxHub.Common.GlobalServices.HumanReadableCurrencyHelper.ToHumanReadable(System.Int32,TaxHub.Common.GlobalServices.PadDirection,System.Int32)">
+        <member name="M:TaxHub.Common.GlobalServices.HumanReadableCurrencyHelper.ToHumanReadable(System.Int32,TaxHub.Common.GlobalServices.PaDOIrection,System.Int32)">
             <summary>
             Converts this number to a variable length character string representation
             that could be printed on a check.
             </summary>
             <param name="value">The number to convert</param>
-            <param name="padDirection">Whether to pad the left or right side of the string with asterisks.</param>
-            <param name="paddingLength">If the string representation is less than this number, it will be padded 
+            <param name="paDOIrection">Whether to pad the left or right side of the string with asterisks.</param>
+            <param name="paDOIngLength">If the string representation is less than this number, it will be padded 
             with asterisks to this length.</param>
-            <returns>A string representation of the specified number padded in the specified padding direction with asterisks
-            up to 'paddingLength' characters.</returns>
+            <returns>A string representation of the specified number padded in the specified paDOIng direction with asterisks
+            up to 'paDOIngLength' characters.</returns>
         </member>
         <member name="M:TaxHub.Common.GlobalServices.IUdesServiceClient.Save(System.String,System.String,System.IO.FileInfo,System.Guid,System.Threading.CancellationToken)">
             <summary>
@@ -5879,7 +5879,7 @@
             String Helper Class
             </summary>
         </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithPadding(System.String,System.Int32,System.String,System.Int32,System.Char,System.String[])">
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithPaDOIng(System.String,System.Int32,System.String,System.Int32,System.Char,System.String[])">
             <summary>
             Formats String
             </summary>
@@ -5887,33 +5887,20 @@
             <param name="part1Size">"part1Size"</param>
             <param name="part2">"part2"</param>
             <param name="part2Size">"part2Size"</param>
-            <param name="padding">"padding"</param>
+            <param name="paDOIng">"paDOIng"</param>
             <param name="toRemove">"toRemove"</param>
             <returns> string </returns>
         </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaddingOnePart(System.String,System.Int32,System.Char)">
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaDOIngOnePart(System.String,System.Int32,System.Char)">
             <summary>
             Formats String
             </summary>
             <param name="part1">"part1"</param>
             <param name="part1Size">"part1Size"</param>
-            <param name="padding">"padding"</param>
+            <param name="paDOIng">"paDOIng"</param>
             <returns> string </returns>
         </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaddingThreePart(System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.Char)">
-            <summary>
-            Formats String
-            </summary>
-            <param name="part1">"part1"</param>
-            <param name="part1Size">"part1Size"</param>
-            <param name="part2">"part2"</param>
-            <param name="part2Size">"part2Size"</param>
-            <param name="part3">"part3"</param>
-            <param name="part3Size">"part3Size"</param>
-            <param name="padding">"padding"</param>
-            <returns> string </returns>
-        </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithLeftPaddingThreePart(System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.Char)">
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaDOIngThreePart(System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.Char)">
             <summary>
             Formats String
             </summary>
@@ -5923,10 +5910,10 @@
             <param name="part2Size">"part2Size"</param>
             <param name="part3">"part3"</param>
             <param name="part3Size">"part3Size"</param>
-            <param name="padding">"padding"</param>
+            <param name="paDOIng">"paDOIng"</param>
             <returns> string </returns>
         </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithLeftPaddingTwoPart(System.String,System.Int32,System.String,System.Int32,System.Char)">
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithLeftPaDOIngThreePart(System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.Char)">
             <summary>
             Formats String
             </summary>
@@ -5934,31 +5921,44 @@
             <param name="part1Size">"part1Size"</param>
             <param name="part2">"part2"</param>
             <param name="part2Size">"part2Size"</param>
-            <param name="padding">"padding"</param>
+            <param name="part3">"part3"</param>
+            <param name="part3Size">"part3Size"</param>
+            <param name="paDOIng">"paDOIng"</param>
             <returns> string </returns>
         </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithLeftPaddingOnePart(System.String,System.Int32,System.Char)">
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithLeftPaDOIngTwoPart(System.String,System.Int32,System.String,System.Int32,System.Char)">
             <summary>
             Formats String
             </summary>
             <param name="part1">"part1"</param>
             <param name="part1Size">"part1Size"</param>
-            <param name="padding">"padding"</param>
-            <returns> string </returns>
-        </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithLeftAndRightPaddingTwoPart(System.String,System.Int32,System.Char,System.String,System.Int32,System.Char)">
-            <summary>
-            Formats String
-            </summary>
-            <param name="part1">"part1"</param>
-            <param name="part1Size">"part1Size"</param>
-            <param name="padding1">"padding"</param> 
             <param name="part2">"part2"</param>
             <param name="part2Size">"part2Size"</param>
-            <param name="padding2">"padding"</param>        
+            <param name="paDOIng">"paDOIng"</param>
             <returns> string </returns>
         </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaddingFourPart(System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.Char)">
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithLeftPaDOIngOnePart(System.String,System.Int32,System.Char)">
+            <summary>
+            Formats String
+            </summary>
+            <param name="part1">"part1"</param>
+            <param name="part1Size">"part1Size"</param>
+            <param name="paDOIng">"paDOIng"</param>
+            <returns> string </returns>
+        </member>
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithLeftAndRightPaDOIngTwoPart(System.String,System.Int32,System.Char,System.String,System.Int32,System.Char)">
+            <summary>
+            Formats String
+            </summary>
+            <param name="part1">"part1"</param>
+            <param name="part1Size">"part1Size"</param>
+            <param name="paDOIng1">"paDOIng"</param> 
+            <param name="part2">"part2"</param>
+            <param name="part2Size">"part2Size"</param>
+            <param name="paDOIng2">"paDOIng"</param>        
+            <returns> string </returns>
+        </member>
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaDOIngFourPart(System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.Char)">
             <summary>
             Formats String
             </summary>
@@ -5970,22 +5970,22 @@
             <param name="part3Size">"part3Size"</param>
             <param name="part4">"part4"</param>
             <param name="part4Size">"part4Size"</param>
-            <param name="padding">"padding"</param>
+            <param name="paDOIng">"paDOIng"</param>
             <returns> string </returns>
         </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaddingTwoPart(System.String,System.Int32,System.Char,System.String,System.Int32,System.Char)">
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaDOIngTwoPart(System.String,System.Int32,System.Char,System.String,System.Int32,System.Char)">
             <summary>
             Formats String
             </summary>
             <param name="part1">"part1"</param>
             <param name="part1Size">"part1Size"</param>
-            <param name="padding1">"padding"</param> 
+            <param name="paDOIng1">"paDOIng"</param> 
             <param name="part2">"part2"</param>
             <param name="part2Size">"part2Size"</param>
-            <param name="padding2">"padding"</param>        
+            <param name="paDOIng2">"paDOIng"</param>        
             <returns> string </returns>
         </member>
-        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaddingFivePart(System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.Char)">
+        <member name="M:TaxHub.Common.Helpers.StringHelper.FormatWithRightPaDOIngFivePart(System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.String,System.Int32,System.Char)">
             <summary>
             Formats String
             </summary>
@@ -5999,7 +5999,7 @@
             <param name="part4Size">"part4Size"</param>
             <param name="part5">"part5"</param>
             <param name="part5Size">"part5Size"</param> 
-            <param name="padding">"padding"</param>
+            <param name="paDOIng">"paDOIng"</param>
             <returns> string </returns>
         </member>
         <member name="M:TaxHub.Common.Helpers.StringHelper.ConvertDecimalToN13Format(System.Decimal)">

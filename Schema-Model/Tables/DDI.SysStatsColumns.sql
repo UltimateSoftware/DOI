@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysStatsColumns]
+CREATE TABLE [DOI].[SysStatsColumns]
 (
 [database_id] [int] NOT NULL,
 [object_id] [int] NOT NULL,

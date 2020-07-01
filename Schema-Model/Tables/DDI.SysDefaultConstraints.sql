@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysDefaultConstraints]
+CREATE TABLE [DOI].[SysDefaultConstraints]
 (
 [database_id] [int] NOT NULL,
 [name] [sys].[sysname] NOT NULL,

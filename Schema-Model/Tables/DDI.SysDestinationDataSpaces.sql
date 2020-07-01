@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysDestinationDataSpaces]
+CREATE TABLE [DOI].[SysDestinationDataSpaces]
 (
 [database_id] [int] NOT NULL,
 [partition_scheme_id] [int] NOT NULL,

@@ -72,11 +72,11 @@
         <member name="M:TaxHub.TokenParser.Core.Tokens.IRecordInterpolator.ReplaceTokens(System.String,System.Collections.Generic.Dictionary{System.String,TaxHub.TokenParser.Core.Tokens.IToken})">
             <summary>
             Replaces the tokens in the template using a dictionary that maps the TokenName to a func that gets the value of the token
-            The token format is as follows: ${[TokenName]:[Length][PaddingDirection]:[PaddingValue]}
+            The token format is as follows: ${[TokenName]:[Length][PaDOIngDirection]:[PaDOIngValue]}
             [TokenName]
             [Length] - how long the value will be that is replacing the token
-            [Padding direction] - 'R' or 'L' - which side the padding character should be on
-            [PaddingValue] - what character should be used to pad
+            [PaDOIng direction] - 'R' or 'L' - which side the paDOIng character should be on
+            [PaDOIngValue] - what character should be used to pad
             </summary>
             <param name="template">The template contains the tokens that need replacing.</param>
             <param name="replacements">Dictionary that maps the TokenName to a func that gets the value of the token</param>
@@ -134,7 +134,7 @@
             String that defines the format of the document. If string has any tokens that are referenced,
             IRecordInterpolator should replace tokens with referenced values.
             If Format is left empty, header of document will not be added.
-            In addition, TokenModels (if provided) will be iterated over creating an entry per item.
+            In aDOItion, TokenModels (if provided) will be iterated over creating an entry per item.
             So this Format variable defines all the potential rows in the for this sectionf of the document.
             If TokenModels is empty, and format is specified, lines will be rendered once for
             this section.
@@ -163,11 +163,11 @@
         <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.ReplaceTokens(System.String,System.Collections.Generic.Dictionary{System.String,TaxHub.TokenParser.Core.Tokens.IToken})">
             <summary>
             Replaces the tokens in the template using a dictionary that maps the TokenName to a func that gets the value of the token
-            The token format is as follows: ${[TokenName]:[Length][PaddingDirection]:[PaddingValue]}
+            The token format is as follows: ${[TokenName]:[Length][PaDOIngDirection]:[PaDOIngValue]}
             [TokenName]
             [Length] - how long the value will be that is replacing the token
-            [Padding direction] - 'R' or 'L' - which side the padding character should be on
-            [PaddingValue] - what character should be used to pad
+            [PaDOIng direction] - 'R' or 'L' - which side the paDOIng character should be on
+            [PaDOIngValue] - what character should be used to pad
             </summary>
             <param name="template">The template contains the tokens that need replacing.</param>
             <param name="replacements">Dictionary that maps the TokenName to a func that gets the value of the token</param>
@@ -243,9 +243,9 @@
             Literal string key that needs to be replaced
             </summary>
         </member>
-        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaddingLength">
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaDOIngLength">
             <summary>
-            Amount of times padding character should be repeated after key has been replaced
+            Amount of times paDOIng character should be repeated after key has been replaced
             </summary>
         </member>
         <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.Format">
@@ -253,19 +253,19 @@
             Custom format
             </summary>
         </member>
-        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaddingCharacter">
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaDOIngCharacter">
             <summary>
             Character to pad left or the right of the value to replace the key with
             </summary>
         </member>
-        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaddDirection">
+        <member name="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PadDOIrection">
             <summary>
-            Describes left or right. See <see cref="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PaddDirection" />
+            Describes left or right. See <see cref="P:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.PadDOIrection" />
             </summary>
         </member>
         <member name="M:TaxHub.TokenParser.Core.Tokens.TokenRecordInterpolator.Token.#ctor">
             <summary>
-            Constructor w/ default token options w/ space character as padding character, and padding direction set to be left.
+            Constructor w/ default token options w/ space character as paDOIng character, and paDOIng direction set to be left.
             </summary>
         </member>
         <member name="M:TaxHub.TokenParser.Core.Tokens.DateUtils.ToJulianDate(System.DateTime)">
@@ -294,7 +294,7 @@
         <member name="M:TaxHub.TokenParser.Core.Tokens.TxtFileGenerator.GenerateDocument">
             <inheritdoc />
         </member>
-        <member name="M:TaxHub.TokenParser.Core.Tokens.TxtFileGenerator.BuildDictionary(System.Collections.Generic.IEnumerable{TaxHub.TokenParser.Core.Tokens.ITokenModel})">
+        <member name="M:TaxHub.TokenParser.Core.Tokens.TxtFileGenerator.BuilDOIctionary(System.Collections.Generic.IEnumerable{TaxHub.TokenParser.Core.Tokens.ITokenModel})">
             <summary>
             Will build a single dictionary of all tokens by calling defineTokens for each token model.
             </summary>

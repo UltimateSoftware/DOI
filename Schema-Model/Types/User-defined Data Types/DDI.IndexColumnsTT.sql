@@ -1,8 +1,8 @@
-IF TYPE_ID('[DDI].[IndexColumnsTT]') IS NOT NULL
-	DROP TYPE [DDI].[IndexColumnsTT];
+IF TYPE_ID('[DOI].[IndexColumnsTT]') IS NOT NULL
+	DROP TYPE [DOI].[IndexColumnsTT];
 
 GO
-CREATE TYPE [DDI].[IndexColumnsTT] AS TABLE
+CREATE TYPE [DOI].[IndexColumnsTT] AS TABLE
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [SchemaName] [sys].[sysname] NOT NULL,

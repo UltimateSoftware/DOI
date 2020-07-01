@@ -732,9 +732,9 @@
             </summary>
             <remarks>http://www.unicode.org/charts/PDF/U1DC0.pdf</remarks>        
         </member>
-        <member name="F:Microsoft.Security.Application.LowerMidCodeCharts.LatinExtendedAdditional">
+        <member name="F:Microsoft.Security.Application.LowerMidCodeCharts.LatinExtendedADOItional">
             <summary>
-            The Latin Extended Additional code table.
+            The Latin Extended ADOItional code table.
             </summary>
             <remarks>http://www.unicode.org/charts/PDF/U1E00.pdf</remarks>
         </member>
@@ -1688,9 +1688,9 @@
             </summary>
             <returns>The safe characters for the code table.</returns>  
         </member>
-        <member name="M:Microsoft.Security.Application.CodeCharts.LowerMiddle.LatinExtendedAdditional">
+        <member name="M:Microsoft.Security.Application.CodeCharts.LowerMiddle.LatinExtendedADOItional">
             <summary>
-            Provides the safe characters for the Latin Extended Addition code table.
+            Provides the safe characters for the Latin Extended ADOItion code table.
             </summary>
             <returns>The safe characters for the code table.</returns>  
         </member>

@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[Run_PartitionState]
+CREATE TABLE [DOI].[Run_PartitionState]
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [SchemaName] [sys].[sysname] NOT NULL,
@@ -10,5 +10,5 @@ CREATE TABLE [DDI].[Run_PartitionState]
 [LastUpdateDateTime] [datetime] NULL CONSTRAINT [Def_Run_PartitionState_LastUpdateDateTime] DEFAULT (getdate())
 )
 GO
-ALTER TABLE [DDI].[Run_PartitionState] ADD CONSTRAINT [PK_Run_PartitionState] PRIMARY KEY CLUSTERED  ([DatabaseName], [SchemaName], [ParentTableName], [PrepTableName], [PartitionFromValue])
+ALTER TABLE [DOI].[Run_PartitionState] ADD CONSTRAINT [PK_Run_PartitionState] PRIMARY KEY CLUSTERED  ([DatabaseName], [SchemaName], [ParentTableName], [PrepTableName], [PartitionFromValue])
 GO

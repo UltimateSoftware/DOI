@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.Practices.Unity.Configuration.ConfigurationHelpers;
 
 using Newtonsoft.Json;
-using DDI.Tests.TestHelpers.CommonSetup.Logging;
-using DDI.Tests.TestHelpers.CommonSetup.Security.Extensions;
+using DOI.Tests.TestHelpers.CommonSetup.Logging;
+using DOI.Tests.TestHelpers.CommonSetup.Security.Extensions;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Security.KeyServer
+namespace DOI.Tests.TestHelpers.CommonSetup.Security.KeyServer
 {
     /// <summary>
     /// This class is responsible for managing application credentials.

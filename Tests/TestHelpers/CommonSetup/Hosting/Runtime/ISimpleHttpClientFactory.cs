@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Hosting.Runtime
+namespace DOI.Tests.TestHelpers.CommonSetup.Hosting.Runtime
 {
     /// <summary>
     /// Interface implemented by the class that creates new instances of Http Client without authorization header. 

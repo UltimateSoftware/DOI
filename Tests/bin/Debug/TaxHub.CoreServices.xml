@@ -2028,12 +2028,12 @@
             IMPORTANT: Avoid directly accessing this field if possible. Instead use Tenant.GetUsgCollectionAccount(productCode).
             </remarks>
         </member>
-        <member name="P:TaxHub.CoreServices.Acl.Payment.HubTenantBankingData.UsgDdDisbursementBankAccountId">
+        <member name="P:TaxHub.CoreServices.Acl.Payment.HubTenantBankingData.UsgDDOIsbursementBankAccountId">
             <summary>
             Gets or sets the tenant's direct deposit disbursement USG bank account Id.
             </summary>
             <remarks>
-            IMPORTANT: Avoid directly accessing this field if possible. Instead use Tenant.GetUsgDdDisbursementAccount(productCode).
+            IMPORTANT: Avoid directly accessing this field if possible. Instead use Tenant.GetUsgDDOIsbursementAccount(productCode).
             </remarks>
         </member>
         <member name="P:TaxHub.CoreServices.Acl.Payment.HubTenantBankingData.UsgTaxEftDisbursementBankAccountId">
@@ -2041,7 +2041,7 @@
             Gets or sets the tenant's tax direct deposit disbursement USG bank account Id.
             </summary>
             <remarks>
-            IMPORTANT: Avoid directly accessing this field if possible. Instead use Tenant.GetUsgDdDisbursementAccount(productCode).
+            IMPORTANT: Avoid directly accessing this field if possible. Instead use Tenant.GetUsgDDOIsbursementAccount(productCode).
             </remarks>
         </member>
         <member name="P:TaxHub.CoreServices.Acl.Payment.HubTenantBankingData.UsgGarnishmentsEftDisbursementBankAccountId">
@@ -2049,7 +2049,7 @@
             Gets or sets the tenant's garnishment direct deposit disbursement USG bank account Id.
             </summary>
             <remarks>
-            IMPORTANT: Avoid directly accessing this field if possible. Instead use Tenant.GetUsgDdDisbursementAccount(productCode).
+            IMPORTANT: Avoid directly accessing this field if possible. Instead use Tenant.GetUsgDDOIsbursementAccount(productCode).
             </remarks>
         </member>
         <member name="P:TaxHub.CoreServices.Acl.Payment.HubTenantBankingData.UsgCheckDisbursementBankAccountId">
@@ -6172,7 +6172,7 @@
             <summary>
             Method returns the alternate code to identify the worksite.
             When present, the Reporting Unit Number is set to zeros and this value is used for reporting.
-            Leading and trailing white-space characters will be removed. In addition, only 5 characters will be considered to fit our SQL table.
+            Leading and trailing white-space characters will be removed. In aDOItion, only 5 characters will be considered to fit our SQL table.
             </summary>
             <param name="employeeWage">The employee wage</param>
             <returns>A string representing the worksite.</returns>
@@ -7761,7 +7761,7 @@
             <summary>
             Method returns the alternate code to identify the worksite.
             When present, the Reporting Unit Number is set to zeros and this value is used for reporting.
-            Leading and trailing white-space characters will be removed. In addition, only 5 characters will be considered to fit our SQL table.
+            Leading and trailing white-space characters will be removed. In aDOItion, only 5 characters will be considered to fit our SQL table.
             </summary>
             <param name="employeeWage">The employee wage</param>
             <returns>A string representing the worksite.</returns>
@@ -11501,7 +11501,7 @@
             <param name="isPrior">isPrior</param>
             <returns>returns DateTime</returns>
         </member>
-        <member name="M:TaxHub.CoreServices.Application.DepositScheduleHelper.GetNextDayOfWeekAddingDaysForHolidays(System.DateTime,System.Collections.Generic.List{System.DateTime},System.DayOfWeek)">
+        <member name="M:TaxHub.CoreServices.Application.DepositScheduleHelper.GetNextDayOfWeekADOIngDaysForHolidays(System.DateTime,System.Collections.Generic.List{System.DateTime},System.DayOfWeek)">
             <summary>
             Gets Next Business Day
             </summary>
@@ -14330,7 +14330,7 @@
             <param name="end">The final position.</param>
             <param name="field">The name of the field.</param>
             <param name="ingestionData">The ingestion data.</param>
-            <param name="isValid">A placeholder for additional validations</param>
+            <param name="isValid">A placeholder for aDOItional validations</param>
             <returns>The string.</returns>
         </member>
         <member name="M:TaxHub.CoreServices.Application.YearEndIngestion.Mmref.MmrefRecordIngestor`2.GetInt(TaxHub.CoreServices.Application.YearEndIngestion.Mmref.MmrefRecord,System.Int32,System.Int32,System.String,TaxHub.CoreServices.Application.YearEndIngestion.Mmref.MmrefIngestionData,System.Func{System.Int32,System.Boolean})">
@@ -14342,7 +14342,7 @@
             <param name="end">The final position.</param>
             <param name="field">The name of the field.</param>
             <param name="ingestionData">The ingestion data.</param>
-            <param name="isValid">A placeholder for additional validations</param>
+            <param name="isValid">A placeholder for aDOItional validations</param>
             <returns>The int.</returns>
         </member>
         <member name="M:TaxHub.CoreServices.Application.YearEndIngestion.Mmref.MmrefRecordIngestor`2.GetInt(TaxHub.CoreServices.Application.YearEndIngestion.Mmref.MmrefRecord,System.Int32,System.Int32)">
@@ -20392,19 +20392,19 @@
         <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeACHCreditInfoIsIATTransaction.Value">
             <remarks/>
         </member>
-        <member name="T:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefundDirectDeposit">
+        <member name="T:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefunDOIrectDeposit">
             <remarks/>
         </member>
-        <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefundDirectDeposit.Item1">
+        <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefunDOIrectDeposit.Item1">
             <remarks/>
         </member>
-        <member name="T:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefundDirectDepositIsIATTransaction">
+        <member name="T:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefunDOIrectDepositIsIATTransaction">
             <remarks/>
         </member>
-        <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefundDirectDepositIsIATTransaction.receivingDFIName">
+        <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefunDOIrectDepositIsIATTransaction.receivingDFIName">
             <remarks/>
         </member>
-        <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefundDirectDepositIsIATTransaction.Value">
+        <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeRefunDOIrectDepositIsIATTransaction.Value">
             <remarks/>
         </member>
         <member name="T:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.OHSD.FinancialTransactionTypeStatePayment">
@@ -24270,10 +24270,10 @@
         <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.WISW.FinancialTransactionType.Items">
             <remarks/>
         </member>
-        <member name="T:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.WISW.FinancialTransactionTypeRefundDirectDeposit">
+        <member name="T:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.WISW.FinancialTransactionTypeRefunDOIrectDeposit">
             <remarks/>
         </member>
-        <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.WISW.FinancialTransactionTypeRefundDirectDeposit.Item1">
+        <member name="P:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.WISW.FinancialTransactionTypeRefunDOIrectDeposit.Item1">
             <remarks/>
         </member>
         <member name="T:TaxHub.CoreServices.Application.YearEnd.Process.AnnualRecs.WISW.FinancialTransactionTypeStatePayment">
@@ -41875,7 +41875,7 @@
             <param name="inputTaxInstance">The input tax instance to create</param>
             <param name="cancellationToken">The cancellation token to cancel the async operation</param>
             <returns>Returns HTTP message.</returns>
-            <remarks>Service may return a Warning header containing an additional information in case of failure</remarks>
+            <remarks>Service may return a Warning header containing an aDOItional information in case of failure</remarks>
             <remarks>Required entitlements: CreateExtended</remarks>
             <response code="201">Success, the periodic tax unit has been created. Response body contains the input tax unit</response>
             <response code="400">Bad request - the input tax instance data is incomplete or invalid</response>
@@ -42805,7 +42805,7 @@
             <param name="periodicTaxInstance">The periodic tax unit to create.</param>
             <param name="cancellationToken">The cancellation token to cancel the async operation</param>
             <returns>Returns HTTP message.</returns>
-            <remarks>Service may return a Warning header containing an additional information in case of failure.</remarks>
+            <remarks>Service may return a Warning header containing an aDOItional information in case of failure.</remarks>
             <remarks>Required entitlements: CreatePeriodicTaxInstance</remarks>
             <response code="201">Success, the periodic tax unit has been created. Response body contains the periodic tax unit.</response>
             <response code="400">Bad request - the periodic tax unit data is incorrect or invalid.</response>
@@ -42822,7 +42822,7 @@
             <param name="taxIds">The list of import amount ids that must be reversed.</param>
             <param name="cancellationToken">The cancellation token to cancel the async operation</param>
             <returns>Returns HTTP message.</returns>
-            <remarks>Service may return a Warning header containing an additional information in case of failure.</remarks>
+            <remarks>Service may return a Warning header containing an aDOItional information in case of failure.</remarks>
             <remarks>Required entitlements: CreatePeriodicTaxInstance</remarks>
             <response code="201">Success, the periodic tax unit has been created. Response body contains the periodic tax unit.</response>
             <response code="400">Bad request - the periodic tax unit data is incorrect or invalid.</response>
@@ -61862,7 +61862,7 @@
             Gets or sets the tenant's default garnishments collection USG bank account Id.
             </summary>
         </member>
-        <member name="P:TaxHub.CoreServices.ServiceMocks.TenantBankingData.UsgDdDisbursementBankAccountId">
+        <member name="P:TaxHub.CoreServices.ServiceMocks.TenantBankingData.UsgDDOIsbursementBankAccountId">
             <summary>
             Gets or sets the tenant's direct deposit disbursement USG bank account Id.
             </summary>

@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysDatabases]
+CREATE TABLE [DOI].[SysDatabases]
 (
 [name] [sys].[sysname] NOT NULL,
 [database_id] [int] NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE [DDI].[SysDatabases]
 [is_auto_update_stats_async_on] [bit] NULL,
 [is_ansi_null_default_on] [bit] NULL,
 [is_ansi_nulls_on] [bit] NULL,
-[is_ansi_padding_on] [bit] NULL,
+[is_ANSI_PADDING_on] [bit] NULL,
 [is_ansi_warnings_on] [bit] NULL,
 [is_arithabort_on] [bit] NULL,
 [is_concat_null_yields_null_on] [bit] NULL,

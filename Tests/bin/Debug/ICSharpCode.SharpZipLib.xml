@@ -466,7 +466,7 @@
              x^32+x^26+x^23+x^22+x^16+x^12+x^11+x^10+x^8+x^7+x^5+x^4+x^2+x+1.
             
              Polynomials over GF(2) are represented in binary, one bit per coefficient,
-             with the lowest powers in the most significant bit.  Then adding polynomials
+             with the lowest powers in the most significant bit.  Then aDOIng polynomials
              is just exclusive-or, and multiplying a polynomial by x is a right shift by
              one.  If we call the above polynomial p, and represent a byte as the
              polynomial q, also with the lowest power in the most significant bit (so the
@@ -477,7 +477,7 @@
              taking the remainder.  The register is initialized to zero, and for each
              incoming bit, x^32 is added mod p to the register if the bit is a one (where
              x^32 mod p is p+x^32 = x^26+...+1), and the register is multiplied mod p by
-             x (which is shifting right by one and adding x^32 mod p if the bit shifted
+             x (which is shifting right by one and aDOIng x^32 mod p if the bit shifted
              out is a one).  We start with the highest power (least significant bit) of
              q and repeat for all eight bits of q.
             
@@ -3245,7 +3245,7 @@
             The buffer to add to
             </param>
             <param name="offset">
-            The offset into the buffer from which to start adding
+            The offset into the buffer from which to start aDOIng
             </param>
             <param name="length">
             The number of header bytes to add
@@ -3260,7 +3260,7 @@
             </summary>
             <param name="name">The name to add</param>
             <param name="buffer">The buffer to add to</param>
-            <param name="offset">The offset into the buffer from which to start adding</param>
+            <param name="offset">The offset into the buffer from which to start aDOIng</param>
             <param name="length">The number of header bytes to add</param>
             <returns>The index of the next free byte in the buffer</returns>
         </member>
@@ -3271,7 +3271,7 @@
             <param name="toAdd">The string to add</param>
             <param name="nameOffset">The offset of the first character to add.</param>
             <param name="buffer">The buffer to add to.</param>
-            <param name="bufferOffset">The offset to start adding at.</param>
+            <param name="bufferOffset">The offset to start aDOIng at.</param>
             <param name="length">The number of ascii characters to add.</param>
             <returns>The next free index in the buffer.</returns>
         </member>
@@ -5448,7 +5448,7 @@
             Read clear text data from the input stream.
             </summary>
             <param name="outBuffer">The buffer to add data to.</param>
-            <param name="offset">The offset to start adding data at.</param>
+            <param name="offset">The offset to start aDOIng data at.</param>
             <param name="length">The number of bytes to read.</param>
             <returns>Returns the number of bytes actually read.</returns>
         </member>
@@ -7171,7 +7171,7 @@
             <returns>
             The size or -1 if unknown.
             </returns>
-            <remarks>Setting the size before adding an entry to an archive can help
+            <remarks>Setting the size before aDOIng an entry to an archive can help
             avoid compatability problems with some archivers which dont understand Zip64 extensions.</remarks>
         </member>
         <member name="P:ICSharpCode.SharpZipLib.Zip.ZipEntry.CompressedSize">
@@ -7810,7 +7810,7 @@
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Zip.ZipExtraData.StartNewEntry">
             <summary>
-            Start adding a new entry.
+            Start aDOIng a new entry.
             </summary>
             <remarks>Add data using <see cref="M:ICSharpCode.SharpZipLib.Zip.ZipExtraData.AddData(System.Byte[])"/>, <see cref="M:ICSharpCode.SharpZipLib.Zip.ZipExtraData.AddLeShort(System.Int32)"/>, <see cref="M:ICSharpCode.SharpZipLib.Zip.ZipExtraData.AddLeInt(System.Int32)"/>, or <see cref="M:ICSharpCode.SharpZipLib.Zip.ZipExtraData.AddLeLong(System.Int64)"/>.
             The new entry is completed and actually added by calling <see cref="M:ICSharpCode.SharpZipLib.Zip.ZipExtraData.AddNewEntry(System.Int32)"/></remarks>
@@ -8054,7 +8054,7 @@
             entries, or get an input stream for a file entry.  The entry is
             automatically decompressed.
             
-            You can also update the archive adding or deleting entries.
+            You can also update the archive aDOIng or deleting entries.
             
             This class is thread safe for input:  You can open input streams for arbitrary
             entries in different threads.
@@ -8379,7 +8379,7 @@
         </member>
         <member name="P:ICSharpCode.SharpZipLib.Zip.ZipFile.UseZip64">
             <summary>
-            Get / set a value indicating how Zip64 Extension usage is determined when adding entries.
+            Get / set a value indicating how Zip64 Extension usage is determined when aDOIng entries.
             </summary>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Zip.ZipFile.BeginUpdate(ICSharpCode.SharpZipLib.Zip.IArchiveStorage,ICSharpCode.SharpZipLib.Zip.IDynamicDataSource)">
@@ -8494,7 +8494,7 @@
             <param name="entry">The entry to add.</param>
             <remarks>This can be used to add directories, volume labels, or empty file entries.</remarks>
         </member>
-        <member name="M:ICSharpCode.SharpZipLib.Zip.ZipFile.AddDirectory(System.String)">
+        <member name="M:ICSharpCode.SharpZipLib.Zip.ZipFile.AdDOIrectory(System.String)">
             <summary>
             Add a directory entry to the archive.
             </summary>
@@ -9751,11 +9751,11 @@
         </member>
         <member name="P:ICSharpCode.SharpZipLib.Zip.ZipOutputStream.UseZip64">
             <summary>
-            Get / set a value indicating how Zip64 Extension usage is determined when adding entries.
+            Get / set a value indicating how Zip64 Extension usage is determined when aDOIng entries.
             </summary>
             <remarks>Older archivers may not understand Zip64 extensions.
-            If backwards compatability is an issue be careful when adding <see cref="P:ICSharpCode.SharpZipLib.Zip.ZipEntry.Size">entries</see> to an archive.
-            Setting this property to off is workable but less desirable as in those circumstances adding a file
+            If backwards compatability is an issue be careful when aDOIng <see cref="P:ICSharpCode.SharpZipLib.Zip.ZipEntry.Size">entries</see> to an archive.
+            Setting this property to off is workable but less desirable as in those circumstances aDOIng a file
             larger then 4GB will fail.</remarks>
         </member>
         <member name="M:ICSharpCode.SharpZipLib.Zip.ZipOutputStream.WriteLeShort(System.Int32)">

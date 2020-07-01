@@ -8,7 +8,7 @@ using System.Text;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Logging
+namespace DOI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// Writes log events as documents to a Sensu local client.
@@ -109,7 +109,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Logging
         /// <param name="evt">The event to emit.</param>
         private void EmitLogEvent(LogEvent evt)
         {
-            StringBuilder additionalDetails = new StringBuilder();
+            StringBuilder aDOItionalDetails = new StringBuilder();
             try
             {
                 dynamic alertMetadata = this.alertTypes[
@@ -118,7 +118,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Logging
                 var dict = pars as IDictionary<string, object>;
                 evt.Properties.Keys.ToList().ForEach(p => dict.Add(p, evt.Properties[p]));
                 dict.Add("messageTemplate", evt.MessageTemplate.Text);
-                additionalDetails.Append($"Message Template: {evt.MessageTemplate.Text}, ");
+                aDOItionalDetails.Append($"Message Template: {evt.MessageTemplate.Text}, ");
                 var alert = new SensuAlert()
                 {
                     AlertStatus = SensuAlertStatus.Critical,
@@ -129,20 +129,20 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Logging
                     Refresh = alertMetadata.RefreshThreshold,
                 };
 
-                additionalDetails.Append($"Alert Status: {SensuAlertStatus.Critical}, ");
-                additionalDetails.Append($"Executed and Issued Utc Date Time: {evt.Timestamp.DateTime}, ");
-                additionalDetails.Append($"Output: {evt.RenderMessage() + '\n' + ConvertLogParamsToHtml(evt.Properties)}, ");
-                additionalDetails.Append($"Name: {alertMetadata.AlertTypeName}, ");
-                additionalDetails.Append($"Refresh: {alertMetadata.RefreshThreshold}, ");
+                aDOItionalDetails.Append($"Alert Status: {SensuAlertStatus.Critical}, ");
+                aDOItionalDetails.Append($"Executed and Issued Utc Date Time: {evt.Timestamp.DateTime}, ");
+                aDOItionalDetails.Append($"Output: {evt.RenderMessage() + '\n' + ConvertLogParamsToHtml(evt.Properties)}, ");
+                aDOItionalDetails.Append($"Name: {alertMetadata.AlertTypeName}, ");
+                aDOItionalDetails.Append($"Refresh: {alertMetadata.RefreshThreshold}, ");
 
                 alert.EnableMailerHandler(this.sensuAlertsEmailAddress);
-                additionalDetails.Append($"Enable Mailer Handler: {this.sensuAlertsEmailAddress}. ");
+                aDOItionalDetails.Append($"Enable Mailer Handler: {this.sensuAlertsEmailAddress}. ");
 
                 this.sensuClientAdapter.SendAlert(alert);
             }
             catch (Exception ex)
             {
-                new FailoverLogger().TryWriteException(ex, additionalDetails.ToString());
+                new FailoverLogger().TryWriteException(ex, aDOItionalDetails.ToString());
             }
         }
 

@@ -7,7 +7,7 @@ using JetBrains.Annotations;
 using SmartHub.Hosting.Annotations;
 using SmartHub.Hosting.Exceptions;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
+namespace DOI.Tests.TestHelpers.CommonSetup.Hosting
 {
     /// <summary>
     /// Provides methods for checking method arguments for validity and throwing localizable exceptions for invalid
@@ -194,7 +194,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// <remarks>
         /// If the value specified in the <paramref name="array"/> parameter is itself null, no check
         /// is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-        /// additional validation is needed.
+        /// aDOItional validation is needed.
         /// </remarks>
         /// <param name="array">The array to check. Only the first dimension is checked.</param>
         /// <param name="parameterName">Name of the parameter.</param>
@@ -221,7 +221,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// <remarks>
         /// If the value specified in the <paramref name="collection"/> parameter is itself null, no check
         /// is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-        /// additional validation is needed.
+        /// aDOItional validation is needed.
         /// The collections non-generic enumerator will be used to enumerate the collection, even if the
         /// type implements IList.
         /// </remarks>
@@ -253,7 +253,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// <remarks>
         /// If the value specified in the <paramref name="value"/> parameter is itself null, no check
         /// is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-        /// additional validation is needed.
+        /// aDOItional validation is needed.
         /// </remarks>
         /// <param name="value">The parameter, which is not checked if it's null.</param>
         /// <param name="regex">The regular expression pattern to match.</param>
@@ -270,7 +270,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// <remarks>
         /// If the value specified in the <paramref name="value"/> parameter is itself null, no check
         /// is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-        /// additional validation is needed.
+        /// aDOItional validation is needed.
         /// </remarks>
         /// <param name="value">The parameter, which is not checked if it's null.</param>
         /// <param name="parameterName">Name of the parameter.</param>
@@ -288,7 +288,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// <remarks>
         /// If the value specified in the <paramref name="value"/> parameter is itself null, no check
         /// is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-        /// additional validation is needed.
+        /// aDOItional validation is needed.
         /// </remarks>
         /// <param name="value">The parameter, which is not checked if it's null.</param>
         /// <param name="regex">The regular expression pattern to match.</param>
@@ -305,7 +305,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// <remarks>
         /// If the value specified in the <paramref name="value"/> parameter is itself null, no check
         /// is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-        /// additional validation is needed.
+        /// aDOItional validation is needed.
         /// </remarks>
         /// <param name="value">The parameter, which is not checked if it's null.</param>
         /// <param name="parameterName">Name of the parameter.</param>
@@ -418,7 +418,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// </summary>
         /// <remarks>
         /// If the value specified in the <paramref name="value"/> parameter is a null reference, the check will not
-        /// be performed. Use <see cref="M:ThrowIfNull"/> if additional validation is needed.
+        /// be performed. Use <see cref="M:ThrowIfNull"/> if aDOItional validation is needed.
         /// </remarks>
         /// <param name="value">The parameter value to validate. If this value is null, no check is performed.</param>
         /// <param name="min">The minimum allowable value (inclusive).</param>
@@ -439,7 +439,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// </summary>
         /// <remarks>
         /// If the value specified in the <paramref name="value"/> parameter is a null reference, the check will not
-        /// be performed. Use <see cref="M:ThrowIfNull"/> if additional validation is needed.
+        /// be performed. Use <see cref="M:ThrowIfNull"/> if aDOItional validation is needed.
         /// </remarks>
         /// <param name="value">The parameter value to validate. If this value is null, no check is performed.</param>
         /// <param name="parameterName">The name of the parameter.</param>
@@ -638,7 +638,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// </summary>
         /// <remarks>
         /// If the <paramref name="fileName"/> parameter is null, no checks will be performed. Use the
-        /// <see cref="M:ThrowIfNull"/> if additional checks are necessary.
+        /// <see cref="M:ThrowIfNull"/> if aDOItional checks are necessary.
         /// </remarks>
         /// <param name="fileName">The file name to validate.</param>
         /// <param name="parameterName">The name of the parameter.</param>
@@ -672,7 +672,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// </summary>
         /// <remarks>
         /// If the <paramref name="path"/> parameter is null, no checks will be performed. Use the
-        /// <see cref="M:ThrowIfNull"/> if additional checks are necessary.
+        /// <see cref="M:ThrowIfNull"/> if aDOItional checks are necessary.
         /// </remarks>
         /// <param name="path">The path to validate.</param>
         /// <param name="parameterName">The name of the parameter.</param>
@@ -705,7 +705,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// <remarks>
         /// If the value specified in the <paramref name="fileName"/> parameter is itself null, no check
         /// is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-        /// additional validation is needed.
+        /// aDOItional validation is needed.
         /// </remarks>
         /// <param name="fileName">The path and file name to check the existence of.</param>
         /// <param name="parameterName">The name of the parameter.</param>
@@ -727,7 +727,7 @@ namespace DDI.Tests.TestHelpers.CommonSetup.Hosting
         /// <remarks>
         /// If the value specified in the <paramref name="directory"/> parameter is itself null, no check
         /// is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-        /// additional validation is needed.
+        /// aDOItional validation is needed.
         /// </remarks>
         /// <param name="directory">The directory path to check the existence of.</param>
         /// <param name="parameterName">The name of the parameter.</param>

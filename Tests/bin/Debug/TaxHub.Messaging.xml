@@ -315,9 +315,9 @@
             Gets or sets the end date and time (in UTC) message filter to apply; this is an optional parameter.
             </summary>
         </member>
-        <member name="P:TaxHub.Messaging.Replay.AggregateEventsReplayFilter.AdditionalFilters">
+        <member name="P:TaxHub.Messaging.Replay.AggregateEventsReplayFilter.ADOItionalFilters">
             <summary>
-            Gets or sets additional filters specific to particular aggregate to apply; these are optional parameters.
+            Gets or sets aDOItional filters specific to particular aggregate to apply; these are optional parameters.
             </summary>
         </member>
         <member name="P:TaxHub.Messaging.Replay.AggregateEventsReplayFilter.ReplayMode">
@@ -361,9 +361,9 @@
             </summary>
             <returns>Returns boolean value.</returns>
         </member>
-        <member name="M:TaxHub.Messaging.Replay.AggregateEventsReplayFilter.HasAdditionalFilters">
+        <member name="M:TaxHub.Messaging.Replay.AggregateEventsReplayFilter.HasADOItionalFilters">
             <summary>
-            Method determines whether additional filters are provided or not.
+            Method determines whether aDOItional filters are provided or not.
             </summary>
             <returns>Returns boolean value.</returns>
         </member>
@@ -376,7 +376,7 @@
         <member name="M:TaxHub.Messaging.Replay.AggregateEventsReplayFilter.FromDynamic(System.Object)">
             <summary>
             Creates a default AggregateEventsReplayFilter based on the details passed in and puts whatever
-            is left over in the AdditionalFilters Dictionary
+            is left over in the ADOItionalFilters Dictionary
             </summary>
             <param name="details">The details to create a replay filter from</param>
             <returns>An aggregate events replay filter</returns>
@@ -436,7 +436,7 @@
             Inbound Domain event data. This is used for inbound message only.
             </summary>
             <remarks>Class represents the same set of data as <see cref="T:TaxHub.Common.EventStore.DomainEventData"/>,
-            but provides additional internal functionality for ability to deliver typed event
+            but provides aDOItional internal functionality for ability to deliver typed event
             data to subscribers inherited from <see cref="T:TaxHub.Messaging.SimpleTypedMessageSubscriber`1"/>.</remarks>
         </member>
         <member name="M:TaxHub.Messaging.Serialization.InboundDomainEventData.#ctor">
@@ -2055,7 +2055,7 @@
             <param name="logger">The logger to use</param>
             <param name="boundedContext">Current service bounded context.</param>
             <param name="credsProvider">The RabbitMQ credentials provider.</param>
-            <param name="additionalQueuenamesToDelete">Additional queue names, that are not defined in the routing table, to delete.</param>
+            <param name="aDOItionalQueuenamesToDelete">ADOItional queue names, that are not defined in the routing table, to delete.</param>
             <remarks>This method is for data seeding and testing only. Do not use it in production code.</remarks>
         </member>
         <member name="M:TaxHub.Messaging.MessageQueueSetup.Initialize(Microsoft.Practices.Unity.IUnityContainer,System.String,System.Threading.CancellationToken)">

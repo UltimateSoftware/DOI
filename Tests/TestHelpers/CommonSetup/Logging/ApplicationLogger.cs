@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using DDI.Tests.Integration.TestHelpers.CommonSetup.Logging;
+using DOI.Tests.Integration.TestHelpers.CommonSetup.Logging;
 using Microsoft.Practices.ObjectBuilder2;
 using Serilog.Core;
 
-namespace DDI.Tests.TestHelpers.CommonSetup.Logging
+namespace DOI.Tests.TestHelpers.CommonSetup.Logging
 {
     /// <summary>
     /// The logging API, used for writing log events.

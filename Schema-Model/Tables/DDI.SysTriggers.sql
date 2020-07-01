@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysTriggers]
+CREATE TABLE [DOI].[SysTriggers]
 (
 [database_id] [int] NOT NULL,
 [name] [sys].[sysname] NOT NULL,

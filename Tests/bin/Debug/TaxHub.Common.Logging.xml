@@ -598,11 +598,11 @@
         </member>
         <member name="M:TaxHub.Common.Logging.FailoverLogger.TryWriteException(System.Exception,System.String)">
             <summary>
-            Method attempts to write a log file with exception and additional details which will be prepended to message.
+            Method attempts to write a log file with exception and aDOItional details which will be prepended to message.
             It suppresses any exceptions encountered during the process.
             </summary>
             <param name="exception">The exception to write.</param>
-            <param name="additionalDetails">additional details which will be prepended to message</param>
+            <param name="aDOItionalDetails">aDOItional details which will be prepended to message</param>
             <returns>Returns boolean indicator of success.</returns>
         </member>
         <member name="T:TaxHub.Common.Logging.LogInitializer">
@@ -1125,7 +1125,7 @@
         </member>
         <member name="P:TaxHub.Common.Logging.TraceEntry.Data">
             <summary>
-            Gets or sets additional data associated with the event.
+            Gets or sets aDOItional data associated with the event.
             </summary>
         </member>
         <member name="M:TaxHub.Common.Logging.TraceEntry.#ctor">

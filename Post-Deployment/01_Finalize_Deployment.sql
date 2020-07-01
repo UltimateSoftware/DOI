@@ -9,10 +9,10 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]
 --------------------------------------------------------------------------------------
 */
-EXEC DDI.spRun_RenameDefaultConstraints 
+EXEC DOI.spRun_RenameDefaultConstraints 
 	@Debug = 0
 
-EXEC DDI.spRun_RenameStatistics
+EXEC DOI.spRun_RenameStatistics
     @Debug = 0
 
 GO

@@ -9,14 +9,14 @@
                SELECT * FROM [$(TableName)]					
 --------------------------------------------------------------------------------------
 */
-USE DDI
+USE DOI
 GO
 
-IF (SELECT is_query_store_on FROM SYS.databases WHERE NAME = 'DDI') <> 1
+IF (SELECT is_query_store_on FROM SYS.databases WHERE NAME = 'DOI') <> 1
 BEGIN
-	ALTER DATABASE DDI SET QUERY_STORE = ON;
+	ALTER DATABASE DOI SET QUERY_STORE = ON;
 
-	PRINT 'Set DDI QUERY_STORE to ON.'
+	PRINT 'Set DOI QUERY_STORE to ON.'
 END
 GO
 
@@ -29,7 +29,7 @@ IF EXISTS(	SELECT 'True'
 				OR size_based_cleanup_mode_desc <> 'AUTO'
 				OR STALE_QUERY_THRESHOLD_DAYS <> 120)
 BEGIN
-	ALTER DATABASE DDI SET QUERY_STORE
+	ALTER DATABASE DOI SET QUERY_STORE
 		(
 			OPERATION_MODE = READ_WRITE,
 			MAX_STORAGE_SIZE_MB = 10000,

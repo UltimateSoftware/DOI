@@ -1,8 +1,8 @@
-IF TYPE_ID('[DDI].[FilteredRowCountsTT]') IS NOT NULL
-	DROP TYPE [DDI].[FilteredRowCountsTT];
+IF TYPE_ID('[DOI].[FilteredRowCountsTT]') IS NOT NULL
+	DROP TYPE [DOI].[FilteredRowCountsTT];
 
 GO
-CREATE TYPE [DDI].[FilteredRowCountsTT] AS TABLE
+CREATE TYPE [DOI].[FilteredRowCountsTT] AS TABLE
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [SchemaName] [sys].[sysname] NOT NULL,

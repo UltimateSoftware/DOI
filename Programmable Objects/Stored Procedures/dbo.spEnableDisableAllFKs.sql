@@ -30,7 +30,7 @@ BEGIN TRY
 
 	IF @Debug = 1
 	BEGIN
-		EXEC ddi.spPrintOutLongSQL
+		EXEC DOI.spPrintOutLongSQL
 			@SQLInput = @SQL,
 			@VariableName = '@SQL'
 	END

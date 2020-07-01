@@ -182,7 +182,7 @@
             <param name="format">The barcode format to generate</param>
             <param name="width">The preferred width in pixels</param>
             <param name="height">The preferred height in pixels</param>
-            <param name="hints">Additional parameters to supply to the encoder</param>
+            <param name="hints">ADOItional parameters to supply to the encoder</param>
             <returns> The generated barcode as a Matrix of unsigned bytes (0 == black, 255 == white)</returns>
         </member>
         <member name="M:ZXing.Aztec.AztecWriter.encode(System.String,ZXing.BarcodeFormat,System.Int32,System.Int32)">
@@ -204,7 +204,7 @@
             <param name="format">The barcode format to generate</param>
             <param name="width">The preferred width in pixels</param>
             <param name="height">The preferred height in pixels</param>
-            <param name="hints">Additional parameters to supply to the encoder</param>
+            <param name="hints">ADOItional parameters to supply to the encoder</param>
             <returns>
             The generated barcode as a Matrix of unsigned bytes (0 == black, 255 == white)
             </returns>
@@ -270,7 +270,7 @@
         </member>
         <member name="M:ZXing.Aztec.Internal.Decoder.readByte(System.Boolean[],System.Int32)">
             <summary>
-            Reads a code of length 8 in an array of bits, padding with zeros
+            Reads a code of length 8 in an array of bits, paDOIng with zeros
             </summary>
             <param name="rawbits"></param>
             <param name="startIndex"></param>
@@ -557,7 +557,7 @@
         </member>
         <member name="M:ZXing.Aztec.Internal.State.addBinaryShiftChar(System.Int32)">
             <summary>
-            Create a new state representing this state, but an additional character
+            Create a new state representing this state, but an aDOItional character
             output in Binary Shift mode.
             </summary>
         </member>
@@ -1701,9 +1701,9 @@
             <returns></returns>
         </member>
         <member name="T:ZXing.Client.Result.AddressBookAUResultParser">
-            <summary> Implements KDDI AU's address book format. See
-            <a href="http://www.au.kddi.com/ezfactory/tec/two_dimensions/index.html">
-            http://www.au.kddi.com/ezfactory/tec/two_dimensions/index.html</a>.
+            <summary> Implements KDOI AU's address book format. See
+            <a href="http://www.au.kDOI.com/ezfactory/tec/two_dimensions/index.html">
+            http://www.au.kDOI.com/ezfactory/tec/two_dimensions/index.html</a>.
             (Thanks to Yuzo for translating!)
             
             </summary>
@@ -2021,7 +2021,7 @@
             <author>Sean Owen</author>
         </member>
         <member name="M:ZXing.Client.Result.URIParsedResult.massageURI(System.String)">
-            <summary> Transforms a string that represents a URI into something more proper, by adding or canonicalizing
+            <summary> Transforms a string that represents a URI into something more proper, by aDOIng or canonicalizing
             the protocol.
             </summary>
         </member>
@@ -2825,7 +2825,7 @@
             be part of a Data Matrix barcode.
             
             </summary>
-            <param name="fixedDimension">if scanning horizontally, this is the row (the fixed vertical location)
+            <param name="fixeDOImension">if scanning horizontally, this is the row (the fixed vertical location)
             where we are scanning. If scanning vertically it's the column, the fixed horizontal location
             </param>
             <param name="maxWhiteRun">largest run of white pixels that can still be considered part of the
@@ -3073,7 +3073,7 @@
         </member>
         <member name="M:ZXing.Common.ReedSolomon.GenericGF.addOrSubtract(System.Int32,System.Int32)">
             <summary>
-            Implements both addition and subtraction -- they are the same in GF(size).
+            Implements both aDOItion and subtraction -- they are the same in GF(size).
             </summary>
             <returns>sum/difference of a and b</returns>
         </member>
@@ -3695,7 +3695,7 @@
         </member>
         <member name="F:ZXing.Datamatrix.Encoder.HighLevelEncoder.PAD">
             <summary>
-            Padding character
+            PaDOIng character
             </summary>
         </member>
         <member name="F:ZXing.Datamatrix.Encoder.HighLevelEncoder.LATCH_TO_C40">
@@ -4752,7 +4752,7 @@
             And then we cross-cross-cross check with another diagonal scan.</p>
             If that succeeds the finder pattern location is added to a list that tracks
             the number of times each location has been nearly-matched as a finder pattern.
-            Each additional find is more evidence that the location is in fact a finder
+            Each aDOItional find is more evidence that the location is in fact a finder
             pattern center
             </summary>
             <param name="stateCount">reading state module counts from horizontal scan</param>
@@ -6193,7 +6193,7 @@
             <param name="format">The barcode format to generate</param>
             <param name="width">The preferred width in pixels</param>
             <param name="height">The preferred height in pixels</param>
-            <param name="hints">Additional parameters to supply to the encoder</param>
+            <param name="hints">ADOItional parameters to supply to the encoder</param>
             <returns>
             The generated barcode as a Matrix of unsigned bytes (0 == black, 255 == white)
             </returns>
@@ -7439,7 +7439,7 @@
             <summary>
             Calculates the necessary number of rows as described in annex Q of ISO/IEC 15438:2001(E).
             </summary>
-            <param name="m">the number of source codewords prior to the additional of the Symbol Length</param>
+            <param name="m">the number of source codewords prior to the aDOItional of the Symbol Length</param>
                      Descriptor and any pad codewords
             <param name="k">the number of error correction codewords</param>
             <param name="c">the number of columns in the symbol in the data region (excluding start, stop and</param>
@@ -7450,7 +7450,7 @@
             <summary>
             Calculates the number of pad codewords as described in 4.9.2 of ISO/IEC 15438:2001(E).
             </summary>
-            <param name="m">the number of source codewords prior to the additional of the Symbol Length</param>
+            <param name="m">the number of source codewords prior to the aDOItional of the Symbol Length</param>
                      Descriptor and any pad codewords
             <param name="k">the number of error correction codewords</param>
             <param name="c">the number of columns in the symbol in the data region (excluding start, stop and</param>
@@ -7913,7 +7913,7 @@
             <param name="format">The barcode format to generate</param>
             <param name="width">The preferred width in pixels</param>
             <param name="height">The preferred height in pixels</param>
-            <param name="hints">Additional parameters to supply to the encoder</param>
+            <param name="hints">ADOItional parameters to supply to the encoder</param>
             <returns>
             The generated barcode as a Matrix of unsigned bytes (0 == black, 255 == white)
             </returns>
@@ -9291,7 +9291,7 @@
             <param name="format">The barcode format to generate</param>
             <param name="width">The preferred width in pixels</param>
             <param name="height">The preferred height in pixels</param>
-            <param name="hints">Additional parameters to supply to the encoder</param>
+            <param name="hints">ADOItional parameters to supply to the encoder</param>
             <returns>
             The generated barcode as a Matrix of unsigned bytes (0 == black, 255 == white)
             </returns>

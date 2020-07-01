@@ -1,13 +1,13 @@
-USE DDI
+USE DOI
 
 
-DELETE DDI.DefaultConstraints			WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
-DELETE DDI.[Statistics]					WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
-DELETE DDI.IndexesColumnStore			WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
-DELETE DDI.IndexesRowStore				WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
-DELETE DDI.ForeignKeys					WHERE DatabaseName = 'PaymentReporting' AND ReferencedTableName		IN ('TempA','TempB','AAA_SpaceError')
-DELETE DDI.Tables						WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
-DELETE DDI.Log							WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
+DELETE DOI.DefaultConstraints			WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
+DELETE DOI.[Statistics]					WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
+DELETE DOI.IndexesColumnStore			WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
+DELETE DOI.IndexesRowStore				WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
+DELETE DOI.ForeignKeys					WHERE DatabaseName = 'PaymentReporting' AND ReferencedTableName		IN ('TempA','TempB','AAA_SpaceError')
+DELETE DOI.Tables						WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
+DELETE DOI.Log							WHERE DatabaseName = 'PaymentReporting' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
 
 
 USE PaymentReporting

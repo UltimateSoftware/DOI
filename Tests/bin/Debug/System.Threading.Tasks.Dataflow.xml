@@ -861,7 +861,7 @@
       <summary>Indicates that the <see cref="T:System.Threading.Tasks.Dataflow.ITargetBlock`1" /> tried to accept the message from the <see cref="T:System.Threading.Tasks.Dataflow.ISourceBlock`1" />, but the message was no longer available.</summary>
     </member>
     <member name="F:System.Threading.Tasks.Dataflow.DataflowMessageStatus.DecliningPermanently">
-      <summary>Indicates that the <see cref="T:System.Threading.Tasks.Dataflow.ITargetBlock`1" /> declined the message. The <see cref="T:System.Threading.Tasks.Dataflow.ISourceBlock`1" /> still owns the message.  Additionally, the <see cref="T:System.Threading.Tasks.Dataflow.ITargetBlock`1" /> will decline all future messages sent by the source.</summary>
+      <summary>Indicates that the <see cref="T:System.Threading.Tasks.Dataflow.ITargetBlock`1" /> declined the message. The <see cref="T:System.Threading.Tasks.Dataflow.ISourceBlock`1" /> still owns the message.  ADOItionally, the <see cref="T:System.Threading.Tasks.Dataflow.ITargetBlock`1" /> will decline all future messages sent by the source.</summary>
     </member>
     <member name="T:System.Threading.Tasks.Dataflow.ExecutionDataflowBlockOptions">
       <summary>Provides options used to configure the processing performed by dataflow blocks that process each message through the invocation of a user-provided delegate. These are dataflow blocks such as <see cref="T:System.Threading.Tasks.Dataflow.ActionBlock`1" /> and <see cref="T:System.Threading.Tasks.Dataflow.TransformBlock`2" />.</summary>

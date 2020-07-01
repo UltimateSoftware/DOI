@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Data.SqlClient;
-using DDI.Tests.Integration;
-using DDI.Tests.Integration.Tests.TablePartitioning;
+using DOI.Tests.Integration;
+using DOI.Tests.Integration.Tests.TablePartitioning;
 using NUnit.Framework;
 
 
-namespace DDI.Tests.Integration.TablePartitioning
+namespace DOI.Tests.Integration.TablePartitioning
 {
     [TestFixture]
     [Category("Integration")]
@@ -41,8 +41,8 @@ namespace DDI.Tests.Integration.TablePartitioning
                 connectionInfoMessage += e.Message;
             };
             connection.Open();
-            sqlHelper.Execute("TRUNCATE TABLE DDI.Log");
-            sqlHelper.Execute("TRUNCATE TABLE DDI.Queue");
+            sqlHelper.Execute("TRUNCATE TABLE DOI.Log");
+            sqlHelper.Execute("TRUNCATE TABLE DOI.Queue");
         }
 
         [TearDown]
@@ -54,9 +54,9 @@ namespace DDI.Tests.Integration.TablePartitioning
                 connection.Close();
                 connection.Dispose();
             }
-            sqlHelper.Execute("TRUNCATE TABLE DDI.Log");
-            sqlHelper.Execute("TRUNCATE TABLE DDI.Queue");
-            sqlHelper.Execute("EXEC DDI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            sqlHelper.Execute("TRUNCATE TABLE DOI.Log");
+            sqlHelper.Execute("TRUNCATE TABLE DOI.Queue");
+            sqlHelper.Execute("EXEC DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
 
         [Test]
@@ -122,21 +122,21 @@ namespace DDI.Tests.Integration.TablePartitioning
             sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(1, "PaymentReporting"));
             
             //Run Queue
-            sqlHelper.Execute($@"   EXEC DDI.spRun 
+            sqlHelper.Execute($@"   EXEC DOI.spRun 
                                         @DatabaseName = '{databaseName}',
                                         @OnlineOperations = 1");
 
             //Assertions
             //Start, info, and finish messages for Get
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Info' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Info' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Get Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
             //Start, info, and finish messages for Release
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Info' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Info' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
             //No error messages
-            Assert.AreEqual(0, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(0, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
         }
 
         [Test]
@@ -148,22 +148,22 @@ namespace DDI.Tests.Integration.TablePartitioning
             sqlHelper.Execute(connection, ApplicationLockTestsHelper.RunAppLockStatementsThroughQueueWithError(1, "PaymentReporting"));
 
             //Run Queue
-            sqlHelper.Execute($@"   EXEC DDI.spRun 
+            sqlHelper.Execute($@"   EXEC DOI.spRun 
                                         @DatabaseName = '{databaseName}',
                                         @OnlineOperations = 1");
 
             //Assertions
             //Start, info, and finish messages for Release
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73' AND ErrorText LIKE '%Unable to release Application Lock.  There is no lock to release for this SPID ({spid}).  The lock is currently being held by no one.%'"));
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73' AND ErrorText LIKE '%Unable to release Application Lock.  There is no lock to release for this SPID ({spid}).  The lock is currently being held by no one.%'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
         }
 
         [Test]
         public void KilledByBusinessHoursCheckBeforeRun(string databaseName)
         {
             //Make sure Business Hours are set so that it will fail and kill the job.
-            sqlHelper.Execute($@"   UPDATE DDI.BusinessHoursSchedule 
+            sqlHelper.Execute($@"   UPDATE DOI.BusinessHoursSchedule 
                                     SET IsBusinessHours = 1 
                                     WHERE DatabaseName = '{databaseName}'");
 
@@ -171,19 +171,19 @@ namespace DDI.Tests.Integration.TablePartitioning
             sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, "PaymentReporting"));
 
             //Run Queue
-            sqlHelper.Execute($@"   EXEC DDI.spRun 
+            sqlHelper.Execute($@"   EXEC DOI.spRun 
                                         @DatabaseName = '{databaseName}',
                                         @OnlineOperations = 0");
 
             //Assert
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND RunStatus = 'Error' AND ErrorText = 'Stopping Offline DDI, before run started.  Business hours are here.'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND RunStatus = 'Error' AND ErrorText = 'Stopping Offline DOI, before run started.  Business hours are here.'"));
         }
 
         [Test]
         public void KilledByBusinessHoursCheckDuringRun(string databaseName)
         {
             //Make sure Business Hours are set so that it will start the run.
-            sqlHelper.Execute($@"   UPDATE DDI.BusinessHoursSchedule 
+            sqlHelper.Execute($@"   UPDATE DOI.BusinessHoursSchedule 
                                     SET IsBusinessHours = 0
                                     WHERE DatabaseName = '{databaseName}'");
 
@@ -192,20 +192,20 @@ namespace DDI.Tests.Integration.TablePartitioning
             sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, "PaymentReporting"));
 
             //insert command in queue to update business hours
-            sqlHelper.Execute($@"EXEC DDI.spInsertSQLCommand
+            sqlHelper.Execute($@"EXEC DOI.spInsertSQLCommand
                                     @DatabaseName = '{databaseName}',
                                     @ParentTableName = 'N/A',
                                     @ParentSchemaName = 'N/A',
                                     @SeqNoJustAfterSQLCommand = 2,
-                                    @SQLCommand = 'UPDATE DDI.BusinessHoursSchedule SET IsBusinessHours = 1 WHERE DatabaseName = '{databaseName}'");
+                                    @SQLCommand = 'UPDATE DOI.BusinessHoursSchedule SET IsBusinessHours = 1 WHERE DatabaseName = '{databaseName}'");
 
             //Run Queue
-            sqlHelper.Execute($@"   EXEC DDI.spRun 
+            sqlHelper.Execute($@"   EXEC DOI.spRun 
                                         @DatabaseName = '{databaseName}',
                                         @OnlineOperations = 0");
 
             //Assert
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DDI.Log WHERE DatabaseName = '{databaseName}' AND RunStatus = 'Error' AND ErrorText = 'Stopping Offline DDI, after run started.  Business hours are here.'"));
+            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{databaseName}' AND RunStatus = 'Error' AND ErrorText = 'Stopping Offline DOI, after run started.  Business hours are here.'"));
         }
 
         private void ReleaseLock(int spId, bool shouldSucceed, byte isAppLockGrantedInSysDmTranLocksExpected, byte isAppLockGrantableInAppLockTestExpected, string messageExpected)

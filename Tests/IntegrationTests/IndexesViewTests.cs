@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using DDI.TestHelpers;
-using DDI.Tests.Integration;
-using DDI.Tests.Integration.Models;
+using DOI.TestHelpers;
+using DOI.Tests.Integration;
+using DOI.Tests.Integration.Models;
 using NUnit.Framework;
-using TestHelper = DDI.Tests.TestHelpers;
+using TestHelper = DOI.Tests.TestHelpers;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -252,25 +252,25 @@ namespace DDI.Tests.Integration
             var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName)
                 .Find(x => x.IndexName == indexName);
 
-            var indexUtilityTableName = indexRow.IndexType == "RowStore" ? "DDI.IndexesRowStore" : "DDI.IndexesColumnStore";
+            var indexUtilityTableName = indexRow.IndexType == "RowStore" ? "DOI.IndexesRowStore" : "DOI.IndexesColumnStore";
 
-            var additionalChanges = string.Empty;
+            var aDOItionalChanges = string.Empty;
 
             if (indexRow.IndexType == "ColumnStore" && propertyName == "IsClustered")
             {
                 var columnListValue = propertyValue == "1" ? "null" : "'TransactionUtcDt'";
-                additionalChanges += $", ColumnList = {columnListValue} "; 
+                aDOItionalChanges += $", ColumnList = {columnListValue} "; 
             }
             else if (propertyName == "IsPrimaryKey" && propertyValue == "1")
             {
-                additionalChanges += ", IsUnique = 1";
+                aDOItionalChanges += ", IsUnique = 1";
             }
             else if (propertyName == "FilterPredicate" && propertyValue.Length > 0)
             {
-                additionalChanges += ", IsFiltered = 1";
+                aDOItionalChanges += ", IsFiltered = 1";
             }
 
-            sqlHelper.Execute($"UPDATE {indexUtilityTableName} SET [{propertyName}] = '{propertyValue}' {additionalChanges} WHERE SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE {indexUtilityTableName} SET [{propertyName}] = '{propertyValue}' {aDOItionalChanges} WHERE SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
 
             indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName)
                 .Find(x => x.IndexName == indexName);
@@ -966,7 +966,7 @@ namespace DDI.Tests.Integration
 
             if (optionUpdateList != null)
             {
-                sqlHelper.Execute($"UPDATE DDI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120); 
+                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120); 
             }
 
             var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);

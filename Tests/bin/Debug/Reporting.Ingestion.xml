@@ -1181,7 +1181,7 @@
             </summary>
             <param name="collectionName">The specific event archive collection to query.</param>
             <param name="action">The action to apply to each aggregate.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="correlationId">The correlation Id</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>A task.</returns>
@@ -1192,7 +1192,7 @@
             </summary>
             <param name="collectionName">The collection name to retrieve events from.</param>
             <param name="pageParams">The page parameters.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
@@ -1438,7 +1438,7 @@
             </summary>
             <param name="collectionName">The specific event archive collection to query.</param>
             <param name="action">The action to apply to each aggregate.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="correlationId">The correlation Id</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>A task.</returns>
@@ -1449,7 +1449,7 @@
             </summary>
             <param name="collectionName">The collection name to retrieve events from.</param>
             <param name="pageParams">The page parameters.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
@@ -1634,7 +1634,7 @@
             </summary>
             <param name="collectionName">The name of the specific event archive collection</param>
             <param name="action">The action to apply to each aggregate.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>A task.</returns>
         </member>
@@ -1660,7 +1660,7 @@
             </summary>
             <param name="collectionName">The collection name to retrieve events from.</param>
             <param name="pageParams">The page parameters.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
@@ -1670,7 +1670,7 @@
             </summary>
             <param name="collectionName">The collection name to retrieve events from.</param>
             <param name="pageParams">The page parameters.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>Returns the IEnumerable of events.</returns>
         </member>
@@ -1812,7 +1812,7 @@
             </summary>
             <param name="collectionName">The name of the specific event archive collection</param>
             <param name="action">The action to apply to each aggregate.</param>
-            <param name="filter">Additional query to filter data. NOTE: an additional filter for tenantId will be added as AND condition.</param>
+            <param name="filter">ADOItional query to filter data. NOTE: an aDOItional filter for tenantId will be added as AND condition.</param>
             <param name="cancellationToken">Cancellation token</param>
             <returns>A task.</returns>
         </member>

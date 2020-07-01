@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[IndexColumns]
+CREATE TABLE [DOI].[IndexColumns]
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
 [SchemaName] [sys].[sysname] NOT NULL,

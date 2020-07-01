@@ -1677,7 +1677,7 @@
             The string values used to represent a boolean when converting.
             </summary>
             <param name="isTrue">A value indicating whether true values or false values are being set.</param>
-            <param name="clearValues">A value indication if the current values should be cleared before adding the new ones.</param>
+            <param name="clearValues">A value indication if the current values should be cleared before aDOIng the new ones.</param>
             <param name="booleanValues">The string boolean values.</param>
         </member>
         <member name="M:CsvHelper.Configuration.MapTypeConverterOption.NullValues(System.String[])">
@@ -1691,7 +1691,7 @@
             <summary>
             The string values used to represent null when converting.
             </summary>
-            <param name="clearValues">A value indication if the current values should be cleared before adding the new ones.</param>
+            <param name="clearValues">A value indication if the current values should be cleared before aDOIng the new ones.</param>
             <param name="nullValues">The values that represent null.</param>
             <returns></returns>
         </member>

@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysSchemas]
+CREATE TABLE [DOI].[SysSchemas]
 (
 [database_id] [int] NOT NULL,
 [name] [sys].[sysname] NOT NULL,

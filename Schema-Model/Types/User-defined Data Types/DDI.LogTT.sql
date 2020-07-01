@@ -1,8 +1,8 @@
-IF TYPE_ID('[DDI].[LogTT]') IS NOT NULL
-	DROP TYPE [DDI].[LogTT];
+IF TYPE_ID('[DOI].[LogTT]') IS NOT NULL
+	DROP TYPE [DOI].[LogTT];
 
 GO
-CREATE TYPE [DDI].[LogTT] AS TABLE
+CREATE TYPE [DOI].[LogTT] AS TABLE
 (
 [LogID] [int] NOT NULL,
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,

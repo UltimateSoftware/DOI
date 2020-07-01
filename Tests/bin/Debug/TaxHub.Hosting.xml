@@ -101,7 +101,7 @@
             <remarks>
             If the value specified in the <paramref name="array"/> parameter is itself null, no check
             is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-            additional validation is needed.
+            aDOItional validation is needed.
             </remarks>
             <param name="array">The array to check. Only the first dimension is checked.</param>
             <param name="parameterName">Name of the parameter.</param>
@@ -115,7 +115,7 @@
             <remarks>
             If the value specified in the <paramref name="collection"/> parameter is itself null, no check
             is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-            additional validation is needed.
+            aDOItional validation is needed.
             The collections non-generic enumerator will be used to enumerate the collection, even if the
             type implements IList.
             </remarks>
@@ -131,7 +131,7 @@
             <remarks>
             If the value specified in the <paramref name="value"/> parameter is itself null, no check
             is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-            additional validation is needed.
+            aDOItional validation is needed.
             </remarks>
             <param name="value">The parameter, which is not checked if it's null.</param>
             <param name="regex">The regular expression pattern to match.</param>
@@ -145,7 +145,7 @@
             <remarks>
             If the value specified in the <paramref name="value"/> parameter is itself null, no check
             is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-            additional validation is needed.
+            aDOItional validation is needed.
             </remarks>
             <param name="value">The parameter, which is not checked if it's null.</param>
             <param name="parameterName">Name of the parameter.</param>
@@ -160,7 +160,7 @@
             <remarks>
             If the value specified in the <paramref name="value"/> parameter is itself null, no check
             is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-            additional validation is needed.
+            aDOItional validation is needed.
             </remarks>
             <param name="value">The parameter, which is not checked if it's null.</param>
             <param name="regex">The regular expression pattern to match.</param>
@@ -174,7 +174,7 @@
             <remarks>
             If the value specified in the <paramref name="value"/> parameter is itself null, no check
             is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-            additional validation is needed.
+            aDOItional validation is needed.
             </remarks>
             <param name="value">The parameter, which is not checked if it's null.</param>
             <param name="parameterName">Name of the parameter.</param>
@@ -241,7 +241,7 @@
             </summary>
             <remarks>
             If the value specified in the <paramref name="value"/> parameter is a null reference, the check will not
-            be performed. Use <see cref="M:ThrowIfNull"/> if additional validation is needed.
+            be performed. Use <see cref="M:ThrowIfNull"/> if aDOItional validation is needed.
             </remarks>
             <param name="value">The parameter value to validate. If this value is null, no check is performed.</param>
             <param name="min">The minimum allowable value (inclusive).</param>
@@ -255,7 +255,7 @@
             </summary>
             <remarks>
             If the value specified in the <paramref name="value"/> parameter is a null reference, the check will not
-            be performed. Use <see cref="M:ThrowIfNull"/> if additional validation is needed.
+            be performed. Use <see cref="M:ThrowIfNull"/> if aDOItional validation is needed.
             </remarks>
             <param name="value">The parameter value to validate. If this value is null, no check is performed.</param>
             <param name="parameterName">The name of the parameter.</param>
@@ -361,7 +361,7 @@
             </summary>
             <remarks>
             If the <paramref name="fileName"/> parameter is null, no checks will be performed. Use the
-            <see cref="M:ThrowIfNull"/> if additional checks are necessary.
+            <see cref="M:ThrowIfNull"/> if aDOItional checks are necessary.
             </remarks>
             <param name="fileName">The file name to validate.</param>
             <param name="parameterName">The name of the parameter.</param>
@@ -376,7 +376,7 @@
             </summary>
             <remarks>
             If the <paramref name="path"/> parameter is null, no checks will be performed. Use the
-            <see cref="M:ThrowIfNull"/> if additional checks are necessary.
+            <see cref="M:ThrowIfNull"/> if aDOItional checks are necessary.
             </remarks>
             <param name="path">The path to validate.</param>
             <param name="parameterName">The name of the parameter.</param>
@@ -390,7 +390,7 @@
             <remarks>
             If the value specified in the <paramref name="fileName"/> parameter is itself null, no check
             is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-            additional validation is needed.
+            aDOItional validation is needed.
             </remarks>
             <param name="fileName">The path and file name to check the existence of.</param>
             <param name="parameterName">The name of the parameter.</param>
@@ -403,7 +403,7 @@
             <remarks>
             If the value specified in the <paramref name="directory"/> parameter is itself null, no check
             is performed. Use <see cref="M:ThrowIfNull"/> or <see cref="M:ThrowIfNullOrEmpty"/> if
-            additional validation is needed.
+            aDOItional validation is needed.
             </remarks>
             <param name="directory">The directory path to check the existence of.</param>
             <param name="parameterName">The name of the parameter.</param>
@@ -783,12 +783,12 @@
         <member name="M:TaxHub.Hosting.Extensions.StringExtensions.TrimAndPad(System.String,System.Int32,System.Char,System.Boolean)">
             <summary>
             Generates a string that is a fixed length and padded with a specific character according to a specified justification.
-            Will convert null strings to strings of the padding char with specified lengths. 
+            Will convert null strings to strings of the paDOIng char with specified lengths. 
             Will truncate strings if they are larger than the input length.
             </summary>
             <param name="str">Source string</param>
             <param name="length">Total Length of output string</param>
-            <param name="padChar">Char used in padding. Space is default.</param>
+            <param name="padChar">Char used in paDOIng. Space is default.</param>
             <param name="leftJustify">Justification used. Left justified if true, right justified otherwise.</param>
             <returns>A trimmed string of the specified length padded with the specified character and justification.</returns>
         </member>
@@ -813,8 +813,8 @@
             The amount of space chars allowed between non-space chars can be adjusted with optional param.
             </summary>
             <param name="str">The source string.</param>
-            <param name="allowAdditional">The amount of additional space chars to allow over 1.</param>
-            <returns>A string with at most (1 + allowAdditional) space chars between non-space chars.</returns>
+            <param name="allowADOItional">The amount of aDOItional space chars to allow over 1.</param>
+            <returns>A string with at most (1 + allowADOItional) space chars between non-space chars.</returns>
         </member>
         <member name="M:TaxHub.Hosting.Extensions.StringExtensions.RemoveSpecialChars(System.String,System.Char[])">
             <summary>

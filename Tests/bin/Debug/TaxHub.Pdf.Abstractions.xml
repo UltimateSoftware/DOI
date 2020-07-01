@@ -156,7 +156,7 @@
             </summary>
             <param name="inputs">An enumerable set of PDF file paths to be merged.</param>
             <param name="output">The path to the output PDF file result of the merge.</param>
-            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="context">Operation context with any aDOItional data needed by the operation.</param>
         </member>
         <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.MergeAsync(System.Collections.Generic.IEnumerable{System.String},System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
             <summary>
@@ -164,7 +164,7 @@
             </summary>
             <param name="inputs">An enumerable set of PDF file paths to be merged.</param>
             <param name="output">The path to the output PDF file result of the merge.</param>
-            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="context">Operation context with any aDOItional data needed by the operation.</param>
             <param name="cancellationToken">The cancellation token.</param>
         </member>
         <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.GetPageCount(System.String,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
@@ -172,7 +172,7 @@
             Get the page count of a PDF file.
             </summary>
             <param name="filePath">Path to PDF file.</param>
-            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="context">Operation context with any aDOItional data needed by the operation.</param>
             <returns>The number of pages.</returns>
         </member>
         <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.Fill(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext)">
@@ -180,7 +180,7 @@
             Fill a PDF template.
             </summary>
             <param name="model">Contains the template info and the data to fill in.</param>
-            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="context">Operation context with any aDOItional data needed by the operation.</param>
             <returns>A stream of the filled PDF.</returns>
         </member>
         <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.FillAsync(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
@@ -188,7 +188,7 @@
             Fill a PDF template asynchronously.
             </summary>
             <param name="model">Contains the template info and the data to fill in.</param>
-            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="context">Operation context with any aDOItional data needed by the operation.</param>
             <param name="cancellationToken">The cancellation token.</param>
             <returns>A stream of the filled PDF.</returns>
         </member>
@@ -197,14 +197,14 @@
             Fill a PDF template and save the output PDF content.
             </summary>
             <param name="model">Contains the template info, the data to fill in and the output filename.</param>
-            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="context">Operation context with any aDOItional data needed by the operation.</param>
         </member>
         <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.FillAndSaveAsync(TaxHub.Pdf.Abstractions.TemplateModel,TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
             <summary>
             Fill a PDF template and save the output PDF content asynchronously.
             </summary>
             <param name="model">Contains the template info, the data to fill in and the output filename.</param>
-            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="context">Operation context with any aDOItional data needed by the operation.</param>
             <param name="cancellationToken">The cancellation token.</param>
         </member>
         <member name="M:TaxHub.Pdf.Abstractions.IPdfOperations.MergeAsync(System.Collections.Generic.IEnumerable{TaxHub.Pdf.Abstractions.PdfOperation},TaxHub.Pdf.Abstractions.IPdfOperationContext,System.Threading.CancellationToken)">
@@ -212,7 +212,7 @@
             Merge a set of operations asynchronously.
             </summary>
             <param name="operations">The set of operations</param>
-            <param name="context">Operation context with any additional data needed by the operation.</param>
+            <param name="context">Operation context with any aDOItional data needed by the operation.</param>
             <param name="cancellationToken">The cancellation token.</param>
             <returns>The result.</returns>
         </member>

@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace DDI.Tests.TestHelpers.CommonSetup.EventStore
+namespace DOI.Tests.TestHelpers.CommonSetup.EventStore
 {
     /// <summary>
     /// Attribute allows to define a domain event details.

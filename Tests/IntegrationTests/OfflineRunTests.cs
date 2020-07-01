@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DDI.TestHelpers;
+using DOI.TestHelpers;
 using NUnit.Framework;
-using TestHelper = DDI.Tests.TestHelpers;
+using TestHelper = DOI.Tests.TestHelpers;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -16,7 +16,7 @@ namespace DDI.Tests.Integration
     {
         /*
          * 1. happy path.  normal run should:
-         *      a. Assert the DDIOfflineJobStatus setting at each stage of the run.
+         *      a. Assert the DOIOfflineJobStatus setting at each stage of the run.
          *          - Before it starts, should = 'Stop'
          *          - After it starts, should = 'IntendToRun'
          *          - Once no SQL commands are running, should = 'Run'
@@ -24,7 +24,7 @@ namespace DDI.Tests.Integration
          * 2. run into business hours should stop and have the error logged.
          *      - if stopped in the middle of a transaction, the transaction should be allowed to complete. (or roll it back?)
          * 2. run while a sql command is still running should not work.
-         * 3. if DDI is stopped for any reason, the Status should = 'Stop'.
+         * 3. if DOI is stopped for any reason, the Status should = 'Stop'.
          */
 
         protected TestHelper.SqlHelper sqlHelper;
@@ -45,11 +45,11 @@ namespace DDI.Tests.Integration
             this.TearDown();
             sqlHelper.Execute(string.Format(TestHelper.ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
             sqlHelper.Execute($@"
-            INSERT INTO DDI.IndexesRowStore (DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
+            INSERT INTO DOI.IndexesRowStore (DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
             VALUES(N'{SchemaName}', N'{TempTableName}', N'{IndexName}', 1, 1, 0, 0, N'TempAId ASC', NULL, 0, NULL, 80, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, 'NONE', 'PRIMARY', NULL)");
 
             sqlHelper.Execute($@"
-            INSERT INTO DDI.IndexesColumnStore ( SchemaName ,TableName ,IndexName ,IsClustered_Desired,ColumnList_Desired,IsFiltered_Desired,FilterPredicate_Desired,OptionDataCompression_Desired,OptionDataCompressionDelay_Desired,NewStorage_Desired,PartitionColumn_Desired )
+            INSERT INTO DOI.IndexesColumnStore ( SchemaName ,TableName ,IndexName ,IsClustered_Desired,ColumnList_Desired,IsFiltered_Desired,FilterPredicate_Desired,OptionDataCompression_Desired,OptionDataCompressionDelay_Desired,NewStorage_Desired,PartitionColumn_Desired )
             VALUES (N'{SchemaName}', N'{TempTableName}', N'{ColumnStoreIndexName}',  0 , N'TempAId,TransactionUtcDt,IncludedColumn,TextCol' ,  0 , NULL,   'COLUMNSTORE' ,   0 ,    N'PRIMARY' ,  NULL)");
 
             sqlHelper.Execute($@"
@@ -90,18 +90,18 @@ namespace DDI.Tests.Integration
             ON [PRIMARY];
     END;");
 
-            sqlHelper.Execute("EXEC DDI.spRefreshMetadata_User_3_DDISettings");
-            sqlHelper.Execute("EXEC DDI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            sqlHelper.Execute("EXEC DOI.spRefreshMetadata_User_3_DOISettings");
+            sqlHelper.Execute("EXEC DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
 
         [TearDown]
         public virtual void TearDown()
         {
             sqlHelper.Execute(string.Format(TestHelper.ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            sqlHelper.Execute("TRUNCATE TABLE DDI.Queue");
-            sqlHelper.Execute("TRUNCATE TABLE DDI.Log");
-            sqlHelper.Execute("EXEC DDI.spRefreshMetadata_User_3_DDISettings");
-            sqlHelper.Execute("EXEC DDI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            sqlHelper.Execute("TRUNCATE TABLE DOI.Queue");
+            sqlHelper.Execute("TRUNCATE TABLE DOI.Log");
+            sqlHelper.Execute("EXEC DOI.spRefreshMetadata_User_3_DOISettings");
+            sqlHelper.Execute("EXEC DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
 
         [Test]
@@ -109,14 +109,14 @@ namespace DDI.Tests.Integration
         {
             //make some changes...
             sqlHelper.Execute($@"
-            UPDATE DDI.IndexesRowStore 
+            UPDATE DOI.IndexesRowStore 
             SET KeyColumnList = 'TempAId ASC,TransactionUtcDt ASC' 
             WHERE SchemaName = '{SchemaName}' 
                 AND TableName = '{TempTableName}' 
                 AND IndexName = '{IndexName}'");
 
             sqlHelper.Execute($@"
-            UPDATE DDI.IndexesColumnStore 
+            UPDATE DOI.IndexesColumnStore 
             SET OptionDataCompression = 'COLUMNSTORE_ARCHIVE' 
             WHERE SchemaName = '{SchemaName}' 
                 AND TableName = '{TempTableName}' 
@@ -163,7 +163,7 @@ namespace DDI.Tests.Integration
 
             // Act
 
-            // run queue in offline mode.  this should do nothing and log an error in DDI.Log stating that 'Stopping Offline DDI.  Business hours are here.'.
+            // run queue in offline mode.  this should do nothing and log an error in DOI.Log stating that 'Stopping Offline DOI.  Business hours are here.'.
             this.dataDrivenIndexTestHelper.ExecuteSPRun(false, SchemaName, TempTableName);
             
             // Validate
@@ -172,7 +172,7 @@ namespace DDI.Tests.Integration
             var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
-            // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the DDI.Log table.
+            // assert that the 'Stopping Offline DOI.  Business hours are here.' error is in the DOI.Log table.
             var businessHoursErrorCount = offlineRunTestsHelper.BusinessHoursErrorCount(SchemaName, TempTableName);
             Assert.AreEqual(1, businessHoursErrorCount);
 
@@ -201,7 +201,7 @@ namespace DDI.Tests.Integration
 
             // Act
 
-            // run queue in offline mode.  this should do nothing and log an error in DDI.Log stating that 'Stopping Offline DDI.  Business hours are here.'.
+            // run queue in offline mode.  this should do nothing and log an error in DOI.Log stating that 'Stopping Offline DOI.  Business hours are here.'.
             this.dataDrivenIndexTestHelper.ExecuteSPRun(false, SchemaName, TempTableName);
 
             // Validate
@@ -210,7 +210,7 @@ namespace DDI.Tests.Integration
             var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
-            // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the DDI.Log table.
+            // assert that the 'Stopping Offline DOI.  Business hours are here.' error is in the DOI.Log table.
             var businessHoursErrorCount = offlineRunTestsHelper.BusinessHoursErrorCount(SchemaName, TempTableName);
             Assert.AreEqual(1, businessHoursErrorCount);
 
@@ -239,7 +239,7 @@ namespace DDI.Tests.Integration
 
             // Act
 
-            // run queue in offline mode.  this should do nothing and log an error in DDI.Log stating that 'Stopping Offline DDI.  Business hours are here.'.
+            // run queue in offline mode.  this should do nothing and log an error in DOI.Log stating that 'Stopping Offline DOI.  Business hours are here.'.
             this.dataDrivenIndexTestHelper.ExecuteSPRun(false, SchemaName, TempTableName);
 
             // Validate
@@ -248,7 +248,7 @@ namespace DDI.Tests.Integration
             var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
-            // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the DDI.Log table.
+            // assert that the 'Stopping Offline DOI.  Business hours are here.' error is in the DOI.Log table.
             var businessHoursErrorCount = offlineRunTestsHelper.BusinessHoursErrorCount(SchemaName, TempTableName);
             Assert.AreEqual(1, businessHoursErrorCount);
 
@@ -277,7 +277,7 @@ namespace DDI.Tests.Integration
             Assert.AreEqual(1, countOfItemsInQueueBefore);
 
             // Act
-            // run queue in offline mode.  this should do nothing and log an error in DDI.Log stating that 'Stopping Offline DDI.  Business hours are here.'.
+            // run queue in offline mode.  this should do nothing and log an error in DOI.Log stating that 'Stopping Offline DOI.  Business hours are here.'.
             this.dataDrivenIndexTestHelper.ExecuteSPRun(false, SchemaName, TempTableName);
 
             // Validate
@@ -286,7 +286,7 @@ namespace DDI.Tests.Integration
             var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
-            // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the DDI.Log table.
+            // assert that the 'Stopping Offline DOI.  Business hours are here.' error is in the DOI.Log table.
             var businessHoursErrorCount = offlineRunTestsHelper.BusinessHoursErrorCount(SchemaName, TempTableName);
             Assert.AreEqual(1, businessHoursErrorCount);
 
@@ -315,7 +315,7 @@ namespace DDI.Tests.Integration
             Assert.AreEqual(1, countOfItemsInQueueBefore);
 
             // Act
-            // run queue in offline mode.  this should do nothing and log an error in DDI.Log stating that 'Stopping Offline DDI.  Business hours are here.'.
+            // run queue in offline mode.  this should do nothing and log an error in DOI.Log stating that 'Stopping Offline DOI.  Business hours are here.'.
             this.dataDrivenIndexTestHelper.ExecuteSPRun(false, SchemaName, TempTableName);
 
             // Validate
@@ -324,7 +324,7 @@ namespace DDI.Tests.Integration
             var countOfItemsInQueueAfter = TestHelper.OfflineRunTestsHelper.GetOfflineQueueCountSQL();
             Assert.AreEqual(0, countOfItemsInQueueAfter, "Failure: Expecting Queue to be empty.");
 
-            // assert that the 'Stopping Offline DDI.  Business hours are here.' error is in the DDI.Log table.
+            // assert that the 'Stopping Offline DOI.  Business hours are here.' error is in the DOI.Log table.
             var businessHoursErrorCount = offlineRunTestsHelper.BusinessHoursErrorCount(SchemaName, TempTableName);
             Assert.AreEqual(1, businessHoursErrorCount);
 
@@ -339,7 +339,7 @@ namespace DDI.Tests.Integration
 
             //make change to rebuild NCCI...
             sqlHelper.Execute($@"
-                UPDATE DDI.IndexesColumnStore 
+                UPDATE DOI.IndexesColumnStore 
                 SET OptionDataCompression = 'COLUMNSTORE_ARCHIVE' 
                 WHERE SchemaName = '{SchemaName}' 
                     AND TableName = '{TempTableName}' 
@@ -360,10 +360,10 @@ namespace DDI.Tests.Integration
             //run queue
             Task result = this.dataDrivenIndexTestHelper.ExecuteSPRunAsync(false, SchemaName, TempTableName);
 
-            //wait until the application lock is taken, then stop the DDI run
+            //wait until the application lock is taken, then stop the DOI run
             Func<bool> getApplicationLock = () => offlineRunTestsHelper.GetApplicationLock();
             TestHelper.WaitHelper.WaitFor(getApplicationLock, 30000);
-            sqlHelper.Execute("EXEC DDI.spStop");
+            sqlHelper.Execute("EXEC DOI.spStop");
 
             //assert that the KILL command appears in the log.
             var killLogCount = offlineRunTestsHelper.GetKillCommandInLogCount(SchemaName, TempTableName);

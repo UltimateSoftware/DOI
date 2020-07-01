@@ -10,7 +10,7 @@ using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace DDI.Tests.Integration.TestHelpers
+namespace DOI.Tests.Integration.TestHelpers
 {
     public sealed class TestConfigurationHelper
     {

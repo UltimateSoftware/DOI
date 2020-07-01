@@ -1,8 +1,8 @@
-﻿DELETE DDI.MappingSqlServerDMVToDDITables 
+﻿DELETE DOI.MappingSqlServerDMVToDOITables 
 GO
 
-INSERT INTO DDI.MappingSqlServerDMVToDDITables 
-        ( DDITableName              , SQLServerObjectName               , SQLServerObjectType   , HasDatabaseIdInOutput , DatabaseOutputString			, FunctionParameterList										, FunctionParentDMV	)
+INSERT INTO DOI.MappingSqlServerDMVToDOITables 
+        ( DOITableName              , SQLServerObjectName               , SQLServerObjectType   , HasDatabaseIdInOutput , DatabaseOutputString			, FunctionParameterList										, FunctionParentDMV	)
 VALUES   ('SysFilegroups'           , 'sys.filegroups'                  , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
         ,('SysDestinationDataSpaces', 'sys.destination_data_spaces'     , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)
         ,('SysSchemas'              , 'sys.schemas'                     , 'V'                   , 0                     , 'DB_ID(''{DatabaseName}'')'	, NULL														, NULL				)

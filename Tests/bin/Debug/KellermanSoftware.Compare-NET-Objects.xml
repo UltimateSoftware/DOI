@@ -714,7 +714,7 @@
             Returns true if the objects are equal
             </summary>
         </member>
-        <member name="P:KellermanSoftware.CompareNetObjects.ComparisonResult.ExceededDifferences">
+        <member name="P:KellermanSoftware.CompareNetObjects.ComparisonResult.ExceedeDOIfferences">
             <summary>
             Returns true if the number of differences has reached the maximum
             </summary>
@@ -1437,13 +1437,13 @@
             <param name="index">The index if it is an array, list, row etc.</param>
             <returns>The new breadcrumb</returns>
         </member>
-        <member name="M:KellermanSoftware.CompareNetObjects.TypeComparers.BaseComparer.AddDifference(KellermanSoftware.CompareNetObjects.CompareParms)">
+        <member name="M:KellermanSoftware.CompareNetObjects.TypeComparers.BaseComparer.AdDOIfference(KellermanSoftware.CompareNetObjects.CompareParms)">
             <summary>
             Add a difference for the current parameters
             </summary>
             <param name="parameters"></param>
         </member>
-        <member name="M:KellermanSoftware.CompareNetObjects.TypeComparers.BaseComparer.AddDifference(KellermanSoftware.CompareNetObjects.ComparisonResult,KellermanSoftware.CompareNetObjects.Difference)">
+        <member name="M:KellermanSoftware.CompareNetObjects.TypeComparers.BaseComparer.AdDOIfference(KellermanSoftware.CompareNetObjects.ComparisonResult,KellermanSoftware.CompareNetObjects.Difference)">
             <summary>
             Add a difference to the result
             </summary>

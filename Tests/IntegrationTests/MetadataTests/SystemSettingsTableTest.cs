@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using DDI.Tests.TestHelpers;
+using DOI.Tests.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using  NUnit.Framework;
 
-namespace DDI.Tests.Integration
+namespace DOI.Tests.Integration
 {
     [TestFixture]
     [Category("Integration")]
@@ -32,13 +32,13 @@ namespace DDI.Tests.Integration
                     new Pair<string, string>("FreeSpaceCheckerPercentBuffer", @"10")
                 };
             var sqlHelper = new SqlHelper();
-            sqlHelper.Execute($"EXEC DDI.spRefreshMetadata_User_3_DDISettings");
+            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
         }
 
         [Test]
         public void ValidateSystemSettings()
         {
-            var reader = new SqlHelper().ExecuteReader(" SELECT SettingName, SettingValue FROM DDI.DDISettings ORDER BY SettingName ");
+            var reader = new SqlHelper().ExecuteReader(" SELECT SettingName, SettingValue FROM DOI.DOISettings ORDER BY SettingName ");
             var actualSettingList = new List<Pair<string, string>>();
 
             while (reader.Read())
@@ -46,13 +46,13 @@ namespace DDI.Tests.Integration
                 actualSettingList.Add(new Pair<string, string>(Convert.ToString(reader["SettingName"]), Convert.ToString(reader["SettingValue"])));
             }
 
-            Assert.IsNotEmpty(actualSettingList, "The PaymentReporting.DDI.DDISettings table must have settings.");
-            Assert.True(actualSettingList.Count == expectedSettingList.Count, $"The PaymentReporting.DDI.DDISettings table must have {expectedSettingList.Count} settings.");
+            Assert.IsNotEmpty(actualSettingList, "The PaymentReporting.DOI.DOISettings table must have settings.");
+            Assert.True(actualSettingList.Count == expectedSettingList.Count, $"The PaymentReporting.DOI.DOISettings table must have {expectedSettingList.Count} settings.");
 
             foreach (Pair<string, string> expectedSetting in expectedSettingList)
             {
                 Pair<string, string> actualSetting = actualSettingList.Find(x => x.First == expectedSetting.First);
-                Assert.IsNotNull(actualSetting, $"Missing setting [{expectedSetting.First}] in table DDI.DDISettings");
+                Assert.IsNotNull(actualSetting, $"Missing setting [{expectedSetting.First}] in table DOI.DOISettings");
                 Assert.AreEqual(expectedSetting.Second, actualSetting.Second, $"Incorrect setting: {expectedSetting.First}.");
                 actualSettingList.Remove(actualSetting); // to be more efficient
             }

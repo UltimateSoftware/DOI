@@ -5,14 +5,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using DDI.Tests.Integration.TestHelpers;
-using DDI.Tests.TestHelpers;
+using DOI.Tests.Integration.TestHelpers;
+using DOI.Tests.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using SqlHelper = DDI.Tests.TestHelpers.SqlHelper;
+using SqlHelper = DOI.Tests.TestHelpers.SqlHelper;
 
-namespace DDI.Tests.Integration.TablePartitioning
+namespace DOI.Tests.Integration.TablePartitioning
 {
     [TestFixture]
     [Category("Integration")]
@@ -50,7 +50,7 @@ namespace DDI.Tests.Integration.TablePartitioning
                     else
                     {
                         throw new FileNotFoundException(
-                            $"Cannot find our copy of the utebcp.exe file in {ourCopyOfBcp.FullName}. This test depends on this BCP DDI.");
+                            $"Cannot find our copy of the utebcp.exe file in {ourCopyOfBcp.FullName}. This test depends on this BCP DOI.");
                     }
                 }
             }
@@ -116,7 +116,7 @@ namespace DDI.Tests.Integration.TablePartitioning
 
         private void SetUpTableUnderTest()
         {
-            sqlHelper.Execute("UPDATE DDI.Tables SET ReadyToQueue = 0");
+            sqlHelper.Execute("UPDATE DOI.Tables SET ReadyToQueue = 0");
             sqlHelper.Execute(TablePartitioningSqlStatements.PartitionFunctionCreation);
             sqlHelper.Execute(TablePartitioningSqlStatements.TableCreation);
             sqlHelper.Execute(TablePartitioningSqlStatements.DataInsert);
@@ -221,7 +221,7 @@ namespace DDI.Tests.Integration.TablePartitioning
              and one year from now, plus 2 more partitions()*/
              //get this from the PartitionFunctions table.
             int minimumNumberOfExpectedPartitions = sqlHelper.ExecuteScalar<int>(@"SELECT NumOfTotalPartitionFunctionIntervals 
-                                                                                 FROM DDI.PartitionFunctions 
+                                                                                 FROM DOI.PartitionFunctions 
                                                                                  WHERE PartitionFunctionName = 'pfMonthlyTest'");
             List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.RowsInFileGroupsProcedureCall));
             Assert.IsTrue(list.Count >= minimumNumberOfExpectedPartitions, $"Expecting at least {minimumNumberOfExpectedPartitions} partition but found {list.Count}");
@@ -310,17 +310,17 @@ namespace DDI.Tests.Integration.TablePartitioning
 
         private void ValidateThatTheQueueIsEmptyAfterPartitioning()
         {
-            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.RecordsInTheQueue)), "Expecting the Queue table [DDI.Queue] to be empty but found records.");
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.RecordsInTheQueue)), "Expecting the Queue table [DOI.Queue] to be empty but found records.");
         }
 
         private void ValidateThatLogTableHasNoErrors()
         {
-            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.LogHasNoErrors)), "Log table [DDI.Log] has errors!!");
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.LogHasNoErrors)), "Log table [DOI.Log] has errors!!");
         }
 
         private void ValidateThatPartitionStateMetadataTableIsEmptyAfterPartitioning()
         {
-            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.CheckForEmptyPartitionStateMetadata("dbo", "PartitioningTestAutomationTable"))), "Expecting the PartitionState Metadata table [DDI._PartitionState] to be empty but found records.");
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.CheckForEmptyPartitionStateMetadata("dbo", "PartitioningTestAutomationTable"))), "Expecting the PartitionState Metadata table [DOI._PartitionState] to be empty but found records.");
         }
 
         private bool IsTestRunningInLocalEnvironment()

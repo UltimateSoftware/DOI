@@ -1,4 +1,4 @@
-CREATE TABLE [DDI].[SysForeignKeyColumns]
+CREATE TABLE [DOI].[SysForeignKeyColumns]
 (
 [database_id] [int] NOT NULL,
 [constraint_object_id] [int] NOT NULL,
