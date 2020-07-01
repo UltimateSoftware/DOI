@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics;
 using DOI.TestHelpers;
 using DOI.Tests.Integration.Models;
-using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
-namespace DOI.Tests.Integration
+namespace DOI.Tests.Integration.Maintenance
 {
     [TestFixture]
     [Category("Integration")]

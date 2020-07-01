@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using DOI.TestHelpers;
 using DOI.Tests.Integration.Models;
-using DOI.Tests.TestHelpers;
 using NUnit.Framework;
-using PaymentSolutions.TestHelpers.Attributes;
-using TestHelper = DOI.Tests.TestHelpers;
+using TestHelper = DOI.TestHelpers;
 
 namespace DOI.Tests.Integration
 {
@@ -110,7 +108,7 @@ namespace DOI.Tests.Integration
         }
 
         [Test]
-        [Quarantine("ULTI-388423: Flaky in CI.")]
+        //[Quarantine("ULTI-388423: Flaky in CI.")]
         [TestCase("ST_TempA_TempAId", "Droprecreate Statistics", true, TestName = "DropRecreate")]
         [TestCase("ST_TempA_TempAId", "Create Statistics", true, TestName = "Create")]
         [TestCase("ST_TempA_TempAId", "Update Statistics", true, TestName = "Update")]

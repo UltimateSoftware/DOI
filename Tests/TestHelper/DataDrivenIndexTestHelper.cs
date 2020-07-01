@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Practices.Unity.Utility;
 using NUnit.Framework;
 using DOI.Tests.Integration.Models;
-using TestHelper = DOI.TestHelpers.SqlHelper;
 
 namespace DOI.TestHelpers
 {

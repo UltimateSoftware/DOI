@@ -3,7 +3,6 @@ using System.Diagnostics;
 using DOI.Tests.Integration.Models;
 using NUnit.Framework;
 using DOI.TestHelpers;
-using DOI.Tests.TestHelpers;
 
 namespace DOI.Tests.Integration
 {
@@ -14,13 +13,12 @@ namespace DOI.Tests.Integration
     [Category("DataDrivenIndex")]
     public class LowFragmentationTests
     {
-        private SqlHelper sqlHelper;
-        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        protected TempARepository tempARepository;
         protected const string TempTableName = "TempA";
         protected const int MinimumFragmentation = 5;
         protected const int MaximumFragmentation = 30;
-        protected const int MinimumIndexPages = 5;
+        protected const int MinimumIndexPages = 5; private SqlHelper sqlHelper;
+        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
+        protected TempARepository tempARepository;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
@@ -28,8 +26,8 @@ namespace DOI.Tests.Integration
             this.sqlHelper = new SqlHelper();
             this.OneTimeTearDown();
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
-            this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(sqlHelper);
-            this.tempARepository = new TempARepository(sqlHelper);
+            this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
+            this.tempARepository = new TempARepository(this.sqlHelper);
             this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = {MinimumIndexPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
 
             this.dataDrivenIndexTestHelper.CreateIndex("NIDX_TempA_Report");
@@ -41,7 +39,7 @@ namespace DOI.Tests.Integration
                 this.dataDrivenIndexTestHelper.AddRowsToTempA(700);
 
                 var indexName = "NIDX_TempA_Report";
-                var minimumPageSize = sqlHelper.ExecuteScalar<int>("SELECT CAST(SettingValue AS INT) FROM DOI.DOISettings WHERE SettingName = 'MinNumPagesForIndexDefrag'");
+                var minimumPageSize = this.sqlHelper.ExecuteScalar<int>("SELECT CAST(SettingValue AS INT) FROM DOI.DOISettings WHERE SettingName = 'MinNumPagesForIndexDefrag'");
 
                 if (this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Exists(i => i.IndexFragmentation >= MinimumFragmentation && i.IndexFragmentation < MaximumFragmentation && i.TotalPages > minimumPageSize && i.IndexName == indexName))
                 {
@@ -56,8 +54,8 @@ namespace DOI.Tests.Integration
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
+            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
+            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
         }
 
         [SetUp]
@@ -75,6 +73,7 @@ namespace DOI.Tests.Integration
         public void LowFragmentationShouldTriggerAlterIndexReorganizeUnlessSpecificPropertiesAreModified(string propertyName, string propertyValue, string indexUpdateType)
         {
             var indexName = "NIDX_TempA_Report";
+
             // Fragmentation needs to be between 5% and 30% and TotalPages is configurable
             IndexView indexToReorganize = null;
             indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.IndexFragmentation >= MinimumFragmentation && i.TotalPages > MinimumIndexPages && i.IndexName == indexName);
@@ -82,7 +81,7 @@ namespace DOI.Tests.Integration
             // Update property
             if (!string.IsNullOrEmpty(propertyName))
             {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
+                this.sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
                 indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.IndexFragmentation >= MinimumFragmentation && i.TotalPages > MinimumIndexPages && i.IndexName == indexName);
             }
 

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Data.SqlClient;
+using DOI.TestHelpers;
 using DOI.Tests.Integration;
-using DOI.Tests.Integration.Tests.TablePartitioning;
+using DOI.Tests.Integration.TablePartitioning;
 using NUnit.Framework;
 
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using DOI.TestHelpers;
-using TestHelper = DOI.TestHelpers;
+using TestHelper = DOI.Tests.TestHelpers;
 
 namespace DOI.TestHelpers
 {

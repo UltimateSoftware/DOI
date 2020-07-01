@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using DOI.TestHelpers;
-using DOI.Tests.Integration;
 using DOI.Tests.Integration.Models;
 using NUnit.Framework;
-using TestHelper = DOI.Tests.TestHelpers;
 
 namespace DOI.Tests.Integration
 {
@@ -16,8 +14,8 @@ namespace DOI.Tests.Integration
     {
         private List<IndexView> expectedIndexViews;
         private List<ForeignKey> expectedForeignKeys;
-        protected TestHelper.DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        protected TestHelper.TempARepository tempARepository;
+        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
+        protected TempARepository tempARepository;
         protected const string DatabaseName = "PaymentReporting";
         protected const string TempTableName = "TempA";
 
@@ -27,9 +25,9 @@ namespace DOI.Tests.Integration
             this.expectedIndexViews = new List<IndexView>();
             this.expectedForeignKeys = new List<ForeignKey>();
             this.TearDown();
-            this.sqlHelper.Execute(string.Format(TestHelper.ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
-            this.dataDrivenIndexTestHelper = new TestHelper.DataDrivenIndexTestHelper(this.sqlHelper);
-            this.tempARepository = new TestHelper.TempARepository(this.sqlHelper);
+            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
+            this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
+            this.tempARepository = new TempARepository(this.sqlHelper);
 
             this.expectedIndexViews.Add(new IndexView()
             {
@@ -151,7 +149,7 @@ namespace DOI.Tests.Integration
         [TearDown]
         public virtual void TearDown()
         {
-            sqlHelper.Execute(string.Format(TestHelper.ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
+            sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
         }
 
         [Test]
@@ -259,7 +257,7 @@ namespace DOI.Tests.Integration
             if (indexRow.IndexType == "ColumnStore" && propertyName == "IsClustered")
             {
                 var columnListValue = propertyValue == "1" ? "null" : "'TransactionUtcDt'";
-                aDOItionalChanges += $", ColumnList = {columnListValue} "; 
+                aDOItionalChanges += $", ColumnList = {columnListValue} ";
             }
             else if (propertyName == "IsPrimaryKey" && propertyValue == "1")
             {

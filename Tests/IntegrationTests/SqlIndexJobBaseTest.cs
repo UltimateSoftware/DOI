@@ -2,8 +2,6 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-using DOI.Tests.TestHelpers;
-
 namespace DOI.Tests.Integration
 {
     using DOI.TestHelpers;

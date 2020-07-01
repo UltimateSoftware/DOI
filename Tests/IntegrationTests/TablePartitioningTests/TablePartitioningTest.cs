@@ -5,12 +5,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using DOI.Tests.Integration.TestHelpers;
-using DOI.Tests.TestHelpers;
+using DOI.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using SqlHelper = DOI.Tests.TestHelpers.SqlHelper;
+using SqlHelper = DOI.TestHelpers.SqlHelper;
 
 namespace DOI.Tests.Integration.TablePartitioning
 {

@@ -13,7 +13,6 @@ namespace DOI.TestHelpers
                     @IsOnlineOperation = 1,
                     @LockTimeout = 1000";
         }
-
         public static string ReleaseApplicationLockSql(string databaseName)
         {
             return $@"
@@ -46,7 +45,6 @@ namespace DOI.TestHelpers
                                         AND RunStatus = 'Info'
                                         AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'), 0)";
         }
-
         public static string VerifyThatAppLockReleaseWasLogged(string databaseName)
         {
             return $@"
@@ -60,12 +58,11 @@ namespace DOI.TestHelpers
 
         public static string IsAppLockGrantableInAppLock_Test(string databaseName)
         {
-            return
+            return 
                 $@" USE {databaseName}
                     SELECT APPLOCK_TEST('dbo', '', 'Exclusive', 'Session')
                     USE DOI";
         }
-
         public static string DoesLogHaveErrors(string databaseName)
         {
             return $@"
@@ -179,16 +176,16 @@ namespace DOI.TestHelpers
 
             var isAppLockGrantedInSysDmTranLocks_Actual = new SqlHelper().ExecuteScalar<int>(IsAppLockGrantedInSysDmTranLocks("PaymentReporting"));
 
-            // Assert if lock is grant-able in APPLOCK_TEST
+            //Assert if lock is grant-able in APPLOCK_TEST
             Assert.AreEqual(isAppLockGrantableInAppLock_Test_Expected, isAppLockGrantableInAppLock_Test_Actual);
 
-            // Assert that lock was taken
+            //Assert that lock was taken
             Assert.AreEqual(isAppLockGrantedInSysDmTranLocks_Expected, isAppLockGrantedInSysDmTranLocks_Actual);
 
-            // Assert message
+            //Assert message
             StringAssert.Contains(message_Expected, message_Actual);
 
-            // Assert if message was logged
+            //Assert if message was logged
             var wasAppLockOperationLogged = new SqlHelper().ExecuteScalar<int>($@"
                                                                         SELECT ISNULL((SELECT TOP 1 1
                                                                         FROM DOI.Log

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using DOI.Tests.TestHelpers;
-using Microsoft.Practices.Unity.Utility;
+using Castle.Core;
+using DOI.TestHelpers;
 using  NUnit.Framework;
 
-namespace DOI.Tests.Integration
+namespace DOI.Tests.Integration.Metadata
 {
     [TestFixture]
     [Category("Integration")]
@@ -17,7 +17,7 @@ namespace DOI.Tests.Integration
         [SetUp]
         public void Setup()
         {
-            expectedSettingList = new List<Pair<string, string>>()
+            this.expectedSettingList = new List<Pair<string, string>>()
                 {
                     new Pair<string, string>("DBFileGrowthMB", "10"),
                     new Pair<string, string>("DBFileInitialSizeMB", "100"),
@@ -47,9 +47,9 @@ namespace DOI.Tests.Integration
             }
 
             Assert.IsNotEmpty(actualSettingList, "The PaymentReporting.DOI.DOISettings table must have settings.");
-            Assert.True(actualSettingList.Count == expectedSettingList.Count, $"The PaymentReporting.DOI.DOISettings table must have {expectedSettingList.Count} settings.");
+            Assert.True(actualSettingList.Count == this.expectedSettingList.Count, $"The PaymentReporting.DOI.DOISettings table must have {this.expectedSettingList.Count} settings.");
 
-            foreach (Pair<string, string> expectedSetting in expectedSettingList)
+            foreach (Pair<string, string> expectedSetting in this.expectedSettingList)
             {
                 Pair<string, string> actualSetting = actualSettingList.Find(x => x.First == expectedSetting.First);
                 Assert.IsNotNull(actualSetting, $"Missing setting [{expectedSetting.First}] in table DOI.DOISettings");

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using DOI.TestHelpers;
 using NUnit.Framework;
-using TestHelper = DOI.Tests.TestHelpers;
+using TestHelper = DOI.TestHelpers;
 
 namespace DOI.Tests.Integration
 {

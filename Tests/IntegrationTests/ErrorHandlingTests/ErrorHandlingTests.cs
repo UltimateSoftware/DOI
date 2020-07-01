@@ -1,10 +1,9 @@
 ﻿using System;
 using DOI.Tests.Integration.Models;
 using DOI.TestHelpers;
-using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
-namespace DOI.Tests.Integration
+namespace DOI.Tests.Integration.ErrorHandling
 {
     [TestFixture]
     [Category("Integration")]
@@ -26,7 +25,7 @@ namespace DOI.Tests.Integration
         protected const string DatabaseName = "PaymentReporting";
         protected const string SchemaName = "dbo";
         protected const string TempTableName = "TempA";
-        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
+        protected TestHelpers.DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
         protected TempARepository tempARepository;
 
         [SetUp]
