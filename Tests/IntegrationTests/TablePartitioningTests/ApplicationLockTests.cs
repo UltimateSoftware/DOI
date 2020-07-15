@@ -26,6 +26,7 @@ namespace DOI.Tests.Integration.TablePartitioning
          * 6. try the APPLOCK_TEST() function?  this is what the DDL trigger uses.
          * 7. try running job so that it's killed by business hours check.
          */
+        protected const string DatabaseName = "DOIUnitTests";
         private SqlConnection connection;
 
         private string connectionInfoMessage;
@@ -33,7 +34,7 @@ namespace DOI.Tests.Integration.TablePartitioning
         [SetUp]
         public void Setup()
         {
-            sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock("PaymentReporting"));
+            sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock(DatabaseName));
             connection = new SqlConnection(sqlHelper.GetConnectionString());
             connectionInfoMessage = String.Empty;
 
@@ -49,7 +50,7 @@ namespace DOI.Tests.Integration.TablePartitioning
         [TearDown]
         public void TearDown()
         {
-            sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock("PaymentReporting"));
+            sqlHelper.Execute(ApplicationLockTestsHelper.KillSessionHoldingAppLock(DatabaseName));
             if (connection != null)
             {
                 connection.Close();
@@ -120,7 +121,7 @@ namespace DOI.Tests.Integration.TablePartitioning
         public void RunApplicationLocksThroughQueue(string databaseName)
         {
             //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(1, "PaymentReporting"));
+            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(1, DatabaseName));
             
             //Run Queue
             sqlHelper.Execute($@"   EXEC DOI.spRun 
@@ -146,7 +147,7 @@ namespace DOI.Tests.Integration.TablePartitioning
             var spid = sqlHelper.ExecuteScalar<int>(connection, "SELECT CAST(@@SPID AS INT)");
 
             //Populate Queue
-            sqlHelper.Execute(connection, ApplicationLockTestsHelper.RunAppLockStatementsThroughQueueWithError(1, "PaymentReporting"));
+            sqlHelper.Execute(connection, ApplicationLockTestsHelper.RunAppLockStatementsThroughQueueWithError(1, DatabaseName));
 
             //Run Queue
             sqlHelper.Execute($@"   EXEC DOI.spRun 
@@ -169,7 +170,7 @@ namespace DOI.Tests.Integration.TablePartitioning
                                     WHERE DatabaseName = '{databaseName}'");
 
             //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, "PaymentReporting"));
+            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, DatabaseName));
 
             //Run Queue
             sqlHelper.Execute($@"   EXEC DOI.spRun 
@@ -190,7 +191,7 @@ namespace DOI.Tests.Integration.TablePartitioning
 
 
             //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, "PaymentReporting"));
+            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, DatabaseName));
 
             //insert command in queue to update business hours
             sqlHelper.Execute($@"EXEC DOI.spInsertSQLCommand
@@ -215,11 +216,11 @@ namespace DOI.Tests.Integration.TablePartitioning
             var operationType = "Release";
 
             this.connectionInfoMessage = "";
-            sqlHelper.Execute(connection, ApplicationLockTestsHelper.ReleaseApplicationLockSql("PaymentReporting"));
+            sqlHelper.Execute(connection, ApplicationLockTestsHelper.ReleaseApplicationLockSql(DatabaseName));
 
             //Assert
             var messageActual = this.connectionInfoMessage;
-            var isAppLockGrantableInAppLockTestActual = sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test("PaymentReporting"));
+            var isAppLockGrantableInAppLockTestActual = sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test(DatabaseName));
             ApplicationLockTestsHelper.AssertAppLockOperation(
                 operationType,
                 shouldSucceed,
@@ -229,7 +230,7 @@ namespace DOI.Tests.Integration.TablePartitioning
                 messageExpected,
                 messageActual,
                 spId,
-                "PaymentReporting");
+                DatabaseName);
         }
         private void GetLock(SqlConnection connection, int spId, bool shouldSucceed, byte isAppLockGrantedInSysDmTranLocksExpected, byte isAppLockGrantableInAppLockTestExpected, string messageExpected)
         {
@@ -237,12 +238,12 @@ namespace DOI.Tests.Integration.TablePartitioning
             var operationType = "Get";
 
             this.connectionInfoMessage = "";
-            sqlHelper.Execute(connection, ApplicationLockTestsHelper.GetApplicationLockSql("PaymentReporting"));
+            sqlHelper.Execute(connection, ApplicationLockTestsHelper.GetApplicationLockSql(DatabaseName));
 
             //Assert
             var messageActual = this.connectionInfoMessage;
             var isAppLockGrantableInAppLockTestActual =
-                sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test("PaymentReporting"));
+                sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test(DatabaseName));
             ApplicationLockTestsHelper.AssertAppLockOperation(
                 operationType,
                 shouldSucceed,
@@ -252,19 +253,19 @@ namespace DOI.Tests.Integration.TablePartitioning
                 messageExpected,
                 messageActual,
                 spId,
-                "PaymentReporting");
+                DatabaseName);
         }
         private void GetLock(int spId, bool shouldSucceed, byte isAppLockGrantedInSysDmTranLocksExpected, byte isAppLockGrantableInAppLockTestExpected, string messageExpected)
         {
             //Get Lock
             var operationType = "Get";
 
-            string infoMessage = sqlHelper.ExecuteGetInfoMessageOnly(ApplicationLockTestsHelper.GetApplicationLockSql("PaymentReporting"));
+            string infoMessage = sqlHelper.ExecuteGetInfoMessageOnly(ApplicationLockTestsHelper.GetApplicationLockSql(DatabaseName));
 
             //Assert
             var messageActual = infoMessage;
             var isAppLockGrantableInAppLockTestActual =
-                sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test("PaymentReporting"));
+                sqlHelper.ExecuteScalar<int>(ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test(DatabaseName));
             ApplicationLockTestsHelper.AssertAppLockOperation(
                 operationType,
                 shouldSucceed,
@@ -274,13 +275,13 @@ namespace DOI.Tests.Integration.TablePartitioning
                 messageExpected,
                 messageActual,
                 spId,
-                "PaymentReporting");
+                DatabaseName);
         }
         private void CheckForGrantableLock()
         {
             //Lock should be grant-able
             var isAppLockGrantableInAppLockTest =
-                sqlHelper.ExecuteScalar<int>(connection, ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test("PaymentReporting"));
+                sqlHelper.ExecuteScalar<int>(connection, ApplicationLockTestsHelper.IsAppLockGrantableInAppLock_Test(DatabaseName));
             Assert.AreEqual(1, isAppLockGrantableInAppLockTest);
         }
     }

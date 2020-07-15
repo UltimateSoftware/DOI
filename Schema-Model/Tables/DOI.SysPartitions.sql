@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[SysPartitions]
 (
 [database_id] [int] NOT NULL,

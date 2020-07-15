@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spQueue_ConstraintsNotInMetadata]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spQueue_ConstraintsNotInMetadata];
 

@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF TYPE_ID('[DOI].[FilteredRowCountsTT]') IS NOT NULL
 	DROP TYPE [DOI].[FilteredRowCountsTT];
 

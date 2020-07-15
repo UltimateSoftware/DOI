@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[SysPartitionRangeValues]
 (
 [database_id] [sys].[sysname] NOT NULL,

@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spForeignKeysAdd]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spForeignKeysAdd];
 
@@ -68,8 +71,9 @@ BEGIN TRY
 	ORDER BY ReferencedTableName
 
     SELECT @AddFKsSQL += '
-    EXEC dbo.spEnableDisableAllFKs 
-	   @Action = ''DISABLE'''
+    EXEC DOI.Utility.spEnableDisableAllFKs 
+		@DatabaseName = ''' + @DatabaseName + ''',
+		@Action = ''DISABLE'''
 
     IF @Debug = 1
     BEGIN

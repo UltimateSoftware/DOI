@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[MappingSqlServerDMVToDOITables]
 (
 [DOITableName] [sys].[sysname] NOT NULL,

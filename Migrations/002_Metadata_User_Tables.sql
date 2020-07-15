@@ -1,5 +1,4 @@
 ﻿-- <Migration ID="18878c81-4559-467b-9b75-11e9da703880" TransactionHandling="Custom" />
-GO
 IF OBJECT_ID('[DOI].[Databases]') IS NULL
 CREATE TABLE [DOI].[Databases]
 (

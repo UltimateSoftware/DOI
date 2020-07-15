@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRun_RenameDefaultConstraints]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRun_RenameDefaultConstraints];
 

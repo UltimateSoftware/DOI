@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[SysPartitionSchemes]
 (
 [database_id] [sys].[sysname] NOT NULL,

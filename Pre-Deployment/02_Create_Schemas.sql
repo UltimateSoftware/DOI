@@ -1,10 +1,16 @@
-﻿PRINT N'Creating schemas'
+﻿USE [$(DatabaseName2)]
 GO
-IF SCHEMA_ID(N'DOI') IS NULL
-EXEC sp_executesql N'CREATE SCHEMA [DOI]
-AUTHORIZATION [dbo]'
+
+PRINT N'Creating schemas'
 GO
-IF SCHEMA_ID(N'Utility') IS NULL
-EXEC sp_executesql N'CREATE SCHEMA [Utility]
-AUTHORIZATION [dbo]'
+IF NOT EXISTS (SELECT 'True' FROM [$(DatabaseName2)].sys.schemas WHERE name = 'DOI')
+BEGIN
+	EXEC('CREATE SCHEMA [DOI] AUTHORIZATION [dbo]')
+END
+GO
+
+IF NOT EXISTS (SELECT 'True' FROM [$(DatabaseName2)].sys.schemas WHERE name = 'DOI')
+BEGIN
+	EXEC('CREATE SCHEMA [Utility] AUTHORIZATION [dbo]')
+END
 GO

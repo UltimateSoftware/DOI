@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[fnFixStatsSampleSize]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnFixStatsSampleSize];
 

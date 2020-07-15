@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spForeignKeysDrop]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spForeignKeysDrop];
 

@@ -1,4 +1,7 @@
 -- <Migration ID="de9ce8ee-16d3-5400-b81e-621715bcca54" TransactionHandling="Custom" />
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_Constraints_InsertData]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_User_Constraints_InsertData];
 

@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[sp_ExecuteSQLByBatch]') IS NOT NULL
 	DROP PROCEDURE [DOI].[sp_ExecuteSQLByBatch];
 

@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spEnableDisableAllFKs]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spEnableDisableAllFKs];
 

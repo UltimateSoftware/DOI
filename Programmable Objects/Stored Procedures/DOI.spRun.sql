@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRun]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRun];
 
@@ -180,7 +183,7 @@ BEGIN TRY
         OR ((SELECT is_enabled FROM sys.resource_governor_configuration) = 0)
 	BEGIN
 		SET @ExitTableLoopOnError = 1
-		RAISERROR('Resource Governor is not turned on.  Aborting.', 16, 1)	
+		RAISERROR('Online job is trying to run with Resource Governor off.  Aborting.  Need to turn on Resource Governor.', 16, 1)	
 	END
 
 	WHILE @@FETCH_STATUS <> -1

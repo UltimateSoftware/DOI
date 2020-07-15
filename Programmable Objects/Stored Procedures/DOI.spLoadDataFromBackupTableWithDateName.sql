@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spLoadDataFromBackupTableWithDateName]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spLoadDataFromBackupTableWithDateName];
 

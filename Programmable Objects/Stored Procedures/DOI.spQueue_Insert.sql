@@ -1,4 +1,7 @@
 -- <Migration ID="0c57c425-db95-51a3-88a0-fe5bb26e4d58" TransactionHandling="Custom" />
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spQueue_Insert]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spQueue_Insert];
 

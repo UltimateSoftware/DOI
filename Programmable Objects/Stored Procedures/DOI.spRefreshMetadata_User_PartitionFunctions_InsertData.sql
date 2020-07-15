@@ -1,4 +1,7 @@
 -- <Migration ID="ea410dfe-2053-50dc-ac7d-aa067dfd4f0d" TransactionHandling="Custom" />
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_PartitionFunctions_InsertData]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_User_PartitionFunctions_InsertData];
 

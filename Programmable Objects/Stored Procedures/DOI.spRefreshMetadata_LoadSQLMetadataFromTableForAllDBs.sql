@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs];
 

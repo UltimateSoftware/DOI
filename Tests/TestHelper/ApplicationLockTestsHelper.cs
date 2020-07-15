@@ -4,6 +4,8 @@ namespace DOI.TestHelpers
 {
     public class ApplicationLockTestsHelper
     {
+        protected const string DatabaseName = "DOIUnitTests";
+
         public static string GetApplicationLockSql(string databaseName)
         {
             return $@"
@@ -174,7 +176,7 @@ namespace DOI.TestHelpers
             string whichMessageToUse = shouldSucceed ? "Info" : "Error";
             string whichColumnToSelect = shouldSucceed ? "InfoMessage" : "ErrorText";
 
-            var isAppLockGrantedInSysDmTranLocks_Actual = new SqlHelper().ExecuteScalar<int>(IsAppLockGrantedInSysDmTranLocks("PaymentReporting"));
+            var isAppLockGrantedInSysDmTranLocks_Actual = new SqlHelper().ExecuteScalar<int>(IsAppLockGrantedInSysDmTranLocks(DatabaseName));
 
             //Assert if lock is grant-able in APPLOCK_TEST
             Assert.AreEqual(isAppLockGrantableInAppLock_Test_Expected, isAppLockGrantableInAppLock_Test_Actual);

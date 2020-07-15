@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[SysDataSpaces]
 (
 [database_id] [int] NOT NULL,

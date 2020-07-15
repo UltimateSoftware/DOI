@@ -11,7 +11,7 @@ namespace DOI.TestHelpers
 {
     public class DataDrivenIndexTestHelper
     {
-        protected const string DatabaseName = "PaymentReporting";
+        protected const string DatabaseName = "DOIUnitTests";
         private TestHelper sqlHelper;
         private TempARepository tempARepository;
 
@@ -201,11 +201,11 @@ namespace DOI.TestHelpers
 
                 if (i == 1)
                 {
-                    filegroupName = "PaymentReporting_Historical";
+                    filegroupName = $"{DatabaseName}_Historical";
                 }
                 else
                 {
-                    filegroupName = "PaymentReporting_" + boundaryDate.Year.ToString() + boundaryDate.Month.ToString("#00");
+                    filegroupName = $"{DatabaseName}_" + boundaryDate.Year.ToString() + boundaryDate.Month.ToString("#00");
                 }
 
                 expectedMonthlyPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()

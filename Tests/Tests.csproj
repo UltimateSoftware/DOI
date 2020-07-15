@@ -471,18 +471,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="IntegrationTests\TablePartitioningTests\utebcp.exe" />
+    <EmbeddedResource Include="Resources\Create Test Database.sql" />
     <EmbeddedResource Include="Resources\IndexesViewTests_Setup.sql" />
     <EmbeddedResource Include="Resources\IndexesViewTests_TearDown.sql" />
     <EmbeddedResource Include="Resources\FragmentationTests_Setup.sql" />
     <Content Include="PsService.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="TestHelpers\TestHelpers.csproj">
-      <Project>{f26cb940-a2ad-4e36-a94d-7f83364fdbe7}</Project>
-      <Name>TestHelpers</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

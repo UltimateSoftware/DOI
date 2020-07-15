@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF TYPE_ID('[DOI].[SysPartitionRangeValuesTT]') IS NOT NULL
 	DROP TYPE [DOI].[SysPartitionRangeValuesTT];
 

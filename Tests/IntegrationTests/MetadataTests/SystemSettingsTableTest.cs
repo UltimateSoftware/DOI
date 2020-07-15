@@ -46,8 +46,8 @@ namespace DOI.Tests.Integration.Metadata
                 actualSettingList.Add(new Pair<string, string>(Convert.ToString(reader["SettingName"]), Convert.ToString(reader["SettingValue"])));
             }
 
-            Assert.IsNotEmpty(actualSettingList, "The PaymentReporting.DOI.DOISettings table must have settings.");
-            Assert.True(actualSettingList.Count == this.expectedSettingList.Count, $"The PaymentReporting.DOI.DOISettings table must have {this.expectedSettingList.Count} settings.");
+            Assert.IsNotEmpty(actualSettingList, "The DOI.DOISettings table must have settings.");
+            Assert.True(actualSettingList.Count == this.expectedSettingList.Count, $"The DOI.DOISettings table must have {this.expectedSettingList.Count} settings.");
 
             foreach (Pair<string, string> expectedSetting in this.expectedSettingList)
             {

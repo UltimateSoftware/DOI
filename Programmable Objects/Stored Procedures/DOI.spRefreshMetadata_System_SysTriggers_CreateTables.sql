@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRefreshMetadata_System_SysTriggers_CreateTables]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_System_SysTriggers_CreateTables];
 

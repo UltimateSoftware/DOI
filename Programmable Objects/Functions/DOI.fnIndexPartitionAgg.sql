@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[fnIndexPartitionAgg]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnIndexPartitionAgg];
 

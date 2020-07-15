@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE SCHEMA [DOI]
 AUTHORIZATION [dbo]
 GO

@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[fnEstimateIndexSize_InclVarColSize]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnEstimateIndexSize_InclVarColSize];
 

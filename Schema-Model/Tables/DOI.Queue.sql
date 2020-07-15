@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[Queue]
 (
 [DatabaseName] [nvarchar] (128) NOT NULL,

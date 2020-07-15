@@ -12,7 +12,7 @@ namespace DOI.TestHelpers
 {
     public class DataDrivenIndexTestHelper
     {
-        protected const string DatabaseName = "PaymentReporting";
+        protected const string DatabaseName = "DOIUnitTests";
         private TestHelper sqlHelper;
         private TempARepository tempARepository;
 
@@ -38,21 +38,25 @@ namespace DOI.TestHelpers
             return this.sqlHelper.GetList<IndexView>($"select * FROM DOI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND TableName = '{tableName}'");
         }
 
-        public void ExecuteSPQueue(bool onlineOperations, bool isBeingRunDuringADeployment = false)
+        public void ExecuteSPQueue(bool onlineOperations, bool isBeingRunDuringADeployment = false, string databaseName = null, string schemaName = null, string tableName = null)
         {
             var sql = $"DECLARE @BatchId UNIQUEIDENTIFIER " +
                       $"EXEC [DOI].[spQueue]  " +
                         $"@OnlineOperations = {(onlineOperations ? "1" : "0")}" +
                         $",@IsBeingRunDuringADeployment = {(isBeingRunDuringADeployment ? "1" : "0")}" +
                         $",@BatchIdOUT = @BatchId";
+            sql += databaseName != null ? $",@DatabaseName = '{databaseName}' " : string.Empty;
+            sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
+            sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
 
             this.sqlHelper.Execute(sql, 120);
         }
 
-        public void ExecuteSPRun(bool onlineOperations, string schemaName = null, string tableName = null)
+        public void ExecuteSPRun(bool onlineOperations, string databaseName = null, string schemaName = null, string tableName = null)
         {
             var sql = $"EXEC [DOI].[spRun]  " +
                       $"@OnlineOperations = {(onlineOperations ? "1" : "0")}";
+            sql += databaseName != null ? $",@DatabaseName = '{databaseName}' " : string.Empty;
             sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
             sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
 
@@ -202,11 +206,11 @@ namespace DOI.TestHelpers
 
                 if (i == 1)
                 {
-                    filegroupName = "PaymentReporting_Historical";
+                    filegroupName = $"{DatabaseName}_Historical";
                 }
                 else
                 {
-                    filegroupName = "PaymentReporting_" + boundaryDate.Year.ToString() + boundaryDate.Month.ToString("#00");
+                    filegroupName = $"{DatabaseName}_" + boundaryDate.Year.ToString() + boundaryDate.Month.ToString("#00");
                 }
 
                 expectedMonthlyPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()

@@ -1,4 +1,7 @@
 -- <Migration ID="0110741a-4233-558c-95cb-a48ab650cbbe" TransactionHandling="Custom" />
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[fnEstimateIndexSize_AllColSize]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnEstimateIndexSize_AllColSize];
 

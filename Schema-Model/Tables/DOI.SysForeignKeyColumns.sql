@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[SysForeignKeyColumns]
 (
 [database_id] [int] NOT NULL,

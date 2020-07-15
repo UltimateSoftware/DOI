@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRefreshStorageContainers_FilegroupsAndFiles]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshStorageContainers_FilegroupsAndFiles];
 

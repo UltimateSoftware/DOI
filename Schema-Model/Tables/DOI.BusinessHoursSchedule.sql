@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[BusinessHoursSchedule]
 (
 [DatabaseName] [sys].[sysname] NOT NULL,

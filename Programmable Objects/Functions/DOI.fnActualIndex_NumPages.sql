@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[fnActualIndex_NumPages]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnActualIndex_NumPages];
 

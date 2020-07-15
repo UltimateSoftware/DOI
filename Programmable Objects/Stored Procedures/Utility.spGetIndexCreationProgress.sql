@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[Utility].[spGetIndexCreationProgress]') IS NOT NULL
 	DROP PROCEDURE [Utility].[spGetIndexCreationProgress];
 

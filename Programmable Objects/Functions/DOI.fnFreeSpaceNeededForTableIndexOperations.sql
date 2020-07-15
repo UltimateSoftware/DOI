@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[fnFreeSpaceNeededForTableIndexOperations]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnFreeSpaceNeededForTableIndexOperations];
 

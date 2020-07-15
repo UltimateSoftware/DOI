@@ -1,4 +1,6 @@
 -- <Migration ID="80b9d690-808a-5c9a-b27c-cc2c0ea09e87" TransactionHandling="Custom" />
+USE [$(DatabaseName2)]
+GO
 
 IF OBJECT_ID('DOI.trIndexesRowStore_IndexValidations') IS NOT NULL
 DROP TRIGGER DOI.trIndexesRowStore_IndexValidations

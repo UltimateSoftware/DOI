@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[vwStatistics]') IS NOT NULL
 	DROP VIEW [DOI].[vwStatistics];
 

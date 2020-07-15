@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spQueue_BCPTables]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spQueue_BCPTables];
 

@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[SysIndexPhysicalStats]
 (
 [database_id] [smallint] NOT NULL,

@@ -1,4 +1,7 @@
-﻿DELETE DOI.MappingSqlServerDMVToDOITables 
+﻿USE [$(DatabaseName2)]
+GO
+
+DELETE DOI.MappingSqlServerDMVToDOITables 
 GO
 
 INSERT INTO DOI.MappingSqlServerDMVToDOITables 

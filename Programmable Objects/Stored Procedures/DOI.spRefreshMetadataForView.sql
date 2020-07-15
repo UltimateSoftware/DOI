@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRefreshMetadataForView]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadataForView];
 

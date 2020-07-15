@@ -6,7 +6,6 @@ using DOI.TestHelpers;
 using DOI.Tests.Integration.Models;
 using FluentAssertions;
 using NUnit.Framework;
-using SmartHub.Hosting;
 using SmartHub.Hosting.Extensions;
 
 /*
@@ -33,7 +32,7 @@ namespace DOI.Tests.Integration
         private const string PartitionFunctionNameMonthly = "PfMonthlyUnitTest";
         private const string PartitionSchemeNameMonthly = "psMonthlyUnitTest";
         private const string TableTestFuturePartitionFailsDueToLocking = "TestFuturePartitionFailsDueToLocking";
-        private const string DatabaseName = "PaymentReporting";
+        private const string DatabaseName = "DOIUnitTests";
 
         private DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
         private List<PartitionFunctionBoundary> expectedPartitionFunctionBoundaries;
@@ -115,7 +114,7 @@ namespace DOI.Tests.Integration
                 DestinationFilegroupId = 1,
                 PartitionSchemeName = PartitionSchemeName,
                 DataSpaceType = "FG",
-                FilegroupName = "PaymentReporting_Historical"
+                FilegroupName = $"{DatabaseName}_Historical"
             });
 
             do
@@ -136,7 +135,7 @@ namespace DOI.Tests.Integration
                     DestinationFilegroupId = boundaryId + 1,
                     PartitionSchemeName = PartitionSchemeName,
                     DataSpaceType = "FG",
-                    FilegroupName = $"PaymentReporting_{boundaryYear}"
+                    FilegroupName = $"{DatabaseName}_{boundaryYear}"
                 });
 
                 boundaryId++;
@@ -172,14 +171,14 @@ namespace DOI.Tests.Integration
                         DestinationFilegroupId = 5,
                         PartitionSchemeName = PartitionSchemeName,
                         DataSpaceType = "FG",
-                        FilegroupName = $"PaymentReporting_{DateTime.Now.Year}"
+                        FilegroupName = $"{DatabaseName}_{DateTime.Now.Year}"
                     });
                     this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
                     {
                         DestinationFilegroupId = 6,
                         PartitionSchemeName = PartitionSchemeName,
                         DataSpaceType = "FG",
-                        FilegroupName = "PaymentReporting_Active"
+                        FilegroupName = $"{DatabaseName}_Active"
                     });
                     break;
                 default:
@@ -198,7 +197,7 @@ namespace DOI.Tests.Integration
                         DestinationFilegroupId = 5,
                         PartitionSchemeName = PartitionSchemeName,
                         DataSpaceType = "FG",
-                        FilegroupName = "PaymentReporting_Active"
+                        FilegroupName = $"{DatabaseName}_Active"
                     });
                     break;
             }
@@ -265,7 +264,7 @@ namespace DOI.Tests.Integration
                     DestinationFilegroupId = boundaryId + 1,
                     PartitionSchemeName = PartitionSchemeNameNoSlidingWindow,
                     DataSpaceType = "FG",
-                    FilegroupName = $"PaymentReporting_{boundaryYear}"
+                    FilegroupName = $"{DatabaseName}_{boundaryYear}"
                 });
 
                 boundaryId++;
@@ -357,12 +356,12 @@ namespace DOI.Tests.Integration
             });
 
             var maxFilegroupId = this.expectedPartitionSchemeFilegroups.Max(x => x.DestinationFilegroupId);
-            var maxFilegroupName = this.expectedPartitionSchemeFilegroups.FindAll(x => x.FilegroupName != "PaymentReporting_Historical").Max(x => x.FilegroupName);
+            var maxFilegroupName = this.expectedPartitionSchemeFilegroups.FindAll(x => x.FilegroupName != $"{DatabaseName}_Historical").Max(x => x.FilegroupName);
 
             var maxFilegroupDate = $"{maxFilegroupName.Right(2)}/01/{maxFilegroupName.Right(6).Left(4)}".ObjectToDateTime();
             maxFilegroupId++;
             maxFilegroupDate = maxFilegroupDate.AddMonths(1);
-            maxFilegroupName = "PaymentReporting_" + maxFilegroupDate.Year + maxFilegroupDate.Month.ToString("#00");
+            maxFilegroupName = $"{DatabaseName}_" + maxFilegroupDate.Year + maxFilegroupDate.Month.ToString("#00");
 
             this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
             {
@@ -459,7 +458,7 @@ namespace DOI.Tests.Integration
 
             if (nextUsedFilegroupAlreadyExists)
             {
-                this.sqlHelper.Execute($@"ALTER PARTITION SCHEME {PartitionSchemeNameNoSlidingWindow} NEXT USED [PaymentReporting_2021]");
+                this.sqlHelper.Execute($@"ALTER PARTITION SCHEME {PartitionSchemeNameNoSlidingWindow} NEXT USED [{DatabaseName}_2021]");
             }
 
             // Assert
@@ -524,7 +523,7 @@ namespace DOI.Tests.Integration
                 DestinationFilegroupId = 1,
                 PartitionSchemeName = PartitionSchemeNameNoSlidingWindow,
                 DataSpaceType = "FG",
-                FilegroupName = "PaymentReporting_Historical"
+                FilegroupName = $"{DatabaseName}_Historical"
             });
 
             do
@@ -543,7 +542,7 @@ namespace DOI.Tests.Integration
                     DestinationFilegroupId = boundaryId + 1,
                     PartitionSchemeName = PartitionSchemeNameNoSlidingWindow,
                     DataSpaceType = "FG",
-                    FilegroupName = $"PaymentReporting_{boundaryYear}"
+                    FilegroupName = $"{DatabaseName}_{boundaryYear}"
                 });
 
                 boundaryId++;

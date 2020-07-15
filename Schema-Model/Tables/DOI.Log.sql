@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[Log]
 (
 [LogID] [int] NOT NULL IDENTITY(1, 1),

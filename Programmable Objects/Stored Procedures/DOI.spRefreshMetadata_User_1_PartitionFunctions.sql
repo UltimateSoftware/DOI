@@ -1,3 +1,7 @@
+--:setvar DatabaseName "DOI"
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_1_PartitionFunctions]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_User_1_PartitionFunctions];
 

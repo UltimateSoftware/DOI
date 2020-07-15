@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[Utility].[spRowCountsAllTables]') IS NOT NULL
 	DROP PROCEDURE [Utility].[spRowCountsAllTables];
 

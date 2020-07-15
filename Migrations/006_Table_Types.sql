@@ -1,6 +1,4 @@
 ﻿-- <Migration ID="098d132d-e1a3-4798-92cb-4bddd4abef30" TransactionHandling="Custom" />
-GO
-
 PRINT N'Creating types'
 GO
 IF TYPE_ID(N'[DOI].[LogTT]') IS NULL

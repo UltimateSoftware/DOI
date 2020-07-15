@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spQueue]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spQueue];
 
@@ -9,6 +12,9 @@ GO
 CREATE   PROCEDURE [DOI].[spQueue]
 	@OnlineOperations BIT,
 	@IsBeingRunDuringADeployment BIT,
+    @DatabaseName SYSNAME = NULL,
+    @SchemaName SYSNAME = NULL,
+    @TableName SYSNAME = NULL,
 	@BatchIdOUT UNIQUEIDENTIFIER OUTPUT 
 
 AS
@@ -102,7 +108,7 @@ BEGIN TRY
 				AND X.SchemaName = T.SchemaName
 				AND X.TableName = T.TableName
 	WHERE T.ReadyToQueue = 1
-
+ 
 	WHILE @@FETCH_STATUS <> -1
 	BEGIN
 		IF @@FETCH_STATUS <> -2
@@ -126,7 +132,10 @@ BEGIN TRY
 				        OR FN.AreIndexesFragmented = 1
 				        OR FN.IsStorageChanging = 1
                         OR FN.AreStatisticsChanging = 1) --any indexes to add or update?
-			        AND ReadyToQueue = 1
+                    AND FN.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN FN.DatabaseName ELSE @DatabaseName END
+                    AND FN.SchemaName = CASE WHEN @SchemaName IS NULL THEN FN.SchemaName ELSE @SchemaName END
+                    AND FN.TableName = CASE WHEN @TableName IS NULL THEN FN.TableName ELSE @TableName END
+                    AND ReadyToQueue = 1
 			        AND NOT EXISTS (SELECT 'True' 
 							        FROM #TablesWithPendingConstraintsTable TV 
 							        WHERE TV.SchemaName = FN.SchemaName 

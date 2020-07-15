@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 IF OBJECT_ID('[DOI].[spRun_RefreshPartitionState]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRun_RefreshPartitionState];
 

@@ -1,3 +1,6 @@
+USE [$(DatabaseName2)]
+GO
+
 CREATE TABLE [DOI].[IndexColumns]
 (
 [DatabaseName] [sys].[sysname] NOT NULL,
