@@ -1,3 +1,6 @@
+-- <Migration ID="0e69c351-99ec-4d1a-b7c3-6d99d89e015b" TransactionHandling="Custom" />
+USE MASTER
+
 EXEC sp_configure 'contained database authentication', 1
 RECONFIGURE WITH OVERRIDE
 GO
@@ -7,7 +10,7 @@ IF (DB_ID(N'$(DatabaseName)') IS NULL)
 BEGIN
 	PRINT N'Creating $(DatabaseName)...';
 END
-GO
+GO	
 
 IF (DB_ID(N'$(DatabaseName)') IS NULL)
 BEGIN
@@ -60,7 +63,7 @@ ALTER DATABASE [$(DatabaseName)] SET NESTED_TRIGGERS = ON
 GO
 
 
-USE [$(DatabaseName2)]
+
 GO
 ALTER DATABASE SCOPED CONFIGURATION SET MAXDOP = 0;
 ALTER DATABASE SCOPED CONFIGURATION FOR SECONDARY SET MAXDOP = PRIMARY;

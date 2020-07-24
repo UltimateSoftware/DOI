@@ -10,7 +10,7 @@ namespace DOI.Tests.Integration.Maintenance
     [Category("ReportingIntegration")]
     [Category("ExcludePreflight")]
     [Category("DataDrivenIndex")]
-    public class HighFragmentationTests : SqlIndexJobBaseTest
+    public class HighFragmentationTests : DOIBaseTest
     {
         // protected TestHelper.SqlHelper sqlHelper;
         protected const int MinimumFragmentation = 31;

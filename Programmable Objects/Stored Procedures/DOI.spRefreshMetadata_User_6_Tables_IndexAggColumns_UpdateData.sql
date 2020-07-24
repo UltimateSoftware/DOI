@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_6_Tables_IndexAggColumns_UpdateData]') IS NOT NULL

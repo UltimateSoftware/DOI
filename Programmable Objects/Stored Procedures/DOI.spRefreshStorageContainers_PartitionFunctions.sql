@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshStorageContainers_PartitionFunctions]') IS NOT NULL
@@ -34,7 +34,8 @@ BEGIN TRY
 	END
 
 
-	DECLARE @CreatePartitionFunctionSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
+	DECLARE @CreatePartitionFunctionSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10),
+			@DropPartitionFunctionSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
 
 
 	SET @CreatePartitionFunctionSQL += (SELECT CreatePartitionFunctionSQL + CHAR(13) + CHAR(10)
@@ -42,13 +43,21 @@ BEGIN TRY
 	                                    WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END 
                                         FOR XML PATH, TYPE).value('.', 'varchar(max)')
 
+	SET @DropPartitionFunctionSQL += (	SELECT CreatePartitionFunctionSQL + CHAR(13) + CHAR(10)
+	                                    FROM DOI.vwPartitionFunctions
+	                                    WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END 
+                                        FOR XML PATH, TYPE).value('.', 'varchar(max)')
+
+
 	IF @Debug = 1
 	BEGIN
 		PRINT @CreatePartitionFunctionSQL
+		PRINT @DropPartitionFunctionSQL
 	END
 	ELSE
 	BEGIN
 		EXEC sp_executesql @CreatePartitionFunctionSQL;  
+		EXEC sp_executesql @DropPartitionFunctionSQL;  
 	END
 END TRY
 BEGIN CATCH

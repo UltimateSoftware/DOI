@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_IndexesRowStore_CreateTables]') IS NOT NULL
@@ -225,8 +225,8 @@ AS
         NumIndexPages_Estimated                                                     INT NOT NULL
             CONSTRAINT Def_IndexesRowStore_NumIndexPages_Estimated
                 DEFAULT (0),
-        IndexSizeMB_Estimated                                                       DECIMAL(10,2) NOT NULL
-            CONSTRAINT Def_IndexesRowStore_IndexSizeMB_Estimated
+        IndexSizeMB_Actual_Estimated                                                       DECIMAL(10,2) NOT NULL
+            CONSTRAINT Def_IndexesRowStore_IndexSizeMB_Actual_Estimated
                 DEFAULT (0),
         IndexSizeMB_Actual                                                          DECIMAL(10,2) NOT NULL
             CONSTRAINT Def_IndexesRowStore_IndexSizeMB_Actual

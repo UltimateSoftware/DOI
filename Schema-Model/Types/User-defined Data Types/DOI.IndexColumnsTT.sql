@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF TYPE_ID('[DOI].[IndexColumnsTT]') IS NOT NULL

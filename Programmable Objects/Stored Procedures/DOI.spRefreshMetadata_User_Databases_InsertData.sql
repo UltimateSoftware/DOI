@@ -1,5 +1,5 @@
 -- <Migration ID="6a92f07d-eb33-548c-9be6-fb834ef39594" TransactionHandling="Custom" />
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_Databases_InsertData]') IS NOT NULL

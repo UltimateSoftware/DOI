@@ -28,13 +28,13 @@ namespace DOI.Tests.Integration
        [SetUp]
         public void Setup()
         {
-            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_3_DOISettings");
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace DOI.Tests.Integration
                 new SqlCommand(
                     @"   Select 
                                 DayOfWeekId, DayOfWeekName, StartUtcMilitaryTime, IsBusinessHours
-                                From DOI.BusinessHoursSchedule "));
+                                From DOI.DOI.BusinessHoursSchedule "));
             var result = new List<BusinessHoursScheduleResult>();
             foreach (var row in rows)
             {

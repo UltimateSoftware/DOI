@@ -10,7 +10,7 @@ namespace DOI.Tests.Integration
     [Category("ReportingIntegration")]
     [Category("ExcludePreflight")]
     [Category("DataDrivenIndex")]
-    public class IndexesViewTests : SqlIndexJobBaseTest
+    public class IndexesViewTests : DOIBaseTest
     {
         private List<IndexView> expectedIndexViews;
         private List<ForeignKey> expectedForeignKeys;

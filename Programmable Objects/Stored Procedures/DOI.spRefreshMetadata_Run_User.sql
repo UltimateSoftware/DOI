@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_Run_User]') IS NOT NULL
@@ -27,6 +27,7 @@ FROM SYS.procedures P
 WHERE p.NAME LIKE 'spRefreshMetadata_User%'
     AND ISNUMERIC(SUBSTRING(p.NAME, 24, 1)) = 1
 	AND p.name NOT LIKE '%CreateTables'
+    AND p.name NOT LIKE '%DOISettings%'
 ORDER BY p.name
 
 IF @Debug = 1

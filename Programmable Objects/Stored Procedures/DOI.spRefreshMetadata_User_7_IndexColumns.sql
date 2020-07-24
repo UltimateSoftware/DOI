@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_7_IndexColumns]') IS NOT NULL
@@ -14,6 +14,6 @@ CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_7_IndexColumns]
 AS
 
 	--EXEC DOI.spRefreshMetadata_User_IndexColumns_CreateTables
-	EXEC DOI.spRefreshMetadata_User_IndexColumns_InsertData
+	--EXEC DOI.spRefreshMetadata_User_IndexColumns_InsertData
 
 GO

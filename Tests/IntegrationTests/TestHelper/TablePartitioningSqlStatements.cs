@@ -8,14 +8,14 @@ namespace DOI.TestHelpers
         protected const string DatabaseName = "DOIUnitTests";
 
         public static string PartitionFunctionCreation = @"
-INSERT INTO DOI.PartitionFunctions ( 
+INSERT INTO DOI.DOI.PartitionFunctions ( 
 				PartitionFunctionName			,PartitionFunctionDataType	,BoundaryInterval	,NumOfFutureIntervals	, InitialDate	, UsesSlidingWindow	, SlidingWindowSize	, IsDeprecated)
 VALUES		(	'pfMonthlyTest'					, 'DATETIME2'				, 'Monthly'			, 1					    , '2019-08-01'	, 0					, NULL				, 0);
 
-EXEC DOI.spRefreshStorageContainers_PartitionFunctions
+EXEC DOI.DOI.spRefreshStorageContainers_PartitionFunctions
 	@PartitionFunctionName = 'pfMonthlyTest';
 
-EXEC DOI.spRefreshStorageContainers_PartitionSchemes
+EXEC DOI.DOI.spRefreshStorageContainers_PartitionSchemes
     @PartitionFunctionName = 'pfMonthlyTest';
 ";
 
@@ -100,7 +100,7 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
                                             END;";
 
         public static string RowStoreIndexes = @"            
-    INSERT INTO DOI.IndexesRowStore (DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
+    INSERT INTO DOI.DOI.IndexesRowStore (DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
                       
     Select 
         SchemaName					 = N'dbo'
@@ -184,7 +184,7 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
                     ";
 
         public static string ColumnStoreIndexes = $@"
-            INSERT INTO DOI.IndexesColumnStore ( SchemaName ,TableName ,IndexName ,IsClustered_Desired,ColumnList_Desired,IsFiltered_Desired,FilterPredicate_Desired,OptionDataCompression_Desired,OptionDataCompressionDelay_Desired_Desired,NewStorage_Desired,PartitionColumn_Desired )
+            INSERT INTO DOI.DOI.IndexesColumnStore ( SchemaName ,TableName ,IndexName ,IsClustered_Desired,ColumnList_Desired,IsFiltered_Desired,FilterPredicate_Desired,OptionDataCompression_Desired,OptionDataCompressionDelay_Desired_Desired,NewStorage_Desired,PartitionColumn_Desired )
                     SELECT 
                       [DatabaseName]            = N'{DatabaseName}'
                     , [SchemaName]              = N'dbo'
@@ -205,12 +205,12 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
         public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'Refresh Index Structures - Online'";
 
         public static string DropTableAndDeleteMetadata = $@"
-                        DELETE FROM  [DOI].[Statistics]         WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[CheckConstraints]   WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[DefaultConstraints] WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[IndexesColumnStore] WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[IndexesRowStore]    WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[Tables]		        WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  DOI.DOI.[Statistics]         WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  DOI.DOI.[CheckConstraints]   WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  DOI.DOI.[DefaultConstraints] WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  DOI.DOI.[IndexesColumnStore] WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  DOI.DOI.[IndexesRowStore]    WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  DOI.DOI.[Tables]		        WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
 
                         DECLARE @sql VARCHAR(MAX) = SPACE(0)
                         SELECT @sql += 'DROP TABLE IF EXISTS ' + s.name + '.' + t.name + CHAR(13) + CHAR(10)
@@ -220,12 +220,12 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
 
                         EXEC(@sql)
 
-                        TRUNCATE TABLE DOI.Log;
-                        TRUNCATE TABLE DOI.Queue
-                        DELETE PT FROM DOI.Run_PartitionState pt WHERE DatabaseName = '{DatabaseName}' AND pt.ParentTableName = 'PartitioningTestAutomationTable';
-                        EXEC DOI.spRefreshMetadata_Tables;
-                        EXEC DOI.spRefreshMetadata_PartitionFunctions;
-                        DELETE DOI.PartitionFunctions WHERE PartitionFunctionName = 'pfMonthlyTest';
+                        TRUNCATE TABLE DOI.DOI.Log;
+                        TRUNCATE TABLE DOI.DOI.Queue
+                        DELETE PT FROM DOI.DOI.Run_PartitionState pt WHERE DatabaseName = '{DatabaseName}' AND pt.ParentTableName = 'PartitioningTestAutomationTable';
+                        EXEC DOI.DOI.spRefreshMetadata_Tables;
+                        EXEC DOI.DOI.spRefreshMetadata_PartitionFunctions;
+                        DELETE DOI.DOI.PartitionFunctions WHERE PartitionFunctionName = 'pfMonthlyTest';
                         IF EXISTS(SELECT 'True' FROM sys.partition_schemes WHERE name = 'psMonthlyTest')
                         BEGIN
                             DROP PARTITION SCHEME psMonthlyTest
@@ -237,7 +237,7 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
 
 
         public static string TableToMetadata = $@"
-                                INSERT INTO DOI.Tables
+                                INSERT INTO DOI.DOI.Tables
                                 (DatabaseName,
                                  SchemaName,
                                  TableName,
@@ -257,17 +257,17 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
                                 );  ";
 
         public static string StatisticsToMetadata = $@"
-                                INSERT INTO DOI.[Statistics] ( DatabaseName, SchemaName, TableName, StatisticsName, StatisticsColumnList_Desired, SampleSizePct_Desired, IsFiltered_Desired, FilterPredicate_Desired, IsIncremental_Desired, NoRecompute_Desired, LowerSampleSizeToDesired, ReadyToQueue)
+                                INSERT INTO DOI.DOI.[Statistics] ( DatabaseName, SchemaName, TableName, StatisticsName, StatisticsColumnList_Desired, SampleSizePct_Desired, IsFiltered_Desired, FilterPredicate_Desired, IsIncremental_Desired, NoRecompute_Desired, LowerSampleSizeToDesired, ReadyToQueue)
                                 VALUES   ( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_id', 'id', 20, 0, NULL, 1, 0, 0, 1)
                                         ,( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_myDateTime', 'myDateTime', 20, 0, NULL, 1, 0, 0, 1)
                                         ,( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_Comments', 'Comments', 20, 0, NULL, 1, 0, 0, 1)
                                         ,( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_updatedUtcDt', 'updatedUtcDt', 20, 0, NULL, 1, 0, 0, 1)";
 
         public static string ConstraintsToMetadata = $@"
-                                INSERT INTO DOI.CheckConstraints ( DatabaseName, SchemaName ,TableName ,ColumnName ,CheckDefinition ,IsDisabled ,CheckConstraintName )
+                                INSERT INTO DOI.DOI.CheckConstraints ( DatabaseName, SchemaName ,TableName ,ColumnName ,CheckDefinition ,IsDisabled ,CheckConstraintName )
                                 VALUES ( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(updatedUtcDt > ''0001-01-01'')', 0, N'Chk_PartitioningTestAutomationTable_updatedUtcDt')
 
-                                INSERT INTO DOI.DefaultConstraints ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition )
+                                INSERT INTO DOI.DOI.DefaultConstraints ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition )
                                 VALUES ( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(SYSDATETIME())')";
 
 
@@ -370,8 +370,8 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
                                                     ,@command = N' 
                                                            DECLARE @BatchId UNIQUEIDENTIFIER
                                                            
-	                                                       TRUNCATE TABLE DOI.Queue
-	                                                       EXEC DOI.spQueue 
+	                                                       TRUNCATE TABLE DOI.DOI.Queue
+	                                                       EXEC DOI.DOI.spQueue 
 			                                                    @OnlineOperations = 1,
 			                                                    @IsBeingRunDuringADeployment = 0,
                                                                 @BatchIdOUT = @BatchId OUTPUT'
@@ -385,8 +385,8 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
                                                     ,@command = N' 
 	                                                       DECLARE @BatchId UNIQUEIDENTIFIER
                                                            
-	                                                       TRUNCATE TABLE DOI.Queue
-	                                                       EXEC DOI.spQueue 
+	                                                       TRUNCATE TABLE DOI.DOI.Queue
+	                                                       EXEC DOI.DOI.spQueue 
 			                                                    @OnlineOperations = 1,
 			                                                    @IsBeingRunDuringADeployment = 0,
                                                                 @BatchIdOUT = @BatchId OUTPUT '
@@ -469,25 +469,25 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
                                                             WHERE t.name = 'PartitioningTestAutomationTable_OLD'
                                                                 AND s.name = 'dbo'";
 
-        public static string RecordsInTheQueue = @"Select * FROM  DOI.Queue WHERE IsOnlineOperation = 1";
+        public static string RecordsInTheQueue = @"Select * FROM  DOI.DOI.Queue WHERE IsOnlineOperation = 1";
 
-        public static string LogHasNoErrors = @"SELECT * FROM DOI.Log WHERE SchemaName = 'dbo' and TableName = 'PartitioningTestAutomationTable' and ErrorText IS NOT NULL";
+        public static string LogHasNoErrors = @"SELECT * FROM DOI.DOI.Log WHERE SchemaName = 'dbo' and TableName = 'PartitioningTestAutomationTable' and ErrorText IS NOT NULL";
 
         public static string PartitionStateMetadata = @"
-                                                    INSERT INTO DOI._PartitionState ( SchemaName ,ParentTableName , PrepTableName, PartitionFromValue ,PartitionToValue ,DataSynchState ,LastUpdateDateTime )
+                                                    INSERT INTO DOI.DOI._PartitionState ( SchemaName ,ParentTableName , PrepTableName, PartitionFromValue ,PartitionToValue ,DataSynchState ,LastUpdateDateTime )
                                                     SELECT SchemaName, ParentTableName, UnPartitionedPrepTableName, PartitionFunctionValue, NextPartitionFunctionValue, 0, GETDATE()
-                                                    FROM DOI.fnDataDrivenIndexes_GetPartitionSQL () FN
+                                                    FROM DOI.DOI.fnDataDrivenIndexes_GetPartitionSQL () FN
                                                     WHERE ParentTableName IN ('PartitioningTestAutomationTable')
 	                                                    AND NOT EXISTS (SELECT 'True' 
-					                                                    FROM DOI._PartitionState PS 
+					                                                    FROM DOI.DOI._PartitionState PS 
 					                                                    WHERE PS.SchemaName = FN.SchemaName
 						                                                    AND PS.ParentTableName = FN.ParentTableName
 						                                                    AND PS.PrepTableName = FN.UnPartitionedPrepTableName)
 
                                                     DELETE PS
-                                                    FROM DOI._PartitionState PS
+                                                    FROM DOI.DOI._PartitionState PS
                                                     WHERE NOT EXISTS(	SELECT 'True' 
-					                                                    FROM DOI._PartitionState PS2
+					                                                    FROM DOI.DOI._PartitionState PS2
 					                                                    WHERE PS.SchemaName = PS2.SchemaName
 						                                                    AND PS.ParentTableName = PS2.ParentTableName
 						                                                    AND PS.PrepTableName = PS2.PrepTableName)";
@@ -513,7 +513,7 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
         public static string CheckForEmptyPartitionStateMetadata(string schemaName, string tableName)
         {
             return $@"
-            SELECT 1 FROM DOI._PartitionState
+            SELECT 1 FROM DOI.DOI._PartitionState
             WHERE SchemaName = '{schemaName}'
             AND ParentTableName = '{tableName}'";   
         }

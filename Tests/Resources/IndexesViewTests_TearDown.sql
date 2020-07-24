@@ -8,7 +8,9 @@ DELETE DOI.IndexesRowStore				WHERE DatabaseName = 'DOIUnitTests' AND TableName	
 DELETE DOI.ForeignKeys					WHERE DatabaseName = 'DOIUnitTests' AND ReferencedTableName		IN ('TempA','TempB','AAA_SpaceError')
 DELETE DOI.Tables						WHERE DatabaseName = 'DOIUnitTests' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
 DELETE DOI.Log							WHERE DatabaseName = 'DOIUnitTests' AND TableName				IN ('TempA','TempB','AAA_SpaceError')
-DELETE DOI.Databases					WHERE DatabaseName = 'DOIUnitTests'
+
+
+USE DOIUnitTests
 
 DROP TABLE IF EXISTS dbo.TempA
 DROP TABLE IF EXISTS dbo.TempB

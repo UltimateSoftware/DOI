@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_5_Indexes]') IS NOT NULL
@@ -14,8 +14,8 @@ AS
 
 --EXEC DOI.spRefreshMetadata_User_IndexesRowStore_CreateTables
 --EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_CreateTables
-EXEC DOI.spRefreshMetadata_User_IndexesRowStore_InsertData
-EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_InsertData
+--EXEC DOI.spRefreshMetadata_User_IndexesRowStore_InsertData
+--EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_InsertData
 EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData
 EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData
 GO

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Text;
 
-namespace DOI.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
-    public static class TablePartitioningSqlStatements
+    public static class SetupSqlStatements_Partitioned
     {
-        public static string PartitionFunctionCreation = @"
+        public static string PartitionFunction_Setup = @"
 INSERT INTO DOI.PartitionFunctions ( 
 				PartitionFunctionName			,PartitionFunctionDataType	,BoundaryInterval	,NumOfFutureIntervals	, InitialDate	, UsesSlidingWindow	, SlidingWindowSize	, IsDeprecated)
 VALUES		(	'pfMonthlyTest'					, 'DATETIME2'				, 'Monthly'			, 1					    , '2019-08-01'	, 0					, NULL				, 0);

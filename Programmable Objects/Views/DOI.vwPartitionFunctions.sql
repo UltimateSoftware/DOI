@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[vwPartitionFunctions]') IS NOT NULL
@@ -23,8 +23,8 @@ AS
 SELECT	PartitionFunctionName,
         PartitionFunctionDataType,
         BoundaryInterval,
-        NumOfFutureIntervals AS NumOfFutureIntervalsDesired,
-        ISNULL(FI.NumFutureIntervals, 0) AS NumOfFutureIntervalsActual,
+        NumOfFutureIntervals AS NumOfFutureIntervals_Desired,
+        ISNULL(FI.NumFutureIntervals, 0) AS NumOfFutureIntervals_Actual,
         InitialDate,
         UsesSlidingWindow,
         SlidingWindowSize,

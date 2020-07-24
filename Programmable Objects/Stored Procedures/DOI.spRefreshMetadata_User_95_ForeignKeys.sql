@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_95_ForeignKeys]') IS NOT NULL
@@ -13,7 +13,7 @@ CREATE     PROCEDURE [DOI].[spRefreshMetadata_User_95_ForeignKeys]
 
 AS
 
-EXEC DOI.spRefreshMetadata_User_ForeignKeys_InsertData
+--EXEC DOI.spRefreshMetadata_User_ForeignKeys_InsertData
 EXEC DOI.spRefreshMetadata_User_ForeignKeys_UpdateData
 
 GO

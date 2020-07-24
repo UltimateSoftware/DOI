@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_4_Tables]') IS NOT NULL
@@ -13,6 +13,6 @@ CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_4_Tables]
 
 AS
     --EXEC DOI.spRefreshMetadata_User_Tables_CreateTables
-    EXEC DOI.spRefreshMetadata_User_Tables_InsertData
+    --EXEC DOI.spRefreshMetadata_User_Tables_InsertData
     EXEC DOI.spRefreshMetadata_User_Tables_UpdateData
 GO

@@ -1,5 +1,5 @@
 -- <Migration ID="21417c13-2136-59b0-bd3e-11bb918f2dac" TransactionHandling="Custom" />
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[fnActualIndexSize]') IS NOT NULL

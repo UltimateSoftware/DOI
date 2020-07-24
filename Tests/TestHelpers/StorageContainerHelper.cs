@@ -1,0 +1,124 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using DOI.TestHelpers;
+using DOI.Tests.Integration.Models;
+using FluentAssertions;
+using NUnit.Framework;
+
+namespace DOI.Tests.TestHelpers
+{
+    public class StorageContainerHelper
+    {
+        private DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
+        private List<PartitionFunctionBoundary> expectedPartitionFunctionBoundaries;
+        private List<PartitionSchemeFilegroup> expectedPartitionSchemeFilegroups;
+        private SqlHelper sqlHelper;
+        private const string PartitionFunctionName = "PfSlidingWindowUnitTest";
+        private const string PartitionSchemeName = "psSlidingWindowUnitTest";
+        private const string PartitionFunctionNameNoSlidingWindow = "PfNoSlidingWindowUnitTest";
+        private const string PartitionSchemeNameNoSlidingWindow = "psNoSlidingWindowUnitTest";
+        private const string PartitionFunctionNameMonthly = "PfMonthlyUnitTest";
+        private const string PartitionSchemeNameMonthly = "psMonthlyUnitTest";
+        private const string TableTestFuturePartitionFailsDueToLocking = "TestFuturePartitionFailsDueToLocking";
+        private const string DatabaseName = "DOIUnitTests";
+
+        protected void AssertBoundariesAndFileGroups(string partitionFunctionName)
+        {
+            // get actual values
+            var actualPartitionFunctionBoundariesAddFuturePartitions = dataDrivenIndexTestHelper.GetExistingPartitionFunctionBoundaries(partitionFunctionName);
+            var actualPartitionSchemeFilegroupsAddFuturePartitions = dataDrivenIndexTestHelper.GetExistingPartitionSchemeFilegroups(partitionFunctionName);
+
+            Assert.AreEqual(this.expectedPartitionSchemeFilegroups.Count, actualPartitionSchemeFilegroupsAddFuturePartitions.Count, "FileGroup Count");
+            Assert.AreEqual(this.expectedPartitionFunctionBoundaries.Count, actualPartitionFunctionBoundariesAddFuturePartitions.Count, "Boundaries Count");
+
+            // assert before adding future partitions
+            // ASSERT 1:  MATCH PARTITION FUNCTION BOUNDARIES TO EXPECTED
+            foreach (var expectedPartitionFunctionBoundaryAddFuturePartitions in this.expectedPartitionFunctionBoundaries)
+            {
+                var actualPartitionFunctionBoundaryAddFuturePartitions =
+                    actualPartitionFunctionBoundariesAddFuturePartitions.Find(
+                        b => b.BoundaryId == expectedPartitionFunctionBoundaryAddFuturePartitions.BoundaryId);
+
+                Assert.NotNull(actualPartitionFunctionBoundaryAddFuturePartitions, "ActualPartitionBoundary lookup.");
+                Assert.AreEqual(expectedPartitionFunctionBoundaryAddFuturePartitions.BoundaryValueOnRight, actualPartitionFunctionBoundaryAddFuturePartitions.BoundaryValueOnRight, "BoundaryValueOnRight compare.");
+                Assert.AreEqual(expectedPartitionFunctionBoundaryAddFuturePartitions.Name, actualPartitionFunctionBoundaryAddFuturePartitions.Name, "Name compare.");
+                Assert.AreEqual(expectedPartitionFunctionBoundaryAddFuturePartitions.Type, actualPartitionFunctionBoundaryAddFuturePartitions.Type, "Type compare.");
+                Assert.AreEqual(expectedPartitionFunctionBoundaryAddFuturePartitions.Value, actualPartitionFunctionBoundaryAddFuturePartitions.Value, "Value compare.");
+            }
+
+            // ASSERT 2:  MATCH PARTITION SCHEME FILEGROUPS TO EXPECTED
+            foreach (var expectedPartitionSchemeFilegroupAddFuturePartitions in this.expectedPartitionSchemeFilegroups)
+            {
+                var actualPartitionSchemeFilegroupAddFuturePartitions =
+                    actualPartitionSchemeFilegroupsAddFuturePartitions.Find(
+                        b => b.DestinationFilegroupId == expectedPartitionSchemeFilegroupAddFuturePartitions
+                                 .DestinationFilegroupId);
+
+                Assert.NotNull(expectedPartitionSchemeFilegroupAddFuturePartitions, "ActualPartitionBoundary lookup.");
+                Assert.AreEqual(expectedPartitionSchemeFilegroupAddFuturePartitions.DataSpaceType, actualPartitionSchemeFilegroupAddFuturePartitions.DataSpaceType, "DataSpaceType compare.");
+                Assert.AreEqual(expectedPartitionSchemeFilegroupAddFuturePartitions.PartitionSchemeName, actualPartitionSchemeFilegroupAddFuturePartitions.PartitionSchemeName, "PartitionSchemeName compare.");
+                Assert.AreEqual(expectedPartitionSchemeFilegroupAddFuturePartitions.FilegroupName, actualPartitionSchemeFilegroupAddFuturePartitions.FilegroupName, "FilegroupName compare.");
+            }
+
+            // ASSERT 3:  NO DUPLICATES IN PREP TABLE FUNCTION
+            this.dataDrivenIndexTestHelper.GetPrepTableFunctionDuplicates(partitionFunctionName).Count.Should().Be(0);
+        }
+
+        protected Tuple<int, int> SetupInitialStateForYearlyPartitionsWith1FuturePartition()
+        {
+            // Arrange (Initial state - Only 1 future interval)
+            this.sqlHelper.Execute($@"
+            INSERT INTO DOI.DOI.PartitionFunctions ( PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
+            VALUES ( '{PartitionFunctionNameNoSlidingWindow}', 'DATETIME2', 'Yearly', 1, '2016-01-01', 0, NULL, 0)");
+
+            var boundaryId = 1;
+            var boundaryYear = 2016;
+            var initialFutureMaxYear = DateTime.Now.Year + 1;
+
+            this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
+            {
+                DestinationFilegroupId = 1,
+                PartitionSchemeName = PartitionSchemeNameNoSlidingWindow,
+                DataSpaceType = "FG",
+                FilegroupName = $"{DatabaseName}_Historical"
+            });
+
+            do
+            {
+                this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
+                {
+                    Name = PartitionFunctionNameNoSlidingWindow,
+                    Type = "R",
+                    BoundaryValueOnRight = true,
+                    BoundaryId = boundaryId,
+                    Value = $"{boundaryYear}-01-01".ObjectToDateTime()
+                });
+
+                this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
+                {
+                    DestinationFilegroupId = boundaryId + 1,
+                    PartitionSchemeName = PartitionSchemeNameNoSlidingWindow,
+                    DataSpaceType = "FG",
+                    FilegroupName = $"{DatabaseName}_{boundaryYear}"
+                });
+
+                boundaryId++;
+                boundaryYear++;
+            }
+            while (boundaryYear <= initialFutureMaxYear);
+
+            // Act
+            this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionFunction(PartitionFunctionNameNoSlidingWindow);
+            this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionScheme(PartitionFunctionNameNoSlidingWindow);
+
+            // Assert
+            this.AssertBoundariesAndFileGroups(PartitionFunctionNameNoSlidingWindow);
+
+            return new Tuple<int, int>(boundaryId, boundaryYear);
+        }
+
+    }
+}

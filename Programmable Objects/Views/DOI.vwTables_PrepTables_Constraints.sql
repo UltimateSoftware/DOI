@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[vwTables_PrepTables_Constraints]') IS NOT NULL

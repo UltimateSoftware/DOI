@@ -1,7 +1,7 @@
 -- <Migration ID="ebe0a54c-6fb5-5dbc-bc07-1d2b12481ea4" TransactionHandling="Custom" />
 --:setvar DatabaseName "DOI"
 
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_0_Databases]') IS NOT NULL

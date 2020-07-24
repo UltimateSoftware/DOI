@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_IndexesRowStore_UpdateData]') IS NOT NULL
@@ -429,7 +429,7 @@ AS
                                     END + 1  --we add 1 for the root page.
 
     UPDATE DOI.IndexesRowStore
-    SET IndexSizeMB_Estimated = CAST(CASE
+    SET IndexSizeMB_Actual_Estimated = CAST(CASE
                                         WHEN IsClustered_Desired = 1
                                         THEN (((LeafSpaceUsed_Estimated + (NumIndexPages_Estimated * 8192.00))/1024.00)/1024.00)
                                         ELSE ((((ColsSize_Estimated

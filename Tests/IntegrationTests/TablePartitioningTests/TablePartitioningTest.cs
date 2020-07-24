@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -58,8 +59,8 @@ namespace DOI.Tests.Integration.TablePartitioning
         [TearDown]
         public void TearDown()
         {
-            sqlHelper.Execute(TablePartitioningSqlStatements.DropTableAndDeleteMetadata);
-            sqlHelper.Execute(TablePartitioningSqlStatements.RestoreJobStep);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.DropTableAndDeleteMetadata);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.RestoreJobStep);
          }
 
         [Test]
@@ -116,15 +117,15 @@ namespace DOI.Tests.Integration.TablePartitioning
         private void SetUpTableUnderTest()
         {
             sqlHelper.Execute("UPDATE DOI.Tables SET ReadyToQueue = 0");
-            sqlHelper.Execute(TablePartitioningSqlStatements.PartitionFunctionCreation);
-            sqlHelper.Execute(TablePartitioningSqlStatements.TableCreation);
-            sqlHelper.Execute(TablePartitioningSqlStatements.DataInsert);
-            sqlHelper.Execute(TablePartitioningSqlStatements.TableToMetadata);
-            sqlHelper.Execute(TablePartitioningSqlStatements.RowStoreIndexes);
-            sqlHelper.Execute(TablePartitioningSqlStatements.ColumnStoreIndexes);
-            sqlHelper.Execute(TablePartitioningSqlStatements.StatisticsToMetadata);
-            sqlHelper.Execute(TablePartitioningSqlStatements.ConstraintsToMetadata);
-            sqlHelper.Execute(TablePartitioningSqlStatements.UpdateJobStepForTest);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.PartitionFunctionCreation);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.TableCreation);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.DataInsert);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.TableToMetadata);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.RowStoreIndexes);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.ColumnStoreIndexes);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.StatisticsToMetadata);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.ConstraintsToMetadata);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.UpdateJobStepForTest);
 
 
             /*This sql statement was extracted from [Utility].[spDataDrivenIndexes_RefreshPartitionState]
@@ -132,12 +133,12 @@ namespace DOI.Tests.Integration.TablePartitioning
             to Sam's makes the Sp take a parameter with the table name. Now the table names are hardcoded inside the Sp
             Ideally the Sp can get called for the specified table when building the queue so we dont need to even worry about it.
             Sam hasn't gotten to it yet, but sometime soon,20190122.*/
-            sqlHelper.Execute(new SqlCommand(TablePartitioningSqlStatements.PartitionStateMetadata));
+            sqlHelper.Execute(new SqlCommand(SetupSqlStatements_Partitioned.PartitionStateMetadata));
         }
 
         private void RunPartitionJobAndWaitForItToFinish()
         {
-            sqlHelper.Execute(TablePartitioningSqlStatements.StartJob);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.StartJob);
             WaitForJobToFinish();
         }
 
@@ -148,7 +149,7 @@ namespace DOI.Tests.Integration.TablePartitioning
 
         private short? GetJobRunStatus()
         {
-            List<List<Pair<string, object>>> result = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.JobActivity));
+            List<List<Pair<string, object>>> result = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.JobActivity));
             if (result.Count > 0)
             {
                 var val = result[0].Single(x => x.First == "run_status").Second;
@@ -205,12 +206,12 @@ namespace DOI.Tests.Integration.TablePartitioning
 
         private void ValidateThatTheOldTableExists()
         {
-            Assert.IsNotEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.CheckOldTable)), " The old table [dbo].[PartitioningTestAutomationTable_Old] does not exist.");
+            Assert.IsNotEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckOldTable)), " The old table [dbo].[PartitioningTestAutomationTable_Old] does not exist.");
         }
 
         private void ValidateThatTheNewTableExists()
         {
-            Assert.IsNotEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.CheckNewTable)), " The new partitioned table [dbo].[PartitioningTestAutomationTable] does not exist.");
+            Assert.IsNotEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckNewTable)), " The new partitioned table [dbo].[PartitioningTestAutomationTable] does not exist.");
         }
 
         private void ValidateThatTheNewTableIsPartitioned()
@@ -222,36 +223,36 @@ namespace DOI.Tests.Integration.TablePartitioning
             int minimumNumberOfExpectedPartitions = sqlHelper.ExecuteScalar<int>(@"SELECT NumOfTotalPartitionFunctionIntervals 
                                                                                  FROM DOI.PartitionFunctions 
                                                                                  WHERE PartitionFunctionName = 'pfMonthlyTest'");
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.RowsInFileGroupsProcedureCall));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.RowsInFileGroupsProcedureCall));
             Assert.IsTrue(list.Count >= minimumNumberOfExpectedPartitions, $"Expecting at least {minimumNumberOfExpectedPartitions} partition but found {list.Count}");
         }
 
         private void ValidateThatTheNewTableHasAllTheData()
         {
-            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.DataMismatchValidation)), "Error: There is a data mismatch between the new and the old table.");
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.DataMismatchValidation)), "Error: There is a data mismatch between the new and the old table.");
         }
 
         private void ValidateThatThereIsDataInPartitions()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.TotalRowsInFileGroups));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.TotalRowsInFileGroups));
             Assert.AreEqual(list[0][0].Second, 96, $"Expecting 96 rows but found {list[0][0].Second} according to [Utility].[spSeeRowsInFileGroups]");
         }
 
         private void ValidateThatAllPartitionsHaveData()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.AllPartitionsHaveData));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.AllPartitionsHaveData));
             Assert.IsEmpty(list, $"Expecting all partitions to have data but some partition has 0 rows:{list}");
         }
 
         private void ValidateThatAllRowsAreInPartitionedTable()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.DataInPartitionedTable));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.DataInPartitionedTable));
             Assert.AreEqual(list.Count, 96, $"Expecting 96 rows in the partitioned table but found {list.Count}.");
         }
 
         private void ValidateIndexesAreThereOnNewTableAfterPartitioning()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.IndexesAfterPartitioningNewTable));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.IndexesAfterPartitioningNewTable));
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable"), "Index CDX_PartitioningTestAutomationTable is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_Comments"), "Index NCCI_PartitioningTestAutomationTable_Comments is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_Comments"), "Index IDX_PartitioningTestAutomationTable_Comments is missing.");
@@ -260,7 +261,7 @@ namespace DOI.Tests.Integration.TablePartitioning
 
         private void ValidateIndexesAreThereOnOldTableAfterPartitioning()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.IndexesAfterPartitioningOldTable));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.IndexesAfterPartitioningOldTable));
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable_OLD"), "Index CDX_PartitioningTestAutomationTable_OLD is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_OLD_Comments"), "Index NCCI_PartitioningTestAutomationTable_OLD_Comments is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_OLD_Comments"), "Index IDX_PartitioningTestAutomationTable_OLD_Comments is missing.");
@@ -269,21 +270,21 @@ namespace DOI.Tests.Integration.TablePartitioning
 
         private void ValidateConstraintsAreThereOnNewTableAfterPartitioning()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.ConstraintsAfterPartitioningNewTable));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.ConstraintsAfterPartitioningNewTable));
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Chk_PartitioningTestAutomationTable_updatedUtcDt"), "Constraint Chk_PartitioningTestAutomationTable_updatedUtcDt is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Def_PartitioningTestAutomationTable_updatedUtcDt"), "Constraint Def_PartitioningTestAutomationTable_updatedUtcDt is missing.");
         }
 
         private void ValidateConstraintsAreThereOnOldTableAfterPartitioning()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.ConstraintsAfterPartitioningOldTable));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.ConstraintsAfterPartitioningOldTable));
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Chk_PartitioningTestAutomationTable_OLD_updatedUtcDt"), "Constraint Chk_PartitioningTestAutomationTable_OLD_updatedUtcDt is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Def_PartitioningTestAutomationTable_OLD_updatedUtcDt"), "Constraint Def_PartitioningTestAutomationTable_OLD_updatedUtcDt is missing.");
         }
 
         private void ValidateStatisticsAreThereOnNewTableAfterPartitioning()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.StatisticsAfterPartitioningNewTable));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.StatisticsAfterPartitioningNewTable));
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable"), "Statistics for index CDX_PartitioningTestAutomationTable is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_Comments"), "Statistics for index NCCI_PartitioningTestAutomationTable_Comments is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_Comments"), "Statistics for index IDX_PartitioningTestAutomationTable_Comments is missing.");
@@ -296,7 +297,7 @@ namespace DOI.Tests.Integration.TablePartitioning
 
         private void ValidateStatisticsAreThereOnOldTableAfterPartitioning()
         {
-            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.StatisticsAfterPartitioningOldTable));
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.StatisticsAfterPartitioningOldTable));
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable_OLD"), "Statistics for index CDX_PartitioningTestAutomationTable_OLD is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_OLD_Comments"), "Statistics for index NCCI_PartitioningTestAutomationTable_OLD_Comments is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_OLD_Comments"), "Statistics for index IDX_PartitioningTestAutomationTable_OLD_Comments is missing.");
@@ -309,17 +310,17 @@ namespace DOI.Tests.Integration.TablePartitioning
 
         private void ValidateThatTheQueueIsEmptyAfterPartitioning()
         {
-            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.RecordsInTheQueue)), "Expecting the Queue table [DOI.Queue] to be empty but found records.");
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.RecordsInTheQueue)), "Expecting the Queue table [DOI.Queue] to be empty but found records.");
         }
 
         private void ValidateThatLogTableHasNoErrors()
         {
-            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.LogHasNoErrors)), "Log table [DOI.Log] has errors!!");
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.LogHasNoErrors)), "Log table [DOI.Log] has errors!!");
         }
 
         private void ValidateThatPartitionStateMetadataTableIsEmptyAfterPartitioning()
         {
-            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.CheckForEmptyPartitionStateMetadata("dbo", "PartitioningTestAutomationTable"))), "Expecting the PartitionState Metadata table [DOI._PartitionState] to be empty but found records.");
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckForEmptyPartitionStateMetadata("dbo", "PartitioningTestAutomationTable"))), "Expecting the PartitionState Metadata table [DOI._PartitionState] to be empty but found records.");
         }
 
         private bool IsTestRunningInLocalEnvironment()
@@ -330,7 +331,7 @@ namespace DOI.Tests.Integration.TablePartitioning
 
         private List<JobRunInfo> GetDetailsOfLastJobRun()
         {
-            List<List<Pair<string, object>>> rows = sqlHelper.ExecuteQuery(new SqlCommand(TablePartitioningSqlStatements.DetailsOfLastJobRun));
+            List<List<Pair<string, object>>> rows = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.DetailsOfLastJobRun));
             List<JobRunInfo> list = new List<JobRunInfo>();
             foreach (List<Pair<string, object>> row in rows)
             {

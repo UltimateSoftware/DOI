@@ -25,7 +25,7 @@ namespace DOI.TestHelpers
         {
             return $@"
             SELECT COUNT(*) 
-            FROM DOI.Queue 
+            FROM DOI.DOI.Queue 
             WHERE DatabaseName = '{DatabaseName}'
                 AND SchemaName = '{schemaName}' 
                 AND TableName = '{tableName}' 
@@ -34,13 +34,13 @@ namespace DOI.TestHelpers
 
         public List<IndexView> GetIndexViews(string tableName)
         {
-            return this.sqlHelper.GetList<IndexView>($"select * FROM DOI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND TableName = '{tableName}'");
+            return this.sqlHelper.GetList<IndexView>($"select * FROM DOI.DOI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND TableName = '{tableName}'");
         }
 
         public void ExecuteSPQueue(bool onlineOperations, bool isBeingRunDuringADeployment = false)
         {
             var sql = $"DECLARE @BatchId UNIQUEIDENTIFIER " +
-                      $"EXEC [DOI].[spQueue]  " +
+                      $"EXEC DOI.DOI.[spQueue]  " +
                         $"@OnlineOperations = {(onlineOperations ? "1" : "0")}" +
                         $",@IsBeingRunDuringADeployment = {(isBeingRunDuringADeployment ? "1" : "0")}" +
                         $",@BatchIdOUT = @BatchId";
@@ -50,7 +50,7 @@ namespace DOI.TestHelpers
 
         public void ExecuteSPRun(bool onlineOperations, string schemaName = null, string tableName = null)
         {
-            var sql = $"EXEC [DOI].[spRun]  " +
+            var sql = $"EXEC DOI.DOI.[spRun]  " +
                       $"@OnlineOperations = {(onlineOperations ? "1" : "0")}";
             sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
             sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
@@ -60,7 +60,7 @@ namespace DOI.TestHelpers
 
         public async Task ExecuteSPRunAsync(bool onlineOperations, string schemaName = null, string tableName = null)
         {
-            var sql = $"EXEC [DOI].[spRun]  " +
+            var sql = $"EXEC DOI.DOI.[spRun]  " +
                       $"@OnlineOperations = {(onlineOperations ? "1" : "0")}";
             sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
             sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
@@ -70,21 +70,21 @@ namespace DOI.TestHelpers
 
         public void ExecuteSPCreateNewPartitionFunction(string partitionFunctionName)
         {
-            this.sqlHelper.Execute($@"EXEC [DOI].[spRefreshStorageContainers_PartitionFunctions] 
+            this.sqlHelper.Execute($@"EXEC DOI.DOI.[spRefreshStorageContainers_PartitionFunctions] 
                                         @DatabaseName = '{DatabaseName}',
                                         @PartitionFunctionName = '{partitionFunctionName}'");
 
-            this.sqlHelper.Execute(@"EXEC DOI.spRefreshMetadata_System_PartitionFunctionsAndSchemes");
-            this.sqlHelper.Execute($@"EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
+            this.sqlHelper.Execute(@"EXEC DOI.DOI.spRefreshMetadata_System_PartitionFunctionsAndSchemes");
+            this.sqlHelper.Execute($@"EXEC DOI.DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
         }
 
         public void ExecuteSPCreateNewPartitionScheme(string partitionFunctionName)
         {
-            this.sqlHelper.Execute($@"EXEC [DOI].[spRefreshStorageContainers_PartitionSchemes] 
+            this.sqlHelper.Execute($@"EXEC DOI.DOI.[spRefreshStorageContainers_PartitionSchemes] 
                                         @DatabaseName = '{DatabaseName}',
                                         @PartitionFunctionName = '{partitionFunctionName}'");
 
-            this.sqlHelper.Execute(@"EXEC [DOI].[spRefreshMetadata_System_PartitionFunctionsAndSchemes]");
+            this.sqlHelper.Execute(@"EXEC DOI.DOI.[spRefreshMetadata_System_PartitionFunctionsAndSchemes]");
         }
 
         public List<PartitionFunctionBoundary> GetExistingPartitionFunctionBoundaries(string partitionFunctionName)
@@ -115,7 +115,7 @@ namespace DOI.TestHelpers
             {
                 return this.sqlHelper.GetList<PrepTable>($@"
                	SELECT PrepTableName
-            	FROM DOI.vwTables_PrepTables)
+            	FROM DOI.DOI.vwTables_PrepTables)
                 WHERE DatabaseName = '{DatabaseName}'
                 GROUP BY PrepTableName
             	HAVING COUNT(*) > 1");
@@ -124,7 +124,7 @@ namespace DOI.TestHelpers
             {
                 return this.sqlHelper.GetList<PrepTable>($@"
                	SELECT PrepTableName
-            	FROM DOI.vwTables_PrepTables
+            	FROM DOI.DOI.vwTables_PrepTables
                 WHERE DatabaseName = '{DatabaseName}'
                     AND PartitionFunctionName = '{partitionFunctionName}'
                 GROUP BY PrepTableName
@@ -143,7 +143,7 @@ namespace DOI.TestHelpers
 
             return this.sqlHelper.GetList<PrepTable>($@"
                	    SELECT FN.PartitionFunctionValue, COUNT(*)
-                    FROM DOI.fnDataDrivenIndexes_GetPartitionSQL () FN
+                    FROM DOI.DOI.fnDataDrivenIndexes_GetPartitionSQL () FN
                     {whereStatement}
                     GROUP BY FN.PartitionFunctionValue
                     HAVING COUNT(*) > 1");
@@ -155,7 +155,7 @@ namespace DOI.TestHelpers
 
             List<List<Pair<string, object>>> rows = this.sqlHelper.ExecuteQuery(new SqlCommand($@"
                 SELECT InitialDate, NumOfTotalPartitionFunctionIntervals
-                FROM DOI.PartitionFunctions 
+                FROM DOI.DOI.PartitionFunctions 
                 WHERE DatabaseName = '{DatabaseName}'
                     AND PartitionFunctionName = '{partitionFunctionName}'"));
 
@@ -186,7 +186,7 @@ namespace DOI.TestHelpers
 
             List<List<Pair<string, object>>> rows = this.sqlHelper.ExecuteQuery(new SqlCommand($@"
                 SELECT InitialDate, NumOfTotalPartitionSchemeIntervals, PartitionSchemeName
-                FROM DOI.PartitionFunctions 
+                FROM DOI.DOI.PartitionFunctions 
                 WHERE DatabaseName = '{DatabaseName}'
                     AND PartitionFunctionName = '{partitionFunctionName}'"));
 
@@ -227,7 +227,7 @@ namespace DOI.TestHelpers
 
         public void ExecuteSPAddFuturePartitions(string partitionFunctionName, int commandTimeoutSec = 30)
         {
-            var sql = $@"EXEC [DOI].[spRefreshStorageContainers_AddNewPartition] 
+            var sql = $@"EXEC DOI.DOI.[spRefreshStorageContainers_AddNewPartition] 
                             @DatabaseName = '{DatabaseName}',
                             @PartitionFunctionName = '{partitionFunctionName}'";
 
@@ -236,17 +236,17 @@ namespace DOI.TestHelpers
 
         public List<MetaDataTable> GetTablesInMetaData()
         {
-            return this.sqlHelper.GetList<MetaDataTable>($"select * FROM DOI.Tables WHERE DatabaseName = '{DatabaseName}'");
+            return this.sqlHelper.GetList<MetaDataTable>($"select * FROM DOI.DOI.Tables WHERE DatabaseName = '{DatabaseName}'");
         }
 
         public List<MetaDataTable> GetTablesReadytoQueue()
         {
-            return this.sqlHelper.GetList<MetaDataTable>($"select * FROM DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND ReadyToQueue = 1 ");
+            return this.sqlHelper.GetList<MetaDataTable>($"select * FROM DOI.DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND ReadyToQueue = 1 ");
         }
 
         public List<LogTableRow> GetErrorsFromLogTables(Guid batchId)
         {
-            return this.sqlHelper.GetList<LogTableRow>($"select * FROM DOI.Log WHERE DatabaseName = '{DatabaseName}' AND BatchId = '{batchId}");
+            return this.sqlHelper.GetList<LogTableRow>($"select * FROM DOI.DOI.Log WHERE DatabaseName = '{DatabaseName}' AND BatchId = '{batchId}");
         }
 
         public List<Index> GetExistingIndexes()
@@ -264,12 +264,12 @@ namespace DOI.TestHelpers
         {
             return this.sqlHelper.GetList<Index>($@"
                 SELECT SchemaName, TableName, IndexName
-                FROM DOI.IndexesColumnStore 
+                FROM DOI.DOI.IndexesColumnStore 
                 WHERE DatabaseName = '{DatabaseName}'
                 UNION 
                 SELECT UIRS.SchemaName, UIRS.TableName, IndexName
-                FROM DOI.IndexesRowStore UIRS
-				    INNER JOIN DOI.Tables UT ON UIRS.DatabaseName = UT.DatabaseName
+                FROM DOI.DOI.IndexesRowStore UIRS
+				    INNER JOIN DOI.DOI.Tables UT ON UIRS.DatabaseName = UT.DatabaseName
                         AND UIRS.SchemaName = UT.SchemaName
 				        AND UIRS.TableName = UT.TableName
 				WHERE DatabaseName = '{DatabaseName}'
@@ -315,14 +315,14 @@ namespace DOI.TestHelpers
                         st.FilterPredicate,
                         st.IsIncremental,
                         st.NoRecompute 
-                FROM DOI.[Statistics] st
+                FROM DOI.DOI.[Statistics] st
                 WHERE DatabaseName = '{DatabaseName}'
                     AND st.StatisticsName = '{statisticsName}'");
         }
 
         public List<ForeignKey> GetForeignKeys(string parentTableName)
         {
-            return this.sqlHelper.GetList<ForeignKey>($"select * FROM DOI.ForeignKeys WHERE DatabaseName = '{DatabaseName}' AND ReferencedTableName = '{parentTableName}'");
+            return this.sqlHelper.GetList<ForeignKey>($"select * FROM DOI.DOI.ForeignKeys WHERE DatabaseName = '{DatabaseName}' AND ReferencedTableName = '{parentTableName}'");
         }
 
         public List<string> GetExistingForeignKeyNames(string parentTableName)
@@ -360,9 +360,9 @@ namespace DOI.TestHelpers
 
         public void CreateForeignKeys()
         {
-            this.sqlHelper.Execute($@"INSERT INTO [DOI].[ForeignKeys]    (DatabaseName, [ParentSchemaName]	,[ParentTableName]	,[ParentColumnList_Desired]	,[ReferencedSchemaName]	,[ReferencedTableName]	,[ReferencedColumnList_Desired])
+            this.sqlHelper.Execute($@"INSERT INTO DOI.DOI.[ForeignKeys]    (DatabaseName, [ParentSchemaName]	,[ParentTableName]	,[ParentColumnList_Desired]	,[ReferencedSchemaName]	,[ReferencedTableName]	,[ReferencedColumnList_Desired])
                                                                  VALUES ('{DatabaseName}', 'dbo'				,'TempB'			,'TempAId'			,'dbo'					,'TempA'				,'TempAId')");
-            this.sqlHelper.Execute($@"EXEC DOI.spForeignKeysAdd 
+            this.sqlHelper.Execute($@"EXEC DOI.DOI.spForeignKeysAdd 
                                        @DatabaseName = '{DatabaseName}',
                                        @ReferencedSchemaName = 'dbo'
                                       ,@ReferencedTableName = 'TempA'
@@ -396,7 +396,7 @@ namespace DOI.TestHelpers
 
         public void SeedDataAndDefrag(int numberOfRowsToInsertPerLoop)
         {
-            var pageSize = this.sqlHelper.ExecuteScalar<int>($"SELECT CAST(SettingValue AS INT) FROM DOI.DOISettings WHERE DatabaseName = '{DatabaseName}' AND SettingName = 'MinNumPagesForIndexDefrag'");
+            var pageSize = this.sqlHelper.ExecuteScalar<int>($"SELECT CAST(SettingValue AS INT) FROM DOI.DOI.DOISettings WHERE DatabaseName = '{DatabaseName}' AND SettingName = 'MinNumPagesForIndexDefrag'");
             var indexRows = new List<IndexView>();
             var watch = Stopwatch.StartNew();
 
@@ -426,7 +426,7 @@ namespace DOI.TestHelpers
                                         TempAId ASC
                                     ) WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 
-            this.sqlHelper.Execute($@"INSERT INTO DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+            this.sqlHelper.Execute($@"INSERT INTO DOI.DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
                                                                 VALUES  (	'{DatabaseName}', N'dbo'		, N'TempA'	, N'PK_TempA'	, 1			        , 1				        , 0					        , 0				        , N'TempAId ASC'            , NULL				        , 0			        , NULL				        , 90				        , 1				        , 0								        , 0								        , 0					        , DEFAULT			        , 0					        , 1						        , 1						        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
@@ -438,7 +438,7 @@ namespace DOI.TestHelpers
 	                                    TransactionUtcDt ASC
                                     )WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 
-            this.sqlHelper.Execute($@"INSERT INTO DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	                ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+            this.sqlHelper.Execute($@"INSERT INTO DOI.DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	                ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
                                                                 VALUES   (	'{DatabaseName}', N'dbo'		, N'TempA'	, N'CDX_TempA'	, 0			        , 0				        , 0					        , 1				        , N'TempAId ASC,TransactionUtcDt ASC'	, NULL				        , 0			        , NULL				        , 90			            , DEFAULT		        , DEFAULT						        , DEFAULT						        , DEFAULT			        , DEFAULT			        , DEFAULT			        , DEFAULT				        , DEFAULT				        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
@@ -449,7 +449,7 @@ namespace DOI.TestHelpers
 	                                    TransactionUtcDt ASC
                                     ) INCLUDE(TextCol) WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80)");
 
-            this.sqlHelper.Execute($@"INSERT INTO DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		        ,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+            this.sqlHelper.Execute($@"INSERT INTO DOI.DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		        ,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
                                                                 VALUES   (	'{DatabaseName}', N'dbo'		, N'TempA'	, N'NIDX_TempA_Report'	, 0			        , 0				        , 0					        , 0				        , N'TransactionUtcDt ASC'	,N'TextCol'			        , 0			        , NULL				        , 80			            , DEFAULT		        , DEFAULT						        , DEFAULT						        , DEFAULT			        , DEFAULT			        , DEFAULT			        , DEFAULT				        , DEFAULT				        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
@@ -460,7 +460,7 @@ namespace DOI.TestHelpers
 	                                    TransactionUtcDt ASC
                                     )WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 
-            this.sqlHelper.Execute($@"INSERT INTO DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		        ,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+            this.sqlHelper.Execute($@"INSERT INTO DOI.DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		        ,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
                                                                 VALUES	  (	'{DatabaseName}', N'dbo'		, N'TempA'	, N'NIDX_TempA_Report2'	, 0			        , 0				        , 0					        , 0				        , N'TransactionUtcDt ASC'	, NULL				        , 0			        , NULL				        , 90			            , DEFAULT		        , DEFAULT						        , DEFAULT						        , DEFAULT			        , DEFAULT			        , DEFAULT			        , DEFAULT				        , DEFAULT				        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
@@ -470,7 +470,7 @@ namespace DOI.TestHelpers
                                         TempBId ASC
                                     ) WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 
-            this.sqlHelper.Execute($@"INSERT INTO DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
+            this.sqlHelper.Execute($@"INSERT INTO DOI.DOI.IndexesRowStore    (	DatabaseName, SchemaName	,TableName	,IndexName		,IsUnique_Desired	,IsPrimaryKey_Desired	, IsUniqueConstraint_Desired, IsClustered_Desired	,KeyColumnList_Desired	    ,IncludedColumnList_Desired	,IsFiltered_Desired ,FilterPredicate_Desired	,[Fillfactor_Desired]	    ,OptionPadIndex_Desired ,OptionStatisticsNoRecompute_Desired	,OptionStatisticsIncremental_Desired	,OptionIgnoreDupKey_Desired ,OptionResumable_Desired	,OptionMaxDuration_Desired	,OptionAllowRowLocks_Desired	,OptionAllowPageLocks_Desired	,OptionDataCompression_Desired	, Storage_Desired	, PartitionColumn_Desired	)
                                                                 VALUES	  (	'{DatabaseName}', N'dbo'		, N'TempB'	, N'PK_TempB'	, 1			        , 1				        , 0					        , 0				        , N'TempBId ASC'            , NULL				        , 0			        , NULL				        , 90			            , DEFAULT		        , DEFAULT						        , DEFAULT						        , DEFAULT			        , DEFAULT			        , DEFAULT			        , DEFAULT				        , DEFAULT				        , 'NONE'				        , 'PRIMARY'		    , NULL				)");
         }
 
@@ -481,7 +481,7 @@ namespace DOI.TestHelpers
 	                                    TransactionUtcDt
                                     )WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0)");
 
-            this.sqlHelper.Execute($@"INSERT [DOI].[IndexesColumnStore]  (DatabaseName, [SchemaName]	, [TableName]   , [IndexName]			, [IsClustered_Desired]	, [ColumnList_Desired]			, [IsFiltered_Desired]	, [FilterPredicate_Desired]	, [OptionDataCompression_Desired]	, [OptionDataCompressionDelay_Desired]	, Storage_Desired    , PartitionColumn_Desired		) 
+            this.sqlHelper.Execute($@"INSERT DOI.DOI.[IndexesColumnStore]  (DatabaseName, [SchemaName]	, [TableName]   , [IndexName]			, [IsClustered_Desired]	, [ColumnList_Desired]			, [IsFiltered_Desired]	, [FilterPredicate_Desired]	, [OptionDataCompression_Desired]	, [OptionDataCompressionDelay_Desired]	, Storage_Desired    , PartitionColumn_Desired		) 
                                                                     VALUES	('{DatabaseName}', N'dbo'			, N'TempA'	    , N'NCCI_TempA_Report'	, 0				        , N'TransactionUtcDt'	        , 0				        , NULL				        , N'COLUMNSTORE'			        , 0							        , 'PRIMARY'	         , NULL					)");
         }
 
@@ -490,7 +490,7 @@ namespace DOI.TestHelpers
             this.sqlHelper.Execute($@"USE {DatabaseName} CREATE CLUSTERED COLUMNSTORE INDEX CCI_TempB_Report     ON dbo.TempB          
                                     WITH (DROP_EXISTING = OFF, COMPRESSION_DELAY = 0, MAXDOP = 0, DATA_COMPRESSION = COLUMNSTORE) ");
 
-            this.sqlHelper.Execute($@"INSERT [DOI].[IndexesColumnStore]  (DatabaseName, [SchemaName]	, [TableName]   , [IndexName]			, [IsClustered_Desired]	, [ColumnList_Desired]			, [IsFiltered_Desired]	, [FilterPredicate_Desired]	, [OptionDataCompression_Desired]	, [OptionDataCompressionDelay_Desired]	, Storage_Desired    , PartitionColumn_Desired		) 
+            this.sqlHelper.Execute($@"INSERT DOI.DOI.[IndexesColumnStore]  (DatabaseName, [SchemaName]	, [TableName]   , [IndexName]			, [IsClustered_Desired]	, [ColumnList_Desired]			, [IsFiltered_Desired]	, [FilterPredicate_Desired]	, [OptionDataCompression_Desired]	, [OptionDataCompressionDelay_Desired]	, Storage_Desired    , PartitionColumn_Desired		) 
                                                                  VALUES	('{DatabaseName}', N'dbo'		, N'TempB'		, N'CCI_TempB_Report'	, 1				, NULL					, 0				, NULL				, N'COLUMNSTORE'			, 0							, 'PRIMARY'	    , NULL					)");
         }
     }

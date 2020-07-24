@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 --<Migration ID="67c39ea0-3068-53c9-bc4d-08b8fa12e012" TransactionHandling="Custom" />

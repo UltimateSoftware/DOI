@@ -18,7 +18,5 @@ BEGIN
                     FILEGROWTH = 65536KB )
 END
 
-USE DOI
-
-INSERT INTO DOI.Databases(DatabaseName)
+INSERT INTO DOI.DOI.Databases(DatabaseName)
 VALUES(N'DOIUnitTests')

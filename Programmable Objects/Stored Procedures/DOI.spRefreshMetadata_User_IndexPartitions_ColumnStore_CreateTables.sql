@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_IndexPartitions_ColumnStore_CreateTables]') IS NOT NULL

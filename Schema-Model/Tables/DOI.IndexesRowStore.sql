@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 CREATE TABLE [DOI].[IndexesRowStore]
@@ -86,7 +86,7 @@ CREATE TABLE [DOI].[IndexesRowStore]
 [LeafSpaceUsedMB_Estimated] [decimal] (10, 2) NOT NULL CONSTRAINT [Def_IndexesRowStore_LeafSpaceUsedMB_Estimated] DEFAULT ((0)),
 [NumNonLeafLevelsInIndex_Estimated] [tinyint] NOT NULL CONSTRAINT [Def_IndexesRowStore_NumNonLeafLevelsInIndex_Estimated] DEFAULT ((0)),
 [NumIndexPages_Estimated] [int] NOT NULL CONSTRAINT [Def_IndexesRowStore_NumIndexPages_Estimated] DEFAULT ((0)),
-[IndexSizeMB_Estimated] [decimal] (10, 2) NOT NULL CONSTRAINT [Def_IndexesRowStore_IndexSizeMB_Estimated] DEFAULT ((0)),
+[IndexSizeMB_Actual_Estimated] [decimal] (10, 2) NOT NULL CONSTRAINT [Def_IndexesRowStore_IndexSizeMB_Actual_Estimated] DEFAULT ((0)),
 [IndexSizeMB_Actual] [decimal] (10, 2) NOT NULL CONSTRAINT [Def_IndexesRowStore_IndexSizeMB_Actual] DEFAULT ((0)),
 [DriveLetter] [char] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [IsIndexLarge] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_IsIndexLarge] DEFAULT ((0)),

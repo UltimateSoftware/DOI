@@ -1,4 +1,4 @@
-USE [$(DatabaseName2)]
+
 GO
 
 IF OBJECT_ID('[DOI].[spForeignKeysAdd]') IS NOT NULL
@@ -71,7 +71,7 @@ BEGIN TRY
 	ORDER BY ReferencedTableName
 
     SELECT @AddFKsSQL += '
-    EXEC DOI.Utility.spEnableDisableAllFKs 
+    EXEC DOI.DOI.spEnableDisableAllFKs 
 		@DatabaseName = ''' + @DatabaseName + ''',
 		@Action = ''DISABLE'''
 

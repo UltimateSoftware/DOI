@@ -1,8 +1,8 @@
-USE [$(DatabaseName2)]
+
 GO
 
-IF OBJECT_ID('[DOI].[spEnableDisableAllFKs]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spEnableDisableAllFKs];
+IF OBJECT_ID('DOI.[spEnableDisableAllFKs]') IS NOT NULL
+	DROP PROCEDURE DOI.[spEnableDisableAllFKs];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,31 +10,47 @@ GO
 SET ANSI_NULLS ON
 GO
 
-CREATE     PROCEDURE [DOI].[spEnableDisableAllFKs]
+
+CREATE   PROCEDURE DOI.[spEnableDisableAllFKs]
     @DatabaseName SYSNAME,
 	@Action VARCHAR(10) ,
+	@InternalDebug BIT = 0,
 	@Debug BIT = 0
 
 AS
 
 /*
-	exec dbo.spEnableDisableAllFKs 
-    'enable', 1
-
+	exec DOI.spEnableDisableAllFKs 
+        @DatabaseName = 'PaymentReporting',
+        @Action = 'Disable', 
+		@InternalDebug = 1,
+        @Debug = 1
 */
 BEGIN TRY 
-	DECLARE @SQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
+	DECLARE @InternalSQL NVARCHAR(MAX) = '',
+			@SQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10),
+			@SQL_Out NVARCHAR(MAX),
+			@ParamList NVARCHAR(50) = '@SQL_Out NVARCHAR(MAX) OUTPUT'
 
-	SELECT @SQL += 'ALTER TABLE ' + ps.name + '.[' + pt.name + ']' + CASE WHEN @Action = 'Enable' THEN ' ' ELSE ' NO' END + 'CHECK CONSTRAINT ' + FK.name + CHAR(13) + CHAR(10)
-    --SELECT fk.*
-	FROM DOI.SysForeignKeys fk
-        INNER JOIN DOI.SysDatabases D ON D.database_id = fk.database_id
-		INNER JOIN DOI.SysTables pt ON pt.database_id = fk.database_id
-            AND pt.object_id = fk.parent_object_id
-		INNER JOIN DOI.SysSchemas ps ON ps.database_id = pt.database_id
-            AND pt.schema_id = ps.schema_id
-	WHERE is_disabled = CASE WHEN @Action = 'Disable' THEN 0 ELSE 1 END
-        AND D.name = @DatabaseName
+    SELECT @InternalSQL += '
+	                SELECT @SQL_Out += ''ALTER TABLE '' + ps.name + ''.['' + pt.name + ''] ' + CASE WHEN @Action = 'Enable' THEN SPACE(0) ELSE 'NO' END + 'CHECK CONSTRAINT '' + FK.name + CHAR(13) + CHAR(10)
+                    --SELECT fk.*
+	                FROM ' + @DatabaseName + '.sys.foreign_keys fk
+		                INNER JOIN ' + @DatabaseName + '.sys.tables pt ON pt.object_id = fk.parent_object_id
+		                INNER JOIN ' + @DatabaseName + '.sys.schemas ps ON pt.schema_id = ps.schema_id
+	                WHERE is_disabled = ' + CASE WHEN @Action = 'Disable' THEN '0' ELSE '1' END
+
+	IF @InternalDebug = 1
+	BEGIN
+		EXEC DOI.spPrintOutLongSQL
+			@SQLInput = @InternalSQL,
+			@VariableName = '@InternalSQL'
+	END
+
+	EXEC sp_ExecuteSQL
+		@stmt = @InternalSQL,
+		@Params = @ParamList,
+		@SQL_Out = @SQL OUTPUT
 
 	IF @Debug = 1
 	BEGIN
@@ -50,4 +66,5 @@ END TRY
 BEGIN CATCH
 	THROW;
 END CATCH
+
 GO
