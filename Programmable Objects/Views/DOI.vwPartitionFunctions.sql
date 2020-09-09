@@ -20,7 +20,8 @@ AS
 	select * from DOI.vwPartitionFunctions where partitionfunctionname = 'PfMonthlyUnitTest'
 */
 
-SELECT	PartitionFunctionName,
+SELECT	DatabaseName,
+		PartitionFunctionName,
         PartitionFunctionDataType,
         BoundaryInterval,
         NumOfFutureIntervals AS NumOfFutureIntervals_Desired,

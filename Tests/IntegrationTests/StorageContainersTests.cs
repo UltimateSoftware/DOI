@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using DOI.TestHelpers;
 using DOI.Tests.Integration.Models;
 using DOI.Tests.TestHelpers;
+using DOI.Tests.TestHelpers.Metadata.StorageContainers;
 using FluentAssertions;
 using NUnit.Framework;
 using SmartHub.Hosting.Extensions;
@@ -30,7 +30,6 @@ namespace DOI.Tests.Integration
     [Category("DataDrivenIndex")]
     public class StorageContainersTests : StorageContainerHelper
     {
-        private SqlHelper sqlHelper;
         private const string PartitionFunctionName = "PfSlidingWindowUnitTest";
         private const string PartitionSchemeName = "psSlidingWindowUnitTest";
         private const string PartitionFunctionNameNoSlidingWindow = "PfNoSlidingWindowUnitTest";
@@ -41,8 +40,6 @@ namespace DOI.Tests.Integration
         private const string DatabaseName = "DOIUnitTests";
 
         private DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        private List<PartitionFunctionBoundary> expectedPartitionFunctionBoundaries;
-        private List<PartitionSchemeFilegroup> expectedPartitionSchemeFilegroups;
 
         [SetUp]
         public void Setup()

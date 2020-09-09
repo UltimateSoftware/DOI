@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
 namespace DOI.Tests.Integration

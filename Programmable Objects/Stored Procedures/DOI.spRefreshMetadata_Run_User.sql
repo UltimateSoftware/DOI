@@ -11,6 +11,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_Run_User]
+    @DatabaseName NVARCHAR(128) = NULL,    
     @Debug BIT = 0
 AS
 
@@ -21,7 +22,7 @@ AS
 
 DECLARE @SQL NVARCHAR(MAX) = ''
 
-SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10) + 'GO' + CHAR(13) + CHAR(10)
+SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + ' @DatabaseName = ' + CASE WHEN @DatabaseName IS NOT NULL THEN '''' + @DatabaseName + '''' ELSE 'NULL' END + CHAR(13) + CHAR(10) + 'GO' + CHAR(13) + CHAR(10)
 FROM SYS.procedures P
     INNER JOIN sys.schemas s ON p.schema_id = s.schema_id
 WHERE p.NAME LIKE 'spRefreshMetadata_User%'

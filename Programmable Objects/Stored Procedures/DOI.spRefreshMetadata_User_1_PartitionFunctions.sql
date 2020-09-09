@@ -16,7 +16,7 @@ AS
     DROP TRIGGER IF EXISTS DOI.trUpdPartitionFunctions
 
     --EXEC DOI.spRefreshMetadata_User_PartitionFunctions_CreateTables
-    EXEC DOI.spRefreshMetadata_User_PartitionFunctions_InsertData
+    --EXEC DOI.spRefreshMetadata_User_PartitionFunctions_InsertData
     EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData
 
 GO

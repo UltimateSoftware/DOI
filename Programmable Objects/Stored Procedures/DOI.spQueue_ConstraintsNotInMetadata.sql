@@ -12,6 +12,7 @@ GO
 
 
 CREATE   PROCEDURE [DOI].[spQueue_ConstraintsNotInMetadata]
+	@DatabaseName NVARCHAR(128) = NULL
 
 AS
 
@@ -22,7 +23,10 @@ AS
 */
 
 DELETE DOI.CheckConstraintsNotInMetadata
+WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
+
 DELETE DOI.DefaultConstraintsNotInMetadata
+WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 
 INSERT INTO DOI.CheckConstraintsNotInMetadata ( DatabaseName, SchemaName ,TableName ,ColumnName , CheckDefinition ,IsDisabled ,CheckConstraintName )
 SELECT d.name, s.name, t.name, c.name, ch.definition, ch.is_disabled, ch.name
@@ -46,6 +50,7 @@ WHERE t.name NOT LIKE '%|_OLD' ESCAPE '|'
 					WHERE s.Name = CH2.SchemaName COLLATE DATABASE_DEFAULT
 						AND t.Name = CH2.TableName COLLATE DATABASE_DEFAULT 
 						AND ch.NAME = CH2.CheckConstraintName COLLATE DATABASE_DEFAULT)
+	AND d.name = CASE WHEN @DatabaseName IS NULL THEN d.name ELSE @DatabaseName END 
 																		
 INSERT INTO DOI.DefaultConstraintsNotInMetadata ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition )
 SELECT d2.name, s.name, t.name, c.name, d.definition
@@ -69,4 +74,5 @@ WHERE t.name NOT LIKE '%|_OLD' ESCAPE '|'
 					WHERE s.Name = D2.SchemaName COLLATE DATABASE_DEFAULT 
 						AND t.Name = D2.TableName COLLATE DATABASE_DEFAULT 
 						AND c.Name = D2.ColumnName COLLATE DATABASE_DEFAULT )--check definition here as well.
+	AND d2.name = CASE WHEN @DatabaseName IS NULL THEN d2.name ELSE @DatabaseName END 
 GO

@@ -648,7 +648,7 @@ GO
 IF OBJECT_ID('[DOI].[SysTypes]') IS NULL
 CREATE TABLE [DOI].[SysTypes]
 (
-[DatabaseName] [sys].[sysname] NOT NULL,
+[database_id] [int] NOT NULL,
 [name] [sys].[sysname] NOT NULL,
 [system_type_id] [tinyint] NOT NULL,
 [user_type_id] [int] NOT NULL,
@@ -664,7 +664,7 @@ CREATE TABLE [DOI].[SysTypes]
 [default_object_id] [int] NOT NULL,
 [rule_object_id] [int] NOT NULL,
 [is_table_type] [bit] NOT NULL,
-CONSTRAINT [PK_SysTypes] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [user_type_id])
+CONSTRAINT [PK_SysTypes] PRIMARY KEY NONCLUSTERED  ([database_id], [user_type_id])
 )
 WITH
 (
@@ -730,7 +730,7 @@ CREATE TABLE [DOI].[SysAllocationUnits]
 [used_pages] [bigint] NOT NULL,
 [data_pages] [bigint] NOT NULL,
 CONSTRAINT [PK_SysAllocationUnits] PRIMARY KEY NONCLUSTERED  ([database_id], [allocation_unit_id]),
-CONSTRAINT [UQ_SysAllocationUnits] UNIQUE NONCLUSTERED  ([container_id], [data_space_id], [type])
+CONSTRAINT [UQ_SysAllocationUnits] UNIQUE NONCLUSTERED  ([database_id], [container_id], [data_space_id], [type])
 )
 WITH
 (

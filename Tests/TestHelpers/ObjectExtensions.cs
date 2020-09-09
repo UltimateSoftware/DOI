@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DOI.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     /// <summary>
     /// GuidExtensions

@@ -40,13 +40,17 @@ SET QUOTED_IDENTIFIER ON
 
 BEGIN TRY
 	SET @BatchIdOUT = NEWID()
+	DECLARE @DatabaseId INT = DB_ID(@DatabaseName)
 
-    EXEC DOI.spRefreshMetadata_Run_All
+    EXEC DOI.spRefreshMetadata_Run_System
+		@DatabaseId = @DatabaseId
 
 	--TRACK INDEXES NOT IN METADATA...DO THIS LATER
 	EXEC DOI.spQueue_IndexesNotInMetadata
+		@DatabaseName = @DatabaseName
 
 	EXEC DOI.spQueue_ConstraintsNotInMetadata
+		@DatabaseName = @DatabaseName
 
 	DECLARE @CRLF CHAR(2) = CHAR(13) + CHAR(10)
 
@@ -108,6 +112,7 @@ BEGIN TRY
 				AND X.SchemaName = T.SchemaName
 				AND X.TableName = T.TableName
 	WHERE T.ReadyToQueue = 1
+		AND T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END
  
 	WHILE @@FETCH_STATUS <> -1
 	BEGIN

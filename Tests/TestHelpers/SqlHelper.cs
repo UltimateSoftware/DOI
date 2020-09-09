@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace DOI.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     using System;
     using System.Collections.Generic;

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DOI.TestHelpers;
 using NUnit.Framework;
-using TestHelper = DOI.TestHelpers;
+using TestHelper = DOI.Tests.TestHelpers;
 
 namespace DOI.Tests.Integration
 {

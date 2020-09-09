@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using DOI.Tests.Integration.Models;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace DOI.Tests.TestHelpers
+namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
 {
     public class StorageContainerHelper
     {
-        private DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        private List<PartitionFunctionBoundary> expectedPartitionFunctionBoundaries;
-        private List<PartitionSchemeFilegroup> expectedPartitionSchemeFilegroups;
-        private SqlHelper sqlHelper;
+        protected List<PartitionFunctionBoundary> expectedPartitionFunctionBoundaries;
+        protected List<PartitionSchemeFilegroup> expectedPartitionSchemeFilegroups;
+        protected SqlHelper sqlHelper = new SqlHelper();
+        private DataDrivenIndexTestHelper dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(new SqlHelper());
         private const string PartitionFunctionName = "PfSlidingWindowUnitTest";
         private const string PartitionSchemeName = "psSlidingWindowUnitTest";
         private const string PartitionFunctionNameNoSlidingWindow = "PfNoSlidingWindowUnitTest";

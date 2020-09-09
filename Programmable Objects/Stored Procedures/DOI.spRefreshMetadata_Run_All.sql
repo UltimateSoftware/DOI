@@ -8,18 +8,33 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_Run_All]
+    @DatabaseName NVARCHAR(128) = NULL,
+    @Debug BIT = 0
 
 AS
 
 /*
     EXEC DOI.spRefreshMetadata_Run_All
+        @Debug = 1
 */
 
 BEGIN TRY
     --BEGIN TRAN
+    IF @DatabaseName IS NOT NULL
+    BEGIN
+        DECLARE @DatabaseId INT = (SELECT database_id FROM sys.databases WHERE name = @DatabaseName)
+    END
+
     EXEC DOI.spRefreshMetadata_User_0_Databases
+        @DatabaseName = @DatabaseName
+
     EXEC DOI.spRefreshMetadata_Run_System
+        @DatabaseId = @DatabaseId,
+        @Debug = @Debug
+
     EXEC DOI.spRefreshMetadata_Run_User
+        @DatabaseName = @DatabaseName,
+        @Debug = @Debug
     --COMMIT TRAN
 END TRY
 BEGIN CATCH

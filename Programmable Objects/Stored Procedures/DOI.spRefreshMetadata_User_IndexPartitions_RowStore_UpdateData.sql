@@ -12,6 +12,7 @@ GO
 
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData]
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
@@ -45,6 +46,7 @@ FROM DOI.SysIndexPhysicalStats IPS
 		AND p.index_id = i.index_id
 		AND p.partition_number = IRSP.PartitionNumber
         AND p.hobt_id = au.container_id
+WHERE IRSP.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRSP.DatabaseName ELSE @DatabaseName END 
 
 
 UPDATE IRSP
@@ -58,6 +60,7 @@ SET PartitionUpdateType =   CASE
 			                    ELSE 'None'
                     		END
 FROM DOI.IndexRowStorePartitions IRSP
+WHERE IRSP.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRSP.DatabaseName ELSE @DatabaseName END 
 
 
 UPDATE IRS
@@ -81,5 +84,6 @@ FROM DOI.IndexesRowStore IRS
             AND IRSP.SchemaName = IRS.SchemaName
             AND IRSP.TableName = IRS.TableName
             AND IRSP.IndexName = IRS.IndexName
+WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
 GO

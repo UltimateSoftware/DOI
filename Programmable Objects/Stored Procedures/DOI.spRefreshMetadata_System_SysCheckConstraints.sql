@@ -11,13 +11,21 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysCheckConstraints]
+    @DatabaseId INT = NULL
 
 AS
 
+/*
+    EXEC [DOI].[spRefreshMetadata_System_SysCheckConstraints]
+        @DatabaseId = 18
+*/
+
 DELETE DOI.SysCheckConstraints
+WHERE database_id = CASE WHEN @DatabaseId IS NULL THEN database_id ELSE @DatabaseId END
 
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysCheckConstraints'
+    @TableName = 'SysCheckConstraints',
+    @DatabaseId = @DatabaseId
 
 GO

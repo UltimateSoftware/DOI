@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using DOI.Tests.Integration.Models;
 using NUnit.Framework;
-using TestHelper = DOI.TestHelpers;
+using TestHelper = DOI.Tests.TestHelpers;
 
 namespace DOI.Tests.Integration
 {

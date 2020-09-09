@@ -12,8 +12,14 @@ GO
 
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysDatabases]
+    @DatabaseId INT = NULL
 
 AS
+
+/*
+    EXEC [DOI].[spRefreshMetadata_System_SysDatabases]
+        @DatabaseId = 18
+*/
 
 DELETE DOI.SysDatabases
 

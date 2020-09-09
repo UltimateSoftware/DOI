@@ -17,6 +17,7 @@ GO
 --    @UseExistenceCheck  = 1
 --GO
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_Tables_UpdateData]
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
@@ -39,16 +40,19 @@ FROM DOI.Tables T
         AND I.type_desc IN ('CLUSTERED', 'HEAP')
     INNER JOIN DOI.SysDataSpaces DS_Actual ON i.database_id = DS_Actual.database_id
         AND i.data_space_id = DS_Actual.data_space_id
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 UPDATE T
 SET PartitionFunctionName = PF.PartitionFunctionName
 FROM DOI.Tables T
     LEFT JOIN DOI.PartitionFunctions PF ON PF.PartitionSchemeName = T.Storage_Actual
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 UPDATE T
 SET StorageType_Desired = DS_Desired.type_desc
 FROM DOI.Tables T
     INNER JOIN DOI.SysDataSpaces DS_Desired ON T.Storage_Desired = DS_Desired.name
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 UPDATE T
 SET T.DSTriggerSQL = DSTrigger.DSTriggerSQL
@@ -58,6 +62,7 @@ FROM DOI.Tables T
 								WHERE PT.SchemaName = T.SchemaName
 									AND PT.TableName = T.TableName
 								FOR XML PATH(''), TYPE).value(N'.[1]', N'nvarchar(max)'), 1, 1, '')) DSTrigger(DSTriggerSQL)
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 
 GO

@@ -11,13 +11,21 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysTriggers]
+    @DatabaseId INT = NULL
 
 AS
 
+/*
+    EXEC [DOI].[spRefreshMetadata_System_SysTriggers]
+        @DatabaseId = 18
+*/
+
 DELETE DOI.SysTriggers
+WHERE database_id = CASE WHEN @DatabaseId IS NULL THEN database_id ELSE @DatabaseId END
 
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysTriggers'
+    @TableName = 'SysTriggers',
+    @DatabaseId = @DatabaseId
 
 GO

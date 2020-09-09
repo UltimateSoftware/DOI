@@ -161,7 +161,7 @@ BEGIN TRY
 	IF (@CurrentSchemaName + '.' + @CurrentTableName) IS NOT NULL
 	BEGIN 
 		EXEC DOI.spRun_LogInsert
-            @CurrentDatabaseName        = @CurrentDatabaseName 
+            @CurrentDatabaseName        = 'N/A' 
 			,@CurrentSchemaName			= 'N/A'  
 			,@CurrentTableName			= 'N/A'
 			,@CurrentIndexName			= 'N/A'
@@ -415,7 +415,8 @@ BEGIN CATCH
 		SET    LastLoggedRow.ErrorText = @ErrorMessage
 		WHERE LastLoggedRow.TransactionId = @TransactionId;
 
-		INSERT INTO @Log (  DatabaseName,
+		INSERT INTO @Log (  LogID,
+							DatabaseName,
                             SchemaName ,
 							TableName ,
 							IndexName ,
@@ -454,6 +455,7 @@ BEGIN CATCH
 		AND Q.ParentTableName = @CurrentParentTableName
 
 	SET @CurrentDateTime = SYSDATETIME()
+	SET @CurrentDatabaseName = ISNULL(@CurrentDatabaseName, 'N/A')
 	SET @CurrentSchemaName = ISNULL(@CurrentSchemaName, 'N/A')
 	SET @CurrentTableName = ISNULL(@CurrentTableName, 'N/A')
 	SET @CurrentIndexName = ISNULL(@CurrentIndexName, 'N/A')

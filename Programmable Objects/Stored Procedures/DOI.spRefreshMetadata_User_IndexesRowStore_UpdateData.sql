@@ -14,8 +14,9 @@ GO
 --go
 
 CREATE PROCEDURE [DOI].[spRefreshMetadata_User_IndexesRowStore_UpdateData]
+    @DatabaseName NVARCHAR(128) = NULL
 
---WITH NATIVE_COMPILATION, SCHEMABINDING
+--WITH NATIVE_COMPILATION, SCHEMABINDING --UPDATE..FROM NOT SUPPORTED IN NC MODULES.
 AS
 
 --BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
@@ -30,7 +31,8 @@ AS
     SELECT @SQL += CASE @SQL WHEN '' THEN '' ELSE CHAR(13) + CHAR(10) + 'UNION ALL' + CHAR(13) + CHAR(10) END + 'SELECT ''' + DatabaseName + ''' AS DatabaseName, ''' + SchemaName + ''' AS SchemaName, ''' + TableName + ''' AS TableName, ''' + IndexName + ''' AS IndexName, COUNT(*) as NumRows FROM ' + DatabaseName + '.' + SchemaName + '.' + TableName + ' WHERE ' + FilterPredicate_Desired
     FROM (  SELECT IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, IRS.FilterPredicate_Desired
             FROM DOI.IndexesRowStore IRS
-            WHERE IsFiltered_Desired = 1)x
+            WHERE IsFiltered_Desired = 1
+                AND IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END )x
 
     INSERT @FilteredRowCounts        
     EXEC(@SQL)
@@ -50,6 +52,7 @@ AS
                             AND s.name = IRS.SchemaName
 						    AND t.name = IRS.TableName
 						    AND i.name = IRS.IndexName)
+        AND IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE IRS
     SET NumRows_Actual = T.NumRows
@@ -59,6 +62,7 @@ AS
             AND IRS.TableName = T.TableName
             AND IRS.IndexName = T.IndexName
     WHERE IsFiltered_Desired = 1
+        AND IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE IRS
     SET NumRows_Actual = p.NumRows
@@ -73,8 +77,7 @@ AS
                         AND t.name = IRS.TableName COLLATE DATABASE_DEFAULT
                     GROUP BY s.name , t.name)p
     WHERE IsFiltered_Desired = 0
-
-
+        AND IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     --INDEX SIZING
     UPDATE IRS
@@ -112,10 +115,12 @@ AS
                             INNER JOIN DOI.SysDatabaseFiles df ON df.data_space_id = a.data_space_id
 			                CROSS JOIN (SELECT CAST(SettingValue AS INT) AS SizeCutoffValue
 						                FROM DOI.DOISettings 
-						                WHERE SettingName = 'LargeTableCutoffValue')SS1
+						                WHERE SettingName = 'LargeTableCutoffValue'
+                                            AND DatabaseName = IRS.DatabaseName)SS1
                             CROSS JOIN (SELECT CAST(SettingValue AS INT) AS MinNumPages
                                         FROM DOI.DOISettings 
-                                        WHERE SettingName = 'MinNumPagesForIndexDefrag')SS2
+                                        WHERE SettingName = 'MinNumPagesForIndexDefrag'
+                                            AND DatabaseName = IRS.DatabaseName)SS2
                             CROSS JOIN (SELECT database_id FROM DOI.SysDatabases WHERE name = IRS.DatabaseName) DB
 			                INNER JOIN DOI.SysDmOsVolumeStats vs ON vs.database_id = DB.database_id
                                 AND vs.FILE_ID = df.FILE_ID
@@ -123,6 +128,7 @@ AS
                             AND t.NAME = IRS.TableName
                             AND i.NAME = IRS.IndexName
 		                GROUP BY s.name, t.name, i.name) TS
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     --FRAG
     UPDATE IRS
@@ -144,6 +150,7 @@ AS
                             AND FN.SchemaName = IRS.SchemaName
                             AND FN.TableName = IRS.TableName
                             AND FN.IndexName = IRS.IndexName) F
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     --SysIndexes, and friends...
     UPDATE IRS
@@ -187,6 +194,7 @@ AS
             AND ActualDS.data_space_id = I.data_space_id
 	    INNER JOIN DOI.SysDataSpaces DesiredDS ON DesiredDS.database_id = d.database_id
             AND DesiredDS.name = IRS.Storage_Desired
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE IRS
     SET     PartitionFunction_Desired = NewPf.name,
@@ -201,6 +209,7 @@ AS
             AND NewPs.name = IRS.Storage_Desired
 	    LEFT JOIN DOI.SysPartitionFunctions NewPf ON NewPf.database_id = NewPs.database_id
             AND NewPf.function_id = NewPs.function_id
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     --CHANGE BITS
 
@@ -228,12 +237,13 @@ AS
         INNER JOIN DOI.Tables T ON IRS.DatabaseName = T.DatabaseName
             AND IRS.SchemaName = T.SchemaName
             AND IRS.TableName = T.TableName
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     /*			
 			    ,ISNULL(i.has_LOB_columns, 0) AS IndexHasLOBColumns
     */
 
-    UPDATE DOI.IndexesRowStore
+    UPDATE IRS
     SET AreDropRecreateOptionsChanging =    CASE
                                                 WHEN (IsUniquenessChanging = 1
                                                         OR IsKeyColumnListChanging = 1
@@ -273,11 +283,14 @@ AS
                                                 ELSE 0
                                             END              
     FROM DOI.IndexesRowStore IRS
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
 
     /*******************************        FOR ESTIMATING INDEX SIZE (START) *******************************************/
-    UPDATE DOI.IndexesRowStore
+    UPDATE IRS
     SET AllColsInTableSize_Estimated = ISNULL(DOI.fnEstimateIndexSize_AllColSize(DatabaseName, schemaname, tablename), 0)
+    FROM DOI.IndexesRowStore IRS
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
     --NEED TO HANDLE THIS NULL VALUE INSIDE OF FUNCTION!!!
 
     UPDATE IRS
@@ -290,6 +303,7 @@ AS
                             AND IRS.SchemaName = FN.SchemaName
                             AND IRS.TableName = FN.TableName
                             AND IRS.IndexName = FN.IndexName) FN
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE IRS
     SET IRS.NumVarKeyCols_Estimated = FN.NumVarCols,
@@ -301,6 +315,7 @@ AS
                             AND IRS.SchemaName = FN.SchemaName
                             AND IRS.TableName = FN.TableName
                             AND IRS.IndexName = FN.IndexName) FN
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE IRS
     SET IRS.NumFixedInclCols_Estimated = FN.NumInclFixedCols,
@@ -312,6 +327,7 @@ AS
                             AND IRS.SchemaName = FN.SchemaName
                             AND IRS.TableName = FN.TableName
                             AND IRS.IndexName = FN.IndexName) FN
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE IRS
     SET IRS.NumVarInclCols_Estimated = FN.NumInclVarCols,
@@ -323,6 +339,7 @@ AS
                             AND IRS.SchemaName = FN.SchemaName
                             AND IRS.TableName = FN.TableName
                             AND IRS.IndexName = FN.IndexName) FN
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
 
     UPDATE DOI.IndexesRowStore
@@ -334,6 +351,7 @@ AS
         NumInclCols_Estimated   = NumFixedInclCols_Estimated  + NumVarInclCols_Estimated,
         NumFixedCols_Estimated  = NumFixedKeyCols_Estimated   + NumFixedInclCols_Estimated,
         NumVarCols_Estimated    = NumVarKeyCols_Estimated     + NumVarInclCols_Estimated
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 
     UPDATE DOI.IndexesRowStore
     SET ColsSize_Estimated = KeyColsSize_Estimated + InclColsSize_Estimated,
@@ -345,6 +363,7 @@ AS
                             THEN 4 
                             ELSE 0 
                         END
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
                              
     UPDATE DOI.IndexesRowStore
     SET TotalRowSize_Estimated =  CASE
@@ -353,18 +372,21 @@ AS
                             WHEN IsClustered_Desired = 0
                             THEN FixedColsSize_Estimated + VarColsSize_Estimated
                         END + NullBitmap_Estimated + 4,
-        NonClusteredIndexRowLocator_Estimated =   CASE
-                                            WHEN IsClustered_Desired = 0 AND IsUnique_Desired = 0
-                                            THEN 0 --when NC index is over a CDX, it's the clustering key.  If it's over a heap, it's the heap RID.
-                                            ELSE 0 
-                                        END
+        NonClusteredIndexRowLocator_Estimated = CASE
+                                                    WHEN IsClustered_Desired = 0 AND IsUnique_Desired = 0
+                                                    THEN 0 --when NC index is over a CDX, it's the clustering key.  If it's over a heap, it's the heap RID.
+                                                    ELSE 0 
+                                                END
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 
     UPDATE DOI.IndexesRowStore 
     SET NumFreeRowsPerPage_Estimated = FLOOR(8096 * ((100 - [Fillfactor_Desired]) / 100.00)) / (TotalRowSize_Estimated),
         NumRowsPerPage_Estimated = FLOOR(8096 / (TotalRowSize_Estimated + 2)) * 1.00
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 
     UPDATE DOI.IndexesRowStore 
     SET NumLeafPages_Estimated = CEILING(NumRows_Actual / (NumRowsPerPage_Estimated - NumFreeRowsPerPage_Estimated))
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 
     UPDATE DOI.IndexesRowStore
     SET LeafSpaceUsed_Estimated = (NumLeafPages_Estimated) * 8192.00,
@@ -374,6 +396,7 @@ AS
                                                 THEN CEILING(1 + CAST(LOG((NumLeafPages_Estimated/(NumRowsPerPage_Estimated * 1.00)), NumRowsPerPage_Estimated) AS DECIMAL(10,2)))
                                                 ELSE 1
                                             END
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 
     UPDATE IRS
     SET PKColsSize_Estimated = PKColsSize.PKColsSize
@@ -389,6 +412,7 @@ AS
                         WHERE s.name = IRS.SchemaName
                             AND t.name = IRS.TableName
                             AND i.is_primary_key = 1) PKColsSize
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
 
     UPDATE DOI.IndexesRowStore
@@ -427,8 +451,9 @@ AS
                                                 + CEILING(CEILING(CEILING(CEILING(CEILING(CEILING(CEILING(NumLeafPages_Estimated/NumRowsPerPage_Estimated)/NumRowsPerPage_Estimated)/NumRowsPerPage_Estimated)/NumRowsPerPage_Estimated)/NumRowsPerPage_Estimated)/NumRowsPerPage_Estimated)/NumRowsPerPage_Estimated)
                                         ELSE 0
                                     END + 1  --we add 1 for the root page.
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 
-    UPDATE DOI.IndexesRowStore
+    UPDATE IRS
     SET IndexSizeMB_Actual_Estimated = CAST(CASE
                                         WHEN IsClustered_Desired = 1
                                         THEN (((LeafSpaceUsed_Estimated + (NumIndexPages_Estimated * 8192.00))/1024.00)/1024.00)
@@ -439,6 +464,8 @@ AS
                                                         ELSE 0 
                                                     END) * NumRows_Actual)/ 1024.00)/ 1024.00) 
                                     END AS DECIMAL(10,2))
+    FROM DOI.IndexesRowStore IRS
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     /*******************************        FOR ESTIMATING INDEX SIZE (END) *******************************************/
 --END

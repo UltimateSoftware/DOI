@@ -11,6 +11,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE PROCEDURE [DOI].[spRefreshMetadata_User_PartitionFunctions_UpdateData]
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
@@ -74,4 +75,5 @@ AS
 																				        END) + 1 --datediff clips 1 month off the end, so we add it back.
 										        END + CASE WHEN UsesSlidingWindow = 1 THEN 2 ELSE 1 END, --one interval for historical and one for the sliding window
         MinValueOfDataType = CASE WHEN PartitionFunctionDataType = 'DATETIME2' THEN '0001-01-01' ELSE 'Error' END
+	WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 GO

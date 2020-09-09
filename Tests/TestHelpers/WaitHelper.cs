@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace DOI.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     public class WaitHelper
     {

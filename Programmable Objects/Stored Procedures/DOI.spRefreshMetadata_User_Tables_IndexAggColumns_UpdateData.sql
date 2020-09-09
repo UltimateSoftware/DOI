@@ -10,6 +10,8 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE PROCEDURE [DOI].[spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData]
+    @DatabaseName NVARCHAR(128) = NULL
+
 AS
 
 UPDATE T
@@ -127,6 +129,7 @@ FROM DOI.Tables T
         ON IndexAgg.DatabaseName = T.DatabaseName
             AND IndexAgg.SchemaName = T.SchemaName
             AND IndexAgg.TableName = T.TableName
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 
 UPDATE T
@@ -140,5 +143,6 @@ FROM DOI.Tables T
                     AND STM.ReadyToQueue = 1
 					AND STM.StatisticsUpdateType <> 'None'
 				GROUP BY STM.SchemaName, STM.TableName) StatsAgg
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 GO

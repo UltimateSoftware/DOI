@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using DOI.TestHelpers;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
 namespace DOI.Tests.Integration.Maintenance
@@ -16,8 +16,6 @@ namespace DOI.Tests.Integration.Maintenance
         protected const int MinimumFragmentation = 31;
         protected const int MinimumIndexPages = 5;
         protected const string TempTableName = "TempA";
-        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        protected TempARepository tempARepository;
 
         [OneTimeSetUp]
         public void OneTimeSetup()

@@ -149,7 +149,8 @@ RECONFIGURE
 			PTI.PrepTableName,
 			PTI.IndexSizeMB_Actual
 	FROM  DOI.vwTables_PrepTables_Indexes PTI
-	WHERE PTI.SchemaName = @SchemaName
+	WHERE PTI.DatabaseName = @DatabaseName
+		AND PTI.SchemaName = @SchemaName
 		AND PTI.ParentTableName = @TableName
 								
 	DECLARE PrepTable_Cur CURSOR LOCAL FAST_FORWARD FOR
@@ -186,6 +187,7 @@ RECONFIGURE
 		WHERE TTP.IntendToPartition = 1
 			AND PT.PrepTableName IS NOT NULL
 			AND TTP.IsStorageChanging = 1
+			AND TTP.DatabaseName = @DatabaseName
 			AND TTP.SchemaName = @SchemaName
 			AND TTP.TableName = @TableName
 		ORDER BY PT.IsNewPartitionedPrepTable, PT.PartitionNumber
@@ -372,7 +374,8 @@ RECONFIGURE
 			DECLARE CreateAllConstraints_Cur CURSOR LOCAL FAST_FORWARD FOR
 				SELECT	PTC.CreateConstraintStatement, RowNum
 				FROM  DOI.vwTables_PrepTables_Constraints PTC
-				WHERE PTC.SchemaName = @CurrentSchemaName
+				WHERE PTC.DatabaseName = @CurrentDatabaseName
+					AND PTC.SchemaName = @CurrentSchemaName
 					AND PTC.ParentTableName = @CurrentTableName
 					AND PTC.PrepTableName = @PrepTableName
 
@@ -489,7 +492,8 @@ RECONFIGURE
 							DropTableSQL,
 							PartitionNumber
 					FROM DOI.vwTables_PrepTables_Partitions
-					WHERE SchemaName = @CurrentSchemaName
+					WHERE DatabaseName = @CurrentDatabaseName
+						AND SchemaName = @CurrentSchemaName
 						AND ParentTableName = @CurrentTableName
 					ORDER BY PartitionNumber ASC
 				OPEN Partitions_Cur
@@ -730,7 +734,8 @@ BEGIN TRAN',
 							PTC.RenameNewPartitionedPrepTableConstraintSQL,
 							PTC.RowNum
 					FROM  DOI.vwTables_PrepTables_Constraints PTC
-					WHERE PTC.SchemaName = @CurrentSchemaName
+					WHERE PTC.DatabaseName = @DatabaseName
+						AND PTC.SchemaName = @CurrentSchemaName
 						AND PTC.ParentTableName = @CurrentTableName
 						AND PTC.PrepTableName = @PrepTableName
 
@@ -791,7 +796,8 @@ BEGIN TRAN',
                             S.RenameExistingTableStatisticsSQL,
 							S.RowNum
 					FROM  DOI.vwTables_PrepTables_Statistics S
-					WHERE S.SchemaName = @CurrentSchemaName
+					WHERE S.DatabaseName = @CurrentDatabaseName
+						AND S.SchemaName = @CurrentSchemaName
 						AND S.ParentTableName = @CurrentTableName
 
 				OPEN RenameAllStatistics_Cur
@@ -972,6 +978,7 @@ BEGIN TRAN',
 
                 --rename all statistics, before we check for any missing....
                 EXEC DOI.spQueue_RenameStatistics 
+					@DatabaseName = @CurrentDatabaseName,
                     @SchemaName = @CurrentSchemaName,
                     @TableName = @CurrentTableName
 
@@ -981,7 +988,8 @@ BEGIN TRAN',
                             s.CreateStatisticsSQL,
                             ROW_NUMBER() OVER(ORDER BY S.StatisticsName) AS RowNum
 					FROM  DOI.vwStatistics S
-					WHERE s.SchemaName = @CurrentSchemaName
+					WHERE s.DatabaseName = @CurrentDatabaseName
+						AND s.SchemaName = @CurrentSchemaName
 						AND s.TableName = @CurrentTableName
 
 				OPEN CreateMissingStatistics_Cur

@@ -13,18 +13,23 @@ GO
 
 
 CREATE     PROCEDURE [DOI].[spRefreshMetadata_User_Databases_InsertData]
+    @DatabaseName NVARCHAR(128) = NULL
 
-WITH NATIVE_COMPILATION, SCHEMABINDING
+--WITH NATIVE_COMPILATION, SCHEMABINDING
 AS
 
 /*
     EXEC DOI.spRefreshMetadata_User_Databases_InsertData
 */
 
-BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
+--BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
     DELETE DOI.Databases
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END
 
     INSERT INTO DOI.Databases ( DatabaseName )
-    VALUES ( N'PaymentReporting')
-END
+    SELECT NAME
+    FROM sys.databases
+    WHERE NAME = CASE WHEN @DatabaseName IS NULL THEN NAME ELSE @DatabaseName END
+        AND name NOT IN ('master', 'tempdb', 'model', 'msdb')
+--END
 GO

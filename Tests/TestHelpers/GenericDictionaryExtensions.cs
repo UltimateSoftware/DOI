@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DOI.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     public static class GenericDictionaryExtensions
     {

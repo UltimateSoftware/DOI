@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.Practices.Unity.Utility;
 using NUnit.Framework;
 using DOI.Tests.Integration.Models;
-using TestHelper = DOI.TestHelpers.SqlHelper;
+using TestHelper = DOI.Tests.TestHelpers.SqlHelper;
 
-namespace DOI.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     public class DataDrivenIndexTestHelper
     {
         protected const string DatabaseName = "DOIUnitTests";
-        private TestHelper sqlHelper;
+        protected TestHelper sqlHelper;
         private TempARepository tempARepository;
 
         public DataDrivenIndexTestHelper(TestHelper sqlHelper)

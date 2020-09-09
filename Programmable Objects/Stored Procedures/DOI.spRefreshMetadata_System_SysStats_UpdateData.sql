@@ -11,7 +11,14 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysStats_UpdateData]
+    @DatabaseId INT = NULL
+
 AS
+
+/*
+    EXEC [DOI].[spRefreshMetadata_System_SysStats_UpdateData]
+        @DatabaseId = 18
+*/
 
 UPDATE ST
 SET ST.column_list = StatsColumnList
@@ -29,4 +36,6 @@ FROM DOI.SysStats ST
 						AND stc.stats_id = st.stats_id
                     ORDER BY stc.stats_column_id ASC
 					FOR XML PATH('')) StatsColumns(StatsColumnList)
+WHERE d.database_id = CASE WHEN @DatabaseId IS NULL THEN d.database_id ELSE @DatabaseId END
+
 GO

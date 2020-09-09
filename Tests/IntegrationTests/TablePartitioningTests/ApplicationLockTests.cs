@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
-using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using DOI.Tests.Integration;
 using DOI.Tests.Integration.TablePartitioning;
 using NUnit.Framework;
@@ -26,7 +26,6 @@ namespace DOI.Tests.Integration.TablePartitioning
          * 6. try the APPLOCK_TEST() function?  this is what the DDL trigger uses.
          * 7. try running job so that it's killed by business hours check.
          */
-        protected const string DatabaseName = "DOIUnitTests";
         private SqlConnection connection;
 
         private string connectionInfoMessage;

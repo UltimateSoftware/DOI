@@ -11,12 +11,21 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysIndexPhysicalStats]
+    @DatabaseId INT = NULL
 
 AS
 
+/*
+    EXEC [DOI].[spRefreshMetadata_System_SysIndexPhysicalStats]
+        @DatabaseId = 18
+*/
+
+
 DELETE DOI.SysIndexPhysicalStats
+WHERE database_id = CASE WHEN @DatabaseId IS NULL THEN database_id ELSE @DatabaseId END
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysIndexPhysicalStats'
+    @TableName = 'SysIndexPhysicalStats',
+    @DatabaseId = @DatabaseId
 
 GO

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using DOI.TestHelpers;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
 namespace DOI.Tests.Integration
@@ -14,9 +14,6 @@ namespace DOI.Tests.Integration
     {
         private List<IndexView> expectedIndexViews;
         private List<ForeignKey> expectedForeignKeys;
-        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        protected TempARepository tempARepository;
-        protected const string DatabaseName = "DOIUnitTests";
         protected const string TempTableName = "TempA";
 
         [SetUp]

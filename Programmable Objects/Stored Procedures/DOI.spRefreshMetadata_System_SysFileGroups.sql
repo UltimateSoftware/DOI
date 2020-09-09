@@ -11,12 +11,19 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysFileGroups]
+    @DatabaseId INT = NULL
+AS
 
-AS  
+/*
+    EXEC [DOI].[spRefreshMetadata_System_SysFileGroups]
+        @DatabaseId = 18
+*/
  
 DELETE DOI.SysFilegroups
+WHERE database_id = CASE WHEN @DatabaseId IS NULL THEN database_id ELSE @DatabaseId END
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysFilegroups'
+    @TableName = 'SysFilegroups',
+    @DatabaseId = @DatabaseId
 
 GO

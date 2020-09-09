@@ -11,8 +11,9 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_IndexesColumnStore_UpdateData]
+    @DatabaseName NVARCHAR(128) = NULL
 
---WITH NATIVE_COMPILATION, SCHEMABINDING
+--WITH NATIVE_COMPILATION, SCHEMABINDING --update...from is not supported in NC modules.
 AS
 
 --BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
@@ -27,7 +28,8 @@ AS
     SELECT @SQL += CASE @SQL WHEN '' THEN '' ELSE CHAR(13) + CHAR(10) + 'UNION ALL' + CHAR(13) + CHAR(10) END + 'SELECT ''' + DatabaseName + ''' AS DatabaseName, ''' + SchemaName + ''' AS SchemaName, ''' + TableName + ''' AS TableName, ''' + IndexName + ''' AS IndexName, COUNT(*) as NumRows FROM ' + DatabaseName + '.' + SchemaName + '.' + TableName + ' WHERE ' + FilterPredicate_Desired
     FROM (  SELECT ICS.DatabaseName, ICS.SchemaName, ICS.TableName, ICS.IndexName, ICS.FilterPredicate_Desired
             FROM DOI.IndexesColumnStore ICS
-            WHERE IsFiltered_Desired = 1)x
+            WHERE IsFiltered_Desired = 1
+                AND ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END )x
 
     INSERT @FilteredRowCounts        
     EXEC(@SQL)
@@ -46,6 +48,7 @@ AS
                             AND s.name = ICS.SchemaName
 						    AND t.name = ICS.TableName
 						    AND i.name = ICS.IndexName)
+        AND ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE ICS
     SET NumRows_Actual = T.NumRows
@@ -55,6 +58,7 @@ AS
             AND ICS.TableName = T.TableName
             AND ICS.IndexName = T.IndexName
     WHERE IsFiltered_Desired = 1
+        AND ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE ICS
     SET NumRows_Actual = p.NumRows
@@ -69,6 +73,7 @@ AS
                             AND t.name = ICS.TableName COLLATE DATABASE_DEFAULT
                         GROUP BY s.name , t.name)p
     WHERE IsFiltered_Desired = 0
+        AND ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     --INDEX SIZING
     UPDATE ICS
@@ -117,6 +122,8 @@ AS
                             AND t.NAME = ICS.TableName
                             AND i.NAME = ICS.IndexName
 		                GROUP BY s.name, t.name, i.name) TS
+    WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
+
     --FRAG
     UPDATE ICS
     SET Fragmentation = F.Fragmentation,
@@ -137,6 +144,7 @@ AS
                             AND FN.SchemaName = ICS.SchemaName
                             AND FN.TableName = ICS.TableName
                             AND FN.IndexName = ICS.IndexName) F
+    WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     --SysIndexes, and friends...
     UPDATE ICS
@@ -166,6 +174,7 @@ AS
             AND ActualDS.data_space_id = I.data_space_id
 	    INNER JOIN DOI.SysDataSpaces DesiredDS ON DesiredDS.database_id = d.database_id
             AND DesiredDS.name = ICS.Storage_Desired
+    WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     --Partition Functions
     UPDATE ICS
@@ -181,6 +190,7 @@ AS
             AND NewPs.name = ICS.Storage_Desired
 	    LEFT JOIN DOI.SysPartitionFunctions NewPf ON NewPf.database_id = NewPs.database_id
             AND NewPf.function_id = NewPs.function_id
+    WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     --CHANGE BITS
     UPDATE ICS
@@ -194,6 +204,7 @@ AS
         INNER JOIN DOI.Tables T ON ICS.DatabaseName = T.DatabaseName
             AND ICS.SchemaName = T.SchemaName
             AND ICS.TableName = T.TableName
+    WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     /*			
 			    ,ISNULL(i.has_LOB_columns, 0) AS IndexHasLOBColumns
@@ -218,6 +229,7 @@ AS
                                                 THEN 1
                                                 ELSE 0
                                             END
+    WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 
     /*******************************        FOR ESTIMATING INDEX SIZE (START) *******************************************/
     /*******************************        FOR ESTIMATING INDEX SIZE (END) *******************************************/

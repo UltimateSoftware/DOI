@@ -15,17 +15,17 @@ GO
 
 
 CREATE     PROCEDURE [DOI].[spRefreshMetadata_User_0_Databases]
+    @DatabaseName NVARCHAR(128) = NULL
 
-WITH NATIVE_COMPILATION, SCHEMABINDING
+--WITH NATIVE_COMPILATION, SCHEMABINDING
 AS
 
 /*
     EXEC DOI.spRefreshMetadata_User_0_Databases
 */
 
-BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
-    SELECT 'We are not doing anything here yet.'
-    --EXEC [DOI].[spRefreshMetadata_User_Databases_InsertData]
-END
+--BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
+    EXEC [DOI].[spRefreshMetadata_User_Databases_InsertData]
+--END
 
 GO

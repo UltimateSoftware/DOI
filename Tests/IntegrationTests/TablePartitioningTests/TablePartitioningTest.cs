@@ -5,12 +5,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using DOI.TestHelpers;
 using DOI.Tests.TestHelpers;
 using Microsoft.Practices.Unity.Utility;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
-using SqlHelper = DOI.TestHelpers.SqlHelper;
+using SqlHelper = DOI.Tests.TestHelpers.SqlHelper;
 
 namespace DOI.Tests.Integration.TablePartitioning
 {
@@ -117,7 +116,7 @@ namespace DOI.Tests.Integration.TablePartitioning
         private void SetUpTableUnderTest()
         {
             sqlHelper.Execute("UPDATE DOI.Tables SET ReadyToQueue = 0");
-            sqlHelper.Execute(SetupSqlStatements_Partitioned.PartitionFunctionCreation);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.PartitionFunction_Setup_Metadata);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.TableCreation);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.DataInsert);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.TableToMetadata);

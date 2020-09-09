@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DOI.TestHelpers;
+
 
 namespace DOI.Tests.TestHelpers
 {
@@ -29,7 +29,7 @@ END
 INSERT INTO DOI.DOI.Databases(DatabaseName)
 VALUES(N'DOIUnitTests')";
 
-        public static string setUpPartitionFunctionsSql = SetupSqlStatements_Partitioned.PartitionFunction_Setup;
+        public static string setUpPartitionFunctionsSql = SetupSqlStatements_Partitioned.PartitionFunction_Setup_Metadata;
 
         public static string tearDownPartitionFunctionSql = @"
 DROP PARTITION SCHEME ";

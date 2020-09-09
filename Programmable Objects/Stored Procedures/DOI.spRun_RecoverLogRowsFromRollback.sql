@@ -12,7 +12,7 @@ SET ANSI_NULLS ON
 GO
 
 
-create PROCEDURE [DOI].[spRun_RecoverLogRowsFromRollback]
+CREATE PROCEDURE [DOI].[spRun_RecoverLogRowsFromRollback]
 	@Log DOI.LogTT READONLY
 	
 --WITH NATIVE_COMPILATION, SCHEMABINDING
@@ -23,7 +23,10 @@ AS
 */
 --NOW THAT WE HAVE ROLLED BACK, INSERT THE MISSING LOG ROWS FROM THE TABLE VAR.  THEY SHOULD STILL BE THERE DESPITE THE ROLLBACK.
 --BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
-    INSERT INTO DOI.Log (   DatabaseName,
+	SET IDENTITY_INSERT DOI.Log ON
+
+    INSERT INTO DOI.Log (   LogID,
+							DatabaseName,
                             SchemaName ,
 							TableName ,
 							IndexName ,
@@ -43,7 +46,8 @@ AS
 							BatchId ,
 							SeqNo ,
 							ExitTableLoopOnError )
-    SELECT  DatabaseName,
+    SELECT  LogID,
+			DatabaseName,
             SchemaName ,
 		    TableName ,
 		    IndexName ,
@@ -73,5 +77,7 @@ AS
 							AND T.IndexOperation = L.IndexOperation
 							AND T.RunStatus = L.RunStatus
 							AND T.TableChildOperationId = L.TableChildOperationId );
+
+	SET IDENTITY_INSERT DOI.Log OFF
 --END
 GO

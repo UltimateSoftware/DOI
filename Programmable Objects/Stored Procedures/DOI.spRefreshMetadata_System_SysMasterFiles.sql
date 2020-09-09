@@ -11,8 +11,14 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysMasterFiles]
+    @DatabaseId INT = NULL
 
 AS
+
+/*
+    EXEC [DOI].[spRefreshMetadata_System_SysMasterFiles]
+        @DatabaseId = 18
+*/
 
 DELETE DOI.SysMasterFiles
 

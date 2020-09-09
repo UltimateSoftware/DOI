@@ -11,6 +11,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysDmOsVolumeStats]
+    @DatabaseId INT
 
 AS
 
@@ -20,22 +21,19 @@ AS
     EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats
 */
 
+
+
 DELETE DOI.SysDmOsVolumeStats
+WHERE database_id = @DatabaseId 
 
-    SELECT  FN.*
-    INTO #SysDmOsVolumeStats
-    FROM DOI.SysDatabaseFiles p 
-        CROSS APPLY sys.dm_os_volume_stats(p.database_id, p.file_id) FN 
-    WHERE p.database_id = DB_ID('PaymentReporting')
+SELECT  FN.*
+INTO #SysDmOsVolumeStats
+FROM DOI.SysDatabaseFiles p 
+    CROSS APPLY sys.dm_os_volume_stats(p.database_id, p.file_id) FN 
+WHERE P.database_id = @DatabaseId
 
-    INSERT INTO #SysDmOsVolumeStats
-    SELECT  FN.*
-    FROM DOI.SysDatabaseFiles p
-        CROSS APPLY sys.dm_os_volume_stats(p.database_id, file_id) FN 
-    WHERE p.database_id = DB_ID('TempDB')    
-
-    INSERT INTO DOI.SysDmOsVolumeStats
-    SELECT * FROM #SysDmOsVolumeStats
+INSERT INTO DOI.SysDmOsVolumeStats
+SELECT * FROM #SysDmOsVolumeStats
 
 DROP TABLE #SysDmOsVolumeStats
 GO

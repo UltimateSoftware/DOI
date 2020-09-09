@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Castle.Core;
-using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using  NUnit.Framework;
 
 namespace DOI.Tests.Integration.Metadata

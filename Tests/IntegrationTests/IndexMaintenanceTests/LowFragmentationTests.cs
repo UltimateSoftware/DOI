@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using DOI.Tests.Integration.Models;
 using NUnit.Framework;
-using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 
 namespace DOI.Tests.Integration
 {

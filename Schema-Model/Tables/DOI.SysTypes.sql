@@ -3,7 +3,7 @@ GO
 
 CREATE TABLE [DOI].[SysTypes]
 (
-[DatabaseName] [sys].[sysname] NOT NULL,
+[database_id] [int] NOT NULL,
 [name] [sys].[sysname] NOT NULL,
 [system_type_id] [tinyint] NOT NULL,
 [user_type_id] [int] NOT NULL,

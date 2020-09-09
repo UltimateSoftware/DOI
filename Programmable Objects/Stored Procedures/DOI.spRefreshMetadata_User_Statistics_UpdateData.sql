@@ -11,6 +11,8 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_Statistics_UpdateData]
+    @DatabaseName NVARCHAR(128) = NULL
+
 AS
 
 UPDATE St
@@ -39,6 +41,7 @@ FROM DOI.[Statistics] St
     LEFT JOIN DOI.SysDmDbStatsProperties SP ON St2.database_id = SP.database_id
         AND St2.object_id = SP.object_id
         AND St2.stats_id = SP.stats_id
+WHERE St.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN St.DatabaseName ELSE @DatabaseName END 
 
 UPDATE St
 SET DoesSampleSizeNeedUpdate =  CASE 
@@ -54,6 +57,7 @@ SET DoesSampleSizeNeedUpdate =  CASE
     HasIncrementalChanged = CASE WHEN St.IsIncremental_Desired <> St.IsIncremental_Actual THEN 1 ELSE 0 END,
     HasNoRecomputeChanged = CASE WHEN St.NoRecompute_Desired <> St.NoRecompute_Actual THEN 1 ELSE 0 END
 FROM DOI.[Statistics] St
+WHERE St.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN St.DatabaseName ELSE @DatabaseName END 
 
 
 UPDATE St
@@ -81,5 +85,6 @@ SET StatisticsUpdateType =
                             ELSE 1
                         END
 FROM DOI.[Statistics] St
+WHERE St.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN St.DatabaseName ELSE @DatabaseName END 
 
 GO

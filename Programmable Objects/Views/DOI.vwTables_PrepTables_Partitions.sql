@@ -20,7 +20,8 @@ AS
 	WHERE parenttablename = 'Pays' 
 	order by PartitionNumber
 */ 
-SELECT	PTNonPartitioned.SchemaName,
+SELECT	PTNonPartitioned.DatabaseName,
+		PTNonPartitioned.SchemaName,
 		PTNonPartitioned.TableName AS ParentTableName,
 		PTPartitioned.NewPartitionedPrepTableName,
 		PTNonPartitioned.PrepTableName AS UnPartitionedPrepTableName,
@@ -42,7 +43,8 @@ AS DropTableSQL,
 
 		PTNonPartitioned.PartitionNumber
 FROM DOI.vwTables_PrepTables PTNonPartitioned
-	INNER JOIN DOI.vwTables_PrepTables PTPartitioned ON PTNonPartitioned.SchemaName = PTPartitioned.SchemaName
+	INNER JOIN DOI.vwTables_PrepTables PTPartitioned ON PTNonPartitioned.DatabaseName = PTPartitioned.DatabaseName
+		AND PTNonPartitioned.SchemaName = PTPartitioned.SchemaName
 		AND PTPartitioned.TableName = PTNonPartitioned.TableName
 WHERE PTNonPartitioned.IsNewPartitionedPrepTable = 0
 	AND PTPartitioned.IsNewPartitionedPrepTable = 1

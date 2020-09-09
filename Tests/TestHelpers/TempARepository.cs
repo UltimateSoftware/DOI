@@ -2,7 +2,7 @@
 using System.Text;
 using DOI.Tests.Integration.Models;
 
-namespace DOI.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     public class TempARepository
     {

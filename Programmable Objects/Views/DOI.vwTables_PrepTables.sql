@@ -11,24 +11,6 @@ SET ANSI_NULLS ON
 GO
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 CREATE     VIEW [DOI].[vwTables_PrepTables]
 
 /*

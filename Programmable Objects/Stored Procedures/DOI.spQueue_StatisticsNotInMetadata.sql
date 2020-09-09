@@ -23,8 +23,9 @@ AS
         @TableName = 'Bai2BankTransactions'
 */
 
-INSERT INTO DOI.[Statistics] ( SchemaName ,TableName ,StatisticsName ,StatisticsColumnList_Desired ,SampleSizePct_Desired ,IsFiltered_Desired ,FilterPredicate_Desired ,IsIncremental_Desired ,NoRecompute_Desired ,LowerSampleSizeToDesired ,ReadyToQueue )
-SELECT  s.name, 
+INSERT INTO DOI.[Statistics] ( DatabaseName, SchemaName ,TableName ,StatisticsName ,StatisticsColumnList_Desired ,SampleSizePct_Desired ,IsFiltered_Desired ,FilterPredicate_Desired ,IsIncremental_Desired ,NoRecompute_Desired ,LowerSampleSizeToDesired ,ReadyToQueue )
+SELECT  d.name,
+        s.name, 
         t.name, 
         CASE 
             WHEN st.name LIKE '|_WA%' ESCAPE '|' 

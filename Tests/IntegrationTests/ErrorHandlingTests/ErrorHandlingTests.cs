@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Permissions;
 using DOI.Tests.Integration.Models;
-using DOI.TestHelpers;
+using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
 namespace DOI.Tests.Integration.ErrorHandling
@@ -23,28 +23,10 @@ namespace DOI.Tests.Integration.ErrorHandling
          * 6. Prep tables and objects should be dropped on failure.
 
          */
-        protected const string DatabaseName = "DOIUnitTests";
-        protected const string SchemaName = "dbo";
-        protected const string TestTableName1 = "TempA";
-        protected const string TestTableName2 = "TempB";
-        protected const string SpaceErrorTableName = "AAA_SpaceError";
-        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        protected TempARepository tempARepository;
-
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            OneTimeTearDown();
-            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("Create Test Database.sql")), 120);
-            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_DOISettings_InsertData @DatabaseName = '{DatabaseName}'");
-        }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            this.sqlHelper.Execute($"DELETE DOI.DOI.Databases WHERE DatabaseName = '{DatabaseName}'");
-            this.sqlHelper.Execute($"DELETE DOI.DOI.DOISettings WHERE DatabaseName = '{DatabaseName}'");
-            this.sqlHelper.Execute($"DROP DATABASE IF EXISTS {DatabaseName}");
         }
 
         [SetUp]
@@ -273,10 +255,10 @@ namespace DOI.Tests.Integration.ErrorHandling
             this.sqlHelper.Execute($"UPDATE IRS SET OptionPadIndex_Desired = CASE WHEN OptionPadIndex_Desired = 0 THEN 1 ELSE 0 END FROM DOI.DOI.IndexesRowStore IRS WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{TestTableName1}' AND IndexName = 'CDX_{TestTableName1}'");
 
             // 3. Run queue and Run SPs.
-            this.dataDrivenIndexTestHelper.ExecuteSPQueue(true);
+            this.dataDrivenIndexTestHelper.ExecuteSPQueue(true, false, DatabaseName, null, null);
             try
             {
-                dataDrivenIndexTestHelper.ExecuteSPRun(true);
+                dataDrivenIndexTestHelper.ExecuteSPRun(true, DatabaseName, null, null);
             }
             catch (Exception e)
             {
@@ -318,7 +300,7 @@ namespace DOI.Tests.Integration.ErrorHandling
 
             // 5. Check that the Logged rows are still in the Log table.
             var countOfLogRows = this.sqlHelper.ExecuteScalar<int>($"SELECT COUNT(*) FROM DOI.DOI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Divide by zero error encountered.'");
-            Assert.AreEqual(1, countOfLogRows);
+            Assert.AreEqual(2, countOfLogRows); //should have 1 row marked as 'Start' and 1 marked as 'Error'.
         }
     }
 }

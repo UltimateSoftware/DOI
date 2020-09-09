@@ -62,6 +62,9 @@ WHERE NOT EXISTS (SELECT 'True'
                     WHERE st2.database_id = T.database_id
                         AND st2.name = 'ST_' + LEFT(T.NAME + '_' + REPLACE(STUFF(StatsColumns.StatsColumnList, LEN(StatsColumns.StatsColumnList), 1,NULL), ',', '_'), 125))
     AND st.name <> 'ST_' + LEFT(T.NAME + '_' + REPLACE(STUFF(StatsColumns.StatsColumnList, LEN(StatsColumns.StatsColumnList), 1,NULL), ',', '_'), 125)
+    AND T2.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T2.DatabaseName ELSE @DatabaseName END
+    AND T2.SchemaName = CASE WHEN @SchemaName IS NULL THEN T2.SchemaName ELSE @SchemaName END
+    AND T2.TableName = CASE WHEN @TableName IS NULL THEN T2.TableName ELSE @TableName END
 ORDER BY d.name, s.name, t.name, st.name
 
 
@@ -109,6 +112,9 @@ WHERE NOT EXISTS (  SELECT 'True'
                 WHERE st2.database_id = T.database_id
                     AND st2.name = 'ST_' + LEFT(T.NAME + '_' + REPLACE(STUFF(StatsColumns.StatsColumnList, LEN(StatsColumns.StatsColumnList), 1,NULL), ',', '_'), 125))
     AND st.name <> 'ST_' + LEFT(T.NAME + '_' + REPLACE(STUFF(StatsColumns.StatsColumnList, LEN(StatsColumns.StatsColumnList), 1,NULL), ',', '_'), 125)
+    AND T2.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T2.DatabaseName ELSE @DatabaseName END
+    AND T2.SchemaName = CASE WHEN @SchemaName IS NULL THEN T2.SchemaName ELSE @SchemaName END
+    AND T2.TableName = CASE WHEN @TableName IS NULL THEN T2.TableName ELSE @TableName END
 ORDER BY d.name, s.name, t.name, st.name
 
 IF @Debug = 1

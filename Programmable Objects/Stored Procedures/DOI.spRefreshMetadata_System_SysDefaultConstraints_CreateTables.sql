@@ -1,6 +1,3 @@
-
-GO
-
 IF OBJECT_ID('[DOI].[spRefreshMetadata_System_SysDefaultConstraints_CreateTables]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_System_SysDefaultConstraints_CreateTables];
 

@@ -5,20 +5,14 @@ namespace DOI.Tests.TestHelpers
 {
     public static class SetupSqlStatements_Partitioned
     {
-        public static string PartitionFunction_Setup = @"
+        public static string PartitionFunction_Setup_Metadata = @"
 INSERT INTO DOI.PartitionFunctions ( 
-				PartitionFunctionName			,PartitionFunctionDataType	,BoundaryInterval	,NumOfFutureIntervals	, InitialDate	, UsesSlidingWindow	, SlidingWindowSize	, IsDeprecated)
-VALUES		(	'pfMonthlyTest'					, 'DATETIME2'				, 'Monthly'			, 1					    , '2019-08-01'	, 0					, NULL				, 0);
+				DatabaseName    , PartitionFunctionName			,PartitionFunctionDataType	,BoundaryInterval	,NumOfFutureIntervals	, InitialDate	, UsesSlidingWindow	, SlidingWindowSize	, IsDeprecated  , PartitionSchemeName   , NumOfCharsInSuffix, LastBoundaryDate  , NumOfTotalPartitionFunctionIntervals  , NumOfTotalPartitionSchemeIntervals, MinValueOfDataType)
+VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 1					    , '2019-08-01'	, 0					, NULL				, 0             , NULL                  , NULL              , NULL              , NULL                                  , NULL                              , NULL);";
 
-EXEC DOI.spRefreshStorageContainers_PartitionFunctions
-	@PartitionFunctionName = 'pfMonthlyTest';
+            public static string PartitionFunction_Teardown_Metadata = @"DELETE DOI.PartitionFunctions WHERE DatabaseName = 'DOIUnitTests'";
 
-EXEC DOI.spRefreshStorageContainers_PartitionSchemes
-    @PartitionFunctionName = 'pfMonthlyTest';
-";
-
-
-        public static string TableCreation = @"
+            public static string TableCreation = @"
                                         SET ANSI_NULLS ON
                                         SET QUOTED_IDENTIFIER ON
 
@@ -232,7 +226,6 @@ EXEC DOI.spRefreshStorageContainers_PartitionSchemes
                         BEGIN
                             DROP PARTITION FUNCTION pfMonthlyTest
                         END;";
-
 
         public static string TableToMetadata = @"
                                 INSERT INTO DOI.Tables

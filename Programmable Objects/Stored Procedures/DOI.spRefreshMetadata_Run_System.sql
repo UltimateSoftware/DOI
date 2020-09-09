@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[spRefreshMetadata_Run_System]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_Run_System];
 
@@ -11,25 +9,28 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_Run_System]
+    @DatabaseId INT = NULL,
     @Debug BIT = 0
 AS
 
 /*
     EXEC DOI.spRefreshMetadata_Run_System
+        @DatabaseId = 5,
         @Debug = 1
 */
 
 DECLARE @SQL VARCHAR(MAX) = ''
 
-SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10)
+SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10) + CHAR(9) + '@DatabaseId = ' + CASE WHEN @DatabaseId IS NOT NULL THEN CAST(@DatabaseId AS VARCHAR(20)) ELSE 'NULL' END + /*',' +*/ CHAR(13) + CHAR(10)-- + CHAR(9) + '@Debug = ' + CAST(@Debug AS CHAR(1)) + CHAR(13) + CHAR(10)
 FROM SYS.procedures P
     INNER JOIN sys.schemas s ON p.schema_id = s.schema_id
 WHERE p.NAME LIKE 'spRefreshMetadata_System%'
     AND p.name NOT LIKE '%CreateTables'
 
-SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10)
+SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10) + CHAR(9) + '@DatabaseName = ''' + CASE WHEN @DatabaseId IS NOT NULL THEN D.name ELSE 'NULL' END + '''' + CHAR(13) + CHAR(10)-- + CHAR(9) + '@Debug = ' + CAST(@Debug AS CHAR(1)) + CHAR(13) + CHAR(10)
 FROM SYS.procedures P
     INNER JOIN sys.schemas s ON p.schema_id = s.schema_id
+    INNER JOIN DOI.SysDatabases D ON D.database_id = @DatabaseId
 WHERE p.NAME LIKE 'spRefreshMetadata_User%_UpdateData'
     AND ISNUMERIC(SUBSTRING(p.name, CHARINDEX('User_', p.name, 1) + 5, 1)) = 0
 

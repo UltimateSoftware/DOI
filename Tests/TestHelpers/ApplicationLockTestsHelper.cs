@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace DOI.TestHelpers
+namespace DOI.Tests.TestHelpers
 {
     public class ApplicationLockTestsHelper
     {
