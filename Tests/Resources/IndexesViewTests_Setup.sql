@@ -1,5 +1,6 @@
 USE DOI
 
+INSERT INTO DOI.Databases VALUES('DOIUnitTests')
 
 INSERT INTO [DOI].[Tables]
            (DatabaseName		, [SchemaName]	,[TableName]	,[PartitionColumn]	,[Storage_Desired]	,[IntendToPartition]	,[ReadyToQueue])

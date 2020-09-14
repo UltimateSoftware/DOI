@@ -252,6 +252,10 @@ END
 
 
 SELECT @SQL += '    
+INSERT INTO DOI.' + @TableName + '
+SELECT *
+FROM #' + @TableName + '
+
     DROP TABLE IF EXISTS #' + @TableName + CHAR(13) + CHAR(10)
 
 IF @Debug = 1

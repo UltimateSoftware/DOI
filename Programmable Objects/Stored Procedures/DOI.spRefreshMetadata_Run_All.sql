@@ -25,9 +25,6 @@ BEGIN TRY
         DECLARE @DatabaseId INT = (SELECT database_id FROM sys.databases WHERE name = @DatabaseName)
     END
 
-    EXEC DOI.spRefreshMetadata_User_0_Databases
-        @DatabaseName = @DatabaseName
-
     EXEC DOI.spRefreshMetadata_Run_System
         @DatabaseId = @DatabaseId,
         @Debug = @Debug
