@@ -42,6 +42,7 @@ END
 GO
 
 CREATE OR ALTER PROCEDURE [DOI].[spRefreshMetadata_User_2_Constraints]
+    @DatabaseName NVARCHAR(128) = NULL
 
 WITH NATIVE_COMPILATION, SCHEMABINDING
 AS
@@ -54,5 +55,6 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
     --EXEC DOI.spRefreshMetadata_User_Constraints_CreateTables
     --EXEC DOI.spRefreshMetadata_User_Constraints_InsertData
     EXEC DOI.spRefreshMetadata_User_Constraints_UpdateData
+        @DatabaseName = @DatabaseName
 END
 GO

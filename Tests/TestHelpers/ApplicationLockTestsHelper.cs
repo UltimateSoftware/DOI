@@ -32,7 +32,7 @@ namespace DOI.Tests.TestHelpers
 				                        AND request_mode = 'X'
 				                        AND request_status = 'GRANT'
                                         AND request_owner_type = 'SESSION'
-				                        AND resource_description LIKE '%:\[\]:%' ESCAPE '\'
+				                        AND resource_description LIKE '%:\[DOI\]:%' ESCAPE '\'
                                         AND request_reference_count = 1), 0)";
         }
 
@@ -163,8 +163,9 @@ namespace DOI.Tests.TestHelpers
                 DECLARE @SQL VARCHAR(100) = ''
 
                 SELECT @SQL += 'KILL ' + CAST(request_session_id AS VARCHAR(5))
-                FROM   {databaseName}.sys.dm_tran_locks
+                FROM   sys.dm_tran_locks
                 WHERE  resource_type = 'APPLICATION'
+                    AND resource_database_id = DB_ID('{databaseName}')
 	                AND request_mode = 'X'
 	                AND request_status = 'GRANT'
 	                AND resource_description LIKE '%:\[\]:%' ESCAPE '\'
@@ -177,10 +178,10 @@ namespace DOI.Tests.TestHelpers
             string whichMessageToUse = shouldSucceed ? "Info" : "Error";
             string whichColumnToSelect = shouldSucceed ? "InfoMessage" : "ErrorText";
 
-            var isAppLockGrantedInSysDmTranLocks_Actual = new SqlHelper().ExecuteScalar<int>(IsAppLockGrantedInSysDmTranLocks("PaymentReporting"));
+            var isAppLockGrantedInSysDmTranLocks_Actual = new SqlHelper().ExecuteScalar<int>(IsAppLockGrantedInSysDmTranLocks(databaseName));
 
-            // Assert if lock is grant-able in APPLOCK_TEST
-            Assert.AreEqual(isAppLockGrantableInAppLock_Test_Expected, isAppLockGrantableInAppLock_Test_Actual);
+                // Assert if lock is grant-able in APPLOCK_TEST
+            //Assert.AreEqual(isAppLockGrantableInAppLock_Test_Expected, isAppLockGrantableInAppLock_Test_Actual);  we don't want to do this because APPLOCK_TEST is unreliable.  it shows grantable after the lock is already granted.
 
             // Assert that lock was taken
             Assert.AreEqual(isAppLockGrantedInSysDmTranLocks_Expected, isAppLockGrantedInSysDmTranLocks_Actual);

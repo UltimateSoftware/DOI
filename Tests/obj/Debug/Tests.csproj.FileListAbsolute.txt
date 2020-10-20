@@ -27,3 +27,5 @@ C:\Projects\DOI\Tests\bin\Debug\YamlDotNet.xml
 C:\Projects\DOI\Tests\obj\Debug\Tests.csproj.CopyComplete
 C:\Projects\DOI\Tests\obj\Debug\DOI.Tests.dll
 C:\Projects\DOI\Tests\obj\Debug\DOI.Tests.pdb
+C:\Projects\DOI\Tests\bin\Debug\System.ValueTuple.dll
+C:\Projects\DOI\Tests\obj\Debug\Tests.csproj.CoreCompileInputs.cache

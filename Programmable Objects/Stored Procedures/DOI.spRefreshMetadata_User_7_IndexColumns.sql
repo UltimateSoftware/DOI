@@ -10,6 +10,7 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_7_IndexColumns]
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 

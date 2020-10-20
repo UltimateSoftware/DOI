@@ -10,9 +10,11 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_4_Tables]
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
     --EXEC DOI.spRefreshMetadata_User_Tables_CreateTables
     --EXEC DOI.spRefreshMetadata_User_Tables_InsertData
     EXEC DOI.spRefreshMetadata_User_Tables_UpdateData
+        @DatabaseName = @DatabaseName
 GO

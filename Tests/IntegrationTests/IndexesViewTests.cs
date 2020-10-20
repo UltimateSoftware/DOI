@@ -33,7 +33,7 @@ namespace DOI.Tests.Integration
                 TableName = "TempA",
                 IndexName = "CDX_TempA",
                 IndexUpdateType = "None",
-                IsClustered = true,
+                IsClustered_Desired = true,
                 DropStatement = "DROP INDEX IF EXISTS dbo.TempA.CDX_TempA",
                 CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'CDX_TempA')  BEGIN   CREATE  CLUSTERED INDEX CDX_TempA     ON dbo.TempA(TempAId ASC,TransactionUtcDt ASC)               WITH (           PAD_INDEX = ON,          FILLFACTOR = 90,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = OFF,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
                 AlterSetStatement = "ALTER INDEX CDX_TempA ON dbo.TempA   SET ( IGNORE_DUP_KEY = OFF,     STATISTICS_NORECOMPUTE = OFF,     ALLOW_ROW_LOCKS = ON,     ALLOW_PAGE_LOCKS = ON)",
@@ -118,7 +118,7 @@ namespace DOI.Tests.Integration
                 TableName = "TempB",
                 IndexName = "CCI_TempB_Report",
                 IndexUpdateType = "None",
-                IsClustered = true,
+                IsClustered_Desired = true,
                 DropStatement = "DROP INDEX IF EXISTS dbo.TempB.CCI_TempB_Report",
                 CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempB' AND i.name = 'CCI_TempB_Report')  BEGIN   CREATE CLUSTERED COLUMNSTORE INDEX CCI_TempB_Report     ON dbo.TempB          WITH (         DROP_EXISTING = OFF,        COMPRESSION_DELAY = 0,        MAXDOP = 0,        DATA_COMPRESSION = COLUMNSTORE)      ON [PRIMARY]    END",
                 AlterSetStatement = "  ALTER INDEX CCI_TempB_Report ON dbo.TempB   SET (COMPRESSION_DELAY = COLUMNSTORE)    ",
@@ -1022,7 +1022,7 @@ namespace DOI.Tests.Integration
             Assert.AreEqual(expectedIndexModel.IndexName, actualIndexModel.IndexName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IndexName");
             Assert.AreEqual(expectedIndexModel.TableName, actualIndexModel.TableName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:TableName");
             Assert.AreEqual(expectedIndexModel.SchemaName, actualIndexModel.SchemaName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:SchemaName");
-            Assert.AreEqual(expectedIndexModel.IsClustered, actualIndexModel.IsClustered, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsClustered");
+            Assert.AreEqual(expectedIndexModel.IsClustered_Desired, actualIndexModel.IsClustered_Actual, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsClustered");
             Assert.AreEqual(expectedIndexModel.IsIndexMissing, actualIndexModel.IsIndexMissing, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIndexMissing");
             Assert.AreEqual(expectedIndexModel.IsIndexStorageChanging, actualIndexModel.IsIndexStorageChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIndexStorageChanging");
             Assert.AreEqual(expectedIndexModel.AreDropRecreateOptionsChanging, actualIndexModel.AreDropRecreateOptionsChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AreDropRecreateOptionsChanging");

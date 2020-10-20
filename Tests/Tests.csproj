@@ -421,6 +421,12 @@
     <Compile Include="IntegrationTests\IndexesViewTests.cs" />
     <Compile Include="IntegrationTests\IndexMaintenanceTests\LowFragmentationTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_1_PartitionFunctions.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysDatabases.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysIndexes.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysPartitions.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysSchemas.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysAllocationUnits.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTables.cs" />
     <Compile Include="IntegrationTests\Models\ForeignKey.cs" />
     <Compile Include="IntegrationTests\Models\Index.cs" />
     <Compile Include="IntegrationTests\Models\IndexRowStore.cs" />
@@ -432,6 +438,9 @@
     <Compile Include="IntegrationTests\Models\PartitionSchemeFilegroup.cs" />
     <Compile Include="IntegrationTests\Models\PrepTable.cs" />
     <Compile Include="IntegrationTests\Models\Statistics.cs" />
+    <Compile Include="IntegrationTests\Models\SysAllocationUnits.cs" />
+    <Compile Include="IntegrationTests\Models\SysDatabases.cs" />
+    <Compile Include="IntegrationTests\Models\SysSchemas.cs" />
     <Compile Include="IntegrationTests\Models\TempARow.cs" />
     <Compile Include="IntegrationTests\OfflineRunTests.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
@@ -446,6 +455,10 @@
     <Compile Include="TestHelpers\GenericDictionaryExtensions.cs" />
     <Compile Include="TestHelpers\Guid2Base64.cs" />
     <Compile Include="TestHelpers\Metadata\StorageContainers\PartitionFunctions\PartitionFunctionHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\SysAllocationUnitsHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\SysDatabasesHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\SysSchemasHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\SystemMetadata\SystemMetadataHelper.cs" />
     <Compile Include="TestHelpers\SetupSqlStatements_NonPartitioned.cs" />
     <Compile Include="TestHelpers\ObjectExtensions.cs" />
     <Compile Include="TestHelpers\OfflineRunTestsHelper.cs" />

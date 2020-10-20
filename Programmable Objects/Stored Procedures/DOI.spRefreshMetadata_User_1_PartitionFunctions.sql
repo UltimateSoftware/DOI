@@ -11,6 +11,7 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_1_PartitionFunctions]
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
     DROP TRIGGER IF EXISTS DOI.trUpdPartitionFunctions
@@ -18,5 +19,6 @@ AS
     --EXEC DOI.spRefreshMetadata_User_PartitionFunctions_CreateTables
     --EXEC DOI.spRefreshMetadata_User_PartitionFunctions_InsertData
     EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData
+        @DatabaseName = @DatabaseName
 
 GO

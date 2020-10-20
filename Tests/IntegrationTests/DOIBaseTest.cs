@@ -41,8 +41,15 @@ namespace DOI.Tests.Integration
             this.sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}'");
             this.sqlHelper.Execute($"DELETE DOI.DOI.DOISettings WHERE DatabaseName = '{DatabaseName}'");
             // restore schedule table to original settings
-            this.sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
-            this.sqlHelper.Execute($"DROP DATABASE IF EXISTS {DatabaseName}");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($@"USE master;
+
+            DECLARE @kill varchar(8000); SET @kill = '';
+            SELECT @kill = @kill + 'kill ' + CONVERT(varchar(5), spid) + ';'
+            FROM master..sysprocesses
+            WHERE dbid = db_id('{DatabaseName}')
+
+            EXEC(@kill); DROP DATABASE IF EXISTS {DatabaseName}");
         }
     }
 }

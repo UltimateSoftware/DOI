@@ -3,12 +3,14 @@ using System.Text;
 
 namespace DOI.Tests.TestHelpers
 {
-    public static class SetupSqlStatements_Partitioned
-    {
-        public static string PartitionFunction_Setup_Metadata = @"
+        public static class SetupSqlStatements_Partitioned
+        {
+            private const string DatabaseName = "DOIUnitTests";
+
+        public static string PartitionFunction_Setup_Metadata = $@"
 INSERT INTO DOI.PartitionFunctions ( 
 				DatabaseName    , PartitionFunctionName			,PartitionFunctionDataType	,BoundaryInterval	,NumOfFutureIntervals	, InitialDate	, UsesSlidingWindow	, SlidingWindowSize	, IsDeprecated  , PartitionSchemeName   , NumOfCharsInSuffix, LastBoundaryDate  , NumOfTotalPartitionFunctionIntervals  , NumOfTotalPartitionSchemeIntervals, MinValueOfDataType)
-VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 1					    , '2019-08-01'	, 0					, NULL				, 0             , NULL                  , NULL              , NULL              , NULL                                  , NULL                              , NULL);";
+VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 1					    , '2019-08-01'	, 0					, NULL				, 0             , NULL                  , NULL              , NULL              , NULL                                  , NULL                              , NULL);";
 
             public static string PartitionFunction_Teardown_Metadata = @"DELETE DOI.PartitionFunctions WHERE DatabaseName = 'DOIUnitTests'";
 
@@ -175,10 +177,10 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                   
                     ";
 
-        public static string ColumnStoreIndexes = @"
+        public static string ColumnStoreIndexes = $@"
             INSERT INTO DOI.IndexesColumnStore ( SchemaName ,TableName ,IndexName ,IsClustered_Desired,ColumnList_Desired,IsFiltered_Desired,FilterPredicate_Desired,OptionDataCompression_Desired,OptionDataCompressionDelay_Desired_Desired,NewStorage_Desired,PartitionColumn_Desired )
                     SELECT 
-                      [DatabaseName]            = N'PaymentReporting'
+                      [DatabaseName]            = N'{DatabaseName}'
                     , [SchemaName]              = N'dbo'
                     , [TableName]               = N'PartitioningTestAutomationTable'	
                     , [IndexName]               = N'NCCI_PartitioningTestAutomationTable_Comments'	
@@ -196,13 +198,13 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
 
         public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'Refresh Index Structures - Online'";
 
-        public static string DropTableAndDeleteMetadata = @"
-                        DELETE FROM  [DOI].[Statistics]         WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[CheckConstraints]   WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[DefaultConstraints] WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[IndexesColumnStore] WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[IndexesRowStore]    WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
-                        DELETE FROM  [DOI].[Tables]		        WHERE DatabaseName = 'PaymentReporting' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+        public static string DropTableAndDeleteMetadata = $@"
+                        DELETE FROM  [DOI].[Statistics]         WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DOI].[CheckConstraints]   WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DOI].[DefaultConstraints] WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DOI].[IndexesColumnStore] WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DOI].[IndexesRowStore]    WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
+                        DELETE FROM  [DOI].[Tables]		        WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
 
                         DECLARE @sql VARCHAR(MAX) = SPACE(0)
                         SELECT @sql += 'DROP TABLE IF EXISTS ' + s.name + '.' + t.name + CHAR(13) + CHAR(10)
@@ -214,7 +216,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
 
                         TRUNCATE TABLE DOI.Log;
                         TRUNCATE TABLE DOI.Queue
-                        DELETE PT FROM DOI.Run_PartitionState pt WHERE DatabaseName = 'PaymentReporting' AND pt.ParentTableName = 'PartitioningTestAutomationTable';
+                        DELETE PT FROM DOI.Run_PartitionState pt WHERE DatabaseName = '{DatabaseName}' AND pt.ParentTableName = 'PartitioningTestAutomationTable';
                         EXEC DOI.spRefreshMetadata_Tables;
                         EXEC DOI.spRefreshMetadata_PartitionFunctions;
                         DELETE DOI.PartitionFunctions WHERE PartitionFunctionName = 'pfMonthlyTest';
@@ -227,7 +229,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                             DROP PARTITION FUNCTION pfMonthlyTest
                         END;";
 
-        public static string TableToMetadata = @"
+        public static string TableToMetadata = $@"
                                 INSERT INTO DOI.Tables
                                 (DatabaseName,
                                  SchemaName,
@@ -238,7 +240,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                  ReadyToQueue
                                 )
                                 VALUES
-                                ('PaymentReporting',
+                                ('{DatabaseName}',
                                  'dbo',
                                  'PartitioningTestAutomationTable',
                                  'MyDateTime',
@@ -247,19 +249,19 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                  1
                                 );  ";
 
-        public static string StatisticsToMetadata = @"
+        public static string StatisticsToMetadata = $@"
                                 INSERT INTO DOI.[Statistics] ( DatabaseName, SchemaName, TableName, StatisticsName, StatisticsColumnList_Desired, SampleSizePct_Desired, IsFiltered_Desired, FilterPredicate_Desired, IsIncremental_Desired, NoRecompute_Desired, LowerSampleSizeToDesired, ReadyToQueue)
-                                VALUES   ( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_id', 'id', 20, 0, NULL, 1, 0, 0, 1)
-                                        ,( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_myDateTime', 'myDateTime', 20, 0, NULL, 1, 0, 0, 1)
-                                        ,( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_Comments', 'Comments', 20, 0, NULL, 1, 0, 0, 1)
-                                        ,( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_updatedUtcDt', 'updatedUtcDt', 20, 0, NULL, 1, 0, 0, 1)";
+                                VALUES   ( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_id', 'id', 20, 0, NULL, 1, 0, 0, 1)
+                                        ,( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_myDateTime', 'myDateTime', 20, 0, NULL, 1, 0, 0, 1)
+                                        ,( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_Comments', 'Comments', 20, 0, NULL, 1, 0, 0, 1)
+                                        ,( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', 'ST_PartitioningTestAutomationTable_updatedUtcDt', 'updatedUtcDt', 20, 0, NULL, 1, 0, 0, 1)";
 
-        public static string ConstraintsToMetadata = @"
+        public static string ConstraintsToMetadata = $@"
                                 INSERT INTO DOI.CheckConstraints ( DatabaseName, SchemaName ,TableName ,ColumnName ,CheckDefinition ,IsDisabled ,CheckConstraintName )
-                                VALUES ( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(updatedUtcDt > ''0001-01-01'')', 0, N'Chk_PartitioningTestAutomationTable_updatedUtcDt')
+                                VALUES ( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(updatedUtcDt > ''0001-01-01'')', 0, N'Chk_PartitioningTestAutomationTable_updatedUtcDt')
 
                                 INSERT INTO DOI.DefaultConstraints ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition )
-                                VALUES ( N'PaymentReporting', N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(SYSDATETIME())')";
+                                VALUES ( N'{DatabaseName}', N'dbo', N'PartitioningTestAutomationTable', N'updatedUtcDt', N'(SYSDATETIME())')";
 
 
         public static string DataInsert => GenerateDataInsertScript();
@@ -291,7 +293,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
 
         private static string GenerateTableExistenceCheckScript(string tablename, string schemaname)
         {
-            return $@"USE PaymentReporting
+            return $@"USE {DatabaseName}
                         SELECT 1
                         FROM sys.tables t 
                         JOIN sys.schemas s on s.schema_id = t.schema_id
@@ -300,7 +302,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                         AND	s.name = '{schemaname}' ";
         }
 
-        public static string DataMismatchValidation = @"USE PaymentReporting
+        public static string DataMismatchValidation = $@"USE {DatabaseName}
                         IF EXISTS(
 	                           Select * FROM [dbo].[PartitioningTestAutomationTable]
 	                           EXCEPT
@@ -316,7 +318,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                         END ";
 
 
-        public static string RowsInFileGroupsProcedureCall = @"USE PaymentReporting
+        public static string RowsInFileGroupsProcedureCall = $@"USE {DatabaseName}
                                         SELECT
                                          TableName = t.name
                                         ,IndexName = i.name
@@ -336,7 +338,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                         AND  i.name = 'CDX_PartitioningTestAutomationTable' ";
 
 
-        public static string TotalRowsInFileGroups = @"USE PaymentReporting
+        public static string TotalRowsInFileGroups = $@"USE {DatabaseName}
                                      SELECT
                                      TotalRowsInPartition = Sum(p.rows)
                                     FROM sys.dm_db_partition_stats pts
@@ -383,10 +385,10 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                                                 @BatchIdOUT = @BatchId OUTPUT '
                                                     ";
 
-        public static string DataInPartitionedTable = @" USE PaymentReporting Select * from dbo.PartitioningTestAutomationTable";
+        public static string DataInPartitionedTable = $@" USE {DatabaseName} Select * from dbo.PartitioningTestAutomationTable";
 
 
-        public static string AllPartitionsHaveData = @"USE PaymentReporting
+        public static string AllPartitionsHaveData = $@"USE {DatabaseName}
                                                         SELECT TOP 1 val = 1
                                                         FROM sys.dm_db_partition_stats pts
                                                         JOIN sys.tables t ON t.object_id = pts.object_id
@@ -402,7 +404,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                                             AND  i.name = 'CDX_PartitioningTestAutomationTable'
                                                             AND p.rows = 0";
 
-        public static string IndexesAfterPartitioningNewTable = @"USE PaymentReporting
+        public static string IndexesAfterPartitioningNewTable = $@"USE {DatabaseName}
                                                         SELECT IndexName = ix.Name
                                                         FROM sys.indexes ix 
                                                             JOIN sys.tables t  on ix.object_id = t.object_id
@@ -411,7 +413,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                                             AND t.name = 'PartitioningTestAutomationTable'
                                                             AND s.name = 'dbo'";
 
-        public static string IndexesAfterPartitioningOldTable = @"USE PaymentReporting
+        public static string IndexesAfterPartitioningOldTable = $@"USE {DatabaseName}
                                                         SELECT IndexName = ix.Name
                                                         FROM sys.indexes ix 
                                                             JOIN sys.tables t  on ix.object_id = t.object_id
@@ -420,7 +422,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                                             AND t.name = 'PartitioningTestAutomationTable_OLD'
                                                             AND s.name = 'dbo'";
 
-        public static string ConstraintsAfterPartitioningNewTable = @"USE PaymentReporting
+        public static string ConstraintsAfterPartitioningNewTable = $@"USE {DatabaseName}
                                                             SELECT ConstraintName = x.Name
                                                             FROM (  SELECT parent_object_id, name
                                                                     FROM sys.check_constraints c
@@ -432,7 +434,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                                             WHERE t.name = 'PartitioningTestAutomationTable'
                                                                 AND s.name = 'dbo'";
 
-        public static string ConstraintsAfterPartitioningOldTable = @"USE PaymentReporting
+        public static string ConstraintsAfterPartitioningOldTable = $@"USE {DatabaseName}
                                                             SELECT ConstraintName = x.Name
                                                             FROM (  SELECT parent_object_id, name
                                                                     FROM sys.check_constraints c
@@ -444,7 +446,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                                             WHERE t.name = 'PartitioningTestAutomationTable_OLD'
                                                                 AND s.name = 'dbo'";
 
-        public static string StatisticsAfterPartitioningNewTable = @"USE PaymentReporting
+        public static string StatisticsAfterPartitioningNewTable = $@"USE {DatabaseName}
                                                             SELECT StatisticsName = st.Name
                                                             FROM sys.stats st
                                                                 INNER JOIN sys.tables t  on st.object_id = t.object_id
@@ -452,7 +454,7 @@ VALUES		(	'DOIUnitTests'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 
                                                             WHERE t.name = 'PartitioningTestAutomationTable'
                                                                 AND s.name = 'dbo'";
 
-        public static string StatisticsAfterPartitioningOldTable = @"USE PaymentReporting
+        public static string StatisticsAfterPartitioningOldTable = $@"USE {DatabaseName}
                                                             SELECT StatisticsName = st.Name
                                                             FROM sys.stats st
                                                                 INNER JOIN sys.tables t  on st.object_id = t.object_id

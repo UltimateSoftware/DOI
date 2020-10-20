@@ -12,7 +12,7 @@ GO
 
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysDatabases]
-    @DatabaseId INT = NULL
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
@@ -22,6 +22,7 @@ AS
 */
 
 DELETE DOI.SysDatabases
+WHERE name = CASE WHEN @DatabaseName IS NULL THEN name ELSE @DatabaseName END 
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
     @TableName = 'SysDatabases'

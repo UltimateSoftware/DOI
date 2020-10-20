@@ -14,3 +14,5 @@ C:\Projects\DOI\utebcp\bin\Debug\nunit.framework.xml
 C:\Projects\DOI\utebcp\obj\Debug\utebcp.csproj.CopyComplete
 C:\Projects\DOI\utebcp\obj\Debug\utebcp.exe
 C:\Projects\DOI\utebcp\obj\Debug\utebcp.pdb
+C:\Projects\DOI\utebcp\obj\Debug\utebcp.csprojAssemblyReference.cache
+C:\Projects\DOI\utebcp\obj\Debug\utebcp.csproj.CoreCompileInputs.cache

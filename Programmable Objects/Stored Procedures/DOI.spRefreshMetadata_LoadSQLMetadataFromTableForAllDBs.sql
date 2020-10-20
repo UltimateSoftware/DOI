@@ -11,14 +11,14 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs]
-    @DatabaseId INT = NULL,
+    @DatabaseName NVARCHAR(128) = NULL,
     @TableName SYSNAME,
     @Debug BIT = 0
 AS
 
 /*
     EXEC DOI.[spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs]
---        @DatabaseId = 19,
+--        @DatabaseName = 'DOIUnitTests',
         @TableName = 'SysStats', 
         @Debug = 1
 */
@@ -36,7 +36,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -44,11 +44,11 @@ BEGIN
     SELECT ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE 'DB_ID(''' + DatabaseName + ''') AS database_id,' END + ' FN.*
     FROM DOI.' + M.FunctionParentDMV + ' p
         CROSS APPLY ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + ' FN  
-    WHERE p.database_id = ' + CASE WHEN @DatabaseId IS NULL THEN 'p.database_id' ELSE CAST(@DatabaseId AS VARCHAR(20)) END  
+    WHERE p.database_id = ' + CASE WHEN @DatabaseName IS NULL THEN 'p.database_id' ELSE CAST(@DatabaseName AS VARCHAR(128)) END  
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 END
 ELSE
 IF @TableName IN ('SysDatabaseFiles')
@@ -61,7 +61,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -71,7 +71,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -93,7 +93,7 @@ BEGIN
 --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -104,7 +104,7 @@ BEGIN
 --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -127,7 +127,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -137,7 +137,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 END
 ELSE
 IF @TableName = 'SysForeignKeys'
@@ -151,7 +151,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -161,7 +161,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 END
 ELSE
 IF @TableName = 'SysStats'
@@ -174,7 +174,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName 
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -185,7 +185,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName 
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 END
 ELSE
 IF @TableName = 'SysPartitionRangeValues'
@@ -198,7 +198,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -208,7 +208,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 END
 ELSE
 IF @TableName IN ('SysDatabases', 'SysMasterFiles')
@@ -225,7 +225,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 END
 ELSE
 BEGIN
@@ -237,7 +237,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
     SELECT @SQL += '
 
@@ -247,7 +247,7 @@ BEGIN
     --select count(*)
     FROM DOI.Databases D
         INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-    WHERE D.DatabaseName = CASE WHEN @DatabaseId IS NULL THEN D.DatabaseName ELSE DB_NAME(@DatabaseId) END
+    WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 END
 
 

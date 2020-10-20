@@ -10,6 +10,7 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_91_IndexPartitions]
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
@@ -17,6 +18,7 @@ AS
 --EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_CreateTables
 --EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_InsertData
 EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData
+    @DatabaseName = @DatabaseName
 --EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_InsertData
 
 GO

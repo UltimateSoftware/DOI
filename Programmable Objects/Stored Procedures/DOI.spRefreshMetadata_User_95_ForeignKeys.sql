@@ -10,10 +10,12 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE     PROCEDURE [DOI].[spRefreshMetadata_User_95_ForeignKeys]
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
 --EXEC DOI.spRefreshMetadata_User_ForeignKeys_InsertData
 EXEC DOI.spRefreshMetadata_User_ForeignKeys_UpdateData
+    @DatabaseName = @DatabaseName
 
 GO

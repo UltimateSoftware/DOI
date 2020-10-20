@@ -49,13 +49,13 @@ AS RETURN
                         END * MAX(SST.FreeSpaceMultiplier)
             END, 0) AS SpaceNeededOnDrive
     FROM DOI.vwIndexes V
-        CROSS JOIN (SELECT CAST(SettingValue AS INT) AS FreeSpaceMultiplier 
+        CROSS JOIN (SELECT CAST(CEILING(SettingValue) AS INT) AS FreeSpaceMultiplier 
                     FROM DOI.DOISettings 
                     WHERE SettingName = 'FreeSpaceCheckerTestMultiplierForDataFiles') SSD
-        CROSS JOIN (SELECT CAST(SettingValue AS INT) AS FreeSpaceMultiplier 
+        CROSS JOIN (SELECT CAST(CEILING(SettingValue) AS INT) AS FreeSpaceMultiplier 
                     FROM DOI.DOISettings 
                     WHERE SettingName = 'FreeSpaceCheckerTestMultiplierForLogFiles') SSL
-        CROSS JOIN (SELECT CAST(SettingValue AS INT) AS FreeSpaceMultiplier 
+        CROSS JOIN (SELECT CAST(CEILING(SettingValue) AS INT) AS FreeSpaceMultiplier 
                     FROM DOI.DOISettings 
                     WHERE SettingName = 'FreeSpaceCheckerTestMultiplierForTempDBFiles') SST
     WHERE V.DatabaseName = @DatabaseName

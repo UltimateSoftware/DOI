@@ -137,7 +137,7 @@ SELECT @DataSpaceAvailable = available_MB,
         @DriveLetter = FS.DriveLetter
 FROM DOI.DOI.vwFreeSpaceOnDisk FS
     INNER JOIN DOI.DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
-WHERE DBName = ''PaymentReporting''
+WHERE DBName = ''' + T.DatabaseName + '''
     AND FS.FileType = ''DATA''
     AND EXISTS(	SELECT ''True''
 				FROM DOI.DOI.Queue Q 
@@ -169,7 +169,7 @@ SELECT @LogSpaceAvailable = available_MB,
         @DriveLetter = FS.DriveLetter
 FROM DOI.DOI.vwFreeSpaceOnDisk FS
     INNER JOIN DOI.DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
-WHERE DBName = ''PaymentReporting''
+WHERE DBName = ''' + T.DatabaseName + '''
     AND FS.FileType = ''LOG''
     AND EXISTS(	SELECT ''True''
 				FROM DOI.DOI.Queue Q 
@@ -192,12 +192,12 @@ END
 
         '
 DECLARE @ErrorMessage NVARCHAR(500),
-        @LogSpaceNeeded BIGINT,
-        @LogSpaceAvailable BIGINT,
+        @TempDBSpaceNeeded BIGINT,
+        @TempDBSpaceAvailable BIGINT,
         @DriveLetter CHAR(1)  
 
-SELECT @LogSpaceAvailable = available_MB, 
-        @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
+SELECT @TempDBSpaceAvailable = available_MB, 
+        @TempDBSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
 FROM DOI.DOI.vwFreeSpaceOnDisk FS
     INNER JOIN DOI.DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
@@ -208,15 +208,15 @@ WHERE DBName = ''TempDB''
 				WHERE Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
 
-IF @LogSpaceAvailable <= @LogSpaceNeeded
+IF @TempDBSpaceAvailable <= @TempDBSpaceNeeded
 BEGIN
-    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@LogSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@LogSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@TempDBSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@TempDBSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
     
 	RAISERROR(@ErrorMessage, 16, 1)
 END
 ELSE 
 BEGIN
-    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@LogSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@LogSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@TempDBSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@TempDBSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
     
 	RAISERROR(@ErrorMessage, 10, 1)
 END

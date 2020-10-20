@@ -84,8 +84,7 @@ BEGIN TRY
 			@OriginalIndexUpdateType				VARCHAR(20),
 			@TransactionId							UNIQUEIDENTIFIER = NULL,
 			@IndexSizeInMB							INT,
-			@NeedsTransaction						BIT,
-            @ChangeDBSQL                            VARCHAR(MAX) = 'USE '
+			@NeedsTransaction						BIT
 
     DROP TABLE IF EXISTS #TablesWithPendingConstraintsTable
 
@@ -157,12 +156,12 @@ BEGIN TRY
                     BEGIN TRY
 			            SELECT  @GetApplicationLockSQL	    = '
 EXEC DOI.DOI.spRun_GetApplicationLock
-    @DatabaseName + ''' + @CurrentDatabaseName + ''',
+    @DatabaseName = ''' + @CurrentDatabaseName + ''',
     @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''',
     @IsOnlineOperation = ' + CAST(@OnlineOperations AS VARCHAR(1)),
 			                    @ReleaseApplicationLockSQL	= '
 EXEC DOI.DOI.spRun_ReleaseApplicationLock
-    @DatabaseName + ''' + @CurrentDatabaseName + ''',
+    @DatabaseName = ''' + @CurrentDatabaseName + ''',
     @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''',
     @IsOnlineOperation = ' + CAST(@OnlineOperations AS VARCHAR(1))
 

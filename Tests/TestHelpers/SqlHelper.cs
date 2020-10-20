@@ -14,9 +14,9 @@ namespace DOI.Tests.TestHelpers
 
     public class SqlHelper
     {
-        public string GetConnectionString()
+        public string GetConnectionString(string databaseName = "DOI")
         {
-            return @"server=localhost;database=DOI;Trusted_Connection = True;";
+            return $@"server=localhost;database={databaseName};Trusted_Connection = True;";
         }
 
         public int Execute(SqlCommand command)
@@ -40,19 +40,20 @@ namespace DOI.Tests.TestHelpers
             return retVal;
         }
 
-        public int Execute(string sql, int commandTimeOut = 30, bool marsEnabled = true)
+        public int Execute(string sql, int commandTimeOut = 30, bool marsEnabled = true, string databaseName = "DOI")
         {
             int retVal;
             SqlCommand command = null;
             SqlConnection connection = null;
             try
             {
-                var connectionString = this.GetConnectionString();
+                var connectionString = this.GetConnectionString(databaseName);
                 connection = new SqlConnection(connectionString);
                 command = new SqlCommand(sql, connection)
                 {
                     CommandType = CommandType.Text,
-                    CommandTimeout = commandTimeOut
+                    CommandTimeout = commandTimeOut,
+                    
                 };
                 connection.Open();
                 retVal = command.ExecuteNonQuery();

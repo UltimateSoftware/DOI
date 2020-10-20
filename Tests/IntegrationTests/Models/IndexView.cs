@@ -18,7 +18,9 @@ namespace DOI.Tests.Integration.Models
 
         public string IndexType { get; set; }
 
-        public bool IsClustered { get; set; }
+        public bool IsClustered_Desired { get; set; }
+
+        public bool IsClustered_Actual { get; set; }
 
         public bool IsIndexMissing { get; set; }
 

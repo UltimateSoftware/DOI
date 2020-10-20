@@ -186,21 +186,21 @@ BEGIN TRY
 		RAISERROR('Online job is trying to run with Resource Governor off.  Aborting.  Need to turn on Resource Governor.', 16, 1)	
 	END
 
-	WHILE @@FETCH_STATUS <> -1
+	WHILE @@FETCH_STATUS IN (0, -2)
 	BEGIN
-		IF @@FETCH_STATUS <> -2
+		IF @@FETCH_STATUS = 0 --IF THE STATUS = -2 THEN SKIP EVERYTHING AND JUST FETCH NEXT ROW
 		BEGIN
 			SET @ExitRetryLoopOnError = 0
-            SET @ErrorMessage = NULL 
+			SET @ErrorMessage = NULL 
 
-            /************************** RETRY LOOP (BEGIN) ****************************************************/
+			/************************** RETRY LOOP (BEGIN) ****************************************************/
 			WHILE @RetryCount <= 3 AND @ExitRetryLoopOnError = 0
 			BEGIN
 				BEGIN TRY
 					IF @Debug = 1
 					BEGIN
 						SELECT	@CurrentDatabaseName,
-                                @CurrentSchemaName, 
+								@CurrentSchemaName, 
 								@CurrentTableName, 
 								@CurrentParentSchemaName, 
 								@CurrentParentTableName, 
@@ -221,7 +221,7 @@ BEGIN TRY
 
 						--LOG START
 						EXEC DOI.spRun_LogInsert 
-                            @CurrentDatabaseName    = @CurrentDatabaseName
+							@CurrentDatabaseName    = @CurrentDatabaseName
 							,@CurrentSchemaName		= @CurrentSchemaName  
 							,@CurrentTableName		= @CurrentTableName   
 							,@CurrentIndexName		= @CurrentIndexName 
@@ -242,7 +242,7 @@ BEGIN TRY
 						UPDATE DOI.Queue
 						SET InProgress = 1
 						WHERE DatabaseName = @CurrentDatabaseName
-                            AND SchemaName = @CurrentSchemaName
+							AND SchemaName = @CurrentSchemaName
 							AND TableName = @CurrentTableName
 							AND IndexName = @CurrentIndexName
 							AND IndexOperation = @CurrentIndexOperation
@@ -262,8 +262,8 @@ BEGIN TRY
 						END
 						ELSE
 						IF @CurrentIndexOperation IN ('Synch Deletes', 'Synch Inserts', 'Synch Updates',  'Loading Data', 
-                                                        'Free Data Space Validation', 'Free Log Space Validation', 
-                                                        'Free TempDB Space Validation')
+														'Free Data Space Validation', 'Free Log Space Validation', 
+														'Free TempDB Space Validation')
 						BEGIN
 							EXEC sys.sp_executesql 
 								@CurrentSQLStatement, 
@@ -272,14 +272,14 @@ BEGIN TRY
 								
 							--extract rowcount parameter and store it in variable, for use in logging.
 						END
-                        ELSE 
+						ELSE 
 						BEGIN						
 							EXEC @DBContext @CurrentSQLStatement
 						END
 
 						--LOG FINISH
 						EXEC DOI.spRun_LogInsert 
-                            @CurrentDatabaseName    = @CurrentDatabaseName
+							@CurrentDatabaseName    = @CurrentDatabaseName
 							,@CurrentSchemaName		= @CurrentSchemaName  
 							,@CurrentTableName		= @CurrentTableName   
 							,@CurrentIndexName		= @CurrentIndexName  
@@ -301,7 +301,7 @@ BEGIN TRY
 						--DELETE FROM QUEUE
 						DELETE DOI.Queue
 						WHERE DatabaseName = @CurrentDatabaseName
-                            AND SchemaName = @CurrentSchemaName   
+							AND SchemaName = @CurrentSchemaName   
 							AND TableName = @CurrentTableName   
 							AND IndexName = @CurrentIndexName 
 							AND IndexOperation = @CurrentIndexOperation
@@ -312,7 +312,7 @@ BEGIN TRY
 					SET @ExitRetryLoopOnError = 1 --EXIT THE RETRY LOOP IF SUCCESSFUL.
 				END TRY
 				BEGIN CATCH
-                    SET @ErrorMessage = ERROR_MESSAGE()
+					SET @ErrorMessage = ERROR_MESSAGE()
 
 					IF ERROR_NUMBER() IN (  1204, -- SqlOutOfLocks
 											1205, -- SqlDeadlockVictim
@@ -323,7 +323,7 @@ BEGIN TRY
 						SET @CurrentIndexName = ISNULL(@CurrentIndexName, '')
 
 						EXEC DOI.spRun_LogInsert 
-                            @CurrentDatabaseName    = @CurrentDatabaseName,
+							@CurrentDatabaseName    = @CurrentDatabaseName,
 							@CurrentSchemaName		= @CurrentSchemaName , 
 							@CurrentTableName		= @CurrentTableName ,  
 							@CurrentIndexName		= @CurrentIndexName , 
@@ -346,11 +346,11 @@ BEGIN TRY
 						WAITFOR DELAY '00:00:02'  
 					END 
 					ELSE IF @ErrorMessage LIKE 'NOT ENOUGH FREE SPACE%'
-                    BEGIN
-                        SET @CurrentIndexName = ISNULL(@CurrentIndexName, '')
+					BEGIN
+						SET @CurrentIndexName = ISNULL(@CurrentIndexName, '')
 
 						EXEC DOI.spRun_LogInsert 
-                            @CurrentDatabaseName    = @CurrentDatabaseName,
+							@CurrentDatabaseName    = @CurrentDatabaseName,
 							@CurrentSchemaName		= @CurrentSchemaName , 
 							@CurrentTableName		= @CurrentTableName ,  
 							@CurrentIndexName		= @CurrentIndexName , 
@@ -368,28 +368,26 @@ BEGIN TRY
 							@RunStatus				= 'Error - Skipping...',
 							@ExitTableLoopOnError	= @ExitTableLoopOnError
 
-	                    DELETE Q
-	                    FROM DOI.Queue Q
-	                    WHERE Q.DatabaseName = @CurrentDatabaseName
-                            AND Q.ParentSchemaName = @CurrentParentSchemaName
-		                    AND Q.ParentTableName = @CurrentParentTableName
+						DELETE Q
+						FROM DOI.Queue Q
+						WHERE Q.DatabaseName = @CurrentDatabaseName
+							AND Q.ParentSchemaName = @CurrentParentSchemaName
+							AND Q.ParentTableName = @CurrentParentTableName
 
-                        SET @ExitRetryLoopOnError = 1
-                    END
-                    ELSE
+						SET @ExitRetryLoopOnError = 1
+					END
+					ELSE
 					BEGIN
 						RAISERROR(@ErrorMessage, 16, 1)
 					END
 				END CATCH
 			END
-            /************************** RETRY LOOP (END) ****************************************************/
+			/************************** RETRY LOOP (END) ****************************************************/
+		END
+		FETCH NEXT FROM Tables_Run_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentSeqNo, @TransactionId, @CurrentIndexName, @CurrentPartitionNumber, @CurrentSQLStatement, @RunStatus, @CurrentIndexOperation, @CurrentTableChildOperationId, @BatchId, @ExitTableLoopOnError, @IndexSizeInMB
 
-			FETCH NEXT FROM Tables_Run_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentSeqNo, @TransactionId, @CurrentIndexName, @CurrentPartitionNumber, @CurrentSQLStatement, @RunStatus, @CurrentIndexOperation, @CurrentTableChildOperationId, @BatchId, @ExitTableLoopOnError, @IndexSizeInMB
-
-		END --@@fetch_status <> -2
+	END --@@fetch_status = 0
 		
-	END --@@fetch_status <> -1
-
 	CLOSE Tables_Run_Cur
 	DEALLOCATE Tables_Run_Cur
     /************************************** TABLE LOOP (END) ********************************************/

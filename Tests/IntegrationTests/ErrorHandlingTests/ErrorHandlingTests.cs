@@ -113,7 +113,7 @@ namespace DOI.Tests.Integration.ErrorHandling
                 AreReorgOptionsChanging = false,
                 AreSetOptionsChanging = false,
                 IsIndexMissing = false,
-                IsClustered = true,
+                IsClustered_Desired = true,
                 DropStatement = $"DROP INDEX IF EXISTS dbo.{TestTableName1}.CDX_{TestTableName1}",
                 CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = '{TestTableName1}' AND i.name = 'CDX_{TestTableName1}')  BEGIN   CREATE  CLUSTERED INDEX CDX_{TestTableName1}     ON dbo.{TestTableName1}({TestTableName1}Id ASC,TransactionUtcDt ASC)               WITH (           PAD_INDEX = ON,          FILLFACTOR = 90,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = OFF,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
                 AlterSetStatement = $"ALTER INDEX CDX_{TestTableName1} ON dbo.{TestTableName1}   SET ( IGNORE_DUP_KEY = OFF,     STATISTICS_NORECOMPUTE = OFF,     ALLOW_ROW_LOCKS = ON,     ALLOW_PAGE_LOCKS = ON)",
@@ -138,6 +138,9 @@ namespace DOI.Tests.Integration.ErrorHandling
 
             // add data to fail on space issue
             this.sqlHelper.Execute($"USE {DatabaseName} INSERT INTO dbo.{SpaceErrorTableName}(SenselessText, SenselessText2) SELECT TOP 5000 CONVERT(char(255), NEWID()), CONVERT(char(255), NEWID()) FROM sys.objects a CROSS JOIN sys.objects b");
+
+            int dbId = sqlHelper.ExecuteScalar<int>($"SELECT database_id FROM sys.databases WHERE NAME = '{DatabaseName}'");
+            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Run_System @DatabaseId = {dbId}");
 
             // set multiplier setting to always guarantee a space failure.
             string dbName = fileType == "TempDB" ? "tempdb" : DatabaseName;
@@ -165,7 +168,7 @@ namespace DOI.Tests.Integration.ErrorHandling
                         AreReorgOptionsChanging, 
                         AreSetOptionsChanging, 
                         IndexType, 
-                        IsClustered 
+                        IsClustered_Desired
                 FROM DOI.DOI.vwIndexes 
                 WHERE DatabaseName = '{DatabaseName}' 
                     AND SchemaName = '{SchemaName}' 
@@ -183,12 +186,12 @@ namespace DOI.Tests.Integration.ErrorHandling
                 Assert.AreEqual(indexRow.AreReorgOptionsChanging, Convert.ToBoolean(indexChangesReader["AreReorgOptionsChanging"]));
                 Assert.AreEqual(indexRow.AreSetOptionsChanging, Convert.ToBoolean(indexChangesReader["AreSetOptionsChanging"]));
                 Assert.AreEqual(indexRow.IndexType, Convert.ToString(indexChangesReader["IndexType"]));
-                Assert.AreEqual(indexRow.IsClustered, Convert.ToBoolean(indexChangesReader["IsClustered"]));
+                Assert.AreEqual(indexRow.IsClustered_Desired, Convert.ToBoolean(indexChangesReader["IsClustered_Desired"]));
             }
 
             // Act - Execute the index engine
-            this.dataDrivenIndexTestHelper.ExecuteSPQueue(true);
-            this.dataDrivenIndexTestHelper.ExecuteSPRun(true);
+            this.dataDrivenIndexTestHelper.ExecuteSPQueue(true, false, DatabaseName, null, null);
+            this.dataDrivenIndexTestHelper.ExecuteSPRun(true, DatabaseName, null, null);
 
             // Assert - Check that index for {SpaceErrorTableName} failed due to insufficient space error
             var errorLogReader = this.sqlHelper.ExecuteReader($@"
@@ -224,7 +227,7 @@ namespace DOI.Tests.Integration.ErrorHandling
                     AreReorgOptionsChanging, 
                     AreSetOptionsChanging, 
                     IndexType, 
-                    IsClustered 
+                    IsClustered_Actual
             FROM DOI.DOI.vwIndexes 
             WHERE DatabaseName = '{DatabaseName}' 
                 AND SchemaName = '{SchemaName}' 
@@ -241,7 +244,7 @@ namespace DOI.Tests.Integration.ErrorHandling
                 Assert.AreEqual(indexRow.AreReorgOptionsChanging, Convert.ToBoolean(indexChangesReader["AreReorgOptionsChanging"]));
                 Assert.AreEqual(indexRow.AreSetOptionsChanging, Convert.ToBoolean(indexChangesReader["AreSetOptionsChanging"]));
                 Assert.AreEqual(indexRow.IndexType, Convert.ToString(indexChangesReader["IndexType"]));
-                Assert.AreEqual(indexRow.IsClustered, Convert.ToBoolean(indexChangesReader["IsClustered"]));
+                Assert.AreEqual(indexRow.IsClustered_Desired, Convert.ToBoolean(indexChangesReader["IsClustered_Actual"]));
             }
         }
 
