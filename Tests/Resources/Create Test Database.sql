@@ -1,6 +1,5 @@
 USE [master]
 
-
 /****** Object:  Database [DOIUnitTests]    Script Date: 7/2/2020 2:01:04 PM ******/
 IF NOT EXISTS(SELECT 'True' FROM sys.databases WHERE name = 'DOIUnitTests')
 BEGIN
@@ -20,3 +19,5 @@ END
 
 INSERT INTO DOI.DOI.Databases(DatabaseName)
 VALUES(N'DOIUnitTests')
+
+EXEC DOI.DOI.spRefreshMetadata_System_SysDatabases @DatabaseName = 'DOIUnitTests'

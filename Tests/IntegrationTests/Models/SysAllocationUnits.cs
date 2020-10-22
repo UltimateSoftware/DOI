@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DOI.Tests.Integration.Models
+namespace DOI.Tests.IntegrationTests.Models
 {
     public class SysAllocationUnits
     {
         public int database_id { get; set; }
 
-        public Int64 allocation_unit_id { get; set; }
+        public int allocation_unit_id { get; set; }
 
-        public Int16 type { get; set; }
+        public int type { get; set; }
 
         public string type_desc { get; set; }
 
@@ -20,10 +20,10 @@ namespace DOI.Tests.Integration.Models
 
         public int data_space_id { get; set; }
 
-        public Int64 total_pages { get; set; }
+        public int total_pages { get; set; }
 
-        public Int64 used_pages { get; set; }
+        public int used_pages { get; set; }
 
-        public Int64 data_pages { get; set; }
+        public int data_pages { get; set; }
     }
 }

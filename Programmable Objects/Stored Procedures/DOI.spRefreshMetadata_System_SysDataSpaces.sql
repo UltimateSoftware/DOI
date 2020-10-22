@@ -11,19 +11,19 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysDataSpaces]
-    @DatabaseId INT = NULL
+    @DatabaseName NVARCHAR(128) = NULL
 AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysDataSpaces]
-        @DatabaseId = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 DELETE DOI.SysDataSpaces
-WHERE database_id = CASE WHEN @DatabaseId IS NULL THEN database_id ELSE @DatabaseId END
+WHERE name = CASE WHEN @DatabaseName IS NULL THEN name ELSE @DatabaseName END 
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
     @TableName = 'SysDataSpaces',
-    @DatabaseId = @DatabaseId
+    @DatabaseName = @DatabaseName
 
 GO

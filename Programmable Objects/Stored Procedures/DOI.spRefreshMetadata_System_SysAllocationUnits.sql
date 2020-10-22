@@ -11,21 +11,24 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysAllocationUnits]
-    @DatabaseId INT = NULL,
+    @DatabaseName NVARCHAR(128) = NULL,
     @Debug BIT = 0
 
 AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysAllocationUnits]
+        @DatabaseName = 'DOIUnitTests',
         @Debug = 1
 */
 
-DELETE DOI.SysAllocationUnits
-WHERE database_id = CASE WHEN @DatabaseId IS NULL THEN database_id ELSE @DatabaseId END
+DELETE AU 
+FROM DOI.SysAllocationUnits AU
+    INNER JOIN DOI.SysDatabases D ON AU.database_id = D.database_id
+WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @DatabaseId = @DatabaseId,
+    @DatabaseName = @DatabaseName,
     @TableName = 'SysAllocationUnits',
     @Debug = @Debug
 

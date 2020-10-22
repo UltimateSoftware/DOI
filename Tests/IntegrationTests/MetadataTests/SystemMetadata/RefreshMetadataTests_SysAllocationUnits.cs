@@ -14,27 +14,29 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [SetUp]
         public void Setup()
         {
-            sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}'");
-            sqlHelper.Execute(TestHelper.CreateTableSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDatabasesSql);
+            sqlHelper.Execute(TestHelper.CreateSchemaSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.CreateTableSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, "DOIUnitTests");
         }
 
         [TearDown]
         public void TearDown()
         {
-            sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}'");
+            sqlHelper.Execute(TestHelper.MetadataDeleteSql);
+            sqlHelper.Execute(TestHelper.DropIndexSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.DropTableSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.DropSchemaSql, 30, true, "DOIUnitTests");
         }
 
         [Test]
         public void RefreshMetadata_SysAllocationUnits_MetadataIsAccurate()
         {
-            //assert that sql server DMV does not match SysAllocationUnits table.
-            TestHelper.AssertSysAllocationUnitsMetadata();
-
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.SysAllocationUnits_RefreshMetadata);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysAllocationUnitsSql);
 
             //and now they should match
-            TestHelper.AssertSysAllocationUnitsMetadata();
+            TestHelper.AssertMetadata();
         }
     }
 }

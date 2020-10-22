@@ -13,7 +13,10 @@ EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = 'DOIUnitTests'
 
 */
 
-DECLARE @SQL VARCHAR(MAX) = ''
+DECLARE @SQL VARCHAR(MAX) = '',
+        @DBID INT = (   SELECT database_id FROM DOI.SysDatabases WHERE name = @DatabaseName
+                        UNION 
+                        SELECT database_id FROM sys.databases WHERE NAME = @DatabaseName)
 
 SELECT @SQL += 'DELETE FROM DOI.[' + t.name + '] WHERE DatabaseName = ''' + @DatabaseName + '''' + CHAR(13) + CHAR(10)
 FROM sys.tables t
@@ -21,7 +24,7 @@ FROM sys.tables t
 WHERE s.name = 'DOI'
     AND EXISTS (SELECT 'True' FROM sys.columns c WHERE c.object_id = t.object_id AND c.name = 'DatabaseName')
 
-SELECT @SQL += 'DELETE FROM DOI.[' + t.name + '] WHERE EXISTS (SELECT ''True'' FROM DOI.SysDatabases d WHERE database_id = d.database_id AND d.name = ''' + @DatabaseName + ''' )' + CHAR(13) + CHAR(10)
+SELECT @SQL += 'DELETE FROM DOI.[' + t.name + '] WHERE database_id = ' + CAST(@DBID AS VARCHAR(20)) + CHAR(13) + CHAR(10)
 FROM sys.tables t
     INNER JOIN sys.schemas s ON s.schema_id = T.schema_id
 WHERE s.name = 'DOI'

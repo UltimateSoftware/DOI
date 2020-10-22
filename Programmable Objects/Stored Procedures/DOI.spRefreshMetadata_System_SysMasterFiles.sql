@@ -11,7 +11,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysMasterFiles]
-    @DatabaseId INT = NULL
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
@@ -20,10 +20,15 @@ AS
         @DatabaseId = 18
 */
 
-DELETE DOI.SysMasterFiles
+DELETE MF
+FROM DOI.SysMasterFiles MF
+    INNER JOIN DOI.SysDatabases D ON MF.database_id = D.database_id
+WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
+
 
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysMasterFiles'
+    @TableName = 'SysMasterFiles',
+    @DatabaseName = @DatabaseName
 
 GO

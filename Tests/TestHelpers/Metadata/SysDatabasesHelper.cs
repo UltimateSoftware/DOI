@@ -215,7 +215,11 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
+            Assert.AreEqual(expected.Count, 1);
+
             var actual = GetActualValues();
+
+            Assert.AreEqual(actual.Count, 1);
 
             foreach (var expectedRow in expected)
             {

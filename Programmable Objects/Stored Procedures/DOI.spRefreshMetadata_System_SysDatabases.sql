@@ -25,6 +25,7 @@ DELETE DOI.SysDatabases
 WHERE name = CASE WHEN @DatabaseName IS NULL THEN name ELSE @DatabaseName END 
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysDatabases'
+    @TableName = 'SysDatabases',
+    @DatabaseName = @DatabaseName
 
 GO

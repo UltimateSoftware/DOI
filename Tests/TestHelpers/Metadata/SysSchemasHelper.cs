@@ -71,11 +71,15 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
+            Assert.AreEqual(expected.Count, 1);
+
             var actual = GetActualValues();
+
+            Assert.AreEqual(actual.Count, 1);
 
             foreach (var expectedRow in expected)
             {
-                var actualRow = actual.Find(x => x.database_id == expectedRow.database_id);
+                var actualRow = actual.Find(x => x.database_id == expectedRow.database_id && x.schema_id == expectedRow.schema_id);
 
                 Assert.AreEqual(expectedRow.name, actualRow.name);
                 Assert.AreEqual(expectedRow.schema_id, actualRow.schema_id);
