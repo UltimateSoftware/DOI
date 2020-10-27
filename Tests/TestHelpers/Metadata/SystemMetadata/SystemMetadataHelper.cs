@@ -15,6 +15,62 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         #endregion
 
+        #region FileGroups
+
+        public const string FilegroupName = "Test1FG1";
+        public const string Filegroup2Name = "Test1FG2";
+        public static string CreateFilegroupSql = $@"ALTER DATABASE {DatabaseName} ADD FILEGROUP {FilegroupName};";
+        public static string CreateFilegroup2Sql = $@"ALTER DATABASE {DatabaseName} ADD FILEGROUP {Filegroup2Name};";
+
+
+        public static string DropFilegroupSql = $@"ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {FilegroupName};";
+        public static string DropFilegroup2Sql = $@"ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {Filegroup2Name};";
+
+
+        public static string RefreshMetadata_SysFilegroupsSql = $"EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDataSpacesSql = $"EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDestinationDataSpacesSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'";
+        
+
+        #endregion
+
+        #region PartitionFunctions
+
+        public const string PartitionFunctionName = "pfTests";
+
+        public static string CreatePartitionFunctionSql = $"CREATE PARTITION FUNCTION [{PartitionFunctionName}](datetime2(7)) AS RANGE RIGHT FOR VALUES (N'2016-01-01T00:00:00.000')";
+
+        public static string DropPartitionFunctionSql = $"DROP PARTITION FUNCTION {PartitionFunctionName}";
+
+        public static string RefreshMetadata_SysPartitionFunctionsSql = $"EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'";
+
+        public static string RefreshMetadata_SysPartitionRangeValuesSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues @DatabaseName = '{DatabaseName}'";
+        
+
+        #endregion
+        #region PartitionSchemes
+
+        public const string PartitionSchemeName = "psTests";
+
+        public static string CreatePartitionSchemeSql = $"CREATE PARTITION SCHEME [{PartitionSchemeName}] AS PARTITION [{PartitionFunctionName}] TO ([{FilegroupName}], [{Filegroup2Name}])";
+
+        public static string DropPartitionSchemeSql = $"DROP PARTITION SCHEME {PartitionSchemeName}";
+
+        public static string RefreshMetadata_SysPartitionSchemesSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'";
+
+        #endregion
+
+
         #region Schemas
 
         public static string CreateSchemaSql = "CREATE SCHEMA TEST AUTHORIZATION DBO";
@@ -40,17 +96,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         #endregion
 
-        #region FileGroups
 
-        public const string FilegroupName = "Test1FG1";
-        public static string CreateFilegroupSql = $@"ALTER DATABASE {DatabaseName} ADD FILEGROUP {FilegroupName};";
-
-        public static string DropFilegroupSql = $@"ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {FilegroupName};";
-
-        public static string RefreshMetadata_SysFilegroupsSql = $"EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'";
-        public static string RefreshMetadata_SysSpacesSql = $"EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'";
-
-        #endregion
 
         #region DatabaseFiles
 
@@ -70,6 +116,9 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string RefreshMetadata_SysDatabaseFilesSql = $"EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'";
         public static string RefreshMetadata_SysMasterFilesSql = $"EXEC DOI.spRefreshMetadata_System_SysMasterFiles @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDmOsVolumeStatsSql = $@"
+        EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}' 
+        EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -109,9 +158,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         #endregion
 
 
-        public const string MetadataDeleteSql = @"
-        EXEC [Utility].[spDeleteAllMetadataFromDatabase] 
-            @DatabaseName = 'DOIUnitTests'";
+        public const string MetadataDeleteSql = @"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = 'DOIUnitTests'";
 
        
     }

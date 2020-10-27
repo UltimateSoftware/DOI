@@ -11,7 +11,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysDmOsVolumeStats]
-    @DatabaseId INT
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
@@ -19,18 +19,22 @@ AS
 /*
     set statistics io on
     EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats
+         @DatabaseName = 'DOIUnitTests'
 */
 
 
 
-DELETE DOI.SysDmOsVolumeStats
-WHERE database_id = @DatabaseId 
+DELETE VS
+FROM DOI.SysDmOsVolumeStats VS
+    INNER JOIN DOI.SysDatabases D ON VS.database_id = D.database_id
+WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 SELECT  FN.*
 INTO #SysDmOsVolumeStats
 FROM DOI.SysDatabaseFiles p 
+    INNER JOIN DOI.SysDatabases D ON d.Database_id = p.database_id
     CROSS APPLY sys.dm_os_volume_stats(p.database_id, p.file_id) FN 
-WHERE P.database_id = @DatabaseId
+WHERE D.name = @DatabaseName
 
 INSERT INTO DOI.SysDmOsVolumeStats
 SELECT * FROM #SysDmOsVolumeStats

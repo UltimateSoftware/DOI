@@ -11,7 +11,7 @@ CREATE TABLE [DOI].[SysPartitionSchemes]
 [is_default] [bit] NULL,
 [is_system] [bit] NULL,
 [function_id] [int] NOT NULL,
-CONSTRAINT [PK_SysPartitionSchemes] PRIMARY KEY NONCLUSTERED  ([function_id])
+CONSTRAINT [PK_SysPartitionSchemes] PRIMARY KEY NONCLUSTERED  ([database_id], [function_id])
 )
 WITH
 (
