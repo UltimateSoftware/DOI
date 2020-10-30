@@ -432,6 +432,7 @@
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysDmDbStatsProperties.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysDmOsVolumeStats.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysFilegroups.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysForeignKeyColumns.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysForeignKeys.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysIndexColumns.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysIndexes.cs" />
@@ -462,6 +463,7 @@
     <Compile Include="IntegrationTests\Models\SysDestinationDataSpaces.cs" />
     <Compile Include="IntegrationTests\Models\SysDmDbStatsProperties.cs" />
     <Compile Include="IntegrationTests\Models\SysDmOsVolumeStats.cs" />
+    <Compile Include="IntegrationTests\Models\SysForeignKeyColumns.cs" />
     <Compile Include="IntegrationTests\Models\SysForeignKeys.cs" />
     <Compile Include="IntegrationTests\Models\SysIndexColumns.cs" />
     <Compile Include="IntegrationTests\Models\SysIndexPhysicalStats.cs" />
@@ -509,6 +511,7 @@
     <Compile Include="TestHelpers\Metadata\SysDmDbStatsPropertiesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysDmOsVolumeStatsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysFilegroupsHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\SysForeignKeyColumnsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysForeignKeysHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysIndexColumnsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysIndexesHelper.cs" />

@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[spRefreshMetadata_System_SysForeignKeyColumns_InsertData]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spRefreshMetadata_System_SysForeignKeyColumns_InsertData];
+IF OBJECT_ID('[DOI].[spRefreshMetadata_System_SysForeignKeyColumns]') IS NOT NULL
+	DROP PROCEDURE [DOI].[spRefreshMetadata_System_SysForeignKeyColumns];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,12 +10,12 @@ GO
 SET ANSI_NULLS ON
 GO
 
-CREATE     PROCEDURE [DOI].[spRefreshMetadata_System_SysForeignKeyColumns_InsertData]
+CREATE     PROCEDURE [DOI].[spRefreshMetadata_System_SysForeignKeyColumns]
     @DatabaseName NVARCHAR(128) = NULL
 AS
 
 /*
-    EXEC [DOI].[spRefreshMetadata_System_SysForeignKeyColumns_InsertData]
+    EXEC [DOI].[spRefreshMetadata_System_SysForeignKeyColumns]
         @DatabaseName = 'DOIUnitTests'
 */
 

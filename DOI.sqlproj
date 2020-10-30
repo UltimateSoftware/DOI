@@ -347,7 +347,7 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spForeignKeysAdd.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spForeignKeysDrop.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeyColumns_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeyColumns_InsertData.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeyColumns.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeys.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeys_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeys_InsertData.sql" />

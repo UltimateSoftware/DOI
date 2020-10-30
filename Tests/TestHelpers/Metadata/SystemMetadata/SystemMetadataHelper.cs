@@ -193,6 +193,13 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysForeignKeys @DatabaseName = '{DatabaseName}'";
 
+        public static string RefreshMetadata_SysForeignKeyColumnsSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysForeignKeys @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns @DatabaseName = '{DatabaseName}'";
+
+        
+
         #endregion
 
         #region Indexes
