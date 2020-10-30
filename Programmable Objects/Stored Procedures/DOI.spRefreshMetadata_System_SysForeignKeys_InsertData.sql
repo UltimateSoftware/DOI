@@ -11,20 +11,22 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysForeignKeys_InsertData]
-    @DatabaseId INT = NULL
+    @DatabaseName NVARCHAR(128) = NULL
 AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysForeignKeys_InsertData]
-        @DatabaseId = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 
-DELETE DOI.SysForeignKeys
-WHERE database_id = CASE WHEN @DatabaseId IS NULL THEN database_id ELSE @DatabaseId END
+DELETE FK
+FROM DOI.SysForeignKeys FK
+    INNER JOIN DOI.SysDatabases D ON FK.database_id = D.database_id
+WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
     @TableName = 'SysForeignKeys',
-    @DatabaseId = @DatabaseId
+    @DatabaseName = @DatabaseName
 
 GO

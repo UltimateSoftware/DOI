@@ -46,7 +46,8 @@ BEGIN
         SELECT ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE 'DB_ID(''' + DatabaseName + ''') AS database_id,' END + ' FN.*
         FROM DOI.' + M.FunctionParentDMV + ' p
             CROSS APPLY ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + ' FN  
-        WHERE p.database_id = ' + CASE WHEN @DatabaseName IS NULL THEN 'p.database_id' ELSE CAST(@DatabaseName AS VARCHAR(128)) END  
+            INNER JOIN DOI.SysDatabases D ON D.database_id = p.database_id
+        WHERE d.name = ''' + CASE WHEN @DatabaseName IS NULL THEN 'd.name' ELSE CAST(@DatabaseName AS VARCHAR(128)) END  + ''''
         --select count(*)
         FROM DOI.Databases D
             INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName

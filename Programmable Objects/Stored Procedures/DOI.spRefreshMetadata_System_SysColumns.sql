@@ -17,7 +17,7 @@ AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysColumns]
-        @@DatabaseName = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 DELETE C

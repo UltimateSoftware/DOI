@@ -339,8 +339,8 @@
   <ItemGroup>
     <None Include="Migrations\005_NotInMetadata_Tables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysIndexes.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysStats_InsertData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysStatsColumns_InsertData.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysStats.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysStatsColumns.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\006_DOISettings_Table.sql" />

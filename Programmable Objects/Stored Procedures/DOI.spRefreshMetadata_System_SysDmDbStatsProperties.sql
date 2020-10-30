@@ -11,7 +11,8 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]
-    @DatabaseName NVARCHAR(128) = NULL
+    @DatabaseName NVARCHAR(128) = NULL,
+    @Debug BIT = 0
 AS
 
 /*
@@ -19,12 +20,14 @@ AS
          @DatabaseName = 'DOIUnitTests'
 */
 
-DELETE D
-FROM DOI.SysDmDbStatsProperties
+DELETE SP
+FROM DOI.SysDmDbStatsProperties SP
+    INNER JOIN DOI.SysDatabases D ON SP.database_id = D.database_id
 WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
     @TableName = 'SysDmDbStatsProperties',
-    @DatabaseName = @DatabaseName
+    @DatabaseName = @DatabaseName,
+    @Debug = @Debug
 
 GO

@@ -11,7 +11,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE     PROCEDURE [DOI].[spRefreshMetadata_System_SysForeignKeys]
-    @DatabaseId INT = NULL
+    @DatabaseName NVARCHAR(128) = NULL
 AS
 
 /*
@@ -21,10 +21,10 @@ AS
 
 
 EXEC DOI.spRefreshMetadata_System_SysForeignKeys_InsertData
-    @DatabaseId = @DatabaseId
+    @DatabaseName = @DatabaseName
 EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData
-    @DatabaseId = @DatabaseId
+    @DatabaseName = @DatabaseName
 EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns_InsertData
-    @DatabaseId = @DatabaseId
+    @DatabaseName = @DatabaseName
 
 GO

@@ -11,12 +11,12 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysForeignKeys_UpdateData]
-    @DatabaseId INT = NULL
+    @DatabaseName NVARCHAR(128) = NULL
 AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysForeignKeys_UpdateData]
-        @DatabaseId = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 
@@ -51,7 +51,7 @@ FROM DOI.SysForeignKeys FKS
 					WHERE FKC.constraint_object_id = FKS.object_id 
                     ORDER BY FKC.constraint_column_id ASC
 					FOR XML PATH('')) FKReferencedColumns(FKReferencedColumnList)
-WHERE d.database_id = CASE WHEN @DatabaseId IS NULL THEN d.database_id ELSE @DatabaseId END
+WHERE d.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 
 GO

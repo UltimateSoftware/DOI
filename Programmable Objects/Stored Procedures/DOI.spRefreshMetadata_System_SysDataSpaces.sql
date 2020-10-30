@@ -19,8 +19,10 @@ AS
         @DatabaseName = 'DOIUnitTests'
 */
 
-DELETE DOI.SysDataSpaces
-WHERE name = CASE WHEN @DatabaseName IS NULL THEN name ELSE @DatabaseName END 
+DELETE DS
+FROM DOI.SysDataSpaces DS
+    INNER JOIN DOI.SysDatabases D ON DS.database_id = D.database_id
+WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END 
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
     @TableName = 'SysDataSpaces',
