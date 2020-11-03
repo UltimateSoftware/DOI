@@ -39,19 +39,21 @@ FROM DOI.SysForeignKeys FKS
         AND pts.name = ptu.TableName
     CROSS APPLY (	SELECT c.name + ',' 
 					FROM DOI.SysForeignKeyColumns FKC
-						INNER JOIN DOI.SysColumns c ON FKC.parent_object_id = c.object_id
+						INNER JOIN DOI.SysColumns c ON FKC.database_id = c.database_id
+                            AND FKC.parent_object_id = c.object_id
 							AND FKC.parent_column_id = c.column_id
-					WHERE FKC.constraint_object_id = FKS.object_id 
+					WHERE FKC.database_id = FKS.database_id
+                        AND FKC.constraint_object_id = FKS.object_id
                     ORDER BY FKC.constraint_column_id ASC
 					FOR XML PATH('')) FKParentColumns(FKParentColumnList)
     CROSS APPLY (	SELECT c.name + ',' 
 					FROM DOI.SysForeignKeyColumns FKC
-						INNER JOIN DOI.SysColumns c ON FKC.referenced_object_id = c.object_id
-							AND FKC.parent_column_id = c.column_id
-					WHERE FKC.constraint_object_id = FKS.object_id 
+						INNER JOIN DOI.SysColumns c ON FKC.database_id = c.database_id
+                            AND FKC.referenced_object_id = c.object_id
+							AND FKC.referenced_column_id = c.column_id
+					WHERE FKC.database_id = FKS.database_id
+                        AND FKC.constraint_object_id = FKS.object_id 
                     ORDER BY FKC.constraint_column_id ASC
 					FOR XML PATH('')) FKReferencedColumns(FKReferencedColumnList)
 WHERE d.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
-
-
 GO

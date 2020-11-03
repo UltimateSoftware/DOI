@@ -48,6 +48,10 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.has_filter = (bool) row.First(x => x.First == "has_filter").Second;
                 columnValue.filter_definition = row.First(x => x.First == "filter_definition").Second.ToString();
                 columnValue.compression_delay = row.First(x => x.First == "compression_delay").Second.ObjectToInteger();
+                columnValue.key_column_list = "TempAId ASC";
+                columnValue.included_column_list = String.Empty;
+                columnValue.has_LOB_columns = false;
+
 
                 expectedSysIndexes.Add(columnValue);
             }
@@ -92,6 +96,9 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.has_filter = (bool) row.First(x => x.First == "has_filter").Second;
                 columnValue.filter_definition = row.First(x => x.First == "filter_definition").Second.ToString();
                 columnValue.compression_delay = row.First(x => x.First == "compression_delay").Second.ObjectToInteger();
+                columnValue.key_column_list = row.First(x => x.First == "key_column_list").Second.ToString();
+                columnValue.included_column_list = row.First(x => x.First == "included_column_list").Second.ToString();
+                columnValue.has_LOB_columns = (bool)row.First(x => x.First == "has_LOB_columns").Second;
 
                 actualSysIndexes.Add(columnValue);
             }
@@ -124,7 +131,15 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.ignore_dup_key, actualRow.ignore_dup_key);
                 Assert.AreEqual(expectedRow.is_primary_key, actualRow.is_primary_key);
                 Assert.AreEqual(expectedRow.is_unique_constraint, actualRow.is_unique_constraint);
-                Assert.AreEqual(expectedRow.fill_factor, actualRow.fill_factor);
+                switch (expectedRow.fill_factor)
+                {
+                    case 0:
+                        Assert.AreEqual(100, actualRow.fill_factor); //fill factors are translated from 0 to 100 in our system.
+                        break;
+                    default:
+                        Assert.AreEqual(expectedRow.fill_factor, actualRow.fill_factor);
+                        break;
+                }
                 Assert.AreEqual(expectedRow.is_padded, actualRow.is_padded);
                 Assert.AreEqual(expectedRow.is_disabled, actualRow.is_disabled);
                 Assert.AreEqual(expectedRow.is_hypothetical, actualRow.is_hypothetical);
@@ -133,6 +148,9 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.has_filter, actualRow.has_filter);
                 Assert.AreEqual(expectedRow.filter_definition, actualRow.filter_definition);
                 Assert.AreEqual(expectedRow.compression_delay, actualRow.compression_delay);
+                Assert.AreEqual(expectedRow.key_column_list, actualRow.key_column_list);
+                Assert.AreEqual(expectedRow.included_column_list, actualRow.included_column_list);
+                Assert.AreEqual(expectedRow.has_LOB_columns, actualRow.has_LOB_columns);
             }
         }
     }

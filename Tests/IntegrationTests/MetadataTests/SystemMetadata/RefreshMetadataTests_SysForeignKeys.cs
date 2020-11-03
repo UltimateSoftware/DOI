@@ -16,7 +16,9 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         {
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysDatabasesSql);
             sqlHelper.Execute(TestHelper.CreateTableSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.CreateTableMetadataSql);
             sqlHelper.Execute(TestHelper.CreateChildTableSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.CreateChildTableMetadataSql);
             sqlHelper.Execute(TestHelper.CreateForeignKeySql, 30, true, "DOIUnitTests");
         }
 
@@ -26,7 +28,10 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.MetadataDeleteSql);
             sqlHelper.Execute(TestHelper.DropForeignKeySql, 30, true, "DOIUnitTests");
             sqlHelper.Execute(TestHelper.DropChildTableSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.DropChildTableMetadataSql);
             sqlHelper.Execute(TestHelper.DropTableSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.DropTableMetadataSql);
+
         }
 
         [Test]
@@ -38,15 +43,5 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             //and now they should match
             TestHelper.AssertMetadata();
         }
-
-        //[Test]
-        //public void RefreshMetadata_SysForeignKeys_DerivedMetadataIsAccurate()
-        //{
-        //    //run refresh metadata
-        //    sqlHelper.Execute(TestHelper.RefreshMetadata_SysForeignKeysSql);
-
-        //    //and now they should match
-        //    TestHelper.AssertMetadata();
-        //}
     }
 }

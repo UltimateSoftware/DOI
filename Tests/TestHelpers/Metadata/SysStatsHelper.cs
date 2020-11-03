@@ -39,6 +39,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.filter_definition = row.First(x => x.First == "filter_definition").Second.ToString();
                 columnValue.is_temporary = (bool)row.First(x => x.First == "is_temporary").Second;
                 columnValue.is_incremental = (bool)row.First(x => x.First == "is_incremental").Second;
+                columnValue.column_list = "TransactionUtcDt";
 
                 expectedSysStats.Add(columnValue);
             }
@@ -107,6 +108,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.filter_definition, actualRow.filter_definition);
                 Assert.AreEqual(expectedRow.is_temporary, actualRow.is_temporary);
                 Assert.AreEqual(expectedRow.is_incremental, actualRow.is_incremental);
+                Assert.AreEqual(expectedRow.column_list, actualRow.column_list);
             }
         }
     }

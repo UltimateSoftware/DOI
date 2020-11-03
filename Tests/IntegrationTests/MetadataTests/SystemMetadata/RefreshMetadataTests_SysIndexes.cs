@@ -39,5 +39,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             //and now they should match
             TestHelper.AssertMetadata();
         }
+
+        //test also index with included columns, LOB columns.
     }
 }

@@ -11,23 +11,25 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysIndexes_UpdateData]
-    @DatabaseId INT = NULL
+    @DatabaseName NVARCHAR(128) = NULL
 
 AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysIndexes_UpdateData]
-        @DatabaseId = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 UPDATE T
 SET fill_factor = CASE WHEN fill_factor = 0 THEN 100 ELSE fill_factor END
 FROM DOI.SysIndexes T 
-WHERE database_id = CASE WHEN @DatabaseId IS NULL THEN database_id ELSE @DatabaseId END
+    INNER JOIN DOI.SysDatabases D ON D.database_id = T.database_id
+WHERE d.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 UPDATE T
 SET key_column_list = y.IndexKeyColumnList
 from DOI.SysIndexes T 
+    INNER JOIN DOI.SysDatabases D ON D.database_id = T.database_id
     INNER JOIN (SELECT database_id, object_id, index_id, STUFF(IndexKeyColumnList,LEN(X.IndexKeyColumnList),1,'') AS IndexKeyColumnList
                 FROM DOI.SysIndexes T
                     CROSS APPLY (   SELECT C.NAME + CASE WHEN ic.is_descending_key = 1 THEN ' DESC' ELSE ' ASC' END + ','
@@ -45,12 +47,13 @@ from DOI.SysIndexes T
         ON T.database_id = y.database_id
             and T.object_id = y.object_id
             and T.index_id = y.index_id
-WHERE T.database_id = CASE WHEN @DatabaseId IS NULL THEN T.database_id ELSE @DatabaseId END
+WHERE d.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 
 UPDATE T
 SET included_column_list = y.IndexIncludedColumnList
-from DOI.SysIndexes T 
+FROM DOI.SysIndexes T 
+    INNER JOIN DOI.SysDatabases D ON D.database_id = T.database_id
     INNER JOIN (SELECT database_id, object_id, index_id, STUFF(IndexIncludedColumnList,LEN(X.IndexIncludedColumnList),1,'') AS IndexIncludedColumnList
                 FROM DOI.SysIndexes T
                     CROSS APPLY (   SELECT C.NAME + CASE WHEN ic.is_descending_key = 1 THEN ' DESC' ELSE ' ASC' END + ','
@@ -69,24 +72,27 @@ from DOI.SysIndexes T
         ON T.database_id = y.database_id
             and T.object_id = y.object_id
             and T.index_id = y.index_id
-WHERE T.database_id = CASE WHEN @DatabaseId IS NULL THEN T.database_id ELSE @DatabaseId END
+WHERE d.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 
 UPDATE T
 SET has_LOB_columns = ISNULL(IndexHasLOBColumns, 0)
-from DOI.SysIndexes T 
+FROM DOI.SysIndexes T 
+    INNER JOIN DOI.SysDatabases D ON D.database_id = T.database_id
 	OUTER APPLY (	SELECT 1 AS IndexHasLOBColumns 
 					FROM DOI.SysIndexColumns ic
 						INNER JOIN DOI.SysColumns c ON c.object_id = ic.object_id
 							AND c.column_id = ic.column_id
-						INNER JOIN DOI.SysTypes ty ON c.user_type_id = ty.user_type_id
+                            AND c.database_id = ic.database_id
+						INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
+                            AND c.user_type_id = ty.user_type_id
 					WHERE ic.database_id = T.database_id
                         AND ic.object_id = T.object_id	
 						AND ic.index_id = T.index_id
 						AND ty.is_user_defined = 0
 						AND (ty.name IN ('image', 'text', 'ntext') --not supported for online index rebuilds
 							OR c.max_length = -1)) LOBColumns
-WHERE T.database_id = CASE WHEN @DatabaseId IS NULL THEN T.database_id ELSE @DatabaseId END
+WHERE d.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 
 GO

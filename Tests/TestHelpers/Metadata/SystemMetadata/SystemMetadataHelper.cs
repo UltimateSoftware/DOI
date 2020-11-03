@@ -121,8 +121,21 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 	        TransactionUtcDt datetime2(7) NOT NULL,
         )";
 
+        public static string CreateTableMetadataSql = $@"
+        DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}'
+        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue) 
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName}'				,NULL						, 'PRIMARY'							, 0					,  1)";
+
+        public static string CreateChildTableMetadataSql = $@"
+        DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{ChildTableName}'
+        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue) 
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{ChildTableName}'			,NULL						, 'PRIMARY'							, 0					,  1)";
+
         public static string DropTableSql = $"DROP TABLE IF EXISTS dbo.{ChildTableName}";
+        public static string DropTableMetadataSql = $@"DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}'";
         public static string DropChildTableSql = $"DROP TABLE IF EXISTS dbo.{ChildTableName}";
+        public static string DropChildTableMetadataSql = $@"DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}'";
+
 
 
         public static string RefreshMetadata_SysTablesSql = $"EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'";
@@ -191,18 +204,23 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string RefreshMetadata_SysForeignKeysSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeys @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysForeignKeys @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysForeignKeyColumnsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysForeignKeys @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'";
 
         
 
         #endregion
 
-        #region Indexes
+        #region SysIndexes
         public const string IndexName = "CDX_TempA_TempAId";
 
 
@@ -212,10 +230,14 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string RefreshMetadata_SysIndexesSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysIndexes_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysIndexColumnsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'";
 
@@ -237,15 +259,20 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string RefreshMetadata_SysStatsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysStatsColumns @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysStats_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysStatsColumnsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysStatsColumns @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysDmDbStatsPropertiesSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysStatsColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysDmDbStatsProperties @DatabaseName = '{DatabaseName}'";

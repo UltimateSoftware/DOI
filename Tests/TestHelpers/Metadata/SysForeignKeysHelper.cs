@@ -51,6 +51,10 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.update_referential_action = row.First(x => x.First == "update_referential_action").Second.ObjectToInteger();
                 columnValue.update_referential_action_desc = row.First(x => x.First == "update_referential_action_desc").Second.ToString();
                 columnValue.is_system_named = (bool)row.First(x => x.First == "is_system_named").Second;
+                columnValue.ParentColumnList_Actual = "TempAId";
+                columnValue.ReferencedColumnList_Actual = "TempAId";
+                columnValue.DeploymentTime = "Deployment";
+
 
                 expectedSysForeignKeys.Add(columnValue);
             }
@@ -98,6 +102,10 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.update_referential_action = row.First(x => x.First == "update_referential_action").Second.ObjectToInteger();
                 columnValue.update_referential_action_desc = row.First(x => x.First == "update_referential_action_desc").Second.ToString();
                 columnValue.is_system_named = (bool)row.First(x => x.First == "is_system_named").Second;
+                columnValue.ParentColumnList_Actual = row.First(x => x.First == "ParentColumnList_Actual").Second.ToString();
+                columnValue.ReferencedColumnList_Actual = row.First(x => x.First == "ReferencedColumnList_Actual").Second.ToString();
+                columnValue.DeploymentTime = row.First(x => x.First == "DeploymentTime").Second.ToString();
+
 
                 actualSysForeignKeys.Add(columnValue);
             }
