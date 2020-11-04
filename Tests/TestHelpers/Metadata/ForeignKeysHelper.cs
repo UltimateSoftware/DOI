@@ -7,16 +7,16 @@ using DOI.Tests.IntegrationTests.Models;
 using NUnit.Framework;
 using DOI.Tests.TestHelpers;
 using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
-using Models = DOI.Tests.Integration.Models;
 
 namespace DOI.Tests.TestHelpers.Metadata
 {
-    public class SysForeignKeysHelper : SystemMetadataHelper
+    public class ForeignKeysHelper : SystemMetadataHelper
     {
         public const string SysTableName = "SysForeignKeys";
         public const string SqlServerDmvName = "sys.foreign_keys";
+        public const string UserTableName = "ForeignKeys";
 
-        public static List<SysForeignKeys> GetExpectedValues()
+        public static List<SysForeignKeys> GetExpectedSysValues()
         {
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
@@ -62,7 +62,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             return expectedSysForeignKeys;
         }
 
-        public static List<SysForeignKeys> GetActualValues()
+        public static List<SysForeignKeys> GetActualSysValues()
         {
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
@@ -113,14 +113,45 @@ namespace DOI.Tests.TestHelpers.Metadata
             return actualSysForeignKeys;
         }
 
-        //verify DOI Sys table data against expected values.
-        public static void AssertMetadata()
+        public static List<ForeignKeys> GetActualUserValues()
         {
-            var expected = GetExpectedValues();
+            SqlHelper sqlHelper = new SqlHelper();
+            var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
+            SELECT FK.ParentColumnList_Desired,
+                    FK.ParentColumnList_Actual,
+                    FK.ReferencedColumnList_Desired,
+                    FK.ReferencedColumnList_Actual,
+                    FK.DeploymentTime
+            FROM DOI.DOI.{UserTableName} FK
+            WHERE FK.DatabaseName = '{DatabaseName}'
+                AND FK.ParentTableName = '{ChildTableName}'
+                AND FK.FKName = '{ForeignKeyName}'"));
+
+            List<ForeignKeys> actualForeignKeys = new List<ForeignKeys>();
+
+            foreach (var row in actual)
+            {
+                var columnValue = new ForeignKeys();
+                columnValue.ParentColumnList_Desired = row.First(x => x.First == "ParentColumnList_Desired").Second.ToString();
+                columnValue.ParentColumnList_Actual = row.First(x => x.First == "ParentColumnList_Actual").Second.ToString();
+                columnValue.ReferencedColumnList_Desired = row.First(x => x.First == "ReferencedColumnList_Desired").Second.ToString();
+                columnValue.ReferencedColumnList_Actual = row.First(x => x.First == "ReferencedColumnList_Actual").Second.ToString();
+                columnValue.DeploymentTime = row.First(x => x.First == "DeploymentTime").Second.ToString();
+
+                actualForeignKeys.Add(columnValue);
+            }
+
+            return actualForeignKeys;
+        }
+
+        //verify DOI Sys table data against expected values.
+        public static void AssertSysMetadata()
+        {
+            var expected = GetExpectedSysValues();
 
             Assert.AreEqual(1, expected.Count);
 
-            var actual = GetActualValues();
+            var actual = GetActualSysValues();
 
             Assert.AreEqual(1, actual.Count);
 
@@ -153,6 +184,20 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.ParentColumnList_Actual, actualRow.ParentColumnList_Actual);
                 Assert.AreEqual(expectedRow.ReferencedColumnList_Actual, actualRow.ReferencedColumnList_Actual);
                 Assert.AreEqual(expectedRow.DeploymentTime, actualRow.DeploymentTime);
+            }
+        }
+
+        public static void AssertUserMetadata()
+        {
+            var actual = GetActualUserValues();
+
+            Assert.AreEqual(1, actual.Count);
+            
+            foreach (var row in actual)
+            {
+                Assert.AreEqual(row.ParentColumnList_Desired, row.ParentColumnList_Actual);
+                Assert.AreEqual(row.ReferencedColumnList_Desired, row.ReferencedColumnList_Actual);
+                Assert.AreEqual("Deployment", row.DeploymentTime);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using DOI.Tests.Integration.Models;
 using Simple.Data.Ado.Schema;
 
@@ -105,6 +106,9 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public const string TableName = "TempA";
         public const string ChildTableName = "TempB";
+        public static string DeleteTableSql = $"DELETE FROM dbo.{TableName}";
+
+        public static string InsertOneRowIntoTableSql = $@"INSERT INTO dbo.TempA VALUES({Guid.Parse("0525CED4-4F7B-4212-B511-44D13C129DA9")}, SYSDATETIME(), 'BLA', 'BLA')";
 
         public static string CreateTableSql = $@"
         CREATE TABLE dbo.{TableName}(
@@ -200,6 +204,15 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
                 ADD CONSTRAINT {ForeignKeyName}
                     FOREIGN KEY (TempAId) REFERENCES dbo.{TableName}(TempAId)";
 
+        public static string CreateForeignKeyMetadataSql = $@"
+
+DELETE DOI.ForeignKeys WHERE DatabaseName = '{DatabaseName}' AND FKName = '{ForeignKeyName}'
+
+INSERT [DOI].[ForeignKeys] 
+        ([DatabaseName]       , [ParentSchemaName]  , [ParentTableName]     , [ParentColumnList_Desired]    , [ReferencedSchemaName], [ReferencedTableName] , [ReferencedColumnList_Desired], [FKName]) 
+VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'TempAId'					, N'dbo'    	        , N'TempA'			    , N'TempAId'                    , N'{ForeignKeyName}')
+";
+
         public static string DropForeignKeySql = $@"ALTER TABLE dbo.{ChildTableName} DROP CONSTRAINT {ForeignKeyName}";
 
         public static string RefreshMetadata_SysForeignKeysSql = $@"
@@ -207,7 +220,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysForeignKeys @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_ForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysForeignKeyColumnsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
@@ -216,24 +230,39 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'";
 
-        
-
         #endregion
 
-        #region SysIndexes
+        #region Indexes
         public const string IndexName = "CDX_TempA_TempAId";
+        
+        public static string CreateIndexSql = $"CREATE UNIQUE CLUSTERED INDEX {IndexName} ON dbo.TempA(TempAId) WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
 
-
-        public static string CreateIndexSql = $"CREATE UNIQUE CLUSTERED INDEX {IndexName} ON dbo.TempA(TempAId)";
+        public static string CreateIndexMetadataSQl = $@"
+            INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
+                                            IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
+                                            OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
+                                            PartitionFunction_Desired, PartitionColumn_Desired)
+            VALUES (N'{DatabaseName}', N'dbo', N'{TableName}', N'{IndexName}', 1, 0, 0, 1, 'TempAId ASC', NULL,  
+                    0, NULL, 100, 1, 0, 0, 0, 
+                    0, 0, 1, 1, N'PAGE', 'PRIMARY', N'ROWS_FILEGROUP', 
+                    NULL, NULL)";
 
         public static string DropIndexSql = $"DROP INDEX IF EXISTS {IndexName} ON dbo.TempA";
 
         public static string RefreshMetadata_SysIndexesSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_System_SysIndexes_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitions @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysAllocationUnits @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysIndexColumnsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'

@@ -62,8 +62,6 @@ RETURN  (
 					,IRS.OptionIgnoreDupKey_Actual
 					,IRS.OptionDataCompression_Desired
 					,IRS.OptionDataCompression_Actual
-					,IRS.OptionDataCompressionDelay_Desired
-					,IRS.OptionDataCompressionDelay_Actual
 					,IRS.OptionAllowRowLocks_Desired
 					,IRS.OptionAllowRowLocks_Actual
 					,IRS.OptionAllowPageLocks_Desired
@@ -107,7 +105,6 @@ RETURN  (
 					,IRS.IsAllowRowLocksChanging
 					,IRS.IsAllowPageLocksChanging
 					,IRS.IsDataCompressionChanging
-					,IRS.IsDataCompressionDelayChanging
 					,IRS.IndexHasLOBColumns
 					,IRS.NumPages_Actual
                     ,'RowStore' AS IndexType

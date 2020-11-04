@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.IntegrationTests.Models;
 using DOI.Tests.TestHelpers;
 using NUnit.Framework;
+using Simple.Data.Ado.Schema;
 
 namespace DOI.Tests.Integration
 {
@@ -13,14 +15,14 @@ namespace DOI.Tests.Integration
     public class IndexesViewTests : DOIBaseTest
     {
         private List<IndexView> expectedIndexViews;
-        private List<ForeignKey> expectedForeignKeys;
+        private List<ForeignKeys> expectedForeignKeys;
         protected const string TempTableName = "TempA";
 
         [SetUp]
         public virtual void Setup()
         {
             this.expectedIndexViews = new List<IndexView>();
-            this.expectedForeignKeys = new List<ForeignKey>();
+            this.expectedForeignKeys = new List<ForeignKeys>();
             this.TearDown();
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
             this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
@@ -129,15 +131,15 @@ namespace DOI.Tests.Integration
                 IsOnlineOperation = true
             });
 
-            this.expectedForeignKeys.Add(new ForeignKey()
+            this.expectedForeignKeys.Add(new ForeignKeys()
             {
                 DatabaseName = DatabaseName,
                 ParentSchemaName = "dbo",
                 ParentTableName = "TempB",
-                ParentColumnList = "TempAId",
+                ParentColumnList_Desired = "TempAId",
                 ReferencedSchemaName = "dbo",
                 ReferencedTableName = "TempA",
-                ReferencedColumnList = "TempAId",
+                ReferencedColumnList_Desired = "TempAId",
                 FKName = "FK_TempB_TempA_TempAId",
                 CreateFKSQL = "ALTER TABLE dbo.[TempB] WITH NOCHECK ADD     CONSTRAINT FK_TempB_TempA_TempAId      FOREIGN KEY (TempAId)       REFERENCES dbo.[TempA](TempAId)"
             });
@@ -1009,10 +1011,10 @@ namespace DOI.Tests.Integration
                 Assert.AreEqual(expectedForeignKey.FKName, actualForeignKey.FKName, "FK FKName");
                 Assert.AreEqual(expectedForeignKey.ParentSchemaName, actualForeignKey.ParentSchemaName, "FK ParentSchemaName");
                 Assert.AreEqual(expectedForeignKey.ParentTableName, actualForeignKey.ParentTableName, "FK ParentTableName");
-                Assert.AreEqual(expectedForeignKey.ParentColumnList, actualForeignKey.ParentColumnList, "FK ParentColumnList");
+                Assert.AreEqual(expectedForeignKey.ParentColumnList_Desired, actualForeignKey.ParentColumnList_Desired, "FK ParentColumnList");
                 Assert.AreEqual(expectedForeignKey.ReferencedSchemaName, actualForeignKey.ReferencedSchemaName, "FK ReferencedSchemaName");
                 Assert.AreEqual(expectedForeignKey.ReferencedTableName, actualForeignKey.ReferencedTableName, "FK ReferencedTableName");
-                Assert.AreEqual(expectedForeignKey.ReferencedColumnList, actualForeignKey.ReferencedColumnList, "FK ReferencedColumnList");
+                Assert.AreEqual(expectedForeignKey.ReferencedColumnList_Desired, actualForeignKey.ReferencedColumnList_Desired, "FK ReferencedColumnList");
                 Assert.AreEqual(this.CleanUp(expectedForeignKey.CreateFKSQL), this.CleanUp(actualForeignKey.CreateFKSQL), "FK SQL");
             }
         }

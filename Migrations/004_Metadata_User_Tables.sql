@@ -144,14 +144,15 @@ CREATE TABLE [DOI].[ForeignKeys]
 [DatabaseName] [sys].[sysname] NOT NULL,
 [ParentSchemaName] [sys].[sysname] NOT NULL,
 [ParentTableName] [sys].[sysname] NOT NULL,
-[ParentColumnList_Desired] [sys].[sysname] NOT NULL,
+[FKName] [sys].[sysname] NOT NULL,
+[ParentColumnList_Desired] [varchar] (MAX) NOT NULL,
 [ReferencedSchemaName] [sys].[sysname] NOT NULL,
 [ReferencedTableName] [sys].[sysname] NOT NULL,
-[ReferencedColumnList_Desired] [sys].[sysname] NOT NULL,
-[ParentColumnList_Actual] [varchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ReferencedColumnList_Actual] [varchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ReferencedColumnList_Desired] [varchar] (MAX) NOT NULL,
+[ParentColumnList_Actual] [varchar] (MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ReferencedColumnList_Actual] [varchar] (MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [DeploymentTime] [varchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-CONSTRAINT [PK_ForeignKeys] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [ParentSchemaName], [ParentTableName], [ParentColumnList_Desired], [ReferencedSchemaName], [ReferencedTableName], [ReferencedColumnList_Desired])
+CONSTRAINT [PK_ForeignKeys] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [ParentSchemaName], [ParentTableName], [FKName])
 )
 WITH
 (
@@ -307,8 +308,6 @@ CREATE TABLE [DOI].[IndexesRowStore]
 [OptionAllowPageLocks_Actual] [bit] NULL,
 [OptionDataCompression_Desired] [nvarchar] (60) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexesRowStore_OptionDataCompression_Desired] DEFAULT ('PAGE'),
 [OptionDataCompression_Actual] [nvarchar] (60) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[OptionDataCompressionDelay_Desired] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_OptionDataCompressionDelay_Desired] DEFAULT ((0)),
-[OptionDataCompressionDelay_Actual] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_OptionDataCompressionDelay_Actual] DEFAULT ((0)),
 [Storage_Desired] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Storage_Actual] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [StorageType_Desired] [nvarchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -376,7 +375,6 @@ CREATE TABLE [DOI].[IndexesRowStore]
 [IsAllowRowLocksChanging] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_IsAllowRowLocksChanging] DEFAULT ((0)),
 [IsAllowPageLocksChanging] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_IsAllowPageLocksChanging] DEFAULT ((0)),
 [IsDataCompressionChanging] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_IsDataCompressionChanging] DEFAULT ((0)),
-[IsDataCompressionDelayChanging] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_IsDataCompressionDelayChanging] DEFAULT ((0)),
 [IsStorageChanging] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_IsStorageChanging] DEFAULT ((0)),
 [IndexHasLOBColumns] [bit] NOT NULL CONSTRAINT [Def_IndexesRowStore_IndexHasLOBColumns] DEFAULT ((0)),
 [NumPages_Actual] [int] NOT NULL CONSTRAINT [Def_IndexesRowStore_NumPages_Actual] DEFAULT ((0)),
@@ -401,12 +399,6 @@ ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_IndexesRowStore_Included
 GO
 IF OBJECT_ID('[DOI].[Chk_IndexesRowStore_IsUniqueConstraint_Desired]') IS NULL
 ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_IndexesRowStore_IsUniqueConstraint_Desired] CHECK (([IsUniqueConstraint_Desired]=(0)))
-GO
-IF OBJECT_ID('[DOI].[Chk_IndexesRowStore_OptionDataCompressionDelay_Actual]') IS NULL
-ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_IndexesRowStore_OptionDataCompressionDelay_Actual] CHECK (([OptionDataCompressionDelay_Actual]=(0)))
-GO
-IF OBJECT_ID('[DOI].[Chk_IndexesRowStore_OptionDataCompressionDelay_Desired]') IS NULL
-ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_IndexesRowStore_OptionDataCompressionDelay_Desired] CHECK (([OptionDataCompressionDelay_Desired]=(0)))
 GO
 IF OBJECT_ID('[DOI].[Chk_IndexesRowStore_OptionDataCompression_Desired]') IS NULL
 ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_IndexesRowStore_OptionDataCompression_Desired] CHECK (([OptionDataCompression_Desired]='PAGE' OR [OptionDataCompression_Desired]='ROW' OR [OptionDataCompression_Desired]='NONE'))

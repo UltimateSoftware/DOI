@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Practices.Unity.Utility;
 using NUnit.Framework;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.IntegrationTests.Models;
 using TestHelper = DOI.Tests.TestHelpers.SqlHelper;
 
 namespace DOI.Tests.TestHelpers
@@ -325,9 +326,9 @@ namespace DOI.Tests.TestHelpers
                     AND st.StatisticsName = '{statisticsName}'");
         }
 
-        public List<ForeignKey> GetForeignKeys(string parentTableName)
+        public List<ForeignKeys> GetForeignKeys(string parentTableName)
         {
-            return this.sqlHelper.GetList<ForeignKey>($"select * FROM DOI.DOI.ForeignKeys WHERE DatabaseName = '{DatabaseName}' AND ReferencedTableName = '{parentTableName}'");
+            return this.sqlHelper.GetList<ForeignKeys>($"select * FROM DOI.DOI.ForeignKeys WHERE DatabaseName = '{DatabaseName}' AND ReferencedTableName = '{parentTableName}'");
         }
 
         public List<string> GetExistingForeignKeyNames(string parentTableName)

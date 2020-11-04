@@ -1,7 +1,7 @@
 ﻿using System.Data.SqlClient;
 using DOI.Tests.Integration;
 using DOI.Tests.TestHelpers;
-using TestHelper = DOI.Tests.TestHelpers.Metadata.SysForeignKeysHelper;
+using TestHelper = DOI.Tests.TestHelpers.Metadata.ForeignKeysHelper;
 using NUnit.Framework;
 
 namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
@@ -9,7 +9,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
     [TestFixture]
     [Category("Integration")]
     [Category("ReportingIntegration")]
-    public class RefreshMetadataTests_SysForeignKeys : DOIBaseTest
+    public class RefreshMetadataTests_ForeignKeys : DOIBaseTest
     {
         [SetUp]
         public void Setup()
@@ -20,6 +20,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.CreateChildTableSql, 30, true, "DOIUnitTests");
             sqlHelper.Execute(TestHelper.CreateChildTableMetadataSql);
             sqlHelper.Execute(TestHelper.CreateForeignKeySql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.CreateForeignKeyMetadataSql);
+
         }
 
         [TearDown]
@@ -41,7 +43,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysForeignKeysSql);
 
             //and now they should match
-            TestHelper.AssertMetadata();
+            TestHelper.AssertSysMetadata();
+            TestHelper.AssertUserMetadata();
         }
     }
 }

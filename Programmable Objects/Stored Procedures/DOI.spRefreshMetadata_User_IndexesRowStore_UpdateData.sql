@@ -70,9 +70,13 @@ AS
     FROM DOI.IndexesRowStore IRS
         CROSS APPLY (SELECT s.name AS SchemaName, t.name AS TableName, SUM(p.rows) AS NumRows
                     FROM DOI.SysSchemas s 
-                        INNER JOIN DOI.SysTables t ON s.schema_id = t.schema_id
-                        INNER JOIN DOI.SysPartitions p ON p.object_id = t.object_id
+                        INNER JOIN DOI.SysTables t ON s.database_id = t.database_id
+                            AND s.schema_id = t.schema_id
+                        INNER JOIN DOI.SysPartitions p ON p.database_id = t.database_id
+                            AND p.object_id = t.object_id
+                        INNER JOIN DOI.SysDatabases d ON s.database_id = d.database_id
                     WHERE p.index_id IN (0,1)
+                        AND d.name = IRS.DatabaseName COLLATE DATABASE_DEFAULT
                         AND s.name = IRS.SchemaName COLLATE DATABASE_DEFAULT
                         AND t.name = IRS.TableName COLLATE DATABASE_DEFAULT
                     GROUP BY s.name , t.name)p
@@ -92,7 +96,8 @@ AS
         IndexMeetsMinimumSize = ISNULL(TS.IndexMeetsMinimumSize,0),
         OptionDataCompression_Actual = TS.data_compression_desc
     FROM DOI.IndexesRowStore IRS
-        OUTER APPLY (   SELECT  s.NAME AS SchemaName,
+        OUTER APPLY (   SELECT  db.name AS DatabaseName,
+                                s.NAME AS SchemaName,
                                 t.NAME AS TableName,
                                 i.NAME AS IndexName,
                                 MAX(df.physical_name) AS FilePath, 
@@ -107,12 +112,17 @@ AS
                                 MAX(p.data_compression_desc) COLLATE DATABASE_DEFAULT AS data_compression_desc,
                                 CASE WHEN SUM(a.total_pages) > MAX(SS2.MinNumPages) THEN 1 ELSE 0 END AS IndexMeetsMinimumSize
 		                FROM DOI.systables t 
-                            INNER JOIN DOI.SysSchemas s ON t.SCHEMA_ID = s.SCHEMA_ID
-                            INNER JOIN DOI.SysIndexes i ON i.OBJECT_ID = t.object_id
-                            INNER JOIN DOI.SysPartitions p ON p.OBJECT_ID = t.OBJECT_ID
+                            INNER JOIN DOI.SysSchemas s ON t.database_id = s.database_id
+                                AND t.SCHEMA_ID = s.SCHEMA_ID
+                            INNER JOIN DOI.SysIndexes i ON i.database_id = t.database_id
+                                AND i.OBJECT_ID = t.object_id
+                            INNER JOIN DOI.SysPartitions p ON p.database_id = t.database_id
+                                AND p.OBJECT_ID = t.OBJECT_ID
                                 AND p.index_id = I.index_id
-                            INNER JOIN DOI.SysAllocationUnits a ON p.hobt_id = a.container_id
-                            INNER JOIN DOI.SysDatabaseFiles df ON df.data_space_id = a.data_space_id
+                            INNER JOIN DOI.SysAllocationUnits a ON p.database_id = a.database_id
+                                AND p.hobt_id = a.container_id
+                            INNER JOIN DOI.SysDatabaseFiles df ON df.database_id = a.database_id
+                                AND df.data_space_id = a.data_space_id
 			                CROSS JOIN (SELECT CAST(SettingValue AS INT) AS SizeCutoffValue
 						                FROM DOI.DOISettings 
 						                WHERE SettingName = 'LargeTableCutoffValue'
@@ -121,13 +131,14 @@ AS
                                         FROM DOI.DOISettings 
                                         WHERE SettingName = 'MinNumPagesForIndexDefrag'
                                             AND DatabaseName = IRS.DatabaseName)SS2
-                            CROSS JOIN (SELECT database_id FROM DOI.SysDatabases WHERE name = IRS.DatabaseName) DB
+                            CROSS JOIN (SELECT database_id, name FROM DOI.SysDatabases WHERE name = IRS.DatabaseName) DB
 			                INNER JOIN DOI.SysDmOsVolumeStats vs ON vs.database_id = DB.database_id
                                 AND vs.FILE_ID = df.FILE_ID
-		                WHERE s.NAME = IRS.SchemaName
+		                WHERE db.name = IRS.DatabaseName
+                            AND s.NAME = IRS.SchemaName
                             AND t.NAME = IRS.TableName
                             AND i.NAME = IRS.IndexName
-		                GROUP BY s.name, t.name, i.name) TS
+		                GROUP BY db.name, s.name, t.name, i.name) TS
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     --FRAG
@@ -401,17 +412,21 @@ AS
     UPDATE IRS
     SET PKColsSize_Estimated = PKColsSize.PKColsSize
     FROM DOI.IndexesRowStore IRS
-        CROSS APPLY (   SELECT ISNULL(SUM(c.max_length + c.precision + scale), 0) AS PKColsSize
-                        FROM DOI.SysIndexes i
-                            INNER JOIN DOI.SysIndexColumns ic ON ic.object_id = i.object_id
-                                AND ic.index_id = i.index_id
-                            INNER JOIN DOI.SysColumns c ON c.object_id = ic.object_id
-                                AND c.column_id = ic.column_id
-                            INNER JOIN DOI.SysTables t ON i.object_id = t.object_id
-                            INNER JOIN DOI.SysSchemas s ON t.schema_id = s.schema_id
-                        WHERE s.name = IRS.SchemaName
-                            AND t.name = IRS.TableName
-                            AND i.is_primary_key = 1) PKColsSize
+            CROSS APPLY (   SELECT ISNULL(SUM(c.max_length + c.precision + scale), 0) AS PKColsSize
+                            FROM DOI.SysIndexes i
+                                INNER JOIN DOI.SysIndexColumns ic ON ic.database_id = i.database_id
+                                    AND ic.object_id = i.object_id
+                                    AND ic.index_id = i.index_id
+                                INNER JOIN DOI.SysColumns c ON c.database_id = ic.database_id
+                                    AND c.object_id = ic.object_id
+                                    AND c.column_id = ic.column_id
+                                INNER JOIN DOI.SysTables t ON i.database_id = t.database_id
+                                    AND i.object_id = t.object_id
+                                INNER JOIN DOI.SysSchemas s ON t.database_id = s.database_id
+                                    AND t.schema_id = s.schema_id
+                            WHERE s.name = IRS.SchemaName
+                                AND t.name = IRS.TableName
+                                AND i.is_primary_key = 1) PKColsSize
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
 
