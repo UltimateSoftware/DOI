@@ -34,7 +34,7 @@ RETURN  (
 		    PartitionType,
 		    OptionDataCompression
 --select count(*)
-FROM DOI.IndexRowStorePartitions
+FROM DOI.IndexPartitionsRowStore
        )
 
 

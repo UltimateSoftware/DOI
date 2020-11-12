@@ -2,6 +2,7 @@
 using DOI.Tests.Integration;
 using DOI.Tests.TestHelpers;
 using TestHelper = DOI.Tests.TestHelpers.Metadata.SysPartitionFunctionsHelper;
+using TablePartitioning = DOI.Tests.IntegrationTests.TablePartitioning;
 using NUnit.Framework;
 
 
@@ -15,6 +16,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [SetUp]
         public void Setup()
         {
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionMetadataSql);
             sqlHelper.Execute(TestHelper.CreatePartitionFunctionSql, 30, true, DatabaseName);
         }
 
@@ -33,7 +35,9 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionFunctionsSql);
 
             //and now they should match
-            TestHelper.AssertMetadata();
+            TestHelper.AssertSysMetadata();
+
+            TestHelper.AssertUserMetadata();
         }
     }
 }

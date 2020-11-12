@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using DOI.Tests.TestHelpers;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.IntegrationTests.Models;
 using NUnit.Framework;
 using TestHelper = DOI.Tests.TestHelpers;
 
@@ -303,12 +304,12 @@ namespace DOI.Tests.Integration
             Assert.AreEqual(expectedStatisticsDetail.SchemaName, actualStatisticsDetail.SchemaName, "Stat SchemaName");
             Assert.AreEqual(expectedStatisticsDetail.TableName, actualStatisticsDetail.TableName, "Stat TableName");
             Assert.AreEqual(expectedStatisticsDetail.StatisticsName, actualStatisticsDetail.StatisticsName, "Stat StatisticsName");
-            Assert.AreEqual(expectedStatisticsDetail.StatisticsColumnList, actualStatisticsDetail.StatisticsColumnList, "Stat StatisticsColumnList");
-            Assert.AreEqual(expectedStatisticsDetail.SampleSizePct, actualStatisticsDetail.SampleSizePct, "Stat SampleSizePct");
-            Assert.AreEqual(expectedStatisticsDetail.IsFiltered, actualStatisticsDetail.IsFiltered, "Stat IsFiltered");
-            Assert.AreEqual(expectedStatisticsDetail.FilterPredicate, actualStatisticsDetail.FilterPredicate, "Stat FilterPredicate");
-            Assert.AreEqual(expectedStatisticsDetail.IsIncremental, actualStatisticsDetail.IsIncremental, "Stat IsIncremental");
-            Assert.AreEqual(expectedStatisticsDetail.NoRecompute, actualStatisticsDetail.NoRecompute, "Stat NoRecompute");
+            Assert.AreEqual(expectedStatisticsDetail.StatisticsColumnList_Desired, actualStatisticsDetail.StatisticsColumnList_Actual, "Stat StatisticsColumnList");
+            Assert.AreEqual(expectedStatisticsDetail.SampleSizePct_Desired, actualStatisticsDetail.SampleSizePct_Actual, "Stat SampleSizePct");
+            Assert.AreEqual(expectedStatisticsDetail.IsFiltered_Desired, actualStatisticsDetail.IsFiltered_Actual, "Stat IsFiltered");
+            Assert.AreEqual(expectedStatisticsDetail.FilterPredicate_Desired, actualStatisticsDetail.FilterPredicate_Actual, "Stat FilterPredicate");
+            Assert.AreEqual(expectedStatisticsDetail.IsIncremental_Desired, actualStatisticsDetail.IsIncremental_Actual, "Stat IsIncremental");
+            Assert.AreEqual(expectedStatisticsDetail.NoRecompute_Desired, actualStatisticsDetail.NoRecompute_Actual, "Stat NoRecompute");
         }
     }
 }

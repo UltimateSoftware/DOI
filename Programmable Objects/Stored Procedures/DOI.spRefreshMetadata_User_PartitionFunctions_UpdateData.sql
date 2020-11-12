@@ -16,8 +16,8 @@ CREATE PROCEDURE [DOI].[spRefreshMetadata_User_PartitionFunctions_UpdateData]
 AS
 
 /*
-    EXEC DOI.[spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs]
-        @TableName = 'SysTables', @Debug = 1
+    EXEC DOI.[spRefreshMetadata_User_PartitionFunctions_UpdateData]
+        @DatabaseName = 'DOIUnitTests'
 */
 
     UPDATE DOI.PartitionFunctions

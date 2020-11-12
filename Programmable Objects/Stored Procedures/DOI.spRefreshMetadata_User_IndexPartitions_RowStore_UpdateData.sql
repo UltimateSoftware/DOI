@@ -27,20 +27,26 @@ FROM DOI.SysIndexPhysicalStats IPS
     INNER JOIN DOI.SysDatabases d ON d.database_id = IPS.database_id
     INNER JOIN DOI.SysTables t ON t.database_id = d.database_id
         AND IPS.object_id = t.object_id
-    INNER JOIN DOI.SysSchemas s ON t.schema_id = s.schema_id
+    INNER JOIN DOI.SysSchemas s ON t.database_id = s.database_id
+        AND t.schema_id = s.schema_id
     INNER JOIN DOI.SysIndexes i ON i.database_id = d.database_id
         AND i.object_id = t.object_id
         AND IPS.index_id = i.index_id
-    INNER JOIN DOI.IndexRowStorePartitions IRSP ON IRSP.DatabaseName = D.name
+    INNER JOIN DOI.IndexPartitionsRowStore IRSP ON IRSP.DatabaseName = D.name
         AND IRSP.SchemaName = s.name
         AND IRSP.TableName = t.name
         AND IRSP.IndexName = i.name
         AND IRSP.PartitionNumber = IPS.partition_number
-	INNER JOIN DOI.SysPartitionSchemes ps ON i.data_space_id = ps.data_space_id
-	INNER JOIN DOI.SysDestinationDataSpaces dds ON ps.data_space_id = dds.partition_scheme_id
-	INNER JOIN DOI.SysDataSpaces ds ON ds.data_space_id = dds.data_space_id
-	INNER JOIN DOI.SysAllocationUnits au ON au.data_space_id = dds.data_space_id
-	INNER JOIN DOI.SysDatabaseFiles df ON df.data_space_id = dds.data_space_id
+	INNER JOIN DOI.SysPartitionSchemes ps ON i.database_id = ps.database_id
+        AND i.data_space_id = ps.data_space_id
+	INNER JOIN DOI.SysDestinationDataSpaces dds ON ps.database_id = dds.database_id
+        AND ps.data_space_id = dds.partition_scheme_id
+	INNER JOIN DOI.SysDataSpaces ds ON ds.database_id = dds.database_id
+        AND ds.data_space_id = dds.data_space_id
+	INNER JOIN DOI.SysAllocationUnits au ON au.database_id = dds.database_id
+        AND au.data_space_id = dds.data_space_id
+	INNER JOIN DOI.SysDatabaseFiles df ON df.database_id = dds.database_id
+        AND df.data_space_id = dds.data_space_id
     INNER JOIN DOI.SysPartitions p ON p.database_id = d.database_id
         AND p.object_id = t.object_id
 		AND p.index_id = i.index_id
@@ -59,7 +65,7 @@ SET PartitionUpdateType =   CASE
 			                    THEN 'AlterReorganize-PartitionLevel' --this always happens online, can be done on a partition level
 			                    ELSE 'None'
                     		END
-FROM DOI.IndexRowStorePartitions IRSP
+FROM DOI.IndexPartitionsRowStore IRSP
 WHERE IRSP.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRSP.DatabaseName ELSE @DatabaseName END 
 
 
@@ -78,7 +84,7 @@ FROM DOI.IndexesRowStore IRS
 				            ELSE 0
 			            END NeedsPartitionLevelOperations
                 --select count(*)
-                FROM DOI.IndexRowStorePartitions
+                FROM DOI.IndexPartitionsRowStore
                 GROUP BY DatabaseName, SchemaName, TableName, IndexName) IRSP
         ON IRSP.DatabaseName = IRS.DatabaseName
             AND IRSP.SchemaName = IRS.SchemaName

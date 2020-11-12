@@ -10,14 +10,15 @@ using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 using Simple.Data.Ado.Schema;
 using Models = DOI.Tests.Integration.Models;
 
+
 namespace DOI.Tests.TestHelpers.Metadata
 {
-    public class IndexesHelper : SystemMetadataHelper
+    public class IndexPartitionsRowStoreHelper : SystemMetadataHelper
     {
-        public const string SysTableName = "SysIndexes";
-        public const string SqlServerDmvName = "sys.indexes";
-        public const string UserTableName_ColumnStore = "IndexesColumnStore";
-        public const string UserTableName_RowStore = "IndexesRowStore";
+        public const string SysTableName = "SysPartitions";
+        public const string SqlServerDmvName = "sys.partitions";
+        public const string UserTableName_ColumnStore = "IndexPartitionsColumnStore";
+        public const string UserTableName_RowStore = "IndexPartitionsRowStore";
 
         public static List<SysIndexes> GetExpectedSysValues()
         {
@@ -37,18 +38,18 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.index_id = row.First(x => x.First == "index_id").Second.ObjectToInteger();
                 columnValue.type = row.First(x => x.First == "type").Second.ObjectToInteger();
                 columnValue.type_desc = row.First(x => x.First == "type_desc").Second.ToString();
-                columnValue.is_unique = (bool) row.First(x => x.First == "is_unique").Second;
+                columnValue.is_unique = (bool)row.First(x => x.First == "is_unique").Second;
                 columnValue.data_space_id = row.First(x => x.First == "data_space_id").Second.ObjectToInteger();
-                columnValue.ignore_dup_key = (bool) row.First(x => x.First == "ignore_dup_key").Second;
-                columnValue.is_primary_key = (bool) row.First(x => x.First == "is_primary_key").Second;
-                columnValue.is_unique_constraint = (bool) row.First(x => x.First == "is_unique_constraint").Second;
+                columnValue.ignore_dup_key = (bool)row.First(x => x.First == "ignore_dup_key").Second;
+                columnValue.is_primary_key = (bool)row.First(x => x.First == "is_primary_key").Second;
+                columnValue.is_unique_constraint = (bool)row.First(x => x.First == "is_unique_constraint").Second;
                 columnValue.fill_factor = row.First(x => x.First == "fill_factor").Second.ObjectToInteger();
-                columnValue.is_padded = (bool) row.First(x => x.First == "is_padded").Second;
-                columnValue.is_disabled = (bool) row.First(x => x.First == "is_disabled").Second;
-                columnValue.is_hypothetical = (bool) row.First(x => x.First == "is_hypothetical").Second;
-                columnValue.allow_row_locks = (bool) row.First(x => x.First == "allow_row_locks").Second;
-                columnValue.allow_page_locks = (bool) row.First(x => x.First == "allow_page_locks").Second;
-                columnValue.has_filter = (bool) row.First(x => x.First == "has_filter").Second;
+                columnValue.is_padded = (bool)row.First(x => x.First == "is_padded").Second;
+                columnValue.is_disabled = (bool)row.First(x => x.First == "is_disabled").Second;
+                columnValue.is_hypothetical = (bool)row.First(x => x.First == "is_hypothetical").Second;
+                columnValue.allow_row_locks = (bool)row.First(x => x.First == "allow_row_locks").Second;
+                columnValue.allow_page_locks = (bool)row.First(x => x.First == "allow_page_locks").Second;
+                columnValue.has_filter = (bool)row.First(x => x.First == "has_filter").Second;
                 columnValue.filter_definition = row.First(x => x.First == "filter_definition").Second.ToString();
                 columnValue.compression_delay = row.First(x => x.First == "compression_delay").Second.ObjectToInteger();
                 columnValue.key_column_list = "TempAId ASC";
@@ -85,18 +86,18 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.index_id = row.First(x => x.First == "index_id").Second.ObjectToInteger();
                 columnValue.type = row.First(x => x.First == "type").Second.ObjectToInteger();
                 columnValue.type_desc = row.First(x => x.First == "type_desc").Second.ToString();
-                columnValue.is_unique = (bool) row.First(x => x.First == "is_unique").Second;
+                columnValue.is_unique = (bool)row.First(x => x.First == "is_unique").Second;
                 columnValue.data_space_id = row.First(x => x.First == "data_space_id").Second.ObjectToInteger();
-                columnValue.ignore_dup_key = (bool) row.First(x => x.First == "ignore_dup_key").Second;
-                columnValue.is_primary_key = (bool) row.First(x => x.First == "is_primary_key").Second;
-                columnValue.is_unique_constraint = (bool) row.First(x => x.First == "is_unique_constraint").Second;
+                columnValue.ignore_dup_key = (bool)row.First(x => x.First == "ignore_dup_key").Second;
+                columnValue.is_primary_key = (bool)row.First(x => x.First == "is_primary_key").Second;
+                columnValue.is_unique_constraint = (bool)row.First(x => x.First == "is_unique_constraint").Second;
                 columnValue.fill_factor = row.First(x => x.First == "fill_factor").Second.ObjectToInteger();
-                columnValue.is_padded = (bool) row.First(x => x.First == "is_padded").Second;
-                columnValue.is_disabled = (bool) row.First(x => x.First == "is_disabled").Second;
-                columnValue.is_hypothetical = (bool) row.First(x => x.First == "is_hypothetical").Second;
-                columnValue.allow_row_locks = (bool) row.First(x => x.First == "allow_row_locks").Second;
-                columnValue.allow_page_locks = (bool) row.First(x => x.First == "allow_page_locks").Second;
-                columnValue.has_filter = (bool) row.First(x => x.First == "has_filter").Second;
+                columnValue.is_padded = (bool)row.First(x => x.First == "is_padded").Second;
+                columnValue.is_disabled = (bool)row.First(x => x.First == "is_disabled").Second;
+                columnValue.is_hypothetical = (bool)row.First(x => x.First == "is_hypothetical").Second;
+                columnValue.allow_row_locks = (bool)row.First(x => x.First == "allow_row_locks").Second;
+                columnValue.allow_page_locks = (bool)row.First(x => x.First == "allow_page_locks").Second;
+                columnValue.has_filter = (bool)row.First(x => x.First == "has_filter").Second;
                 columnValue.filter_definition = row.First(x => x.First == "filter_definition").Second.ToString();
                 columnValue.compression_delay = row.First(x => x.First == "compression_delay").Second.ObjectToInteger();
                 columnValue.key_column_list = row.First(x => x.First == "key_column_list").Second.ToString();
@@ -317,7 +318,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(row.StorageType_Desired, row.StorageType_Actual);
                 Assert.AreEqual(row.PartitionFunction_Desired, row.PartitionFunction_Actual);
                 Assert.AreEqual(row.PartitionColumn_Desired, row.PartitionColumn_Actual);
-                Assert.AreEqual(0, row.AllColsInTableSize_Estimated); 
+                Assert.AreEqual(0, row.AllColsInTableSize_Estimated);
                 Assert.AreEqual(0, row.NumFixedKeyCols_Estimated);
                 Assert.AreEqual(0, row.NumVarKeyCols_Estimated);
                 Assert.AreEqual(0, row.NumKeyCols_Estimated);
@@ -356,25 +357,25 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(0, row.Fragmentation);
                 Assert.AreEqual("None", row.FragmentationType);
                 Assert.AreEqual(false, row.AreDropRecreateOptionsChanging);
-                Assert.AreEqual(false, row.AreRebuildOptionsChanging); 
+                Assert.AreEqual(false, row.AreRebuildOptionsChanging);
                 Assert.AreEqual(false, row.AreRebuildOnlyOptionsChanging);
-                Assert.AreEqual(false, row.AreReorgOptionsChanging); 
+                Assert.AreEqual(false, row.AreReorgOptionsChanging);
                 Assert.AreEqual(false, row.AreSetOptionsChanging);
-                Assert.AreEqual(false, row.IsUniquenessChanging); 
+                Assert.AreEqual(false, row.IsUniquenessChanging);
                 Assert.AreEqual(false, row.IsPrimaryKeyChanging);
-                Assert.AreEqual(false, row.IsKeyColumnListChanging); 
+                Assert.AreEqual(false, row.IsKeyColumnListChanging);
                 Assert.AreEqual(false, row.IsIncludedColumnListChanging);
-                Assert.AreEqual(false, row.IsFilterChanging); 
+                Assert.AreEqual(false, row.IsFilterChanging);
                 Assert.AreEqual(false, row.IsClusteredChanging);
-                Assert.AreEqual(false, row.IsPartitioningChanging); 
+                Assert.AreEqual(false, row.IsPartitioningChanging);
                 Assert.AreEqual(false, row.IsPadIndexChanging);
-                Assert.AreEqual(false, row.IsFillfactorChanging); 
+                Assert.AreEqual(false, row.IsFillfactorChanging);
                 Assert.AreEqual(false, row.IsIgnoreDupKeyChanging);
-                Assert.AreEqual(false, row.IsStatisticsNoRecomputeChanging); 
+                Assert.AreEqual(false, row.IsStatisticsNoRecomputeChanging);
                 Assert.AreEqual(false, row.IsStatisticsIncrementalChanging);
                 Assert.AreEqual(false, row.IsAllowRowLocksChanging);
                 Assert.AreEqual(false, row.IsAllowPageLocksChanging);
-                Assert.AreEqual(false, row.IsDataCompressionChanging); 
+                Assert.AreEqual(false, row.IsDataCompressionChanging);
                 Assert.AreEqual(false, row.IsStorageChanging);
                 Assert.AreEqual(false, row.IndexHasLOBColumns);
                 Assert.AreEqual(0, row.NumPages_Actual);

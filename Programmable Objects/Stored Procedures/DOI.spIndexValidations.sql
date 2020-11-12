@@ -292,10 +292,10 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
 		    SELECT SchemaName, TableName, IndexName, OptionDataCompression_Desired
 		    FROM DOI.IndexesColumnStore ICS) AllIdx
 	    INNER JOIN (SELECT SchemaName, TableName, IndexName, PartitionNumber, OptionDataCompression
-				    FROM DOI.IndexRowStorePartitions IRS
+				    FROM DOI.IndexPartitionsRowStore IRS
 				    UNION ALL
 				    SELECT SchemaName, TableName, IndexName, PartitionNumber, OptionDataCompression
-				    FROM DOI.IndexColumnStorePartitions ICS) AllIP 
+				    FROM DOI.IndexPartitionsColumnStore ICS) AllIP 
 		    ON AllIdx.SchemaName = AllIP.SchemaName 
 			    AND AllIdx.TableName = AllIP.TableName 
 			    AND AllIdx.IndexName = AllIP.IndexName 

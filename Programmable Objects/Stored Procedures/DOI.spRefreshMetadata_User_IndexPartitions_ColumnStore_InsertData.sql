@@ -15,9 +15,9 @@ CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_IndexPartitions_ColumnStore_Ins
 
 AS
 
-DELETE DOI.IndexColumnStorePartitions
+DELETE DOI.IndexPartitionsColumnStore
 
-INSERT INTO DOI.IndexColumnStorePartitions 
+INSERT INTO DOI.IndexPartitionsColumnStore 
 (		DatabaseName,	SchemaName	,TableName			,IndexName									,PartitionNumber	,OptionDataCompression )
 SELECT IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, P.PartitionNumber, 'COLUMNSTORE'
 FROM DOI.IndexesColumnStore IRS

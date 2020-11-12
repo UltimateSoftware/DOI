@@ -10,12 +10,12 @@ GO
 SET ANSI_NULLS ON
 GO
 
---EXEC DOI.spForeignKeysAdd
---    @ForMetadataTablesOnly = 1,
---	@ReferencedSchemaName	= 'DOI',
---	@ReferencedTableName	= 'Tables',
---    @UseExistenceCheck  = 1
---GO
+/*
+    EXEC DOI.spRefreshMetadata_User_Tables_UpdateData
+        @DatabaseName = 'DOIUnitTests'
+
+*/
+
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_Tables_UpdateData]
     @DatabaseName NVARCHAR(128) = NULL
 

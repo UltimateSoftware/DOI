@@ -15,20 +15,15 @@ CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_IndexPartitions_RowStore_Insert
 
 AS
 
-DELETE DOI.IndexRowStorePartitions
+DELETE DOI.IndexPartitionsRowStore
 
-INSERT INTO DOI.IndexRowStorePartitions (DatabaseName, SchemaName,TableName,IndexName,PartitionNumber)
+INSERT INTO DOI.IndexPartitionsRowStore (DatabaseName, SchemaName,TableName,IndexName,PartitionNumber)
 
 SELECT IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, P.PartitionNumber
 FROM DOI.IndexesRowStore IRS
     INNER JOIN DOI.vwPartitionFunctionPartitions P ON IRS.Storage_Desired = P.PartitionSchemeName
 WHERE IRS.StorageType_Desired = 'PARTITION_SCHEME'
 ORDER BY IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, P.PartitionNumber
---INSERT INTO DOI.IndexColumnStorePartitions 
---(			SchemaName	,TableName			,IndexName									,PartitionNumber	,OptionDataCompression )
---SELECT IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, P.PartitionNumber, 'DEFAULT', 'DEFAULT', 'DEFAULT'
---FROM DOI.IndexesColumnStore IRS
---    INNER JOIN DOI.vwPartitionFunctionPartitions P ON IRS.Storage_Desired = P.PartitionSchemeName
---WHERE IRS.StorageType_Desired = 'PARTITION_SCHEME'
+
 
 GO

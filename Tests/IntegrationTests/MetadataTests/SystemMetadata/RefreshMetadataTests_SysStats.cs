@@ -15,7 +15,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.CreateSchemaSql, 30, true, "DOIUnitTests");
             sqlHelper.Execute(TestHelper.CreateTableSql, 30, true, "DOIUnitTests");
             sqlHelper.Execute(TestHelper.CreateStatsSql, 30, true, "DOIUnitTests");
-
+            sqlHelper.Execute(TestHelper.CreateStatsMetadataSql);
         }
 
         [TearDown]
@@ -34,7 +34,10 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysStatsSql);
 
             //and now they should match
-            TestHelper.AssertMetadata();
+            TestHelper.AssertSysMetadata();
+
+            TestHelper.AssertUserMetadata();
+
         }
     }
 }

@@ -71,11 +71,21 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string DropPartitionFunctionSql = $"DROP PARTITION FUNCTION {PartitionFunctionName}";
 
-        public static string RefreshMetadata_SysPartitionFunctionsSql = $"EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysPartitionFunctionsSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysPartitionRangeValuesSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'";
+
+        public static string CreatePartitionFunctionMetadataSql = $@"
+            INSERT INTO DOI.PartitionFunctions( DatabaseName    ,PartitionFunctionName      ,PartitionFunctionDataType  ,BoundaryInterval   ,NumOfFutureIntervals   ,InitialDate    ,UsesSlidingWindow  ,SlidingWindowSize  ,IsDeprecated   ,PartitionSchemeName    ,NumOfCharsInSuffix ,LastBoundaryDate   ,NumOfTotalPartitionFunctionIntervals   ,NumOfTotalPartitionSchemeIntervals ,MinValueOfDataType)
+            VALUES(                             '{DatabaseName}', '{PartitionFunctionName}' ,'DATETIME2'                ,'Yearly'           ,1                      ,'2016-01-01'   ,0                  ,NULL               ,0              ,'{PartitionSchemeName}',0                  ,N'2016-01-01'      ,2                                      ,3                                  ,'0001-01-01')";
+
+        public static string GetPartitionsFrom_vwPartitionFunctionPartitions = $@"
+            SELECT * FROM DOI.vwPartitionFunctionPartitions WHERE DatabaseName = '{DatabaseName}' AND PartitionFunctionName = '{PartitionFunctionName}'";
         
 
         #endregion
@@ -142,7 +152,9 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
 
 
-        public static string RefreshMetadata_SysTablesSql = $"EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysTablesSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -195,7 +207,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         #endregion
 
-        #region SysForeignKeys
+        #region ForeignKeys
 
         public static string ForeignKeyName = "FK_TempB_TempAId";
 
@@ -284,6 +296,10 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         public static string CreateStatsSql = $"CREATE STATISTICS {StatsName} ON dbo.TempA(TransactionUtcDt) WITH SAMPLE 1 PERCENT";
 
+        public static string CreateStatsMetadataSql = $@"
+            INSERT INTO DOI.[Statistics](DatabaseName       ,SchemaName ,TableName      ,StatisticsName   ,StatisticsColumnList_Desired ,SampleSizePct_Desired  ,IsFiltered_Desired ,FilterPredicate_Desired,IsIncremental_Desired  ,NoRecompute_Desired,LowerSampleSizeToDesired   ,ReadyToQueue)
+            VALUES(                     N'{DatabaseName}'   ,N'dbo'     , N'{TableName}','{StatsName}'    ,'TransactionUtcDt'           , 0                    , 0                 , NULL                  , 0                     , 0                 , 0                         ,  1)";
+
         public static string DropStatsSql = $"DROP STATISTICS dbo.TempA.{StatsName}";
 
         public static string RefreshMetadata_SysStatsSql = $@"
@@ -291,7 +307,8 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
             EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysStatsColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStats_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_System_SysStats_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_Statistics_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysStatsColumnsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'

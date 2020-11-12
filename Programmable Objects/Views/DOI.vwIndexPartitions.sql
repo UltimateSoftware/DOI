@@ -57,7 +57,7 @@ ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + C
 '	REORGANIZE PARTITION = ' + CAST(PartitionNumber AS VARCHAR(5)) + CHAR(13) + CHAR(10) + 
 '		WITH (	LOB_COMPACTION = ON)' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) AS AlterReorganizeStatement
 --select count(*)
-FROM DOI.IndexRowStorePartitions 
+FROM DOI.IndexPartitionsRowStore 
 
 
 GO

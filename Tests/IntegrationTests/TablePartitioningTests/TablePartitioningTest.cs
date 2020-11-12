@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SqlHelper = DOI.Tests.TestHelpers.SqlHelper;
 
-namespace DOI.Tests.Integration.TablePartitioning
+namespace DOI.Tests.IntegrationTests.TablePartitioning
 {
     [TestFixture]
     [Category("Integration")]
@@ -113,7 +113,7 @@ namespace DOI.Tests.Integration.TablePartitioning
             }
         }
 
-        private void SetUpTableUnderTest()
+        public void SetUpTableUnderTest()
         {
             sqlHelper.Execute("UPDATE DOI.Tables SET ReadyToQueue = 0");
             sqlHelper.Execute(SetupSqlStatements_Partitioned.PartitionFunction_Setup_Metadata);

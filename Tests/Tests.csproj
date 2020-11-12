@@ -453,10 +453,11 @@
     <Compile Include="IntegrationTests\Models\Index.cs" />
     <Compile Include="IntegrationTests\Models\IndexesColumnStore.cs" />
     <Compile Include="IntegrationTests\Models\IndexesRowStore.cs" />
+    <Compile Include="IntegrationTests\Models\IndexPartitionsRowStore.cs" />
     <Compile Include="IntegrationTests\Models\IndexView.cs" />
     <Compile Include="IntegrationTests\Models\LogTableRow.cs" />
     <Compile Include="IntegrationTests\Models\MetaDataTable.cs" />
-    <Compile Include="IntegrationTests\Models\PartitionFunction.cs" />
+    <Compile Include="IntegrationTests\Models\PartitionFunctions.cs" />
     <Compile Include="IntegrationTests\Models\PartitionFunctionBoundaries.cs" />
     <Compile Include="IntegrationTests\Models\PartitionSchemeFilegroup.cs" />
     <Compile Include="IntegrationTests\Models\SysCheckConstraints.cs" />
@@ -488,6 +489,7 @@
     <Compile Include="IntegrationTests\Models\SysTables.cs" />
     <Compile Include="IntegrationTests\Models\SysTypes.cs" />
     <Compile Include="IntegrationTests\Models\TempARow.cs" />
+    <Compile Include="IntegrationTests\Models\vwPartitionFunctionPartitions.cs" />
     <Compile Include="IntegrationTests\OfflineRunTests.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
     <Compile Include="IntegrationTests\StatisticsTests.cs" />
@@ -500,6 +502,7 @@
     <Compile Include="TestHelpers\DataDrivenIndexTestHelper.cs" />
     <Compile Include="TestHelpers\GenericDictionaryExtensions.cs" />
     <Compile Include="TestHelpers\Guid2Base64.cs" />
+    <Compile Include="TestHelpers\Metadata\IndexPartitionsRowStoreHelper.cs" />
     <Compile Include="TestHelpers\Metadata\StorageContainers\PartitionFunctions\PartitionFunctionHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysAllocationUnitsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysCheckConstraintsHelper.cs" />
@@ -515,7 +518,7 @@
     <Compile Include="TestHelpers\Metadata\SysForeignKeyColumnsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\ForeignKeysHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysIndexColumnsHelper.cs" />
-    <Compile Include="TestHelpers\Metadata\IndexesHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\IndexesRowStoreHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysIndexPhysicalStatsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysMasterFilesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysPartitionFunctionsHelper.cs" />

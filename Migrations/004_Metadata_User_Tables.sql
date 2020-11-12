@@ -427,68 +427,68 @@ GO
 IF OBJECT_ID('[DOI].[FK_IndexesRowStore_Tables]') IS NOT NULL
 ALTER TABLE [DOI].[IndexesRowStore] NOCHECK CONSTRAINT [FK_IndexesRowStore_Tables]
 GO
-IF OBJECT_ID('[DOI].[IndexColumnStorePartitions]') IS NULL
-CREATE TABLE [DOI].[IndexColumnStorePartitions]
+IF OBJECT_ID('[DOI].[IndexPartitionsColumnStore]') IS NULL
+CREATE TABLE [DOI].[IndexPartitionsColumnStore]
 (
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SchemaName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [TableName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [IndexName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [PartitionNumber] [smallint] NOT NULL,
-[OptionDataCompression] [nvarchar] (60) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexColumnStorePartitions_OptionDataCompression] DEFAULT ('COLUMNSTORE'),
-CONSTRAINT [PK_IndexColumnStorePartitions] PRIMARY KEY NONCLUSTERED  ([SchemaName], [TableName], [IndexName], [PartitionNumber])
+[OptionDataCompression] [nvarchar] (60) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_OptionDataCompression] DEFAULT ('COLUMNSTORE'),
+CONSTRAINT [PK_IndexPartitionsColumnStore] PRIMARY KEY NONCLUSTERED  ([SchemaName], [TableName], [IndexName], [PartitionNumber])
 )
 WITH
 (
 MEMORY_OPTIMIZED = ON
 )
 GO
-IF OBJECT_ID('[DOI].[Chk_IndexColumnStorePartitions_OptionDataCompression]') IS NULL
-ALTER TABLE [DOI].[IndexColumnStorePartitions] ADD CONSTRAINT [Chk_IndexColumnStorePartitions_OptionDataCompression] CHECK (([OptionDataCompression]='COLUMNSTORE_ARCHIVE' OR [OptionDataCompression]='COLUMNSTORE'))
+IF OBJECT_ID('[DOI].[Chk_IndexPartitionsColumnStore_OptionDataCompression]') IS NULL
+ALTER TABLE [DOI].[IndexPartitionsColumnStore] ADD CONSTRAINT [Chk_IndexPartitionsColumnStore_OptionDataCompression] CHECK (([OptionDataCompression]='COLUMNSTORE_ARCHIVE' OR [OptionDataCompression]='COLUMNSTORE'))
 GO
-IF OBJECT_ID('[DOI].[FK_IndexColumnStorePartitions_IndexesColumnStore]') IS NULL
-ALTER TABLE [DOI].[IndexColumnStorePartitions] ADD CONSTRAINT [FK_IndexColumnStorePartitions_IndexesColumnStore] FOREIGN KEY ([DatabaseName], [SchemaName], [TableName], [IndexName]) REFERENCES [DOI].[IndexesColumnStore] ([DatabaseName], [SchemaName], [TableName], [IndexName])
+IF OBJECT_ID('[DOI].[FK_IndexPartitionsColumnStore_IndexesColumnStore]') IS NULL
+ALTER TABLE [DOI].[IndexPartitionsColumnStore] ADD CONSTRAINT [FK_IndexPartitionsColumnStore_IndexesColumnStore] FOREIGN KEY ([DatabaseName], [SchemaName], [TableName], [IndexName]) REFERENCES [DOI].[IndexesColumnStore] ([DatabaseName], [SchemaName], [TableName], [IndexName])
 GO
-IF OBJECT_ID('[DOI].[FK_IndexColumnStorePartitions_IndexesColumnStore]') IS NOT NULL
-ALTER TABLE [DOI].[IndexColumnStorePartitions] NOCHECK CONSTRAINT [FK_IndexColumnStorePartitions_IndexesColumnStore]
+IF OBJECT_ID('[DOI].[FK_IndexPartitionsColumnStore_IndexesColumnStore]') IS NOT NULL
+ALTER TABLE [DOI].[IndexPartitionsColumnStore] NOCHECK CONSTRAINT [FK_IndexPartitionsColumnStore_IndexesColumnStore]
 GO
-IF OBJECT_ID('[DOI].[IndexRowStorePartitions]') IS NULL
-CREATE TABLE [DOI].[IndexRowStorePartitions]
+IF OBJECT_ID('[DOI].[IndexPartitionsRowStore]') IS NULL
+CREATE TABLE [DOI].[IndexPartitionsRowStore]
 (
 [DatabaseName] [NVARCHAR] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SchemaName] [NVARCHAR] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [TableName] [NVARCHAR] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [IndexName] [NVARCHAR] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [PartitionNumber] [SMALLINT] NOT NULL,
-[OptionResumable] [BIT] NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_OptionResumable] DEFAULT ((0)),
-[OptionMaxDuration] [SMALLINT] NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_OptionMaxDuration] DEFAULT ((0)),
-[OptionDataCompression] [NVARCHAR] (60) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_OptionDataCompression] DEFAULT ('PAGE'),
-[NumRows] [BIGINT] NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_NumRows] DEFAULT ((0)),
-[TotalPages] [BIGINT] NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_TotalPages] DEFAULT ((0)),
-[PartitionType] [VARCHAR] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_PartitionType] DEFAULT ('RowStore'),
-[TotalIndexPartitionSizeInMB] [DECIMAL] (10, 2) NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_TotalIndexPartitionSizeInMB] DEFAULT ((0.00)),
-[Fragmentation] [FLOAT] NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_Fragmentation] DEFAULT ((0)),
-[DataFileName] [NVARCHAR] (260) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_DataFileName] DEFAULT (''),
-[DriveLetter] [CHAR] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_DriveLetter] DEFAULT (''),
-[PartitionUpdateType] [VARCHAR] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexRowStorePartitions_PartitionUpdateType] DEFAULT ('None'),
-CONSTRAINT [PK_IndexRowStorePartitions] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [PartitionNumber])
+[OptionResumable] [BIT] NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_OptionResumable] DEFAULT ((0)),
+[OptionMaxDuration] [SMALLINT] NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_OptionMaxDuration] DEFAULT ((0)),
+[OptionDataCompression] [NVARCHAR] (60) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_OptionDataCompression] DEFAULT ('PAGE'),
+[NumRows] [BIGINT] NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_NumRows] DEFAULT ((0)),
+[TotalPages] [BIGINT] NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_TotalPages] DEFAULT ((0)),
+[PartitionType] [VARCHAR] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_PartitionType] DEFAULT ('RowStore'),
+[TotalIndexPartitionSizeInMB] [DECIMAL] (10, 2) NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_TotalIndexPartitionSizeInMB] DEFAULT ((0.00)),
+[Fragmentation] [FLOAT] NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_Fragmentation] DEFAULT ((0)),
+[DataFileName] [NVARCHAR] (260) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_DataFileName] DEFAULT (''),
+[DriveLetter] [CHAR] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_DriveLetter] DEFAULT (''),
+[PartitionUpdateType] [VARCHAR] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_PartitionUpdateType] DEFAULT ('None'),
+CONSTRAINT [PK_IndexPartitionsRowStore] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [PartitionNumber])
 )
 WITH
 (
 MEMORY_OPTIMIZED = ON
 )
 GO
-IF OBJECT_ID('[DOI].[Chk_IndexRowStorePartitions_OptionDataCompression]') IS NULL
-ALTER TABLE [DOI].[IndexRowStorePartitions] ADD CONSTRAINT [Chk_IndexRowStorePartitions_OptionDataCompression] CHECK (([OptionDataCompression]='PAGE' OR [OptionDataCompression]='ROW' OR [OptionDataCompression]='NONE'))
+IF OBJECT_ID('[DOI].[Chk_IndexPartitionsRowStore_OptionDataCompression]') IS NULL
+ALTER TABLE [DOI].[IndexPartitionsRowStore] ADD CONSTRAINT [Chk_IndexPartitionsRowStore_OptionDataCompression] CHECK (([OptionDataCompression]='PAGE' OR [OptionDataCompression]='ROW' OR [OptionDataCompression]='NONE'))
 GO
-IF OBJECT_ID('[DOI].[Chk_IndexRowStorePartitions_PartitionType]') IS NULL
-ALTER TABLE [DOI].[IndexRowStorePartitions] ADD CONSTRAINT [Chk_IndexRowStorePartitions_PartitionType] CHECK (([PartitionType]='RowStore'))
+IF OBJECT_ID('[DOI].[Chk_IndexPartitionsRowStore_PartitionType]') IS NULL
+ALTER TABLE [DOI].[IndexPartitionsRowStore] ADD CONSTRAINT [Chk_IndexPartitionsRowStore_PartitionType] CHECK (([PartitionType]='RowStore'))
 GO
-IF OBJECT_ID('[DOI].[FK_IndexRowStorePartitions_IndexesRowStore]') IS NULL
-ALTER TABLE [DOI].[IndexRowStorePartitions] ADD CONSTRAINT [FK_IndexRowStorePartitions_IndexesRowStore] FOREIGN KEY ([DatabaseName], [SchemaName], [TableName], [IndexName]) REFERENCES [DOI].[IndexesRowStore] ([DatabaseName], [SchemaName], [TableName], [IndexName])
+IF OBJECT_ID('[DOI].[FK_IndexPartitionsRowStore_IndexesRowStore]') IS NULL
+ALTER TABLE [DOI].[IndexPartitionsRowStore] ADD CONSTRAINT [FK_IndexPartitionsRowStore_IndexesRowStore] FOREIGN KEY ([DatabaseName], [SchemaName], [TableName], [IndexName]) REFERENCES [DOI].[IndexesRowStore] ([DatabaseName], [SchemaName], [TableName], [IndexName])
 GO
-IF OBJECT_ID('[DOI].[FK_IndexRowStorePartitions_IndexesRowStore]') IS NOT NULL
-ALTER TABLE [DOI].[IndexRowStorePartitions] NOCHECK CONSTRAINT [FK_IndexRowStorePartitions_IndexesRowStore]
+IF OBJECT_ID('[DOI].[FK_IndexPartitionsRowStore_IndexesRowStore]') IS NOT NULL
+ALTER TABLE [DOI].[IndexPartitionsRowStore] NOCHECK CONSTRAINT [FK_IndexPartitionsRowStore_IndexesRowStore]
 GO
 IF OBJECT_ID('[DOI].[Statistics]') IS NULL
 CREATE TABLE [DOI].[Statistics]
