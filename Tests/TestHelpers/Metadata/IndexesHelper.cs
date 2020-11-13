@@ -12,12 +12,13 @@ using Models = DOI.Tests.Integration.Models;
 
 namespace DOI.Tests.TestHelpers.Metadata
 {
-    public class IndexesRowStoreHelper : SystemMetadataHelper
+    public class IndexesHelper : SystemMetadataHelper
     {
         public const string SysTableName = "SysIndexes";
         public const string SqlServerDmvName = "sys.indexes";
+        public const string UserTableName_RowStore = "IndexesRowStore"; 
         public const string UserTableName_ColumnStore = "IndexesColumnStore";
-        public const string UserTableName_RowStore = "IndexesRowStore";
+
 
         public static List<SysIndexes> GetExpectedSysValues()
         {
@@ -239,6 +240,78 @@ namespace DOI.Tests.TestHelpers.Metadata
 
             return actualIndexesRowStore;
         }
+
+        public static List<IndexesColumnStore> GetActualUserValues_ColumnStore()
+        {
+            SqlHelper sqlHelper = new SqlHelper();
+            var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
+            SELECT *
+            FROM DOI.DOI.{UserTableName_ColumnStore} 
+            WHERE DatabaseName = '{DatabaseName}'
+                AND TableName = '{TableName}'
+                AND IndexName = '{IndexName_ColumnStore}'"));
+
+            List<IndexesColumnStore> actualIndexesColumnStore = new List<IndexesColumnStore>();
+
+            foreach (var row in actual)
+            {
+                var columnValue = new IndexesColumnStore();
+                columnValue.IsIndexMissingFromSQLServer = (bool)row.First(x => x.First == "IsIndexMissingFromSQLServer").Second;
+                columnValue.IsClustered_Desired = (bool)row.First(x => x.First == "IsClustered_Desired").Second;
+                columnValue.IsClustered_Actual = (bool)row.First(x => x.First == "IsClustered_Actual").Second;
+                columnValue.ColumnList_Desired = row.First(x => x.First == "ColumnList_Desired").Second.ToString();
+                columnValue.ColumnList_Actual = row.First(x => x.First == "ColumnList_Actual").Second.ToString();
+                columnValue.IsFiltered_Desired = (bool)row.First(x => x.First == "IsFiltered_Desired").Second;
+                columnValue.IsFiltered_Actual = (bool)row.First(x => x.First == "IsFiltered_Actual").Second;
+                columnValue.FilterPredicate_Desired = row.First(x => x.First == "FilterPredicate_Desired").Second.ToString();
+                columnValue.FilterPredicate_Actual = row.First(x => x.First == "FilterPredicate_Actual").Second.ToString();
+                columnValue.OptionDataCompression_Desired = row.First(x => x.First == "OptionDataCompression_Desired").Second.ToString();
+                columnValue.OptionDataCompression_Actual = row.First(x => x.First == "OptionDataCompression_Actual").Second.ToString();
+                columnValue.OptionDataCompressionDelay_Desired = row.First(x => x.First == "OptionDataCompressionDelay_Desired").Second.ObjectToInteger();
+                columnValue.OptionDataCompressionDelay_Actual = row.First(x => x.First == "OptionDataCompressionDelay_Actual").Second.ObjectToInteger(); columnValue.Storage_Desired = row.First(x => x.First == "Storage_Desired").Second.ToString();
+                columnValue.Storage_Actual = row.First(x => x.First == "Storage_Actual").Second.ToString();
+                columnValue.StorageType_Desired = row.First(x => x.First == "StorageType_Desired").Second.ToString();
+                columnValue.StorageType_Actual = row.First(x => x.First == "StorageType_Actual").Second.ToString();
+                columnValue.PartitionFunction_Desired = row.First(x => x.First == "PartitionFunction_Desired").Second.ToString();
+                columnValue.PartitionFunction_Actual = row.First(x => x.First == "PartitionFunction_Actual").Second.ToString();
+                columnValue.PartitionColumn_Desired = row.First(x => x.First == "PartitionColumn_Desired").Second.ToString();
+                columnValue.PartitionColumn_Actual = row.First(x => x.First == "PartitionColumn_Actual").Second.ToString();
+                columnValue.AllColsInTableSize_Estimated = row.First(x => x.First == "AllColsInTableSize_Estimated").Second.ObjectToInteger();
+                columnValue.NumFixedCols_Estimated = row.First(x => x.First == "NumFixedCols_Estimated").Second.ObjectToInteger();
+                columnValue.NumVarCols_Estimated = row.First(x => x.First == "NumVarCols_Estimated").Second.ObjectToInteger();
+                columnValue.NumCols_Estimated = row.First(x => x.First == "NumCols_Estimated").Second.ObjectToInteger();
+                columnValue.FixedColsSize_Estimated = row.First(x => x.First == "FixedColsSize_Estimated").Second.ObjectToInteger();
+                columnValue.VarColsSize_Estimated = row.First(x => x.First == "VarColsSize_Estimated").Second.ObjectToInteger();
+                columnValue.ColsSize_Estimated = row.First(x => x.First == "ColsSize_Estimated").Second.ObjectToInteger();
+                columnValue.NumRows_Actual = row.First(x => x.First == "NumRows_Actual").Second.ObjectToInteger();
+                columnValue.IndexSizeMB_Actual = row.First(x => x.First == "IndexSizeMB_Actual").Second.ObjectToDecimal();
+                columnValue.DriveLetter = row.First(x => x.First == "DriveLetter").Second.ToString();
+                columnValue.IsIndexLarge = (bool)row.First(x => x.First == "IsIndexLarge").Second;
+                columnValue.IndexMeetsMinimumSize = (bool)row.First(x => x.First == "IndexMeetsMinimumSize").Second;
+                columnValue.Fragmentation = (double)row.First(x => x.First == "Fragmentation").Second;
+                columnValue.FragmentationType = row.First(x => x.First == "FragmentationType").Second.ToString();
+                columnValue.AreDropRecreateOptionsChanging = (bool)row.First(x => x.First == "AreDropRecreateOptionsChanging").Second;
+                columnValue.AreRebuildOptionsChanging = (bool)row.First(x => x.First == "AreRebuildOptionsChanging").Second;
+                columnValue.AreRebuildOnlyOptionsChanging = (bool)row.First(x => x.First == "AreRebuildOnlyOptionsChanging").Second;
+                columnValue.AreReorgOptionsChanging = (bool)row.First(x => x.First == "AreReorgOptionsChanging").Second;
+                columnValue.AreSetOptionsChanging = (bool)row.First(x => x.First == "AreSetOptionsChanging").Second;
+                columnValue.IsColumnListChanging = (bool)row.First(x => x.First == "IsColumnListChanging").Second;
+                columnValue.IsFilterChanging = (bool)row.First(x => x.First == "IsFilterChanging").Second;
+                columnValue.IsClusteredChanging = (bool)row.First(x => x.First == "IsClusteredChanging").Second;
+                columnValue.IsPartitioningChanging = (bool)row.First(x => x.First == "IsPartitioningChanging").Second;
+                columnValue.IsDataCompressionChanging = (bool)row.First(x => x.First == "IsDataCompressionChanging").Second;
+                columnValue.IsDataCompressionDelayChanging = (bool)row.First(x => x.First == "IsDataCompressionDelayChanging").Second;
+                columnValue.IsStorageChanging = (bool)row.First(x => x.First == "IsStorageChanging").Second;
+                columnValue.NumPages_Actual = row.First(x => x.First == "NumPages_Actual").Second.ObjectToInteger();
+                columnValue.TotalPartitionsInIndex = row.First(x => x.First == "TotalPartitionsInIndex").Second.ObjectToInteger();
+                columnValue.NeedsPartitionLevelOperations = (bool)row.First(x => x.First == "NeedsPartitionLevelOperations").Second;
+
+                actualIndexesColumnStore.Add(columnValue);
+            }
+
+            return actualIndexesColumnStore;
+        }
+
         //verify DOI Sys table data against expected values.
         public static void AssertSysMetadata()
         {
@@ -286,7 +359,8 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.has_LOB_columns, actualRow.has_LOB_columns);
             }
         }
-        public static void AssertUserMetadata()
+
+        public static void AssertUserMetadata_RowStore()
         {
             var actual = GetActualUserValues_RowStore();
 
@@ -349,7 +423,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(1, row.NumNonLeafLevelsInIndex_Estimated);
                 Assert.AreEqual(1, row.NumIndexPages_Estimated);
                 Assert.AreEqual(0.01m, row.IndexSizeMB_Actual_Estimated);
-                Assert.AreEqual(0, row.IndexSizeMB_Actual);
+                //Assert.AreEqual(0, row.IndexSizeMB_Actual);
                 Assert.AreEqual("C", row.DriveLetter);
                 Assert.AreEqual(false, row.IsIndexLarge);
                 Assert.AreEqual(false, row.IndexMeetsMinimumSize);
@@ -377,10 +451,61 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(false, row.IsDataCompressionChanging); 
                 Assert.AreEqual(false, row.IsStorageChanging);
                 Assert.AreEqual(false, row.IndexHasLOBColumns);
-                Assert.AreEqual(0, row.NumPages_Actual);
+                //Assert.AreEqual(0, row.NumPages_Actual);
                 Assert.AreEqual(0, row.TotalPartitionsInIndex);
                 Assert.AreEqual(false, row.NeedsPartitionLevelOperations);
             }
         }
+
+        public static void AssertUserMetadata_ColumnStore(int expectedNumPages, int expectedNumRows, decimal expectedIndexSizeMB)
+        {
+            var actual = GetActualUserValues_ColumnStore();
+
+            Assert.AreEqual(1, actual.Count);
+
+            foreach (var row in actual)
+            {
+                Assert.AreEqual(false, row.IsIndexMissingFromSQLServer);
+                Assert.AreEqual(row.IsClustered_Desired, row.IsClustered_Actual);
+                Assert.AreEqual(row.ColumnList_Desired, row.ColumnList_Actual);
+                Assert.AreEqual(row.IsFiltered_Desired, row.IsFiltered_Actual);
+                Assert.AreEqual(row.FilterPredicate_Desired, row.FilterPredicate_Actual);
+                Assert.AreEqual(row.OptionDataCompression_Desired, row.OptionDataCompression_Actual);
+                Assert.AreEqual(row.OptionDataCompressionDelay_Desired, row.OptionDataCompressionDelay_Actual);
+                Assert.AreEqual(row.Storage_Desired, row.Storage_Actual);
+                Assert.AreEqual(row.StorageType_Desired, row.StorageType_Actual);
+                Assert.AreEqual(row.PartitionFunction_Desired, row.PartitionFunction_Actual);
+                Assert.AreEqual(row.PartitionColumn_Desired, row.PartitionColumn_Actual);
+                Assert.AreEqual(0, row.AllColsInTableSize_Estimated);
+                Assert.AreEqual(0, row.NumFixedCols_Estimated);
+                Assert.AreEqual(0, row.NumVarCols_Estimated);
+                Assert.AreEqual(0, row.NumCols_Estimated);
+                Assert.AreEqual(0, row.FixedColsSize_Estimated);
+                Assert.AreEqual(0, row.VarColsSize_Estimated);
+                Assert.AreEqual(0, row.ColsSize_Estimated);
+                Assert.AreEqual(expectedNumRows, row.NumRows_Actual);
+                //Assert.AreEqual(expectedIndexSizeMB, row.IndexSizeMB_Actual);
+                Assert.AreEqual("C", row.DriveLetter);
+                Assert.AreEqual(false, row.IsIndexLarge);
+                Assert.AreEqual(false, row.IndexMeetsMinimumSize);
+                Assert.AreEqual(0, row.Fragmentation);
+                Assert.AreEqual("None", row.FragmentationType);
+                Assert.AreEqual(false, row.AreDropRecreateOptionsChanging);
+                Assert.AreEqual(false, row.AreRebuildOptionsChanging);
+                Assert.AreEqual(false, row.AreRebuildOnlyOptionsChanging);
+                Assert.AreEqual(false, row.AreReorgOptionsChanging);
+                Assert.AreEqual(false, row.AreSetOptionsChanging);
+                Assert.AreEqual(false, row.IsFilterChanging);
+                Assert.AreEqual(false, row.IsClusteredChanging);
+                Assert.AreEqual(false, row.IsPartitioningChanging);
+                Assert.AreEqual(false, row.IsDataCompressionChanging);
+                Assert.AreEqual(false, row.IsDataCompressionDelayChanging);
+                Assert.AreEqual(false, row.IsStorageChanging);
+                //Assert.AreEqual(expectedNumPages, row.NumPages_Actual);
+                Assert.AreEqual(0, row.TotalPartitionsInIndex);
+                Assert.AreEqual(false, row.NeedsPartitionLevelOperations);
+            }
+        }
+
     }
 }

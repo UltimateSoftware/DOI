@@ -64,14 +64,18 @@ AS
     SET NumRows_Actual = p.NumRows
     --SELECT p.*
     FROM DOI.IndexesColumnStore ICS
-        CROSS APPLY (   SELECT s.name AS SchemaName, t.name AS TableName, SUM(p.rows) AS NumRows
+        CROSS APPLY (   SELECT d.name, s.name AS SchemaName, t.name AS TableName, SUM(p.rows) AS NumRows
                         FROM DOI.SysSchemas s 
-                            INNER JOIN DOI.SysTables t ON s.schema_id = t.schema_id
-                            INNER JOIN DOI.SysPartitions p ON p.object_id = t.object_id
+                            INNER JOIN DOI.SysDatabases d ON s.database_id = d.database_id
+                            INNER JOIN DOI.SysTables t ON s.database_id = t.database_id
+                                AND s.schema_id = t.schema_id
+                            INNER JOIN DOI.SysPartitions p ON p.database_id = t.database_id
+                                AND p.object_id = t.object_id
                         WHERE p.index_id IN (0,1)
+                            AND d.name = ICS.DatabaseName COLLATE DATABASE_DEFAULT
                             AND s.name = ICS.SchemaName COLLATE DATABASE_DEFAULT
                             AND t.name = ICS.TableName COLLATE DATABASE_DEFAULT
-                        GROUP BY s.name , t.name)p
+                        GROUP BY d.name, s.name , t.name)p
     WHERE IsFiltered_Desired = 0
         AND ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
@@ -103,25 +107,33 @@ AS
                                 MAX(p.data_compression_desc) COLLATE DATABASE_DEFAULT AS data_compression_desc,
                                 CASE WHEN SUM(a.total_pages) > MAX(SS2.MinNumPages) THEN 1 ELSE 0 END AS IndexMeetsMinimumSize
 		                FROM DOI.systables t 
-                            INNER JOIN DOI.SysSchemas s ON t.SCHEMA_ID = s.SCHEMA_ID
-                            INNER JOIN DOI.SysIndexes i ON i.OBJECT_ID = t.object_id
-                            INNER JOIN DOI.SysPartitions p ON p.OBJECT_ID = t.OBJECT_ID
+                            INNER JOIN DOI.SysDatabases d ON t.database_id = d.database_id
+                            INNER JOIN DOI.SysSchemas s ON t.database_id = s.database_id
+                                AND t.SCHEMA_ID = s.SCHEMA_ID
+                            INNER JOIN DOI.SysIndexes i ON s.database_id = i.database_id
+                                AND i.OBJECT_ID = t.object_id
+                            INNER JOIN DOI.SysPartitions p ON p.database_id = i.database_id
+                                AND p.OBJECT_ID = i.OBJECT_ID
                                 AND p.index_id = I.index_id
-                            INNER JOIN DOI.SysAllocationUnits a ON p.hobt_id = a.container_id
-                            INNER JOIN DOI.SysDatabaseFiles df ON df.data_space_id = a.data_space_id
-			                CROSS JOIN (SELECT CAST(SettingValue AS INT) AS SizeCutoffValue
+                            INNER JOIN DOI.SysAllocationUnits a ON p.database_id = a.database_id
+                                AND p.hobt_id = a.container_id
+                            INNER JOIN DOI.SysDatabaseFiles df ON a.database_id = df.database_id
+                                AND df.data_space_id = a.data_space_id
+			                INNER JOIN (SELECT DatabaseName, CAST(SettingValue AS INT) AS SizeCutoffValue
 						                FROM DOI.DOISettings 
 						                WHERE SettingName = 'LargeTableCutoffValue')SS1
-                            CROSS JOIN (SELECT CAST(SettingValue AS INT) AS MinNumPages
+                                ON SS1.DatabaseName = d.name
+                            INNER JOIN (SELECT DatabaseName, CAST(SettingValue AS INT) AS MinNumPages
                                         FROM DOI.DOISettings 
                                         WHERE SettingName = 'MinNumPagesForIndexDefrag')SS2
-                            CROSS JOIN (SELECT database_id FROM DOI.SysDatabases WHERE name = ICS.DatabaseName) DB
-			                INNER JOIN DOI.SysDmOsVolumeStats vs ON vs.database_id = DB.database_id
+                                ON SS2.DatabaseName = d.name
+			                INNER JOIN DOI.SysDmOsVolumeStats vs ON vs.database_id = df.database_id
                                 AND vs.FILE_ID = df.FILE_ID
-		                WHERE s.NAME = ICS.SchemaName
+		                WHERE d.name = ICS.DatabaseName
+                            AND s.NAME = ICS.SchemaName
                             AND t.NAME = ICS.TableName
                             AND i.NAME = ICS.IndexName
-		                GROUP BY s.name, t.name, i.name) TS
+		                GROUP BY d.name, s.name, t.name, i.name) TS
     WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     --FRAG
@@ -135,9 +147,10 @@ AS
 				                ELSE 'None' 
                             END 
     FROM DOI.IndexesColumnStore ICS
-        CROSS JOIN (SELECT CAST(SettingValue AS INT) AS MinNumPages
+        INNER JOIN (SELECT DatabaseName, CAST(SettingValue AS INT) AS MinNumPages
                     FROM DOI.DOISettings 
                     WHERE SettingName = 'MinNumPagesForIndexDefrag')SS
+            ON SS.DatabaseName = ICS.DatabaseName
         CROSS APPLY (   SELECT  Fragmentation
                         FROM DOI.fnActualIndex_Frag() FN
                         WHERE FN.DatabaseName = ICS.DatabaseName

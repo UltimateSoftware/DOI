@@ -4,6 +4,7 @@ GO
 
 CREATE PROCEDURE [Utility].[spDeleteAllMetadataFromDatabase]
 	@DatabaseName SYSNAME,
+    @OneTimeTearDown BIT = 0,
     @Debug BIT = 0
 AS
 
@@ -22,12 +23,16 @@ SELECT @SQL += 'DELETE FROM DOI.[' + t.name + '] WHERE DatabaseName = ''' + @Dat
 FROM sys.tables t
     INNER JOIN sys.schemas s ON s.schema_id = T.schema_id
 WHERE s.name = 'DOI'
+    AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'Databases' ELSE '' END
+    AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'DOISettings' ELSE '' END
     AND EXISTS (SELECT 'True' FROM sys.columns c WHERE c.object_id = t.object_id AND c.name = 'DatabaseName')
 
 SELECT @SQL += 'DELETE FROM DOI.[' + t.name + '] WHERE database_id = ' + CAST(@DBID AS VARCHAR(20)) + CHAR(13) + CHAR(10)
 FROM sys.tables t
     INNER JOIN sys.schemas s ON s.schema_id = T.schema_id
 WHERE s.name = 'DOI'
+    AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'Databases' ELSE '' END
+    AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'DOISettings' ELSE '' END
     AND EXISTS (SELECT 'True' FROM sys.columns c WHERE c.object_id = t.object_id AND c.name = 'DATABASE_ID')
 
 IF @Debug = 1

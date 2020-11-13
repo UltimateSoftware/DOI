@@ -38,8 +38,7 @@ namespace DOI.Tests.Integration
         [OneTimeTearDown]
         public void OneTimeTeardown()
         {
-            this.sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}'");
-            this.sqlHelper.Execute($"DELETE DOI.DOI.DOISettings WHERE DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}', @OneTimeTearDown = 1");
             // restore schedule table to original settings
             this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
             this.sqlHelper.Execute($@"USE master;

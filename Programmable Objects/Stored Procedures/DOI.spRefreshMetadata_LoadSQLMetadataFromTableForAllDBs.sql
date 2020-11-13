@@ -214,24 +214,6 @@ BEGIN
         WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
     END
     ELSE
-    IF @TableName = 'SysDatabases'
-    BEGIN
-        SELECT TOP 1 @SQL += '
-        SELECT TOP 1 *
-        INTO #' + @TableName + '
-        FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + '
-        WHERE 1 = 2
-
-        INSERT INTO #' + @TableName + '
-        SELECT *
-        FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + '
-        WHERE NAME = ''' + d.DatabaseName + ''''
-        --select count(*)
-        FROM DOI.Databases D
-            INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = @TableName
-        WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
-    END
-    ELSE
     IF @TableName = 'SysMasterFiles'
     BEGIN
         SELECT TOP 1 @SQL += '

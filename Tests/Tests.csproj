@@ -518,7 +518,7 @@
     <Compile Include="TestHelpers\Metadata\SysForeignKeyColumnsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\ForeignKeysHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysIndexColumnsHelper.cs" />
-    <Compile Include="TestHelpers\Metadata\IndexesRowStoreHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\IndexesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysIndexPhysicalStatsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysMasterFilesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysPartitionFunctionsHelper.cs" />

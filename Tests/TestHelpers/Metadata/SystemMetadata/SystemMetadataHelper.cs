@@ -108,7 +108,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         #region Schemas
 
         public static string CreateSchemaSql = "CREATE SCHEMA TEST AUTHORIZATION DBO";
-        public static string DropSchemaSql = "DROP SCHEMA TEST";
+        public static string DropSchemaSql = "DROP SCHEMA IF EXISTS TEST";
         public static string RefreshMetadata_SysSchemasSql = $"EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = {DatabaseName}";
         #endregion
 
@@ -118,7 +118,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         public const string ChildTableName = "TempB";
         public static string DeleteTableSql = $"DELETE FROM dbo.{TableName}";
 
-        public static string InsertOneRowIntoTableSql = $@"INSERT INTO dbo.TempA VALUES({Guid.Parse("0525CED4-4F7B-4212-B511-44D13C129DA9")}, SYSDATETIME(), 'BLA', 'BLA')";
+        public static string InsertOneRowIntoTableSql = $@"INSERT INTO dbo.{TableName}(TempAId, TransactionUtcDt, IncludedColumn, TextCol) VALUES('{Guid.Parse("0525CED4-4F7B-4212-B511-44D13C129DA9")}', SYSDATETIME(), 'BLA', 'BLA')";
 
         public static string CreateTableSql = $@"
         CREATE TABLE dbo.{TableName}(
@@ -145,10 +145,10 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue) 
         VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{ChildTableName}'			,NULL						, 'PRIMARY'							, 0					,  1)";
 
-        public static string DropTableSql = $"DROP TABLE IF EXISTS dbo.{ChildTableName}";
+        public static string DropTableSql = $"DROP TABLE IF EXISTS dbo.{TableName}";
         public static string DropTableMetadataSql = $@"DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}'";
         public static string DropChildTableSql = $"DROP TABLE IF EXISTS dbo.{ChildTableName}";
-        public static string DropChildTableMetadataSql = $@"DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}'";
+        public static string DropChildTableMetadataSql = $@"DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{ChildTableName}'";
 
 
 
@@ -194,7 +194,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         #region SysTriggers
 
-        public static string TriggerName = "trTempA";
+        public static string TriggerName = $"tr{TableName}";
 
         public static string CreateTriggersql = $@"
             CREATE TRIGGER dbo.{TriggerName} ON {TableName} FOR INSERT AS SELECT SYSDATETIME()";
@@ -222,7 +222,7 @@ DELETE DOI.ForeignKeys WHERE DatabaseName = '{DatabaseName}' AND FKName = '{Fore
 
 INSERT [DOI].[ForeignKeys] 
         ([DatabaseName]       , [ParentSchemaName]  , [ParentTableName]     , [ParentColumnList_Desired]    , [ReferencedSchemaName], [ReferencedTableName] , [ReferencedColumnList_Desired], [FKName]) 
-VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'TempAId'					, N'dbo'    	        , N'TempA'			    , N'TempAId'                    , N'{ForeignKeyName}')
+VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'TempAId'					, N'dbo'    	        , N'{TableName}'		, N'TempAId'                    , N'{ForeignKeyName}')
 ";
 
         public static string DropForeignKeySql = $@"ALTER TABLE dbo.{ChildTableName} DROP CONSTRAINT {ForeignKeyName}";
@@ -246,10 +246,11 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         #region Indexes
         public const string IndexName = "CDX_TempA_TempAId";
+        public const string IndexName_ColumnStore = "NCCI_TempA";
         
-        public static string CreateIndexSql = $"CREATE UNIQUE CLUSTERED INDEX {IndexName} ON dbo.TempA(TempAId) WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
+        public static string CreateIndexSql = $"CREATE UNIQUE CLUSTERED INDEX {IndexName} ON dbo.{TableName}(TempAId) WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
 
-        public static string CreateIndexMetadataSQl = $@"
+        public static string CreateIndexMetadataSql = $@"
             INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
                                             IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
                                             OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
@@ -259,7 +260,20 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                     0, 0, 1, 1, N'PAGE', 'PRIMARY', N'ROWS_FILEGROUP', 
                     NULL, NULL)";
 
-        public static string DropIndexSql = $"DROP INDEX IF EXISTS {IndexName} ON dbo.TempA";
+        public static string DropIndexSql = $"DROP INDEX IF EXISTS {IndexName} ON dbo.{TableName}";
+
+        public static string CreateColumnStoreIndexSql = $"CREATE NONCLUSTERED COLUMNSTORE INDEX {IndexName_ColumnStore} ON dbo.{TableName}(TransactionUtcDt) WITH (DATA_COMPRESSION = COLUMNSTORE)";
+
+        public static string CreateColumnStoreIndexMetadataSql = $@"
+            INSERT INTO DOI.IndexesColumnStore
+                (DatabaseName, SchemaName, TableName, IndexName, IsClustered_Desired, ColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,
+                 OptionDataCompression_Desired, OptionDataCompressionDelay_Desired, Storage_Desired, StorageType_Desired, PartitionFunction_Desired,
+                 PartitionColumn_Desired)
+            VALUES(N'{DatabaseName}', N'dbo', N'{TableName}', N'{IndexName_ColumnStore}', 0, N'TransactionUtcDt ASC', 0, NULL, 
+                'COLUMNSTORE', 0, N'PRIMARY', N'ROWS_FILEGROUP', NULL, 
+                NULL)";
+
+        public static string DropColumnStoreIndex = $"DROP INDEX IF EXISTS {IndexName_ColumnStore} ON dbo.{TableName}";
 
         public static string RefreshMetadata_SysIndexesSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = '{DatabaseName}'
@@ -274,7 +288,8 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
             EXEC DOI.spRefreshMetadata_System_SysAllocationUnits @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysIndexColumnsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
@@ -294,13 +309,13 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         public const string StatsName = "ST_TempA_TransactionUtcDt";
 
 
-        public static string CreateStatsSql = $"CREATE STATISTICS {StatsName} ON dbo.TempA(TransactionUtcDt) WITH SAMPLE 1 PERCENT";
+        public static string CreateStatsSql = $"CREATE STATISTICS {StatsName} ON dbo.{TableName}(TransactionUtcDt) WITH SAMPLE 1 PERCENT";
 
         public static string CreateStatsMetadataSql = $@"
             INSERT INTO DOI.[Statistics](DatabaseName       ,SchemaName ,TableName      ,StatisticsName   ,StatisticsColumnList_Desired ,SampleSizePct_Desired  ,IsFiltered_Desired ,FilterPredicate_Desired,IsIncremental_Desired  ,NoRecompute_Desired,LowerSampleSizeToDesired   ,ReadyToQueue)
             VALUES(                     N'{DatabaseName}'   ,N'dbo'     , N'{TableName}','{StatsName}'    ,'TransactionUtcDt'           , 0                    , 0                 , NULL                  , 0                     , 0                 , 0                         ,  1)";
 
-        public static string DropStatsSql = $"DROP STATISTICS dbo.TempA.{StatsName}";
+        public static string DropStatsSql = $"DROP STATISTICS dbo.{TableName}.{StatsName}";
 
         public static string RefreshMetadata_SysStatsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
@@ -356,7 +371,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         #endregion
 
 
-        public const string MetadataDeleteSql = @"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = 'DOIUnitTests'";
+        public const string MetadataDeleteSql = @"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = 'DOIUnitTests', @OneTimeTearDown = 0";
 
        
     }

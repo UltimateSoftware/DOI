@@ -18,14 +18,17 @@ AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysDatabases]
-        @DatabaseId = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 DELETE DOI.SysDatabases
 WHERE name = CASE WHEN @DatabaseName IS NULL THEN name ELSE @DatabaseName END 
 
-EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysDatabases',
-    @DatabaseName = @DatabaseName
+INSERT INTO DOI.SysDatabases
+SELECT *
+FROM sys.databases
+WHERE NAME = CASE WHEN @DatabaseName IS NULL THEN name ELSE @DatabaseName END 
+
+
 
 GO
