@@ -421,6 +421,7 @@
     <Compile Include="IntegrationTests\IndexesViewTests.cs" />
     <Compile Include="IntegrationTests\IndexMaintenanceTests\LowFragmentationTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_1_PartitionFunctions.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_IndexPartitions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_SysSchemas.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysCheckConstraints.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysColumns.cs" />
@@ -453,6 +454,7 @@
     <Compile Include="IntegrationTests\Models\Index.cs" />
     <Compile Include="IntegrationTests\Models\IndexesColumnStore.cs" />
     <Compile Include="IntegrationTests\Models\IndexesRowStore.cs" />
+    <Compile Include="IntegrationTests\Models\IndexPartitionsColumnStore.cs" />
     <Compile Include="IntegrationTests\Models\IndexPartitionsRowStore.cs" />
     <Compile Include="IntegrationTests\Models\IndexView.cs" />
     <Compile Include="IntegrationTests\Models\LogTableRow.cs" />
@@ -502,7 +504,7 @@
     <Compile Include="TestHelpers\DataDrivenIndexTestHelper.cs" />
     <Compile Include="TestHelpers\GenericDictionaryExtensions.cs" />
     <Compile Include="TestHelpers\Guid2Base64.cs" />
-    <Compile Include="TestHelpers\Metadata\IndexPartitionsRowStoreHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\IndexPartitionsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\StorageContainers\PartitionFunctions\PartitionFunctionHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysAllocationUnitsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysCheckConstraintsHelper.cs" />
