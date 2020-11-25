@@ -24,7 +24,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             FROM {DatabaseName}.{SqlServerDmvName} dds
                 INNER JOIN {DatabaseName}.sys.filegroups fg ON dds.data_space_id = fg.data_space_id
                 INNER JOIN {DatabaseName}.sys.partition_schemes ps ON dds.partition_scheme_id = ps.data_space_id
-            WHERE ps.name = '{PartitionSchemeName}'
+            WHERE ps.name = '{PartitionSchemeNameYearly}'
                 AND fg.name IN ('{FilegroupName}', '{Filegroup2Name}')
             ORDER BY partition_scheme_id, destination_id, data_space_id"));
 
@@ -54,7 +54,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 INNER JOIN DOI.SysFilegroups fg ON T.data_space_id = fg.data_space_id
                 INNER JOIN DOI.SysPartitionSchemes ps ON T.partition_scheme_id = ps.data_space_id
             WHERE D.name = '{DatabaseName}'
-                AND ps.name = '{PartitionSchemeName}'
+                AND ps.name = '{PartitionSchemeNameYearly}'
                 AND fg.name IN ('{FilegroupName}', '{Filegroup2Name}')
             ORDER BY partition_scheme_id, destination_id, data_space_id"));
 

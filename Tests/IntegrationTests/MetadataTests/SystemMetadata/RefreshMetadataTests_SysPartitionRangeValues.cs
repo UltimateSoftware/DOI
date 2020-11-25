@@ -14,14 +14,14 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [SetUp]
         public void Setup()
         {
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlySql, 30, true, DatabaseName);
         }
 
         [TearDown]
         public void TearDown()
         {
             sqlHelper.Execute(TestHelper.MetadataDeleteSql);
-            sqlHelper.Execute(TestHelper.DropPartitionFunctionSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.DropPartitionFunctionYearlySql, 30, true, DatabaseName);
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         {
             //run refresh metadata
 
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionRangeValuesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);
 
             //and now they should match
             TestHelper.AssertMetadata();

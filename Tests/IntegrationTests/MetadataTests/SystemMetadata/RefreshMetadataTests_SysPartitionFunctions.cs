@@ -16,28 +16,34 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [SetUp]
         public void Setup()
         {
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionMetadataSql);
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlyMetadataSql);
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionMonthlyMetadataSql);
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlySql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionMonthlySql, 30, true, DatabaseName);
         }
 
         [TearDown]
         public void TearDown()
         {
             sqlHelper.Execute(TestHelper.MetadataDeleteSql);
-            sqlHelper.Execute(TestHelper.DropPartitionFunctionSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.DropPartitionFunctionYearlySql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.DropPartitionFunctionMonthlySql, 30, true, DatabaseName);
         }
 
+        [TestCase("Yearly", TestName = "RefreshMetadata_SysPartitionFunctions_MetadataIsAccurate_Yearly")]
+        [TestCase("Monthly", TestName = "RefreshMetadata_SysPartitionFunctions_MetadataIsAccurate_Monthly")]
         [Test]
-        public void RefreshMetadata_SysPartitionFunctions_MetadataIsAccurate()
+        public void RefreshMetadata_SysPartitionFunctions_MetadataIsAccurate(string boundaryInterval)
         {
+            string partitionFunctionName = string.Concat("pfTests", boundaryInterval);
+
             //run refresh metadata
-            
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionFunctionsSql);
 
             //and now they should match
-            TestHelper.AssertSysMetadata();
+            TestHelper.AssertSysMetadata(partitionFunctionName);
 
-            TestHelper.AssertUserMetadata();
+            TestHelper.AssertUserMetadata(partitionFunctionName);
         }
     }
 }

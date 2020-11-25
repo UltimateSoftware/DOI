@@ -17,13 +17,13 @@ namespace DOI.Tests.TestHelpers.Metadata
         public const string SqlServerDmvName = "sys.partition_functions";
         public const string UserTableName = "PartitionFunctions";
 
-        public static List<SysPartitionFunctions> GetExpectedSysValues()
+        public static List<SysPartitionFunctions> GetExpectedSysValues(string partitionFunctionName)
         {
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT * 
             FROM {DatabaseName}.{SqlServerDmvName} 
-            WHERE name = '{PartitionFunctionName}'"));
+            WHERE name = '{partitionFunctionName}'"));
 
             List<SysPartitionFunctions> expectedSysPartitionFunctions = new List<SysPartitionFunctions>();
 
@@ -47,7 +47,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             return expectedSysPartitionFunctions;
         }
 
-        public static List<SysPartitionFunctions> GetActualSysValues()
+        public static List<SysPartitionFunctions> GetActualSysValues(string partitionFunctionName)
         {
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
@@ -55,7 +55,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             FROM DOI.{SysTableName} T 
                 INNER JOIN DOI.SysDatabases D ON T.database_id = d.database_id
             WHERE D.name = '{DatabaseName}'
-                AND T.name = '{PartitionFunctionName}'"));
+                AND T.name = '{partitionFunctionName}'"));
 
             List<SysPartitionFunctions> actualSysPartitionFunctions = new List<SysPartitionFunctions>();
 
@@ -79,14 +79,14 @@ namespace DOI.Tests.TestHelpers.Metadata
             return actualSysPartitionFunctions;
         }
 
-        public static List<PartitionFunctions> GetActualUserValues()
+        public static List<PartitionFunctions> GetActualUserValues(string partitionFunctionName)
         {
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT T.* 
             FROM DOI.{UserTableName} T 
             WHERE T.DatabaseName = '{DatabaseName}'
-                AND T.PartitionFunctionName = '{PartitionFunctionName}'"));
+                AND T.PartitionFunctionName = '{partitionFunctionName}'"));
 
             List<PartitionFunctions> actualUserPartitionFunctions = new List<PartitionFunctions>();
 
@@ -115,7 +115,7 @@ namespace DOI.Tests.TestHelpers.Metadata
 
             return actualUserPartitionFunctions;
         }
-        public static List<vwPartitionFunctionPartitions> GetExpectedValues_vwPartitionFunctionPartitions()
+        public static List<vwPartitionFunctionPartitions> GetExpectedValues_vwPartitionFunctionPartitions(string partitionFunctionName)
         {
             List<vwPartitionFunctionPartitions> expected_vwPartitionFunctionPartitions = new List<vwPartitionFunctionPartitions>();
 
@@ -151,13 +151,13 @@ namespace DOI.Tests.TestHelpers.Metadata
         }
 
 
-        public static List<vwPartitionFunctionPartitions> GetActualValues_vwPartitionFunctionPartitions()
+        public static List<vwPartitionFunctionPartitions> GetActualValues_vwPartitionFunctionPartitions(string partitionFunctionName)
         {
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT * 
             FROM {DatabaseName}.vwPartitionFunctionPartitions 
-            WHERE name = '{PartitionFunctionName}'"));
+            WHERE name = '{partitionFunctionName}'"));
 
             List<vwPartitionFunctionPartitions> actual_vwPartitionFunctionPartitions = new List<vwPartitionFunctionPartitions>();
 
@@ -170,7 +170,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PartitionSchemeName = row.First(x => x.First == "PartitionSchemeName").Second.ToString();
                 columnValue.BoundaryInterval = row.First(x => x.First == "BoundaryInterval").Second.ToString();
                 columnValue.UsesSlidingWindow = (bool)row.First(x => x.First == "UsesSlidingWindow").Second;
-                columnValue.SlidingWindowSize = row.First(x => x.First == "SlidingWindowSize").Second.ToString();
+                columnValue.SlidingWindowSize = row.First(x => x.First == "SlidingWindowSize").Second.ObjectToInteger();
                 columnValue.IsDeprecated = (bool)row.First(x => x.First == "IsDeprecated").Second;
                 columnValue.NextUsedFileGroupName = row.First(x => x.First == "NextUsedFileGroupName").Second.ToString();
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
@@ -195,19 +195,19 @@ namespace DOI.Tests.TestHelpers.Metadata
         }
 
         //verify DOI Sys table data against expected values.
-        public static void AssertSysMetadata()
+        public static void AssertSysMetadata(string partitionFunctionName)
         {
-            var expected = GetExpectedSysValues();
+            var expected = GetExpectedSysValues(partitionFunctionName);
 
             Assert.AreEqual(1, expected.Count);
 
-            var actual = GetActualSysValues();
+            var actual = GetActualSysValues(partitionFunctionName);
 
             Assert.AreEqual(1, actual.Count);
 
             foreach (var expectedRow in expected)
             {
-                var actualRow = actual.Find(x => x.database_id == expectedRow.database_id);
+                var actualRow = actual.Find(x => x.database_id == expectedRow.database_id && x.name == partitionFunctionName);
 
                 Assert.AreEqual(expectedRow.name, actualRow.name);
                 Assert.AreEqual(expectedRow.function_id, actualRow.function_id);
@@ -221,31 +221,51 @@ namespace DOI.Tests.TestHelpers.Metadata
             }
         }
 
-        public static void AssertUserMetadata()
+        public static void AssertUserMetadata(string partitionFunctionName)
         {
-            var actual = GetActualUserValues();
+            var actual = GetActualUserValues(partitionFunctionName);
 
             Assert.AreEqual(1, actual.Count);
 
             foreach (var actualRow in actual)
             {
-                Assert.AreEqual(DatabaseName, actualRow.DatabaseName);
-                Assert.AreEqual(PartitionFunctionName, actualRow.PartitionFunctionName);
-                Assert.AreEqual("DATETIME2", actualRow.PartitionFunctionDataType);
-                Assert.AreEqual("Yearly", actualRow.BoundaryInterval);
-                Assert.AreEqual(1, actualRow.NumOfFutureIntervals);
-                Assert.AreEqual(DateTime.Parse("2016-01-01"), actualRow.InitialDate);
-                Assert.AreEqual(false, actualRow.UsesSlidingWindow);
-                Assert.AreEqual(0, actualRow.SlidingWindowSize);
-                Assert.AreEqual(false, actualRow.IsDeprecated);
-                Assert.AreEqual(PartitionSchemeName, actualRow.PartitionSchemeName);
-                Assert.AreEqual(4, actualRow.NumOfCharsInSuffix);
-                Assert.AreEqual(DateTime.Parse("2021-01-01"), actualRow.LastBoundaryDate);
-                Assert.AreEqual(6, actualRow.NumOfTotalPartitionFunctionIntervals);
-                Assert.AreEqual(7, actualRow.NumOfTotalPartitionSchemeIntervals);
-                Assert.AreEqual("0001-01-01", actualRow.MinValueOfDataType);
+                if (partitionFunctionName == "pfTestsYearly")
+                {
+                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName);
+                    Assert.AreEqual(partitionFunctionName, actualRow.PartitionFunctionName);
+                    Assert.AreEqual("DATETIME2", actualRow.PartitionFunctionDataType);
+                    Assert.AreEqual("Yearly", actualRow.BoundaryInterval);
+                    Assert.AreEqual(1, actualRow.NumOfFutureIntervals);
+                    Assert.AreEqual(DateTime.Parse("2016-01-01"), actualRow.InitialDate);
+                    Assert.AreEqual(false, actualRow.UsesSlidingWindow);
+                    Assert.AreEqual(0, actualRow.SlidingWindowSize);
+                    Assert.AreEqual(false, actualRow.IsDeprecated);
+                    Assert.AreEqual(PartitionSchemeNameYearly, actualRow.PartitionSchemeName);
+                    Assert.AreEqual(4, actualRow.NumOfCharsInSuffix);
+                    Assert.AreEqual(DateTime.Parse("2021-01-01"), actualRow.LastBoundaryDate);
+                    Assert.AreEqual(6, actualRow.NumOfTotalPartitionFunctionIntervals);
+                    Assert.AreEqual(7, actualRow.NumOfTotalPartitionSchemeIntervals);
+                    Assert.AreEqual("0001-01-01", actualRow.MinValueOfDataType);
+                }
+                else if (partitionFunctionName == "pfTestsMonthly")
+                {
+                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName);
+                    Assert.AreEqual(partitionFunctionName, actualRow.PartitionFunctionName);
+                    Assert.AreEqual("DATETIME2", actualRow.PartitionFunctionDataType);
+                    Assert.AreEqual("Monthly", actualRow.BoundaryInterval);
+                    Assert.AreEqual(12, actualRow.NumOfFutureIntervals);
+                    Assert.AreEqual(DateTime.Parse("2016-01-01"), actualRow.InitialDate);
+                    Assert.AreEqual(false, actualRow.UsesSlidingWindow);
+                    Assert.AreEqual(0, actualRow.SlidingWindowSize);
+                    Assert.AreEqual(false, actualRow.IsDeprecated);
+                    Assert.AreEqual(PartitionSchemeNameMonthly, actualRow.PartitionSchemeName);
+                    Assert.AreEqual(6, actualRow.NumOfCharsInSuffix);
+                    Assert.AreEqual(DateTime.Parse("2021-11-01"), actualRow.LastBoundaryDate);
+                    Assert.AreEqual(71, actualRow.NumOfTotalPartitionFunctionIntervals);
+                    Assert.AreEqual(72, actualRow.NumOfTotalPartitionSchemeIntervals);
+                    Assert.AreEqual("0001-01-01", actualRow.MinValueOfDataType);
+                }
             }
         }
-
     }
 }

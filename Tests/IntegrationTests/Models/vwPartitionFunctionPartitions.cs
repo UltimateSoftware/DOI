@@ -13,7 +13,7 @@ namespace DOI.Tests.IntegrationTests.Models
         public string PartitionSchemeName { get; set; }
         public string BoundaryInterval { get; set; }
         public bool UsesSlidingWindow { get; set; }
-        public string SlidingWindowSize { get; set; }
+        public int SlidingWindowSize { get; set; }
         public bool IsDeprecated { get; set; }
         public string NextUsedFileGroupName { get; set; }
         public DateTime BoundaryValue { get; set; }

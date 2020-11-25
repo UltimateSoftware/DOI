@@ -22,7 +22,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT * 
             FROM {DatabaseName}.{SqlServerDmvName} 
-            WHERE name = '{PartitionSchemeName}'"));
+            WHERE name = '{PartitionSchemeNameYearly}'"));
 
             List<SysPartitionSchemes> expectedSysPartitionSchemes = new List<SysPartitionSchemes>();
 
@@ -52,7 +52,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             FROM DOI.{SysTableName} T 
                 INNER JOIN DOI.SysDatabases D ON T.database_id = d.database_id
             WHERE D.name = '{DatabaseName}'
-                AND T.name = '{PartitionSchemeName}'"));
+                AND T.name = '{PartitionSchemeNameYearly}'"));
 
             List<SysPartitionSchemes> actualSysPartitionSchemes = new List<SysPartitionSchemes>();
 

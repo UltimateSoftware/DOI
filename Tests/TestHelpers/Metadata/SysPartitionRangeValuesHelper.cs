@@ -23,7 +23,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SELECT prv.* 
             FROM {DatabaseName}.{SqlServerDmvName} prv
                 INNER JOIN {DatabaseName}.sys.partition_functions pf ON pf.function_id = prv.function_id
-            WHERE pf.name = '{PartitionFunctionName}'"));
+            WHERE pf.name = '{PartitionFunctionNameYearly}'"));
 
             List<SysPartitionRangeValues> expectedSysPartitionRangeValues = new List<SysPartitionRangeValues>();
 
@@ -51,7 +51,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 INNER JOIN DOI.SysDatabases D ON T.database_id = d.database_id
                 INNER JOIN DOI.SysPartitionFunctions PF ON T.function_id = pf.function_id
             WHERE D.name = '{DatabaseName}'
-                AND pf.name = '{PartitionFunctionName}'"));
+                AND pf.name = '{PartitionFunctionNameYearly}'"));
 
             List<SysPartitionRangeValues> actualSysPartitionRangeValues = new List<SysPartitionRangeValues>();
 

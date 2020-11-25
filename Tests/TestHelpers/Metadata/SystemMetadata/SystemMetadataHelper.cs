@@ -95,37 +95,64 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         #endregion
         #region PartitionFunctions
 
-        public const string PartitionFunctionName = "pfTests";
+        public const string PartitionFunctionNameYearly = "pfTestsYearly";
 
-        public static string CreatePartitionFunctionSql = $"CREATE PARTITION FUNCTION [{PartitionFunctionName}](datetime2(7)) AS RANGE RIGHT FOR VALUES (N'2016-01-01T00:00:00.000')";
+        public static string CreatePartitionFunctionYearlySql = $"CREATE PARTITION FUNCTION [{PartitionFunctionNameYearly}](datetime2(7)) AS RANGE RIGHT FOR VALUES (N'2016-01-01T00:00:00.000')";
 
-        public static string DropPartitionFunctionSql = $"DROP PARTITION FUNCTION {PartitionFunctionName}";
+        public static string DropPartitionFunctionYearlySql = $"DROP PARTITION FUNCTION {PartitionFunctionNameYearly}";
+
+        public const string PartitionFunctionNameMonthly = "pfTestsMonthly";
+
+        public static string CreatePartitionFunctionMonthlySql = $"CREATE PARTITION FUNCTION [{PartitionFunctionNameMonthly}](datetime2(7)) AS RANGE RIGHT FOR VALUES (N'2016-01-01T00:00:00.000')";
+
+        public static string DropPartitionFunctionMonthlySql = $"DROP PARTITION FUNCTION {PartitionFunctionNameMonthly}";
 
         public static string RefreshMetadata_SysPartitionFunctionsSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysFileGroups @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
+";
 
-        public static string RefreshMetadata_SysPartitionRangeValuesSql = $@"
+        public static string RefreshMetadata_PartitionFunctionsSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysFileGroups @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'";
 
-        public static string CreatePartitionFunctionMetadataSql = $@"
-            INSERT INTO DOI.PartitionFunctions( DatabaseName    ,PartitionFunctionName      ,PartitionFunctionDataType  ,BoundaryInterval   ,NumOfFutureIntervals   ,InitialDate    ,UsesSlidingWindow  ,SlidingWindowSize  ,IsDeprecated   ,PartitionSchemeName    ,NumOfCharsInSuffix ,LastBoundaryDate   ,NumOfTotalPartitionFunctionIntervals   ,NumOfTotalPartitionSchemeIntervals ,MinValueOfDataType)
-            VALUES(                             '{DatabaseName}', '{PartitionFunctionName}' ,'DATETIME2'                ,'Yearly'           ,1                      ,'2016-01-01'   ,0                  ,NULL               ,0              ,'{PartitionSchemeName}',0                  ,N'2016-01-01'      ,2                                      ,3                                  ,'0001-01-01')";
+        public static string CreatePartitionFunctionYearlyMetadataSql = $@"
+            INSERT INTO DOI.PartitionFunctions( DatabaseName    ,PartitionFunctionName              ,PartitionFunctionDataType  ,BoundaryInterval   ,NumOfFutureIntervals   ,InitialDate    ,UsesSlidingWindow  ,SlidingWindowSize  ,IsDeprecated   ,LastBoundaryDate)
+            VALUES(                             '{DatabaseName}', '{PartitionFunctionNameYearly}'   ,'DATETIME2'                ,'Yearly'           ,1                      ,'2016-01-01'   ,0                  ,NULL               ,0              ,N'2021-01-01')";
 
-        public static string GetPartitionsFrom_vwPartitionFunctionPartitions = $@"
-            SELECT * FROM DOI.vwPartitionFunctionPartitions WHERE DatabaseName = '{DatabaseName}' AND PartitionFunctionName = '{PartitionFunctionName}'";
-        
+        public string GetPartitionsFrom_vwPartitionFunctionPartitionsYearly = $@"
+            SELECT * FROM DOI.vwPartitionFunctionPartitions WHERE DatabaseName = '{DatabaseName}' AND PartitionFunctionName = '{PartitionFunctionNameYearly}'";
+
+        public static string CreatePartitionFunctionMonthlyMetadataSql = $@"
+            INSERT INTO DOI.PartitionFunctions( DatabaseName    ,PartitionFunctionName              ,PartitionFunctionDataType  ,BoundaryInterval   ,NumOfFutureIntervals   ,InitialDate    ,UsesSlidingWindow  ,SlidingWindowSize  ,IsDeprecated   ,LastBoundaryDate)
+            VALUES(                             '{DatabaseName}', '{PartitionFunctionNameMonthly}'  ,'DATETIME2'                ,'Monthly'           ,12                    ,'2016-01-01'   ,0                  ,NULL               ,0              ,N'2021-12-01')";
+
+        public string GetPartitionsFrom_vwPartitionFunctionPartitionsMonthly = $@"
+            SELECT * FROM DOI.vwPartitionFunctionPartitions WHERE DatabaseName = '{DatabaseName}' AND PartitionFunctionName = '{PartitionFunctionNameMonthly}'";
 
         #endregion
         #region PartitionSchemes
 
-        public const string PartitionSchemeName = "psTests";
+        public const string PartitionSchemeNameYearly = "psTestsYearly";
+        public const string PartitionSchemeNameMonthly = "psTestsMonthly";
 
-        public static string CreatePartitionSchemeSql = $"CREATE PARTITION SCHEME [{PartitionSchemeName}] AS PARTITION [{PartitionFunctionName}] TO ([{FilegroupName}], [{Filegroup2Name}])";
 
-        public static string DropPartitionSchemeSql = $"DROP PARTITION SCHEME {PartitionSchemeName}";
+        public static string CreatePartitionSchemeYearlySql = $"CREATE PARTITION SCHEME [{PartitionSchemeNameYearly}] AS PARTITION [{PartitionFunctionNameYearly}] TO ([{FilegroupName}], [{Filegroup2Name}])";
+        public static string CreatePartitionSchemeMonthlySql = $"CREATE PARTITION SCHEME [{PartitionSchemeNameMonthly}] AS PARTITION [{PartitionFunctionNameMonthly}] TO ([{FilegroupName}], [{Filegroup2Name}])";
+
+
+        public static string DropPartitionSchemeYearlySql = $"DROP PARTITION SCHEME {PartitionSchemeNameYearly}";
+        public static string DropPartitionSchemeMonthlySql = $"DROP PARTITION SCHEME {PartitionSchemeNameMonthly}";
+
 
         public static string RefreshMetadata_SysPartitionSchemesSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
@@ -185,11 +212,11 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             CONSTRAINT PK_{TableName_Partitioned}
                 PRIMARY KEY NONCLUSTERED (TempAId, TransactionUtcDt)
         )
-        ON {PartitionSchemeName}(TransactionUtcDt)";
+        ON {PartitionSchemeNameYearly}(TransactionUtcDt)";
         public static string CreatePartitionedTableMetadataSql = $@"
         DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName_Partitioned}'
         INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue) 
-        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			, '{PartitionSchemeName}'			, 1					,  1)";
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			, '{PartitionSchemeNameYearly}'			, 1					,  1)";
 
         public static string InsertOneRowIntoTableSql = $@"INSERT INTO dbo.{TableName}(TempAId, TransactionUtcDt, IncludedColumn, TextCol) VALUES('{Guid.Parse("0525CED4-4F7B-4212-B511-44D13C129DA9")}', SYSDATETIME(), 'BLA', 'BLA')";
 
@@ -336,7 +363,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
             CREATE UNIQUE CLUSTERED INDEX {IndexName_Partitioned} 
                 ON dbo.{TableName_Partitioned}(TempAId, TransactionUtcDt) 
                     WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) 
-                        ON {PartitionSchemeName}(TransactionUtcDt)";
+                        ON {PartitionSchemeNameYearly}(TransactionUtcDt)";
 
         public static string CreatePartitionedIndexMetadataSql = $@"
             INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
@@ -345,14 +372,14 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                                             PartitionFunction_Desired, PartitionColumn_Desired)
             VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{IndexName_Partitioned}', 1, 0, 0, 1, 'TempAId ASC', NULL,  
                     0, NULL, 100, 1, 0, 0, 0, 
-                    0, 0, 1, 1, N'PAGE', '{PartitionSchemeName}', N'PARTITION_SCHEME', 
-                    '{PartitionFunctionName}', 'TransactionUtcDt')";
+                    0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', 
+                    '{PartitionFunctionNameYearly}', 'TransactionUtcDt')";
 
         public static string CreatePartitionedColumnStoreIndexSql = $@"
             CREATE NONCLUSTERED COLUMNSTORE INDEX {IndexName_ColumnStore_Partitioned} 
                 ON dbo.{TableName_Partitioned}(IncludedColumn) 
                     WITH (DATA_COMPRESSION = COLUMNSTORE) 
-                        ON {PartitionSchemeName}(TransactionUtcDt)";
+                        ON {PartitionSchemeNameYearly}(TransactionUtcDt)";
 
         public static string CreatePartitionedColumnStoreIndexMetadataSql = $@"
             INSERT INTO DOI.IndexesColumnStore
@@ -360,7 +387,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                  OptionDataCompression_Desired, OptionDataCompressionDelay_Desired, Storage_Desired, StorageType_Desired, PartitionFunction_Desired,
                  PartitionColumn_Desired)
             VALUES(N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{IndexName_ColumnStore_Partitioned}', 0, N'IncludedColumn ASC', 0, NULL, 
-                'COLUMNSTORE', 0, N'{PartitionSchemeName}', N'PARTITION_SCHEME', '{PartitionFunctionName}', 
+                'COLUMNSTORE', 0, N'{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', '{PartitionFunctionNameYearly}', 
                 'TransactionUtcDt')";
 
 
@@ -403,14 +430,17 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
             EXEC DOI.spRefreshMetadata_System_SysIndexes_UpdateData @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitions @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysAllocationUnits @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysIndexPhysicalStats @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_InsertData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_InsertData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_InsertData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData @DatabaseName = '{DatabaseName}'";
 
 
         #endregion

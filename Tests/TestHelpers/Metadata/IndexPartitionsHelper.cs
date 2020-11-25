@@ -23,7 +23,8 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
-                SELECT IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, P.PartitionNumber
+                SELECT IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, P.PartitionNumber,
+                    'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\testDBFileName_Partition' + CAST(P.PartitionNumber AS VARCHAR(10)) + '.ndf' AS DataFileName
                 FROM DOI.IndexesRowStore IRS
                     INNER JOIN DOI.vwPartitionFunctionPartitions P ON IRS.Storage_Desired = P.PartitionSchemeName
                 WHERE IRS.StorageType_Desired = 'PARTITION_SCHEME'
@@ -43,7 +44,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.TableName = row.First(x => x.First == "TableName").Second.ToString();
                 columnValue.IndexName = row.First(x => x.First == "IndexName").Second.ToString();
                 columnValue.PartitionNumber = row.First(x => x.First == "PartitionNumber").Second.ObjectToInteger();
-
+                columnValue.DataFileName = row.First(x => x.First == "DataFileName").Second.ToString();
 
                 ExpectedValues_RowStore.Add(columnValue);
             }
@@ -103,6 +104,13 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.IndexName = row.First(x => x.First == "IndexName").Second.ToString();
                 columnValue.PartitionNumber = row.First(x => x.First == "PartitionNumber").Second.ObjectToInteger();
 
+                columnValue.Fragmentation = (double)row.First(x => x.First == "Fragmentation").Second.ObjectToInteger();
+                columnValue.NumRows = row.First(x => x.First == "NumRows").Second.ObjectToInteger();
+                columnValue.TotalPages = row.First(x => x.First == "TotalPages").Second.ObjectToInteger();
+                columnValue.DataFileName = row.First(x => x.First == "DataFileName").Second.ToString();
+                columnValue.DriveLetter = row.First(x => x.First == "DriveLetter").Second.ToString();
+                columnValue.PartitionUpdateType = row.First(x => x.First == "PartitionUpdateType").Second.ToString();
+                columnValue.TotalIndexPartitionSizeInMB = row.First(x => x.First == "TotalIndexPartitionSizeInMB").Second.ObjectToDecimal();
                 ActualValues_RowStore.Add(columnValue);
             }
 
@@ -135,6 +143,7 @@ namespace DOI.Tests.TestHelpers.Metadata
 
             return ActualValues_ColumnStore;
         }
+
         public static void AssertUserMetadata_RowStore()
         {
             var expected = GetExpectedValues_RowStore();
@@ -143,6 +152,24 @@ namespace DOI.Tests.TestHelpers.Metadata
 
             Assert.AreEqual(expected.Count, actual.Count);
             Assert.Greater(actual.Count, 0);
+
+            foreach (var expectedRow in expected)
+            {
+                var actualRow = actual.Find(x =>
+                    x.DatabaseName == expectedRow.DatabaseName &&
+                    x.SchemaName == expectedRow.SchemaName &&
+                    x.TableName == expectedRow.TableName &&
+                    x.IndexName == expectedRow.IndexName &&
+                    x.PartitionNumber == expectedRow.PartitionNumber);
+
+                Assert.AreEqual(1, actualRow.NumRows);
+                //Assert.AreEqual(expectedRow.TotalPages, actualRow.TotalPages);
+                //Assert.AreEqual(expectedRow.TotalIndexPartitionSizeInMB, actualRow.TotalIndexPartitionSizeInMB);
+                Assert.AreEqual(0, actualRow.Fragmentation);
+                Assert.AreEqual(expectedRow.DataFileName, actualRow.DataFileName);
+                Assert.AreEqual("C", actualRow.DriveLetter);
+                Assert.AreEqual("None", actualRow.PartitionUpdateType);
+            }
         }
 
         public static void AssertUserMetadata_ColumnStore()

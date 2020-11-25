@@ -450,6 +450,7 @@
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTables.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTriggers.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTypes.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionFunctionPartitions.cs" />
     <Compile Include="IntegrationTests\Models\ForeignKeys.cs" />
     <Compile Include="IntegrationTests\Models\Index.cs" />
     <Compile Include="IntegrationTests\Models\IndexesColumnStore.cs" />
@@ -535,6 +536,7 @@
     <Compile Include="TestHelpers\Metadata\SysTriggers.cs" />
     <Compile Include="TestHelpers\Metadata\SysTriggersHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysTypesHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\vwPartitionFunctionPartitionsHelper.cs" />
     <Compile Include="TestHelpers\SetupSqlStatements_NonPartitioned.cs" />
     <Compile Include="TestHelpers\ObjectExtensions.cs" />
     <Compile Include="TestHelpers\OfflineRunTestsHelper.cs" />

@@ -20,9 +20,9 @@ namespace DOI.Tests.IntegrationTests.MetadataTests
             sqlHelper.Execute(TestHelper.CreateFilegroupSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreateFilegroup2Sql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreateDatabaseFiles_PartitionedSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionMetadataSql);
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.CreatePartitionSchemeSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlyMetadataSql);
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlySql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.CreatePartitionSchemeYearlySql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreatePartitionedTableSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreatePartitionedTableMetadataSql);
             sqlHelper.Execute(TestHelper.InsertOneRowIntoEachPartitionSql, 30, true, DatabaseName);
@@ -37,8 +37,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests
         {
             sqlHelper.Execute(TestHelper.MetadataDeleteSql);
             sqlHelper.Execute(TestHelper.DropPartitionedTableSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.DropPartitionSchemeSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.DropPartitionFunctionSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.DropPartitionSchemeYearlySql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.DropPartitionFunctionYearlySql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropDatabaseFiles_PartitionedSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropFilegroup2Sql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropFilegroupSql, 30, true, DatabaseName);

@@ -31,7 +31,7 @@ SELECT @SQL += 'DELETE FROM DOI.[' + t.name + '] WHERE database_id = ' + CAST(@D
 FROM sys.tables t
     INNER JOIN sys.schemas s ON s.schema_id = T.schema_id
 WHERE s.name = 'DOI'
-    AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'Databases' ELSE '' END
+    AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'SysDatabases' ELSE '' END
     AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'DOISettings' ELSE '' END
     AND EXISTS (SELECT 'True' FROM sys.columns c WHERE c.object_id = t.object_id AND c.name = 'DATABASE_ID')
 
