@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[vwTables_PrepTables]') IS NOT NULL
-	DROP VIEW [DOI].[vwTables_PrepTables];
+IF OBJECT_ID('[DOI].[vwPartitioning_Tables_PrepTables]') IS NOT NULL
+	DROP VIEW [DOI].[vwPartitioning_Tables_PrepTables];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11,11 +11,11 @@ SET ANSI_NULLS ON
 GO
 
 
-CREATE     VIEW [DOI].[vwTables_PrepTables]
+CREATE     VIEW [DOI].[vwPartitioning_Tables_PrepTables]
 
 /*
 	select top 10 CreateViewForBCPSQL
-	from DOI.vwTables_PrepTables
+	from DOI.[vwPartitioning_Tables_PrepTables]
     where tablename = 'BAI2BANKTRANSACTIONS'
 	order by tablename, partitionnumber
 
@@ -28,7 +28,6 @@ FROM DOI.Tables T
     INNER JOIN DOI.SysDataSpaces UFG_Desired ON DDS_Desired.database_id = UFG_Desired.database_id
         AND DDS_Desired.data_space_id = UFG_Desired.data_space_id
 
-		CONSOLIDATE THIS VIEW WITH vwPartitioning_PrepTables.
  */ 
 AS
 
@@ -663,7 +662,79 @@ FROM (  SELECT T.DatabaseName
         --SELECT COUNT(*)
         FROM DOI.Tables T
             CROSS APPLY (   SELECT *, T.TableName + P.PrepTableNameSuffix AS PrepTableName, 0 AS IsNewPartitionedPrepTable
-                            FROM DOI.vwPartitioning_PrepTables P 
+                            FROM (  SELECT  *,         
+                                            CASE 
+			                                    WHEN DateDiffs IN (365, 366) 
+			                                    THEN CAST(YEAR(CONVERT(DATE, BoundaryValue, 112)) AS VARCHAR(4))-- 'Yearly' 
+			                                    WHEN DateDiffs IN (28, 29, 30, 31) 
+			                                    THEN CAST(YEAR(CONVERT(DATE, BoundaryValue, 112)) AS VARCHAR(4))
+					                                    + CASE WHEN LEN(CAST(MONTH(CONVERT(DATE, BoundaryValue, 112)) AS VARCHAR(2))) < 2 THEN '0' ELSE '' END 
+					                                    + CAST(MONTH(CONVERT(DATE, BoundaryValue, 112)) AS VARCHAR(4)) --'Monthly' 
+			                                    WHEN DateDiffs = 1
+			                                    THEN 'Daily'
+			                                    WHEN BoundaryValue = '0001-01-01'
+			                                    THEN 'Historical' 
+			                                    WHEN NextBoundaryValue = '9999-12-31'
+			                                    THEN 'LastPartition'
+			                                    ELSE ''
+		                                    END + '_PartitionPrep' AS PrepTableNameSuffix
+                                    FROM (  SELECT	PFI.DatabaseName,
+				                                    PFI.PartitionFunctionName,
+                                                    PFI.PartitionSchemeName,
+                                                    PFI.BoundaryInterval,
+                                                    PFI.BoundaryValue,
+                                                    CAST(LEAD(BoundaryValue, 1, '9999-12-31') OVER (PARTITION BY PartitionFunctionName ORDER BY BoundaryValue) AS DATE) AS NextBoundaryValue,
+                                                    DATEDIFF(DAY, PFI.BoundaryValue, CAST(LEAD(BoundaryValue, 1, '9999-12-31') OVER (PARTITION BY PartitionFunctionName ORDER BY BoundaryValue) AS DATE)) AS DateDiffs,
+                                                    ROW_NUMBER() OVER(PARTITION BY PartitionFunctionName ORDER BY BoundaryValue) AS PartitionNumber,
+				                                    PFI.IncludeInPartitionFunction,
+                                                    PFI.IncludeInPartitionScheme
+                                            --SELECT count(*)
+                                            FROM (  SELECT	TOP (1234567890987) *
+                                                    FROM (SELECT DISTINCT
+		                                                    PFM.*,
+		                                                    CASE  
+			                                                    WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
+			                                                    THEN PFM.LastBoundaryDate
+			                                                    WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
+			                                                    THEN DATEADD(MONTH, RowNum-1, InitialDate)
+			                                                    WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
+			                                                    THEN PFM.LastBoundaryDate
+			                                                    WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
+			                                                    THEN DATEADD(YEAR, RowNum-1, InitialDate)
+		                                                    END AS BoundaryValue,
+		                                                    CASE 
+			                                                    WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
+			                                                    THEN 'Active'
+			                                                    WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
+			                                                    THEN LEFT(CONVERT(VARCHAR(20), DATEADD(MONTH, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
+			                                                    WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
+			                                                    THEN 'Active'
+			                                                    WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
+			                                                    THEN LEFT(CONVERT(VARCHAR(20), DATEADD(YEAR, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
+		                                                    END AS Suffix,
+		                                                    CASE 
+			                                                    WHEN (PFM.BoundaryInterval = 'Yearly' AND PFM.UsesSlidingWindow = 1 AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate))
+					                                                    OR (PFM.BoundaryInterval = 'Monthly' AND PFM.UsesSlidingWindow = 1 AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate))
+			                                                    THEN 1
+			                                                    ELSE 0
+		                                                    END AS IsSlidingWindowActivePartition,
+		                                                    1 AS IncludeInPartitionFunction,
+		                                                    1 AS IncludeInPartitionScheme
+                                                    --select count(*)
+                                                    FROM DOI.PartitionFunctions PFM
+	                                                    CROSS APPLY DOI.fnNumberTable(ISNULL(NumOfTotalPartitionFunctionIntervals, 0)) PSN
+                                                    UNION ALL
+                                                    SELECT	PFM.*,
+		                                                    MinInterval.MinValueOfDataType AS BoundaryValue,
+		                                                    'Historical' AS Suffix,
+		                                                    0 AS IsSlidingWindowActivePartition,
+		                                                    0 AS IncludeInPartitionFunction,
+		                                                    1 AS IncludeInPartitionScheme
+                                                    FROM DOI.PartitionFunctions PFM
+	                                                    CROSS APPLY (   SELECT PFM2.MinValueOfDataType 
+                                                                        FROM DOI.PartitionFunctions PFM2 
+                                                                        WHERE PFM2.PartitionFunctionName = PFM.PartitionFunctionName) MinInterval)V
+                                                    ORDER BY PartitionFunctionName, BoundaryValue)PFI)X) P 
                             WHERE T.Storage_Desired = PartitionSchemeName) P
                 INNER JOIN DOI.SysDataSpaces DS_Desired ON T.Storage_Desired = DS_Desired.name
                 INNER JOIN DOI.SysDestinationDataSpaces DDS_Desired ON DDS_Desired.database_id = DS_Desired.database_id
@@ -696,24 +767,5 @@ FROM (  SELECT T.DatabaseName
         FROM DOI.Tables T
         WHERE IntendToPartition = 1) AllTables
     CROSS JOIN (SELECT * FROM DOI.DOISettings WHERE SettingName = 'UTEBCP Filepath') SS
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO

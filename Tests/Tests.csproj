@@ -451,6 +451,9 @@
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTriggers.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTypes.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionFunctionPartitions.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionFunctions.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionSchemes.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartition_FileGroups.cs" />
     <Compile Include="IntegrationTests\Models\ForeignKeys.cs" />
     <Compile Include="IntegrationTests\Models\Index.cs" />
     <Compile Include="IntegrationTests\Models\IndexesColumnStore.cs" />
@@ -493,6 +496,10 @@
     <Compile Include="IntegrationTests\Models\SysTypes.cs" />
     <Compile Include="IntegrationTests\Models\TempARow.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitionFunctionPartitions.cs" />
+    <Compile Include="IntegrationTests\Models\vwPartitionFunctions.cs" />
+    <Compile Include="IntegrationTests\Models\vwPartitioning_DBFiles.cs" />
+    <Compile Include="IntegrationTests\Models\vwPartitioning_Filegroups.cs" />
+    <Compile Include="IntegrationTests\Models\vwPartitionSchemes.cs" />
     <Compile Include="IntegrationTests\OfflineRunTests.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
     <Compile Include="IntegrationTests\StatisticsTests.cs" />
@@ -537,6 +544,9 @@
     <Compile Include="TestHelpers\Metadata\SysTriggersHelper.cs" />
     <Compile Include="TestHelpers\Metadata\SysTypesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwPartitionFunctionPartitionsHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\vwPartitionFunctionsHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\vwPartitioning_FileGroupsHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\vwPartitionSchemesHelper.cs" />
     <Compile Include="TestHelpers\SetupSqlStatements_NonPartitioned.cs" />
     <Compile Include="TestHelpers\ObjectExtensions.cs" />
     <Compile Include="TestHelpers\OfflineRunTestsHelper.cs" />

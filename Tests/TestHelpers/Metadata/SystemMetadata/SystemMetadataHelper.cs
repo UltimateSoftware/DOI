@@ -8,7 +8,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 {
     public class SystemMetadataHelper
     {
-        private SqlHelper sqlHelper = new SqlHelper();
+        public SqlHelper sqlHelper = new SqlHelper();
 
         #region Databases
 
@@ -24,12 +24,22 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         public static string CreateFilegroupSql = $@"ALTER DATABASE {DatabaseName} ADD FILEGROUP {FilegroupName};";
         public static string CreateFilegroup2Sql = $@"ALTER DATABASE {DatabaseName} ADD FILEGROUP {Filegroup2Name};";
 
-
+        public static string RefreshStorageContainers_FilegroupsAndFiles = $@"EXEC DOI.spRefreshStorageContainers_FilegroupsAndFiles @DatabaseName = '{DatabaseName}'";
+        public static string RefreshStorageContainers_PartitionFunctions = $@"EXEC DOI.spRefreshStorageContainers_PartitionFunctions @DatabaseName = '{DatabaseName}'";
+        public static string RefreshStorageContainers_PartitionSchemes = $@"EXEC DOI.spRefreshStorageContainers_PartitionSchemes @DatabaseName = '{DatabaseName}'";
+        
         public static string DropFilegroupSql = $@"ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {FilegroupName};";
         public static string DropFilegroup2Sql = $@"ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {Filegroup2Name};";
+        
+        public static string RefreshMetadata_SysFilegroupsSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'    
+            EXEC DOI.[spRefreshMetadata_User_PartitionFunctions_UpdateData] @DatabaseName = '{DatabaseName}'";
 
-
-        public static string RefreshMetadata_SysFilegroupsSql = $"EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'";
         public static string RefreshMetadata_SysDataSpacesSql = $"EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'";
         public static string RefreshMetadata_SysDestinationDataSpacesSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
@@ -99,13 +109,13 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string CreatePartitionFunctionYearlySql = $"CREATE PARTITION FUNCTION [{PartitionFunctionNameYearly}](datetime2(7)) AS RANGE RIGHT FOR VALUES (N'2016-01-01T00:00:00.000')";
 
-        public static string DropPartitionFunctionYearlySql = $"DROP PARTITION FUNCTION {PartitionFunctionNameYearly}";
+        public static string DropPartitionFunctionYearlySql = $"IF EXISTS(SELECT 'True' FROM sys.partition_functions WHERE name = '{PartitionFunctionNameYearly}') DROP PARTITION FUNCTION {PartitionFunctionNameYearly}";
 
         public const string PartitionFunctionNameMonthly = "pfTestsMonthly";
 
         public static string CreatePartitionFunctionMonthlySql = $"CREATE PARTITION FUNCTION [{PartitionFunctionNameMonthly}](datetime2(7)) AS RANGE RIGHT FOR VALUES (N'2016-01-01T00:00:00.000')";
 
-        public static string DropPartitionFunctionMonthlySql = $"DROP PARTITION FUNCTION {PartitionFunctionNameMonthly}";
+        public static string DropPartitionFunctionMonthlySql = $"IF EXISTS(SELECT 'True' FROM sys.partition_functions WHERE name = '{PartitionFunctionNameMonthly}') DROP PARTITION FUNCTION {PartitionFunctionNameMonthly}";
 
         public static string RefreshMetadata_SysPartitionFunctionsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysFileGroups @DatabaseName = '{DatabaseName}'
@@ -156,7 +166,11 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string RefreshMetadata_SysPartitionSchemesSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'";
 
         #endregion

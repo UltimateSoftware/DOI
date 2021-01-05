@@ -479,4 +479,16 @@
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_GetLogRowsFromRollback.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Filegroups.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_PrepTables.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_DBFiles.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwPartitionSchemes.sql" />
+  </ItemGroup>
 </Project>
