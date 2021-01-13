@@ -11,17 +11,18 @@ using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 
 namespace DOI.Tests.TestHelpers.Metadata
 {
-    public class vwPartitioning_FileGroupsHelper : SystemMetadataHelper
+    public class vwPartitioning_DBFilesHelper : SystemMetadataHelper
     {
         public const string UserTableName = "vwPartitionFunctionPartitions";
-        public const string ViewName = "vwPartitioning_FileGroups";
-        public string GetFilegroupSql(string partitionSchemeName, string createOrDrop)
+        public const string ViewName = "vwPartitioning_DBFiles";
+
+        public string GetDBFilesSql(string partitionSchemeName, string createOrDrop)
         {
-            var fieldName = createOrDrop == "Create" ? "AddFileGroupSQL" : "DropFileGroupSQL";
+            var fieldName = createOrDrop == "Create" ? "AddFileSQL" : "DropFileSQL";
 
             return sqlHelper.ExecuteScalar<string>($@"
             SELECT (SELECT {fieldName} + ';'
-                    FROM DOI.vwPartitioning_Filegroups
+                    FROM DOI.{ViewName}
                     WHERE PartitionSchemeName = '{partitionSchemeName}'
                     FOR XML PATH(''), TYPE).value(N'.[1]', N'varchar(max)')");
         }
@@ -46,7 +47,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PartitionSchemeName = row.First(x => x.First == "PartitionSchemeName").Second.ToString();
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
                 columnValue.NextBoundaryValue = row.First(x => x.First == "NextBoundaryValue").Second.ObjectToDateTime();
-                columnValue.FileGroupName = row.First(x => x.First == "FileGroupName").Second.ToString();
+                columnValue.DBFileName = row.First(x => x.First == "DBFileName").Second.ToString();
 
                 expectedPartitionFunctionPartitions.Add(columnValue);
             }
@@ -54,7 +55,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             return expectedPartitionFunctionPartitions;
         }
 
-        public static List<vwPartitioning_Filegroups> GetActualValues(string partitionFunctionName)
+        public static List<vwPartitioning_DBFiles> GetActualValues(string partitionFunctionName)
         {
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
@@ -65,28 +66,27 @@ namespace DOI.Tests.TestHelpers.Metadata
             ORDER BY BoundaryValue"));
 
 
-            List<vwPartitioning_Filegroups> actualVwPartitioning_Filegroups = new List<vwPartitioning_Filegroups>();
+            List<vwPartitioning_DBFiles> actualVwPartitioning_DBFiles = new List<vwPartitioning_DBFiles>();
 
             foreach (var row in actual)
             {
-                var columnValue = new vwPartitioning_Filegroups();
+                var columnValue = new vwPartitioning_DBFiles();
                 columnValue.DatabaseName = row.First(x => x.First == "DatabaseName").Second.ToString();
                 columnValue.PartitionFunctionName = row.First(x => x.First == "PartitionFunctionName").Second.ToString();
                 columnValue.PartitionSchemeName = row.First(x => x.First == "PartitionSchemeName").Second.ToString();
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
                 columnValue.NextBoundaryValue = row.First(x => x.First == "NextBoundaryValue").Second.ObjectToDateTime();
-                columnValue.FileGroupName = row.First(x => x.First == "FileGroupName").Second.ToString();
-                columnValue.IsFileGroupMissing = row.First(x => x.First == "IsFileGroupMissing").Second.ObjectToInteger();
+                columnValue.DBFileName = row.First(x => x.First == "DBFileName").Second.ToString();
+                columnValue.IsDBFileMissing = row.First(x => x.First == "IsDBFileMissing").Second.ObjectToInteger();
 
-                actualVwPartitioning_Filegroups.Add(columnValue);
+                actualVwPartitioning_DBFiles.Add(columnValue);
             }
 
-            return actualVwPartitioning_Filegroups;
+            return actualVwPartitioning_DBFiles;
         }
 
         //verify DOI Sys table data against expected values.
-
-        public static void AssertMetadata(string boundaryInterval, int isFileGroupMissing)
+        public static void AssertMetadata(string boundaryInterval, int isDBFileMissing)
         {
             SqlHelper sqlHelper = new SqlHelper();
             string partitionFunctionName = String.Concat("pfTests", boundaryInterval);
@@ -94,25 +94,22 @@ namespace DOI.Tests.TestHelpers.Metadata
             var expected = GetExpectedValues(partitionFunctionName);
             var actual = GetActualValues(partitionFunctionName);
 
-            var numOfTotalPartitionSchemeIntervals = sqlHelper.ExecuteScalar<int>($@"
-                SELECT CAST(NumOfTotalPartitionSchemeIntervals AS INT) AS NumOfTotalPartitionSchemeIntervals
+            var numOfTotalPartitionSchemeIntervals = sqlHelper.ExecuteScalar<short>($@"
+                SELECT NumOfTotalPartitionSchemeIntervals 
                 FROM DOI.PartitionFunctions 
                 WHERE PartitionFunctionName = '{partitionFunctionName}'");
 
-            Assert.Greater(expected.Count, 0);
-            Assert.Greater(actual.Count, 0);
-
-            Assert.AreEqual(expected.Count, actual.Count); //1 partition function only
+            Assert.AreEqual(actual.Count, expected.Count); //1 partition function only
 
             foreach (var expectedRow in expected)
             {
                 var actualRow = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PartitionFunctionName == expectedRow.PartitionFunctionName && x.BoundaryValue == expectedRow.BoundaryValue);
 
-                Assert.AreEqual(numOfTotalPartitionSchemeIntervals, actual.Count);
-                Assert.AreEqual(expectedRow.PartitionSchemeName, actualRow.PartitionSchemeName);
-                Assert.AreEqual(expectedRow.NextBoundaryValue, actualRow.NextBoundaryValue);
-                Assert.AreEqual(expectedRow.FileGroupName, actualRow.FileGroupName);
-                Assert.AreEqual(isFileGroupMissing, actualRow.IsFileGroupMissing);
+                Assert.AreEqual(numOfTotalPartitionSchemeIntervals, actual.Count, "TotalPartitionSchemeIntervals");
+                Assert.AreEqual(expectedRow.PartitionSchemeName, actualRow.PartitionSchemeName, "PartitionSchemeName");
+                Assert.AreEqual(expectedRow.NextBoundaryValue, actualRow.NextBoundaryValue, "NextBoundaryValue");
+                Assert.AreEqual(expectedRow.DBFileName, actualRow.DBFileName, "DBFileName");
+                Assert.AreEqual(isDBFileMissing, actualRow.IsDBFileMissing, "IsDBFileMissing");
             }
         }
 

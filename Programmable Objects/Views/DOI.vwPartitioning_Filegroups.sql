@@ -34,7 +34,7 @@ FROM (  SELECT	PFI.DatabaseName,
 BEGIN
 	ALTER DATABASE ' + DBFilePath.DatabaseName + ' ADD FILEGROUP [' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ']
 END' AS AddFileGroupSQL,
-'IF NOT EXISTS(SELECT ''True'' FROM ' + DBFilePath.DatabaseName + '.sys.filegroups WHERE NAME = ''' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ''')
+'IF EXISTS(SELECT ''True'' FROM ' + DBFilePath.DatabaseName + '.sys.filegroups WHERE NAME = ''' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ''')
 BEGIN
 	ALTER DATABASE ' + DBFilePath.DatabaseName + ' REMOVE FILEGROUP [' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ']
 END' AS DropFileGroupSQL,

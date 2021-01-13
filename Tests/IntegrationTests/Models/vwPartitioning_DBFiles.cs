@@ -8,13 +8,13 @@ namespace DOI.Tests.IntegrationTests.Models
 {
     public class vwPartitioning_DBFiles
     {
-        private string DatabaseName { get; set; }
-        private string PartitionFunctionName { get; set; }
-        private string PartitionSchemeName { get; set; }
-        private string BoundaryValue { get; set; }
-        private string NextBoundaryValue { get; set; }
-        private string DBFileName { get; set; }
-        private string AddFileSQL { get; set; }
-        private string IsDBFileMissing { get; set; }
+        public string DatabaseName { get; set; }
+        public string PartitionFunctionName { get; set; }
+        public string PartitionSchemeName { get; set; }
+        public DateTime BoundaryValue { get; set; }
+        public DateTime NextBoundaryValue { get; set; }
+        public string DBFileName { get; set; }
+        public string AddFileSQL { get; set; }
+        public int IsDBFileMissing { get; set; }
     }
 }

@@ -19,9 +19,10 @@ SELECT DatabaseName,
 		BoundaryValue, 
 		NextBoundaryValue, 
         FileGroupName,
-		DBFileName, 
+		X.DBFileName, df.DBFileName AS ddd,
 		AddFileSQL,
-		ISNULL(DF.name, 1) AS IsDBFileMissing
+		DropFileSQL,
+		CASE WHEN DF.DBFileName IS NULL THEN 1 ELSE 0 END AS IsDBFileMissing
 FROM (  SELECT	PFI.DatabaseName,
 				DBFilePath.database_id,
 				PFI.PartitionFunctionName,
@@ -47,7 +48,11 @@ BEGIN
 			FILEGROWTH = ' + CAST(DBFilePath.FileGrowth AS NVARCHAR(20)) + '
 		) 
 			TO FILEGROUP ' + DBFilePath.DatabaseName + '_' + PFI.Suffix + '
-END' AS AddFileSQL
+END' AS AddFileSQL,
+'IF EXISTS(SELECT * FROM ' + DBFilePath.DatabaseName + '.sys.database_files WHERE name = ''' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ''')
+BEGIN
+	ALTER DATABASE ' + DBFilePath.DatabaseName + ' REMOVE FILE ' + DBFilePath.DatabaseName + '_' + PFI.Suffix + '
+END;' AS DropFileSQL
         --SELECT count(*)
         FROM (  SELECT	TOP (1234567890987) *
                 FROM (SELECT DISTINCT
@@ -101,6 +106,14 @@ END' AS AddFileSQL
                                 INNER JOIN DOI.SysDatabases d ON d.database_id = df.database_id
 					        WHERE df.physical_name LIKE '%.mdf'
                                 AND d.name = PFI.DatabaseName) DBFilePath)X
-	LEFT JOIN DOI.SysDatabaseFiles DF ON DF.database_id = X.database_id
-		AND DF.name = X.DBFileName
+	LEFT JOIN ( SELECT	CASE 
+							WHEN type_desc = 'ROWS' AND data_space_id = 1
+							THEN name + '.mdf'
+							WHEN type_desc = 'ROWS' AND data_space_id > 1
+							THEN name + '.ndf'
+							WHEN type_desc = 'LOG'
+							THEN name + '.ldf'
+						END AS DBFileName, *
+				FROM DOI.SysDatabaseFiles) DF ON DF.database_id = X.database_id
+		AND DF.DBFileName = X.DBFileName
 GO

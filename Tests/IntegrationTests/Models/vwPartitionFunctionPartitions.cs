@@ -21,6 +21,7 @@ namespace DOI.Tests.IntegrationTests.Models
         public int DateDiffs { get; set; }
         public int PartitionNumber { get; set; }
         public string FileGroupName { get; set; }
+        public string DBFileName { get; set; }
         public int IsSlidingWindowActivePartition { get; set; }
         public int IncludeInPartitionFunction { get; set; }
         public int IncludeInPartitionScheme { get; set; }
