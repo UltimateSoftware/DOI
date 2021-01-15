@@ -15,14 +15,16 @@ namespace DOI.Tests.TestHelpers.Metadata
     {
         public const string SysTableName = "SysTables";
         public const string SqlServerDmvName = "sys.tables";
+        public const string UserTableName = "Tables";
 
-        public static List<SysTables> GetExpectedValues()
+
+        public static List<SysTables> GetExpectedSysValues(string tableName)
         {
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT * 
             FROM {DatabaseName}.{SqlServerDmvName}
-            WHERE name = '{TableName}'"));
+            WHERE name = '{tableName}'"));
 
             List<SysTables> expectedSysTables = new List<SysTables>();
 
@@ -72,7 +74,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             return expectedSysTables;
         }
 
-        public static List<SysTables> GetActualValues()
+        public static List<SysTables> GetActualSysValues(string tableName)
         {
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
@@ -80,7 +82,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             FROM DOI.DOI.{SysTableName} T 
                 INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = T.database_id 
             WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'"));
+                AND T.name = '{tableName}'"));
 
             List<SysTables> actualSysTables = new List<SysTables>();
 
@@ -130,14 +132,57 @@ namespace DOI.Tests.TestHelpers.Metadata
             return actualSysTables;
         }
 
-        //verify DOI Sys table data against expected values.
-        public static void AssertMetadata()
+        public static List<Tables> GetActualUserValues(string tableName)
         {
-            var expected = GetExpectedValues();
+            SqlHelper sqlHelper = new SqlHelper();
+            var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
+            SELECT T.* 
+            FROM DOI.{UserTableName} T 
+            WHERE T.DatabaseName = '{DatabaseName}'
+                AND T.TableName = '{tableName}'"));
 
-            Assert.AreEqual(1, expected.Count);
+            List<Tables> actualUserTables = new List<Tables>();
 
-            var actual = GetActualValues();
+            foreach (var row in actual)
+            {
+                var columnValue = new Tables();
+
+                columnValue.DatabaseName = row.First(x => x.First == "DatabaseName").Second.ToString();
+                columnValue.SchemaName = row.First(x => x.First == "SchemaName").Second.ToString();
+                columnValue.TableName = row.First(x => x.First == "TableName").Second.ToString();
+                columnValue.PartitionColumn = row.First(x => x.First == "PartitionColumn").Second.ToString();
+                columnValue.Storage_Desired = row.First(x => x.First == "Storage_Desired").Second.ToString();
+                columnValue.Storage_Actual = row.First(x => x.First == "Storage_Actual").Second.ToString();
+                columnValue.StorageType_Desired = row.First(x => x.First == "StorageType_Desired").Second.ToString();
+                columnValue.StorageType_Actual = row.First(x => x.First == "StorageType_Actual").Second.ToString();
+                columnValue.IntendToPartition = (bool)row.First(x => x.First == "IntendToPartition").Second;
+                columnValue.ReadyToQueue = (bool)row.First(x => x.First == "ReadyToQueue").Second;
+                columnValue.AreIndexesFragmented = (bool)row.First(x => x.First == "AreIndexesFragmented").Second;
+                columnValue.AreIndexesBeingUpdated = (bool)row.First(x => x.First == "AreIndexesBeingUpdated").Second;
+                columnValue.AreIndexesMissing = (bool)row.First(x => x.First == "AreIndexesMissing").Second;
+                columnValue.IsClusteredIndexBeingDropped = (bool)row.First(x => x.First == "IsClusteredIndexBeingDropped").Second;
+                columnValue.WhichUniqueConstraintIsBeingDropped = row.First(x => x.First == "WhichUniqueConstraintIsBeingDropped").Second.ToString();
+                columnValue.IsStorageChanging = (bool)row.First(x => x.First == "IsStorageChanging").Second;
+                columnValue.NeedsTransaction = (bool)row.First(x => x.First == "NeedsTransaction").Second;
+                columnValue.AreStatisticsChanging = (bool)row.First(x => x.First == "AreStatisticsChanging").Second;
+                columnValue.NewPartitionedPrepTableName = row.First(x => x.First == "NewPartitionedPrepTableName").Second.ToString();
+                columnValue.PartitionFunctionName = row.First(x => x.First == "PartitionFunctionName").Second.ToString();
+
+                actualUserTables.Add(columnValue);
+            }
+
+            return actualUserTables;
+        }
+
+
+        //verify DOI Sys table data against expected values.
+        public static void AssertSysMetadata(string tableName)
+        {
+            var expected = GetExpectedSysValues(tableName);
+
+            Assert.AreEqual(1, expected.Count, "SysTableCount");
+
+            var actual = GetActualSysValues(tableName);
 
             Assert.AreEqual(1, actual.Count);
 
@@ -145,42 +190,119 @@ namespace DOI.Tests.TestHelpers.Metadata
             {
                 var actualRow = actual.Find(x => x.database_id == expectedRow.database_id && x.name == expectedRow.name);
 
-                Assert.AreEqual(expectedRow.name, actualRow.name);
-                Assert.AreEqual(expectedRow.object_id, actualRow.object_id);
-                Assert.AreEqual(expectedRow.principal_id, actualRow.principal_id);
-                Assert.AreEqual(expectedRow.schema_id, actualRow.schema_id);
-                Assert.AreEqual(expectedRow.parent_object_id, actualRow.parent_object_id);
-                Assert.AreEqual(expectedRow.type, actualRow.type);
-                Assert.AreEqual(expectedRow.type_desc, actualRow.type_desc);
-                Assert.AreEqual(expectedRow.create_date, actualRow.create_date);
-                Assert.AreEqual(expectedRow.modify_date, actualRow.modify_date);
-                Assert.AreEqual(expectedRow.is_ms_shipped, actualRow.is_ms_shipped);
-                Assert.AreEqual(expectedRow.is_published, actualRow.is_published);
-                Assert.AreEqual(expectedRow.is_schema_published, actualRow.is_schema_published);
-                Assert.AreEqual(expectedRow.lob_data_space_id, actualRow.lob_data_space_id);
-                Assert.AreEqual(expectedRow.filestream_data_space_id, actualRow.filestream_data_space_id);
-                Assert.AreEqual(expectedRow.max_column_id_used, actualRow.max_column_id_used);
-                Assert.AreEqual(expectedRow.lock_on_bulk_load, actualRow.lock_on_bulk_load);
-                Assert.AreEqual(expectedRow.uses_ansi_nulls, actualRow.uses_ansi_nulls);
-                Assert.AreEqual(expectedRow.is_replicated, actualRow.is_replicated);
-                Assert.AreEqual(expectedRow.has_replication_filter, actualRow.has_replication_filter);
-                Assert.AreEqual(expectedRow.is_merge_published, actualRow.is_merge_published);
-                Assert.AreEqual(expectedRow.is_sync_tran_subscribed, actualRow.is_sync_tran_subscribed);
-                Assert.AreEqual(expectedRow.has_unchecked_assembly_data, actualRow.has_unchecked_assembly_data);
-                Assert.AreEqual(expectedRow.text_in_row_limit, actualRow.text_in_row_limit);
-                Assert.AreEqual(expectedRow.large_value_types_out_of_row, actualRow.large_value_types_out_of_row);
-                Assert.AreEqual(expectedRow.is_tracked_by_cdc, actualRow.is_tracked_by_cdc);
-                Assert.AreEqual(expectedRow.lock_escalation, actualRow.lock_escalation);
-                Assert.AreEqual(expectedRow.lock_escalation_desc, actualRow.lock_escalation_desc);
-                Assert.AreEqual(expectedRow.is_filetable, actualRow.is_filetable);
-                Assert.AreEqual(expectedRow.is_memory_optimized, actualRow.is_memory_optimized);
-                Assert.AreEqual(expectedRow.durability, actualRow.durability);
-                Assert.AreEqual(expectedRow.durability_desc, actualRow.durability_desc);
-                Assert.AreEqual(expectedRow.temporal_type, actualRow.temporal_type);
-                Assert.AreEqual(expectedRow.temporal_type_desc, actualRow.temporal_type_desc);
-                Assert.AreEqual(expectedRow.history_table_id, actualRow.history_table_id);
-                Assert.AreEqual(expectedRow.is_remote_data_archive_enabled, actualRow.is_remote_data_archive_enabled);
-                Assert.AreEqual(expectedRow.is_external, actualRow.is_external);
+                Assert.AreEqual(expectedRow.name, actualRow.name, "name");
+                Assert.AreEqual(expectedRow.object_id, actualRow.object_id, "object_id");
+                Assert.AreEqual(expectedRow.principal_id, actualRow.principal_id, "principal_id");
+                Assert.AreEqual(expectedRow.schema_id, actualRow.schema_id, "schema_id");
+                Assert.AreEqual(expectedRow.parent_object_id, actualRow.parent_object_id, "parent_object_id");
+                Assert.AreEqual(expectedRow.type, actualRow.type, "type");
+                Assert.AreEqual(expectedRow.type_desc, actualRow.type_desc, "type_desc");
+                Assert.AreEqual(expectedRow.create_date, actualRow.create_date, "create_date");
+                Assert.AreEqual(expectedRow.modify_date, actualRow.modify_date, "modify_date");
+                Assert.AreEqual(expectedRow.is_ms_shipped, actualRow.is_ms_shipped, "is_ms_shipped");
+                Assert.AreEqual(expectedRow.is_published, actualRow.is_published, "is_published");
+                Assert.AreEqual(expectedRow.is_schema_published, actualRow.is_schema_published, "is_schema_published");
+                Assert.AreEqual(expectedRow.lob_data_space_id, actualRow.lob_data_space_id, "lob_data_space_id");
+                Assert.AreEqual(expectedRow.filestream_data_space_id, actualRow.filestream_data_space_id, "filestream_data_space_id");
+                Assert.AreEqual(expectedRow.max_column_id_used, actualRow.max_column_id_used, "max_column_id_used");
+                Assert.AreEqual(expectedRow.lock_on_bulk_load, actualRow.lock_on_bulk_load, "lock_on_bulk_load");
+                Assert.AreEqual(expectedRow.uses_ansi_nulls, actualRow.uses_ansi_nulls, "uses_ansi_nulls");
+                Assert.AreEqual(expectedRow.is_replicated, actualRow.is_replicated, "is_replicated");
+                Assert.AreEqual(expectedRow.has_replication_filter, actualRow.has_replication_filter, "has_replication_filter");
+                Assert.AreEqual(expectedRow.is_merge_published, actualRow.is_merge_published, "is_merge_published");
+                Assert.AreEqual(expectedRow.is_sync_tran_subscribed, actualRow.is_sync_tran_subscribed, "is_sync_tran_subscribed");
+                Assert.AreEqual(expectedRow.has_unchecked_assembly_data, actualRow.has_unchecked_assembly_data, "has_unchecked_assembly_data");
+                Assert.AreEqual(expectedRow.text_in_row_limit, actualRow.text_in_row_limit, "text_in_row_limit");
+                Assert.AreEqual(expectedRow.large_value_types_out_of_row, actualRow.large_value_types_out_of_row, "large_value_types_out_of_row");
+                Assert.AreEqual(expectedRow.is_tracked_by_cdc, actualRow.is_tracked_by_cdc, "is_tracked_by_cdc");
+                Assert.AreEqual(expectedRow.lock_escalation, actualRow.lock_escalation, "lock_escalation");
+                Assert.AreEqual(expectedRow.lock_escalation_desc, actualRow.lock_escalation_desc, "lock_escalation_desc");
+                Assert.AreEqual(expectedRow.is_filetable, actualRow.is_filetable, "is_filetable");
+                Assert.AreEqual(expectedRow.is_memory_optimized, actualRow.is_memory_optimized, "is_memory_optimized");
+                Assert.AreEqual(expectedRow.durability, actualRow.durability, "durability");
+                Assert.AreEqual(expectedRow.durability_desc, actualRow.durability_desc, "durability_desc");
+                Assert.AreEqual(expectedRow.temporal_type, actualRow.temporal_type, "temporal_type");
+                Assert.AreEqual(expectedRow.temporal_type_desc, actualRow.temporal_type_desc, "temporal_type_desc");
+                Assert.AreEqual(expectedRow.history_table_id, actualRow.history_table_id, "history_table_id");
+                Assert.AreEqual(expectedRow.is_remote_data_archive_enabled, actualRow.is_remote_data_archive_enabled, "is_remote_data_archive_enabled");
+                Assert.AreEqual(expectedRow.is_external, actualRow.is_external, "is_external");
+            }
+        }
+
+        public static void AssertUserMetadata(string tableName, string boundaryInterval)
+        {
+            var actual = GetActualUserValues(tableName);
+
+            Assert.AreEqual(1, actual.Count, "UserTableCount");
+
+            foreach (var actualRow in actual)
+            {
+                if (tableName == TableName)
+                {
+                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName, "DatabaseName");
+                    Assert.AreEqual("dbo", actualRow.SchemaName, "SchemaName");
+                    Assert.AreEqual(TableName, actualRow.TableName, "TableName");
+                    Assert.AreEqual(string.Empty, actualRow.PartitionColumn, "PartitionColumn");
+                    Assert.AreEqual("PRIMARY", actualRow.Storage_Desired, "Storage_Desired");
+                    Assert.AreEqual("PRIMARY", actualRow.Storage_Actual, "Storage_Actual");
+                    Assert.AreEqual("ROWS_FILEGROUP", actualRow.StorageType_Desired, "StorageType_Desired");
+                    Assert.AreEqual("ROWS_FILEGROUP", actualRow.StorageType_Actual, "StorageType_Actual");
+                    Assert.AreEqual(false, actualRow.IntendToPartition, "IntendToPartition");
+                    Assert.AreEqual(true, actualRow.ReadyToQueue, "ReadyToQueue");
+                    Assert.AreEqual(false, actualRow.AreIndexesFragmented, "AreIndexesFragmented");
+                    Assert.AreEqual(false, actualRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
+                    Assert.AreEqual(false, actualRow.AreIndexesMissing, "AreIndexesMissing");
+                    Assert.AreEqual(false, actualRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
+                    Assert.AreEqual("None", actualRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
+                    Assert.AreEqual(false, actualRow.NeedsTransaction, "NeedsTransaction");
+                    Assert.AreEqual(false, actualRow.AreStatisticsChanging, "AreStatisticsChanging");
+                    Assert.AreEqual(string.Empty, actualRow.NewPartitionedPrepTableName, "NewPartitionedPrepTableName");
+                    Assert.AreEqual(string.Empty, actualRow.PartitionFunctionName, "PartitionFunctionName");
+                }
+                else if (tableName == TableName_Partitioned && boundaryInterval == "Yearly")
+                {
+                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName, "DatabaseName");
+                    Assert.AreEqual("dbo", actualRow.SchemaName, "SchemaName");
+                    Assert.AreEqual(TableName_Partitioned, actualRow.TableName, "TableName");
+                    Assert.AreEqual(PartitionColumnName, actualRow.PartitionColumn, "PartitionColumn");
+                    Assert.AreEqual(PartitionSchemeNameYearly, actualRow.Storage_Desired, "Storage_Desired");
+                    Assert.AreEqual(PartitionSchemeNameYearly, actualRow.Storage_Actual, "Storage_Actual");
+                    Assert.AreEqual("PARTITION_SCHEME", actualRow.StorageType_Desired, "StorageType_Desired");
+                    Assert.AreEqual("PARTITION_SCHEME", actualRow.StorageType_Actual, "StorageType_Actual");
+                    Assert.AreEqual(true, actualRow.IntendToPartition, "IntendToPartition");
+                    Assert.AreEqual(true, actualRow.ReadyToQueue, "ReadyToQueue");
+                    Assert.AreEqual(false, actualRow.AreIndexesFragmented, "AreIndexesFragmented");
+                    Assert.AreEqual(false, actualRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
+                    Assert.AreEqual(false, actualRow.AreIndexesMissing, "AreIndexesMissing");
+                    Assert.AreEqual(false, actualRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
+                    Assert.AreEqual("None", actualRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
+                    Assert.AreEqual(false, actualRow.NeedsTransaction, "NeedsTransaction");
+                    Assert.AreEqual(false, actualRow.AreStatisticsChanging, "AreStatisticsChanging");
+                    Assert.AreEqual(string.Concat(TableName_Partitioned, "_NewPartitionedTableFromPrep"), actualRow.NewPartitionedPrepTableName, "NewPartitionedPrepTableName");
+                    Assert.AreEqual(PartitionFunctionNameYearly, actualRow.PartitionFunctionName, "PartitionFunctionName");
+                }
+                else if (tableName == TableName_Partitioned && boundaryInterval == "Monthly")
+                {
+                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName, "DatabaseName");
+                    Assert.AreEqual("dbo", actualRow.SchemaName, "SchemaName");
+                    Assert.AreEqual(TableName_Partitioned, actualRow.TableName, "TableName");
+                    Assert.AreEqual(PartitionColumnName, actualRow.PartitionColumn, "PartitionColumn");
+                    Assert.AreEqual(PartitionSchemeNameMonthly, actualRow.Storage_Desired, "Storage_Desired");
+                    Assert.AreEqual(PartitionSchemeNameMonthly, actualRow.Storage_Actual, "Storage_Actual");
+                    Assert.AreEqual("PARTITION_SCHEME", actualRow.StorageType_Desired, "StorageType_Desired");
+                    Assert.AreEqual("PARTITION_SCHEME", actualRow.StorageType_Actual, "StorageType_Actual");
+                    Assert.AreEqual(true, actualRow.IntendToPartition, "IntendToPartition");
+                    Assert.AreEqual(true, actualRow.ReadyToQueue, "ReadyToQueue");
+                    Assert.AreEqual(false, actualRow.AreIndexesFragmented, "AreIndexesFragmented");
+                    Assert.AreEqual(false, actualRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
+                    Assert.AreEqual(false, actualRow.AreIndexesMissing, "AreIndexesMissing");
+                    Assert.AreEqual(false, actualRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
+                    Assert.AreEqual("None", actualRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
+                    Assert.AreEqual(false, actualRow.NeedsTransaction, "NeedsTransaction");
+                    Assert.AreEqual(false, actualRow.AreStatisticsChanging, "AreStatisticsChanging");
+                    Assert.AreEqual(string.Concat(TableName_Partitioned, "_NewPartitionedTableFromPrep"), actualRow.NewPartitionedPrepTableName, "NewPartitionedPrepTableName");
+                    Assert.AreEqual(PartitionFunctionNameMonthly, actualRow.PartitionFunctionName, "PartitionFunctionName");
+                }
             }
         }
     }

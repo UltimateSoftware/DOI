@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[vwTables_PrepTables_Indexes]') IS NOT NULL
-	DROP VIEW [DOI].[vwTables_PrepTables_Indexes];
+IF OBJECT_ID('[DOI].[vwPartitioning_Tables_PrepTables_Indexes]') IS NOT NULL
+	DROP VIEW [DOI].[vwPartitioning_Tables_PrepTables_Indexes];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -16,13 +16,13 @@ GO
 
 
 
-CREATE   VIEW [DOI].[vwTables_PrepTables_Indexes]
+CREATE   VIEW [DOI].[vwPartitioning_Tables_PrepTables_Indexes]
 
 AS
 
 /*
 	SELECT	PrepTableIndexCreateSQL
-	FROM  DOI.vwTables_PrepTables_Indexes
+	FROM  DOI.vwPartitioning_Tables_PrepTables_Indexes
 	WHERE preptableindexname = 'CDX_Bai2BankTransactions_NewPartitionedTableFromPrep'
 */ 
 
@@ -208,7 +208,7 @@ BEGIN
 		@objtype = ''INDEX''
 END' 
 		END AS RevertRenameNewPartitionedPrepTableIndexSQL
-FROM DOI.vwTables_PrepTables PT
+FROM DOI.vwPartitioning_Tables_PrepTables PT
     INNER JOIN DOI.vwIndexes I ON I.DatabaseName = PT.DatabaseName
         AND I.SchemaName = PT.SchemaName
         AND I.TableName = PT.TableName

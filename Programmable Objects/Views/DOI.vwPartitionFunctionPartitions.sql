@@ -150,9 +150,13 @@ AS SetFilegroupToNextUsedSQL
                                 AND d.name = PFI.DatabaseName) DBFilePath
 	        OUTER APPLY (	SELECT 1 AS DoesPartitionExist, pf.function_id, ps.data_space_id, ps.name, PRV.boundary_id
 					        FROM DOI.SysPartitionFunctions pf
-						        INNER JOIN DOI.SysPartitionRangeValues prv ON prv.function_id = pf.function_id
-                                INNER JOIN DOI.SysPartitionSchemes ps ON ps.function_id = pf.function_id
-					        WHERE pf.name = PFI.PartitionFunctionName
+                                INNER JOIN DOI.SysDatabases d ON d.database_id = pf.database_id
+						        INNER JOIN DOI.SysPartitionRangeValues prv ON prv.database_id = pf.database_id
+                                    AND prv.function_id = pf.function_id
+                                INNER JOIN DOI.SysPartitionSchemes ps ON ps.database_id = pf.database_id
+                                    AND ps.function_id = pf.function_id
+					        WHERE d.name = pfi.DatabaseName
+                                AND pf.name = PFI.PartitionFunctionName
 						        AND CAST(prv.value AS DATE) = PFI.BoundaryValue) ExistingPartitions
 	        OUTER APPLY (	SELECT *
 					        FROM (	SELECT	FG.Name AS NextUsedFileGroupName,

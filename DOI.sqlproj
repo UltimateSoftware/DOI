@@ -285,7 +285,6 @@
     <None Include="Programmable Objects\Views\DOI.vwPartitionFunctions.sql" />
     <None Include="Programmable Objects\Views\DOI.vwStatistics.sql" />
     <None Include="Programmable Objects\Views\DOI.vwTables.sql" />
-    <None Include="Programmable Objects\Views\DOI.vwTables_PrepTables.sql" />
     <None Include="Schema-Model\Security\Schemas\DOI.sql" />
     <None Include="Schema-Model\Tables\DOI.CheckConstraints.sql" />
     <None Include="Schema-Model\Tables\DOI.CheckConstraintsNotInMetadata.sql" />
@@ -419,9 +418,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\004_Metadata_User_Tables.sql" />
-    <None Include="Programmable Objects\Views\DOI.vwTables_PrepTables_Constraints.sql" />
-    <None Include="Programmable Objects\Views\DOI.vwTables_PrepTables_Indexes.sql" />
-    <None Include="Programmable Objects\Views\DOI.vwTables_PrepTables_Partitions.sql" />
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_PrepTables_Constraints.sql" />
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_PrepTables_Indexes.sql" />
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_PrepTables_Partitions.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Schema-Model\Tables\DOI.SysCheckConstraints.sql" />
@@ -432,7 +431,7 @@
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_RenameStatistics.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_StatisticsNotInMetadata.sql" />
-    <None Include="Programmable Objects\Views\DOI.vwTables_PrepTables_Statistics.sql" />
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_PrepTables_Statistics.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RevertRename.sql" />
@@ -483,12 +482,15 @@
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_Filegroups.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Views\DOI.vwPartitioning_PrepTables.sql" />
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_PrepTables.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_DBFiles.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwPartitionSchemes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\vwPartitioning_PrepTables.sql" />
   </ItemGroup>
 </Project>

@@ -148,7 +148,7 @@ RECONFIGURE
 			PTI.RowNum,
 			PTI.PrepTableName,
 			PTI.IndexSizeMB_Actual
-	FROM  DOI.vwTables_PrepTables_Indexes PTI
+	FROM  DOI.vwPartitioning_Tables_PrepTables_Indexes PTI
 	WHERE PTI.DatabaseName = @DatabaseName
 		AND PTI.SchemaName = @SchemaName
 		AND PTI.ParentTableName = @TableName
@@ -182,7 +182,7 @@ RECONFIGURE
 				PT.FinalRepartitioningValidationSQL,
                 TTP.DeletePartitionStateMetadataSQL
 		FROM DOI.vwTables TTP
-			INNER JOIN DOI.vwTables_PrepTables PT ON PT.SchemaName = TTP.SchemaName
+			INNER JOIN DOI.vwPartitioning_Tables_PrepTables PT ON PT.SchemaName = TTP.SchemaName
 				AND PT.TableName = TTP.TableName
 		WHERE TTP.IntendToPartition = 1
 			AND PT.PrepTableName IS NOT NULL
@@ -373,7 +373,7 @@ RECONFIGURE
 			--create all Constraints
 			DECLARE CreateAllConstraints_Cur CURSOR LOCAL FAST_FORWARD FOR
 				SELECT	PTC.CreateConstraintStatement, RowNum
-				FROM  DOI.vwTables_PrepTables_Constraints PTC
+				FROM  DOI.vwPartitioning_Tables_PrepTables_Constraints PTC
 				WHERE PTC.DatabaseName = @CurrentDatabaseName
 					AND PTC.SchemaName = @CurrentSchemaName
 					AND PTC.ParentTableName = @CurrentTableName
@@ -491,7 +491,7 @@ RECONFIGURE
 							PartitionSwitchSQL,
 							DropTableSQL,
 							PartitionNumber
-					FROM DOI.vwTables_PrepTables_Partitions
+					FROM DOI.vwPartitioning_Tables_PrepTables_Partitions
 					WHERE DatabaseName = @CurrentDatabaseName
 						AND SchemaName = @CurrentSchemaName
 						AND ParentTableName = @CurrentTableName
@@ -733,7 +733,7 @@ BEGIN TRAN',
 					SELECT	PTC.RenameExistingTableConstraintSQL,
 							PTC.RenameNewPartitionedPrepTableConstraintSQL,
 							PTC.RowNum
-					FROM  DOI.vwTables_PrepTables_Constraints PTC
+					FROM  DOI.vwPartitioning_Tables_PrepTables_Constraints PTC
 					WHERE PTC.DatabaseName = @DatabaseName
 						AND PTC.SchemaName = @CurrentSchemaName
 						AND PTC.ParentTableName = @CurrentTableName
@@ -795,7 +795,7 @@ BEGIN TRAN',
 					SELECT	S.StatisticsName,
                             S.RenameExistingTableStatisticsSQL,
 							S.RowNum
-					FROM  DOI.vwTables_PrepTables_Statistics S
+					FROM  DOI.vwPartitioning_Tables_PrepTables_Statistics S
 					WHERE S.DatabaseName = @CurrentDatabaseName
 						AND S.SchemaName = @CurrentSchemaName
 						AND S.ParentTableName = @CurrentTableName

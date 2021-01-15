@@ -34,7 +34,7 @@ DECLARE @now VARCHAR(30) = CONVERT(VARCHAR(30), SYSDATETIME(),112)
 
 DECLARE @BackupTableName sysname = @TableName + '_' + @now
 
-SET @ColumnList += (SELECT DOI.fnGetColumnListForTable(@SchemaName, @TableName, 'INSERT', 1, 'B', 'O'))
+SET @ColumnList += (SELECT DOI.fnGetColumnListForTable(@DatabaseName, @SchemaName, @TableName, 'INSERT', 1, 'B', 'O'))
 SET @JoinClause += (SELECT DOI.fnGetJoinClauseForTable(@DatabaseName, @SchemaName, @TableName, 7, 'B', 'O'))
 
 SELECT @SQL += '

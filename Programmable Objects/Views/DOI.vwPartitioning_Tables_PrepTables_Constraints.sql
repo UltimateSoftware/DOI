@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[vwTables_PrepTables_Constraints]') IS NOT NULL
-	DROP VIEW [DOI].[vwTables_PrepTables_Constraints];
+IF OBJECT_ID('[DOI].[vwPartitioning_Tables_PrepTables_Constraints]') IS NOT NULL
+	DROP VIEW [DOI].[vwPartitioning_Tables_PrepTables_Constraints];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -15,12 +15,12 @@ GO
 
 
 
-CREATE   VIEW [DOI].[vwTables_PrepTables_Constraints]
+CREATE   VIEW [DOI].[vwPartitioning_Tables_PrepTables_Constraints]
 AS
 
 /*
 	SELECT *
-	FROM DOI.vwTables_PrepTables_Constraints
+	FROM DOI.[vwPartitioning_Tables_PrepTables_Constraints]
 	WHERE ParentTableName = 'Pays' 
 		AND preptablename = 'PayTaxes_NewPartitionedTableFromPrep'
 */ 
@@ -37,7 +37,7 @@ SELECT	FN.DatabaseName,
 		C.RevertRenameExistingTableConstraintSQL,
 		C.RevertRenameNewPartitionedPrepTableConstraintSQL,
 		ROW_NUMBER() OVER(PARTITION BY FN.SchemaName, FN.TableName, FN.PrepTableName ORDER BY FN.SchemaName, FN.TableName, FN.PrepTableName) AS RowNum
-FROM DOI.vwTables_PrepTables FN
+FROM DOI.vwPartitioning_Tables_PrepTables FN
 	CROSS APPLY(SELECT *
 				FROM (	SELECT	SchemaName,
 								TableName,

@@ -1,6 +1,3 @@
-
-GO
-
 IF OBJECT_ID('[DOI].[fnIndexesRowStore]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnIndexesRowStore];
 
@@ -9,12 +6,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
-
-
-
-
-
 
 
 CREATE   FUNCTION [DOI].[fnIndexesRowStore]()   
@@ -62,6 +53,8 @@ RETURN  (
 					,IRS.OptionIgnoreDupKey_Actual
 					,IRS.OptionDataCompression_Desired
 					,IRS.OptionDataCompression_Actual
+					,NULL AS OptionDataCompressionDelay_Desired
+					,NULL AS OptionDataCompressionDelay_Actual
 					,IRS.OptionAllowRowLocks_Desired
 					,IRS.OptionAllowRowLocks_Actual
 					,IRS.OptionAllowPageLocks_Desired
@@ -105,32 +98,17 @@ RETURN  (
 					,IRS.IsAllowRowLocksChanging
 					,IRS.IsAllowPageLocksChanging
 					,IRS.IsDataCompressionChanging
+					,0 AS IsDataCompressionDelayChanging
 					,IRS.IndexHasLOBColumns
 					,IRS.NumPages_Actual
                     ,'RowStore' AS IndexType
                     ,IRS.IsIndexLarge
                     ,IRS.DriveLetter
-			--SELECT COUNT(*)
 			FROM DOI.Tables TTP
                 INNER JOIN DOI.SysDatabases d on d.name = TTP.DatabaseName
 				INNER JOIN DOI.IndexesRowStore IRS ON TTP.DatabaseName = IRS.DatabaseName
                     AND TTP.SchemaName = IRS.SchemaName
 					AND TTP.TableName = IRS.TableName
         )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO

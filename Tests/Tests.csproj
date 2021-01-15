@@ -452,6 +452,7 @@
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTypes.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionFunctionPartitions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionFunctions.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitioning_Tables_PrepTables.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionSchemes.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartition_DBFiles.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartition_FileGroups.cs" />
@@ -495,11 +496,13 @@
     <Compile Include="IntegrationTests\Models\SysStatsColumns.cs" />
     <Compile Include="IntegrationTests\Models\SysTables.cs" />
     <Compile Include="IntegrationTests\Models\SysTypes.cs" />
+    <Compile Include="IntegrationTests\Models\Tables.cs" />
     <Compile Include="IntegrationTests\Models\TempARow.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitionFunctionPartitions.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitionFunctions.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitioning_DBFiles.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitioning_Filegroups.cs" />
+    <Compile Include="IntegrationTests\Models\vwPartitioning_Tables_PrepTables.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitionSchemes.cs" />
     <Compile Include="IntegrationTests\OfflineRunTests.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
@@ -548,6 +551,7 @@
     <Compile Include="TestHelpers\Metadata\vwPartitionFunctionsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwPartitioning_DBFilesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwPartitioning_FileGroupsHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\vwPartitioning_PrepTablesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwPartitionSchemesHelper.cs" />
     <Compile Include="TestHelpers\SetupSqlStatements_NonPartitioned.cs" />
     <Compile Include="TestHelpers\ObjectExtensions.cs" />
@@ -586,7 +590,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="IntegrationTests\FunctionTests\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -1,6 +1,3 @@
-
-GO
-
 IF OBJECT_ID('[DOI].[fnIndexesColumnStore]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnIndexesColumnStore];
 
@@ -109,96 +106,9 @@ RETURN(
                     ,ICS.DriveLetter
 			FROM DOI.Tables TTP
                 INNER JOIN DOI.SysDatabases d on d.name = TTP.DatabaseName
-				INNER JOIN DOI.IndexesColumnStore ICS ON TTP.SchemaName = ICS.SchemaName
+				INNER JOIN DOI.IndexesColumnStore ICS ON TTP.DatabaseName = ICS.DatabaseName
+					AND TTP.SchemaName = ICS.SchemaName
 					AND TTP.TableName = ICS.TableName
         )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 GO

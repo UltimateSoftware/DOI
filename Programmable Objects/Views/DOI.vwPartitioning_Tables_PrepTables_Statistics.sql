@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[vwTables_PrepTables_Statistics]') IS NOT NULL
-	DROP VIEW [DOI].[vwTables_PrepTables_Statistics];
+IF OBJECT_ID('[DOI].[vwPartitioning_Tables_PrepTables_Statistics]') IS NOT NULL
+	DROP VIEW [DOI].[vwPartitioning_Tables_PrepTables_Statistics];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11,12 +11,12 @@ SET ANSI_NULLS ON
 GO
 
 
-CREATE   VIEW [DOI].[vwTables_PrepTables_Statistics]
+CREATE   VIEW [DOI].[vwPartitioning_Tables_PrepTables_Statistics]
 AS
 
 /*
 	SELECT	*
-	FROM  DOI.vwTables_PrepTables_Statistics FNS
+	FROM  DOI.vwPartitioning_Tables_PrepTables_Statistics FNS
 	WHERE FNS.SchemaName = 'dbo'
 		AND FNS.ParentTableName = 'PartitioningTestAutomationTable'
     
@@ -107,7 +107,7 @@ BEGIN
         @objtype = ''STATISTICS''
 END' 
             END AS RevertRenameNewPartitionedPrepTableStatisticsSQL
-	FROM  DOI.vwTables_PrepTables T
+	FROM  DOI.vwPartitioning_Tables_PrepTables T
         INNER JOIN DOI.[vwStatistics] STM ON STM.SchemaName = T.SchemaName 
             AND STM.TableName = T.TableName
     WHERE T.IsNewPartitionedPrepTable = 1

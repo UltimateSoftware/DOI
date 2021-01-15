@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[vwTables_PrepTables_Partitions]') IS NOT NULL
-	DROP VIEW [DOI].[vwTables_PrepTables_Partitions];
+IF OBJECT_ID('[DOI].[vwPartitioning_Tables_PrepTables_Partitions]') IS NOT NULL
+	DROP VIEW [DOI].[vwPartitioning_Tables_PrepTables_Partitions];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11,12 +11,12 @@ SET ANSI_NULLS ON
 GO
 
 
-CREATE   VIEW [DOI].[vwTables_PrepTables_Partitions]
+CREATE   VIEW [DOI].[vwPartitioning_Tables_PrepTables_Partitions]
 AS
 
 /*
 	select *
-	from DOI.vwTables_PrepTables_Partitions
+	from DOI.vwPartitioning_Tables_PrepTables_Partitions
 	WHERE parenttablename = 'Pays' 
 	order by PartitionNumber
 */ 
@@ -42,8 +42,8 @@ DROP TABLE ' + PTNonPartitioned.SchemaName + '.' + PTNonPartitioned.PrepTableNam
 AS DropTableSQL,
 
 		PTNonPartitioned.PartitionNumber
-FROM DOI.vwTables_PrepTables PTNonPartitioned
-	INNER JOIN DOI.vwTables_PrepTables PTPartitioned ON PTNonPartitioned.DatabaseName = PTPartitioned.DatabaseName
+FROM DOI.vwPartitioning_Tables_PrepTables PTNonPartitioned
+	INNER JOIN DOI.vwPartitioning_Tables_PrepTables PTPartitioned ON PTNonPartitioned.DatabaseName = PTPartitioned.DatabaseName
 		AND PTNonPartitioned.SchemaName = PTPartitioned.SchemaName
 		AND PTPartitioned.TableName = PTNonPartitioned.TableName
 WHERE PTNonPartitioned.IsNewPartitionedPrepTable = 0

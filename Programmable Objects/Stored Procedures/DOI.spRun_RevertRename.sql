@@ -54,7 +54,7 @@ BEGIN TRY
 						RevertRenameNewPartitionedPrepTableSQL AS SQLStatement, 
 						'Table' AS ObjectType,
 						1 AS SortId
-				FROM DOI.vwTables_PrepTables
+				FROM DOI.vwPartitioning_Tables_PrepTables
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
 					AND IsNewPartitionedPrepTable = 1
@@ -64,7 +64,7 @@ BEGIN TRY
 						RevertRenameNewPartitionedPrepTableIndexSQL,
 						'Index',
 						2
-				FROM DOI.vwTables_PrepTables_Indexes
+				FROM DOI.vwPartitioning_Tables_PrepTables_Indexes
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 					AND IsNewPartitionedPrepTable = 1
@@ -74,7 +74,7 @@ BEGIN TRY
 						RevertRenameNewPartitionedPrepTableConstraintSQL,
 						'Constraint',
 						3
-				FROM DOI.vwTables_PrepTables_Constraints
+				FROM DOI.vwPartitioning_Tables_PrepTables_Constraints
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 					AND IsNewPartitionedPrepTable = 1
@@ -84,7 +84,7 @@ BEGIN TRY
 						RevertRenameNewPartitionedPrepTableStatisticsSQL,
 						'Statistics',
 						4
-				FROM DOI.vwTables_PrepTables_Statistics
+				FROM DOI.vwPartitioning_Tables_PrepTables_Statistics
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 				UNION ALL
@@ -93,7 +93,7 @@ BEGIN TRY
 						RevertRenameExistingTableSQL,
 						'Table',
 						5
-				FROM DOI.vwTables_PrepTables
+				FROM DOI.vwPartitioning_Tables_PrepTables
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
 					AND IsNewPartitionedPrepTable = 1
@@ -103,7 +103,7 @@ BEGIN TRY
 						RevertRenameExistingTableIndexSQL,
 						'Index' AS ObjectType,
 						6
-				FROM DOI.vwTables_PrepTables_Indexes
+				FROM DOI.vwPartitioning_Tables_PrepTables_Indexes
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 					AND IsNewPartitionedPrepTable = 1
@@ -113,7 +113,7 @@ BEGIN TRY
 						RevertRenameExistingTableConstraintSQL,
 						'Constraint',
 						7
-				FROM DOI.vwTables_PrepTables_Constraints
+				FROM DOI.vwPartitioning_Tables_PrepTables_Constraints
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 					AND IsNewPartitionedPrepTable = 1
@@ -123,7 +123,7 @@ BEGIN TRY
 						RevertRenameExistingTableStatisticsSQL,
 						'Statistics',
 						8
-				FROM DOI.vwTables_PrepTables_Statistics
+				FROM DOI.vwPartitioning_Tables_PrepTables_Statistics
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 )x

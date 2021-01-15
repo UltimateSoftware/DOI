@@ -217,8 +217,8 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                         TRUNCATE TABLE DOI.Log;
                         TRUNCATE TABLE DOI.Queue
                         DELETE PT FROM DOI.Run_PartitionState pt WHERE DatabaseName = '{DatabaseName}' AND pt.ParentTableName = 'PartitioningTestAutomationTable';
-                        EXEC DOI.spRefreshMetadata_Tables;
-                        EXEC DOI.spRefreshMetadata_PartitionFunctions;
+                        --EXEC DOI.spRefreshMetadata_Tables;
+                        --EXEC DOI.spRefreshMetadata_PartitionFunctions;
                         DELETE DOI.PartitionFunctions WHERE PartitionFunctionName = 'pfMonthlyTest';
                         IF EXISTS(SELECT 'True' FROM sys.partition_schemes WHERE name = 'psMonthlyTest')
                         BEGIN
@@ -230,24 +230,29 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                         END;";
 
         public static string TableToMetadata = $@"
-                                INSERT INTO DOI.Tables
-                                (DatabaseName,
-                                 SchemaName,
-                                 TableName,
-                                 PartitionColumn_Desired,
-                                 Storage_Desired,
-                                 IntendToPartition,
-                                 ReadyToQueue
-                                )
-                                VALUES
-                                ('{DatabaseName}',
-                                 'dbo',
-                                 'PartitioningTestAutomationTable',
-                                 'MyDateTime',
-                                 'psMonthlyTest',
-                                 1,
-                                 1
-                                );  ";
+            INSERT INTO DOI.Tables
+            (
+                DatabaseName,
+                SchemaName,
+                TableName,
+                PartitionColumn,
+                Storage_Desired,
+                StorageType_Desired,
+                IntendToPartition,
+                ReadyToQueue,
+                PartitionFunctionName
+            )
+            VALUES
+            (   '{DatabaseName}',
+                'dbo',
+                'PartitioningTestAutomationTable',
+                'MyDateTime',
+                'psMonthlyTest',
+                'PARTITION_SCHEME',
+                1,
+                1,
+                N'pfMonthlyTest'  
+                )";
 
         public static string StatisticsToMetadata = $@"
                                 INSERT INTO DOI.[Statistics] ( DatabaseName, SchemaName, TableName, StatisticsName, StatisticsColumnList_Desired, SampleSizePct_Desired, IsFiltered_Desired, FilterPredicate_Desired, IsIncremental_Desired, NoRecompute_Desired, LowerSampleSizeToDesired, ReadyToQueue)

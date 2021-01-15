@@ -15,14 +15,16 @@ namespace DOI.Tests.TestHelpers.Metadata
     {
         public const string UserTableName = "vwPartitionFunctionPartitions";
         public const string ViewName = "vwPartitioning_FileGroups";
-        public string GetFilegroupSql(string partitionSchemeName, string createOrDrop)
+        public string GetFilegroupSql(string partitionSchemeName = null, string createOrDrop = "Create")
         {
             var fieldName = createOrDrop == "Create" ? "AddFileGroupSQL" : "DropFileGroupSQL";
+            var whereClause = partitionSchemeName == null ? string.Empty : $"AND PartitionSchemeName = '{partitionSchemeName}'";
 
             return sqlHelper.ExecuteScalar<string>($@"
             SELECT (SELECT {fieldName} + ';'
                     FROM DOI.vwPartitioning_Filegroups
-                    WHERE PartitionSchemeName = '{partitionSchemeName}'
+                    WHERE DatabaseName = '{DatabaseName}'
+                        {whereClause}
                     FOR XML PATH(''), TYPE).value(N'.[1]', N'varchar(max)')");
         }
 

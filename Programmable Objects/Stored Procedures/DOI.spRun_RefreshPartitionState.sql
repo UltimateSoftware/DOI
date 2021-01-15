@@ -37,7 +37,7 @@ WHERE NOT EXISTS(	SELECT 'True'
 --INSERT ROWS FOR TABLES THAT ARE GOING TO BE PARTITIONED NOW
 INSERT INTO DOI.Run_PartitionState ( DatabaseName, SchemaName ,ParentTableName , PrepTableName, PartitionFromValue ,PartitionToValue ,DataSynchState ,LastUpdateDateTime )
 SELECT DISTINCT DatabaseName, SchemaName, TableName, PrepTableName, PT.BoundaryValue, PT.NextBoundaryValue, 0, GETDATE()
-FROM DOI.vwTables_PrepTables PT
+FROM DOI.vwPartitioning_Tables_PrepTables PT
 WHERE EXISTS (	SELECT 'True' 
 				FROM DOI.vwTables T 
 				WHERE T.DatabaseName = PT.DatabaseName 

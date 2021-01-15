@@ -22,10 +22,10 @@ CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_Tables_UpdateData]
 AS
 
 UPDATE T
-SET ColumnListNoTypes = DOI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL),
-	ColumnListWithTypes = DOI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL),
-	UpdateColumnList = DOI.fnGetColumnListForTable (T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'T'),
-    NewPartitionedPrepTableName = TableName + '_NewPartitionedTableFromPrep',
+SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL),
+	ColumnListWithTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL),
+	UpdateColumnList = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'T'),
+    NewPartitionedPrepTableName = CASE WHEN T.IntendToPartition = 1 THEN TableName + '_NewPartitionedTableFromPrep' ELSE NULL END,
     Storage_Actual = DS_Actual.name,
     StorageType_Actual = DS_Actual.type_desc,
     PKColumnList = DOI.fnGetPKColumnListForTable(T.DatabaseName, T.SchemaName, T.TableName),
@@ -34,7 +34,8 @@ FROM DOI.Tables T
     INNER JOIN DOI.SysDatabases d ON T.DatabaseName = d.name
     INNER JOIN DOI.SysTables T2 ON T2.database_id = d.database_id
         AND T.TableName = T2.name
-    INNER JOIN DOI.SysSchemas s ON s.name = T.SchemaName
+    INNER JOIN DOI.SysSchemas s ON s.database_id = d.database_id
+        AND s.name = T.SchemaName
     INNER JOIN DOI.SysIndexes I ON d.database_id = i.database_id
         AND T2.object_id = I.object_id
         AND I.type_desc IN ('CLUSTERED', 'HEAP')
@@ -58,7 +59,7 @@ UPDATE T
 SET T.DSTriggerSQL = DSTrigger.DSTriggerSQL
 FROM DOI.Tables T
 	CROSS APPLY(SELECT STUFF((  SELECT PT.PrepTableTriggerSQLFragment
-								FROM DOI.vwTables_PrepTables PT
+								FROM DOI.vwPartitioning_Tables_PrepTables PT
 								WHERE PT.SchemaName = T.SchemaName
 									AND PT.TableName = T.TableName
 								FOR XML PATH(''), TYPE).value(N'.[1]', N'nvarchar(max)'), 1, 1, '')) DSTrigger(DSTriggerSQL)

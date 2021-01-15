@@ -10,6 +10,7 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   FUNCTION [DOI].[fnGetColumnListForTable](
+	@DatabaseName				SYSNAME,
 	@SchemaName					SYSNAME, 
 	@TableName					SYSNAME, 
 	@ListType					VARCHAR(50),
@@ -83,7 +84,8 @@ BEGIN
 		INNER JOIN DOI.SysSchemas s ON s.database_id = t.database_id
             AND s.schema_id = t.schema_id
 		INNER JOIN DOI.SysTypes ty ON c.user_type_id = ty.user_type_id
-	WHERE s.name = @SchemaName
+	WHERE d.name = @DatabaseName
+		AND s.name = @SchemaName
 		AND t.name = @TableName
         AND C.is_computed = CASE WHEN @ListType = 'INSERT' THEN 0 ELSE C.is_computed END 
 	ORDER BY c.column_id

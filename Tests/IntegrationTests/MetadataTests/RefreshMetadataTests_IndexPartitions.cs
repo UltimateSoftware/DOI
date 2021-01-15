@@ -23,8 +23,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests
             sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlyMetadataSql);
             sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlySql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreatePartitionSchemeYearlySql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.CreatePartitionedTableSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.CreatePartitionedTableMetadataSql);
+            sqlHelper.Execute(TestHelper.CreatePartitionedTableYearlySql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.CreatePartitionedTableYearlyMetadataSql);
             sqlHelper.Execute(TestHelper.InsertOneRowIntoEachPartitionSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreatePartitionedIndexSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreatePartitionedIndexMetadataSql);

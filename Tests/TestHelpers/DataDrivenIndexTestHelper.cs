@@ -121,7 +121,7 @@ namespace DOI.Tests.TestHelpers
             {
                 return this.sqlHelper.GetList<PrepTable>($@"
                	SELECT PrepTableName
-            	FROM DOI.DOI.vwTables_PrepTables)
+            	FROM DOI.DOI.vwPartitioning_Tables_PrepTables)
                 WHERE DatabaseName = '{DatabaseName}'
                 GROUP BY PrepTableName
             	HAVING COUNT(*) > 1");
@@ -130,7 +130,7 @@ namespace DOI.Tests.TestHelpers
             {
                 return this.sqlHelper.GetList<PrepTable>($@"
                	SELECT PrepTableName
-            	FROM DOI.DOI.vwTables_PrepTables
+            	FROM DOI.DOI.vwPartitioning_Tables_PrepTables
                 WHERE DatabaseName = '{DatabaseName}'
                     AND PartitionFunctionName = '{partitionFunctionName}'
                 GROUP BY PrepTableName
