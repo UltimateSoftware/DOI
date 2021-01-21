@@ -29,7 +29,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                                 INNER JOIN {DatabaseName}.sys.tables t ON t.object_id = i.object_id
                             WHERE p.hobt_id = au.container_id
                                 AND t.name = '{TableName}'
-                                AND i.name = '{IndexName}')
+                                AND i.name = '{CIndexName}')
             ORDER BY container_id, type"));
 
             List<SysAllocationUnits> expectedSysAllocationUnits = new List<SysAllocationUnits>();
@@ -68,7 +68,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     AND T.object_id = I.object_id
             WHERE D.name = '{DatabaseName}'
                 AND T.name = '{TableName}'
-                AND I.name = '{IndexName}'
+                AND I.name = '{CIndexName}'
             ORDER BY container_id, type"));
 
             List<SysAllocationUnits> actualSysAllocationUnits = new List<SysAllocationUnits>();

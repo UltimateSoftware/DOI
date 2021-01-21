@@ -15,7 +15,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         public void Setup()
         {
             sqlHelper.Execute(TestHelper.CreateTableSql, 30, true, "DOIUnitTests");
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.CreateCIndexSql, 30, true, "DOIUnitTests");
 
         }
 
@@ -23,7 +23,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         public void TearDown()
         {
             sqlHelper.Execute(TestHelper.MetadataDeleteSql);
-            sqlHelper.Execute(TestHelper.DropIndexSql, 30, true, "DOIUnitTests");
+            sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, "DOIUnitTests");
             sqlHelper.Execute(TestHelper.DropTableSql, 30, true, "DOIUnitTests");
         }
 

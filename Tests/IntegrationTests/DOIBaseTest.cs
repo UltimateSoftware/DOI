@@ -15,7 +15,7 @@ namespace DOI.Tests.Integration
         protected const string TestTableName2 = "TempB";
         protected const string SpaceErrorTableName = "AAA_SpaceError";
 
-        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
+        public DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
         protected TempARepository tempARepository;
 
         public SqlHelper sqlHelper;
@@ -23,6 +23,7 @@ namespace DOI.Tests.Integration
         public DOIBaseTest()
         {
             this.sqlHelper = new SqlHelper();
+            this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(sqlHelper);
         }
 
         [OneTimeSetUp]

@@ -14,11 +14,11 @@ namespace DOI.Tests.IntegrationTests.Models
         public string IndexName { get; set; }
         public bool IsIndexMissingFromSQLServer { get; set; }
         public bool IsClustered_Desired { get; set; }
-        public bool IsClustered_Actual { get; set; }
+        public bool? IsClustered_Actual { get; set; }
         public string ColumnList_Desired { get; set; }
         public string ColumnList_Actual { get; set; }
         public bool IsFiltered_Desired { get; set; }
-        public bool IsFiltered_Actual { get; set; }
+        public bool? IsFiltered_Actual { get; set; }
         public string FilterPredicate_Desired { get; set; }
         public string FilterPredicate_Actual { get; set; }
         public string OptionDataCompression_Desired { get; set; }

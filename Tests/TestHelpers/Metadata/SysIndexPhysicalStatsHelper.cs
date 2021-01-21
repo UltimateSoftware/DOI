@@ -23,7 +23,7 @@ namespace DOI.Tests.TestHelpers.Metadata
 
             DECLARE @TableId INT = (SELECT object_id FROM {DatabaseName}.sys.tables WHERE name = '{TableName}')
 
-            DECLARE @IndexId INT = (SELECT index_id FROM {DatabaseName}.sys.indexes WHERE object_id = @TableId AND name = '{IndexName}')
+            DECLARE @IndexId INT = (SELECT index_id FROM {DatabaseName}.sys.indexes WHERE object_id = @TableId AND name = '{CIndexName}')
 
             SELECT ips.* 
             FROM {SqlServerDmvName}(DB_ID('{DatabaseName}'), @TableId, @IndexId, NULL, 'DETAILED') ips"));
@@ -77,7 +77,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     AND I.index_id = IPS.index_id
             WHERE D.name = '{DatabaseName}'
                 AND T.name = '{TableName}'
-                AND I.name = '{IndexName}'"));
+                AND I.name = '{CIndexName}'"));
 
             List<SysIndexPhysicalStats> actualSysIndexPhysicalStats = new List<SysIndexPhysicalStats>();
 

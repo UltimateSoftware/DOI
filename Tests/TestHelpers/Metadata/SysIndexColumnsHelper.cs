@@ -26,7 +26,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     AND i.index_id = ic.index_id
                 INNER JOIN {DatabaseName}.sys.tables t ON t.object_id = i.object_id
             WHERE t.name = '{TableName}'
-                AND i.name = '{IndexName}'"));
+                AND i.name = '{CIndexName}'"));
 
             List<SysIndexColumns> expectedSysIndexColumns = new List<SysIndexColumns>();
 
@@ -62,7 +62,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = T.database_id 
             WHERE D.name = '{DatabaseName}'
                 AND T.name = '{TableName}'
-                AND I.name = '{IndexName}'"));
+                AND I.name = '{CIndexName}'"));
 
             List<SysIndexColumns> actualSysIndexColumns = new List<SysIndexColumns>();
 

@@ -34,6 +34,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             var testHelper = new TestHelper();
             var pfTestHelper = new PfTestHelper();
 
+
             string metadataSql = "";
 
             if (boundaryInterval == "Yearly")
@@ -48,6 +49,10 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             sqlHelper.Execute(metadataSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);//refresh metadata after metadata insert
 
+            //tear down...
+            sqlHelper.Execute(testHelper.GetFilegroupSql(partitionSchemeName, "Drop"), 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysFilegroupsSql);
+
             //partition function metadata has already been created, so views should show the filegroups & files that need to be created, plus the fact that they are missing.
             TestHelper.AssertMetadata(boundaryInterval, 1);
 
@@ -58,10 +63,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             //re-assert.  now the FileGroups should show up as not missing in the views.
             TestHelper.AssertMetadata(boundaryInterval, 0);
 
-            //tear down...THESE TESTS DON'T GET HIT IF AN ASSERTION FAILS.
-            sqlHelper.Execute(testHelper.GetFilegroupSql(partitionSchemeName, "Drop"), 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysFilegroupsSql);
-            sqlHelper.Execute(TestHelper.MetadataDeleteSql);
+
         }
     }
 }

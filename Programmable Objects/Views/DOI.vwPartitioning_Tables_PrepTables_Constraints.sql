@@ -29,8 +29,13 @@ SELECT	FN.DatabaseName,
         FN.SchemaName,
 		FN.TableName AS ParentTableName,
 		FN.PrepTableName,
+		FN.NewPartitionedPrepTableName,
+		FN.PartitionFunctionName,
+		FN.BoundaryValue,
+		FN.NextBoundaryValue,
 		FN.IsNewPartitionedPrepTable,
-		C.ConstraintName,
+		REPLACE(C.ConstraintName, FN.TableName, FN.PrepTableName) AS ConstraintName,
+		C.ConstraintType,
 		C.CreateConstraintStatement,
 		C.RenameExistingTableConstraintSQL,
 		C.RenameNewPartitionedPrepTableConstraintSQL,
@@ -42,6 +47,7 @@ FROM DOI.vwPartitioning_Tables_PrepTables FN
 				FROM (	SELECT	SchemaName,
 								TableName,
 								dc.DefaultConstraintName AS ConstraintName,
+								'DEFAULT' AS ConstraintType,
 								'
 IF OBJECT_ID(''' + FN.DatabaseName + '.' + FN.SchemaName + '.' + FN.PrepTableName + ''') IS NOT NULL
 	AND OBJECT_ID(''' + FN.DatabaseName + '.' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstraintName, TableName, FN.PrepTableName) + ''') IS NULL
@@ -87,6 +93,7 @@ AS RevertRenameNewPartitionedPrepTableConstraintSQL
 						SELECT	cc.SchemaName,
 								cc.TableName,
 								cc.CheckConstraintName,
+								'CHECK' AS ConstraintType,
 								'
 IF OBJECT_ID(''' + FN.DatabaseName + '.' + FN.SchemaName + '.' + FN.PrepTableName + ''') IS NOT NULL
 	AND OBJECT_ID(''' + FN.DatabaseName + '.' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, cc.TableName, FN.PrepTableName) + ''') IS NULL

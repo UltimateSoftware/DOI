@@ -14,39 +14,39 @@ namespace DOI.Tests.IntegrationTests.Models
         public string IndexName { get; set; }
         public bool IsIndexMissingFromSQLServer { get; set; }
         public bool IsUnique_Desired { get; set; }
-        public bool IsUnique_Actual { get; set; }
+        public bool? IsUnique_Actual { get; set; }
         public bool IsPrimaryKey_Desired { get; set; }
-        public bool IsPrimaryKey_Actual { get; set; }
+        public bool? IsPrimaryKey_Actual { get; set; }
         public bool IsUniqueConstraint_Desired { get; set; }
-        public bool IsUniqueConstraint_Actual { get; set; }
+        public bool? IsUniqueConstraint_Actual { get; set; }
         public bool IsClustered_Desired { get; set; }
-        public bool IsClustered_Actual { get; set; }
+        public bool? IsClustered_Actual { get; set; }
         public string KeyColumnList_Desired { get; set; }
         public string KeyColumnList_Actual { get; set; }
         public string IncludedColumnList_Desired { get; set; }
         public string IncludedColumnList_Actual { get; set; }
         public bool IsFiltered_Desired { get; set; }
-        public bool IsFiltered_Actual { get; set; }
+        public bool? IsFiltered_Actual { get; set; }
         public string FilterPredicate_Desired { get; set; }
         public string FilterPredicate_Actual { get; set; }
         public int Fillfactor_Desired { get; set; }
         public int Fillfactor_Actual { get; set; }
         public bool OptionPadIndex_Desired { get; set; }
-        public bool OptionPadIndex_Actual { get; set; }
+        public bool? OptionPadIndex_Actual { get; set; }
         public bool OptionStatisticsNoRecompute_Desired { get; set; }
-        public bool OptionStatisticsNoRecompute_Actual { get; set; }
+        public bool? OptionStatisticsNoRecompute_Actual { get; set; }
         public bool OptionStatisticsIncremental_Desired { get; set; }
-        public bool OptionStatisticsIncremental_Actual { get; set; }
+        public bool? OptionStatisticsIncremental_Actual { get; set; }
         public bool OptionIgnoreDupKey_Desired { get; set; }
-        public bool OptionIgnoreDupKey_Actual { get; set; }
+        public bool? OptionIgnoreDupKey_Actual { get; set; }
         public int OptionResumable_Desired { get; set; }
         public int OptionResumable_Actual { get; set; }
         public int OptionMaxDuration_Desired { get; set; }
         public int OptionMaxDuration_Actual { get; set; }
         public bool OptionAllowRowLocks_Desired { get; set; }
-        public bool OptionAllowRowLocks_Actual { get; set; }
+        public bool? OptionAllowRowLocks_Actual { get; set; }
         public bool OptionAllowPageLocks_Desired { get; set; }
-        public bool OptionAllowPageLocks_Actual { get; set; }
+        public bool? OptionAllowPageLocks_Actual { get; set; }
         public string OptionDataCompression_Desired { get; set; }
         public string OptionDataCompression_Actual { get; set; }
         public string Storage_Desired { get; set; }

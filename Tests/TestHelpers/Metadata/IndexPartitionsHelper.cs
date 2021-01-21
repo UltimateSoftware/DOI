@@ -31,7 +31,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     AND IRS.DatabaseName = '{DatabaseName}'
                     AND IRS.SchemaName = 'dbo'
                     AND IRS.TableName = '{TableName_Partitioned}'
-                    AND IRS.IndexName = '{IndexName_Partitioned}'
+                    AND IRS.IndexName = '{CIndexName_Partitioned}'
                 ORDER BY IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, P.PartitionNumber"));
 
             List<IndexPartitionsRowStore> ExpectedValues_RowStore = new List<IndexPartitionsRowStore>();
@@ -62,7 +62,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     AND ICS.DatabaseName = '{DatabaseName}'
                     AND ICS.SchemaName = 'dbo'
                     AND ICS.TableName = '{TableName_Partitioned}'
-                    AND ICS.IndexName = '{IndexName_Partitioned}'
+                    AND ICS.IndexName = '{CIndexName_Partitioned}'
                 ORDER BY ICS.DatabaseName, ICS.SchemaName, ICS.TableName, ICS.IndexName, P.PartitionNumber"));
 
             List<IndexPartitionsColumnStore> ExpectedValues_ColumnStore = new List<IndexPartitionsColumnStore>();
@@ -90,7 +90,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             FROM DOI.DOI.{UserTableName_RowStore}  
             WHERE DatabaseName = '{DatabaseName}'
                 AND TableName = '{TableName_Partitioned}'
-                AND IndexName = '{IndexName_Partitioned}'
+                AND IndexName = '{CIndexName_Partitioned}'
             ORDER BY PartitionNumber"));
 
             List<IndexPartitionsRowStore> ActualValues_RowStore = new List<IndexPartitionsRowStore>();
@@ -124,7 +124,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             FROM DOI.DOI.{UserTableName_ColumnStore}  
             WHERE DatabaseName = '{DatabaseName}'
                 AND TableName = '{TableName_Partitioned}'
-                AND IndexName = '{IndexName_Partitioned}'
+                AND IndexName = '{CIndexName_Partitioned}'
             ORDER BY PartitionNumber"));
 
             List<IndexPartitionsColumnStore> ActualValues_ColumnStore = new List<IndexPartitionsColumnStore>();

@@ -26,7 +26,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     AND i.index_id = p.index_id
                 INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id
             WHERE t.name = '{TableName}'
-                AND i.name = '{IndexName}'"));
+                AND i.name = '{CIndexName}'"));
 
             List<SysPartitions> expectedSysPartitions = new List<SysPartitions>();
 
@@ -63,7 +63,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     AND I.object_id = T.object_id
             WHERE D.name = '{DatabaseName}'
                 AND T.name = '{TableName}'
-                AND I.name = '{IndexName}'"));
+                AND I.name = '{CIndexName}'"));
 
             List<SysPartitions> actualSysPartitions = new List<SysPartitions>();
 

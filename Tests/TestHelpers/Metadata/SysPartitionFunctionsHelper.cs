@@ -226,44 +226,74 @@ namespace DOI.Tests.TestHelpers.Metadata
             var actual = GetActualUserValues(partitionFunctionName);
 
             Assert.AreEqual(1, actual.Count);
+            DateTime lastBoundaryDate;
+            DateTime lastBoundaryDateStartOfYear;
+            DateTime lastBoundaryDateStartOfMonth;
+            int partitionFunctionIntervals;
 
             foreach (var actualRow in actual)
             {
                 if (partitionFunctionName == "pfTestsYearly")
                 {
-                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName);
-                    Assert.AreEqual(partitionFunctionName, actualRow.PartitionFunctionName);
-                    Assert.AreEqual("DATETIME2", actualRow.PartitionFunctionDataType);
-                    Assert.AreEqual("Yearly", actualRow.BoundaryInterval);
-                    Assert.AreEqual(1, actualRow.NumOfFutureIntervals);
-                    Assert.AreEqual(DateTime.Parse("2016-01-01"), actualRow.InitialDate);
-                    Assert.AreEqual(false, actualRow.UsesSlidingWindow);
-                    Assert.AreEqual(0, actualRow.SlidingWindowSize);
-                    Assert.AreEqual(false, actualRow.IsDeprecated);
-                    Assert.AreEqual(PartitionSchemeNameYearly, actualRow.PartitionSchemeName);
-                    Assert.AreEqual(4, actualRow.NumOfCharsInSuffix);
-                    Assert.AreEqual(DateTime.Parse("2021-01-01"), actualRow.LastBoundaryDate);
-                    Assert.AreEqual(6, actualRow.NumOfTotalPartitionFunctionIntervals);
-                    Assert.AreEqual(7, actualRow.NumOfTotalPartitionSchemeIntervals);
-                    Assert.AreEqual("0001-01-01", actualRow.MinValueOfDataType);
+                    lastBoundaryDate = DateTime.Now.AddYears(actualRow.NumOfFutureIntervals);
+                    lastBoundaryDateStartOfYear = new DateTime(lastBoundaryDate.Year, 1, 1);
+                    partitionFunctionIntervals = (int)((lastBoundaryDateStartOfYear - actualRow.InitialDate).TotalDays) / 365;
+
+                    if (actualRow.UsesSlidingWindow)
+                    {
+                        partitionFunctionIntervals += 2; //the date diff clips off a year at the end, so we add it back.  Plus, we add another 1 for the active partition in the sliding window.
+                    }
+                    else
+                    {
+                        partitionFunctionIntervals += 1; //the date diff clips off a year at the end, so we add it back.
+                    }
+
+                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName, "DatabaseName");
+                    Assert.AreEqual(partitionFunctionName, actualRow.PartitionFunctionName, "PartitionFunctionName");
+                    Assert.AreEqual("DATETIME2", actualRow.PartitionFunctionDataType, "PartitionFunctionDataType");
+                    Assert.AreEqual("Yearly", actualRow.BoundaryInterval, "BoundaryInterval");
+                    Assert.AreEqual(1, actualRow.NumOfFutureIntervals, "NumOfFutureIntervals");
+                    Assert.AreEqual(DateTime.Parse("2016-01-01"), actualRow.InitialDate, "InitialDate");
+                    Assert.AreEqual(false, actualRow.UsesSlidingWindow, "UsesSlidingWindow");
+                    Assert.AreEqual(0, actualRow.SlidingWindowSize, "SlidingWindowSize");
+                    Assert.AreEqual(false, actualRow.IsDeprecated, "IsDeprecated");
+                    Assert.AreEqual(PartitionSchemeNameYearly, actualRow.PartitionSchemeName, "PartitionSchemeName");
+                    Assert.AreEqual(4, actualRow.NumOfCharsInSuffix, "NumOfCharsInSuffix");
+                    Assert.AreEqual(lastBoundaryDateStartOfYear, actualRow.LastBoundaryDate, "LastBoundaryDate");
+                    Assert.AreEqual(partitionFunctionIntervals, actualRow.NumOfTotalPartitionFunctionIntervals, "NumOfTotalPartitionFunctionIntervals");
+                    Assert.AreEqual(partitionFunctionIntervals + 1, actualRow.NumOfTotalPartitionSchemeIntervals, "NumOfTotalPartitionSchemeIntervals");
+                    Assert.AreEqual("0001-01-01", actualRow.MinValueOfDataType, "MinValueOfDataType");
                 }
                 else if (partitionFunctionName == "pfTestsMonthly")
                 {
-                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName);
-                    Assert.AreEqual(partitionFunctionName, actualRow.PartitionFunctionName);
-                    Assert.AreEqual("DATETIME2", actualRow.PartitionFunctionDataType);
-                    Assert.AreEqual("Monthly", actualRow.BoundaryInterval);
-                    Assert.AreEqual(12, actualRow.NumOfFutureIntervals);
-                    Assert.AreEqual(DateTime.Parse("2016-01-01"), actualRow.InitialDate);
-                    Assert.AreEqual(false, actualRow.UsesSlidingWindow);
-                    Assert.AreEqual(0, actualRow.SlidingWindowSize);
-                    Assert.AreEqual(false, actualRow.IsDeprecated);
-                    Assert.AreEqual(PartitionSchemeNameMonthly, actualRow.PartitionSchemeName);
-                    Assert.AreEqual(6, actualRow.NumOfCharsInSuffix);
-                    Assert.AreEqual(DateTime.Parse("2021-11-01"), actualRow.LastBoundaryDate);
-                    Assert.AreEqual(71, actualRow.NumOfTotalPartitionFunctionIntervals);
-                    Assert.AreEqual(72, actualRow.NumOfTotalPartitionSchemeIntervals);
-                    Assert.AreEqual("0001-01-01", actualRow.MinValueOfDataType);
+                    lastBoundaryDate = DateTime.Now.AddMonths(actualRow.NumOfFutureIntervals);
+                    lastBoundaryDateStartOfMonth = new DateTime(lastBoundaryDate.Year, lastBoundaryDate.Month, 1);
+                    partitionFunctionIntervals = (int)(((lastBoundaryDateStartOfMonth - actualRow.InitialDate).TotalDays) / 365) * 12;
+
+                    if (actualRow.UsesSlidingWindow)
+                    {
+                        partitionFunctionIntervals += 2; //the date diff clips off a month at the end, so we add it back.  Plus, we add another 1 for the active partition in the sliding window.
+                    }
+                    else
+                    {
+                        partitionFunctionIntervals += 1; //the date diff clips off a month at the end, so we add it back.
+                    }
+
+                    Assert.AreEqual(DatabaseName, actualRow.DatabaseName, "DatabaseName");
+                    Assert.AreEqual(partitionFunctionName, actualRow.PartitionFunctionName, "PartitionFunctionName");
+                    Assert.AreEqual("DATETIME2", actualRow.PartitionFunctionDataType, "PartitionFunctionDataType");
+                    Assert.AreEqual("Monthly", actualRow.BoundaryInterval, "BoundaryInterval");
+                    Assert.AreEqual(12, actualRow.NumOfFutureIntervals, "NumOfFutureIntervals");
+                    Assert.AreEqual(DateTime.Parse("2016-01-01"), actualRow.InitialDate, "InitialDate");
+                    Assert.AreEqual(false, actualRow.UsesSlidingWindow, "UsesSlidingWindow");
+                    Assert.AreEqual(0, actualRow.SlidingWindowSize, "SlidingWindowSize");
+                    Assert.AreEqual(false, actualRow.IsDeprecated, "IsDeprecated");
+                    Assert.AreEqual(PartitionSchemeNameMonthly, actualRow.PartitionSchemeName, "PartitionSchemeName");
+                    Assert.AreEqual(6, actualRow.NumOfCharsInSuffix, "NumOfCharsInSuffix");
+                    Assert.AreEqual(lastBoundaryDateStartOfMonth, actualRow.LastBoundaryDate, "LastBoundaryDate");
+                    Assert.AreEqual(partitionFunctionIntervals, actualRow.NumOfTotalPartitionFunctionIntervals, "NumOfTotalPartitionFunctionIntervals");
+                    Assert.AreEqual(partitionFunctionIntervals + 1, actualRow.NumOfTotalPartitionSchemeIntervals, "NumOfTotalPartitionSchemeIntervals");
+                    Assert.AreEqual("0001-01-01", actualRow.MinValueOfDataType, "MinValueOfDataType");
                 }
             }
         }

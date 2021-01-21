@@ -21,7 +21,7 @@ AS
 /************************************************   SQL SERVER METADATA (START) *******************************************/
 
 --ROW COUNTS
-    DECLARE @FilteredRowCounts FilteredRowCountsTT
+    DECLARE @FilteredRowCounts DOI.FilteredRowCountsTT
 
     DECLARE @SQL VARCHAR(MAX) = ''
 
@@ -211,8 +211,8 @@ AS
 	    IsFilterChanging                = CASE WHEN ISNULL(ICS.FilterPredicate_Desired, '') <> ISNULL(ICS.FilterPredicate_Actual, '') THEN 1 ELSE 0 END, 
 	    IsClusteredChanging             = CASE WHEN ICS.IsClustered_Desired <> CASE ICS.IsClustered_Actual WHEN 1 THEN 1 ELSE 0 END  THEN 1 ELSE 0 END, 
 	    IsPartitioningChanging          = CASE WHEN ICS.IsStorageChanging = 1 AND T.IntendToPartition = 1 THEN 1 ELSE 0 END, 
-	    IsDataCompressionChanging       = CASE WHEN ICS.OptionDataCompression_Desired <> ICS.OptionDataCompression_Actual THEN 1 ELSE 0 END,
-	    IsDataCompressionDelayChanging  = CASE WHEN ICS.OptionDataCompressionDelay_Desired <> ICS.OptionDataCompressionDelay_Actual THEN 1 ELSE 0 END
+	    IsDataCompressionChanging       = CASE WHEN ICS.OptionDataCompression_Desired <> ISNULL(ICS.OptionDataCompression_Actual, '') THEN 1 ELSE 0 END,
+	    IsDataCompressionDelayChanging  = CASE WHEN ICS.OptionDataCompressionDelay_Desired <> ISNULL(ICS.OptionDataCompressionDelay_Actual, '') THEN 1 ELSE 0 END
     FROM DOI.IndexesColumnStore ICS
         INNER JOIN DOI.Tables T ON ICS.DatabaseName = T.DatabaseName
             AND ICS.SchemaName = T.SchemaName

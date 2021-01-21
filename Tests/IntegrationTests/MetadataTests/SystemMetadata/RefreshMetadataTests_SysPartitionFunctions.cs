@@ -16,10 +16,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [SetUp]
         public void Setup()
         {
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlyMetadataSql);
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionMonthlyMetadataSql);
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlySql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.CreatePartitionFunctionMonthlySql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDatabasesSql);
         }
 
         [TearDown]
@@ -37,6 +34,17 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         {
             string partitionFunctionName = string.Concat("pfTests", boundaryInterval);
 
+            if (boundaryInterval == "Yearly")
+            {
+                sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlyMetadataSql);
+                sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlySql, 30, true, DatabaseName);
+            }
+            else if (boundaryInterval == "Monthly")
+            {
+                sqlHelper.Execute(TestHelper.CreatePartitionFunctionMonthlyMetadataSql);
+                sqlHelper.Execute(TestHelper.CreatePartitionFunctionMonthlySql, 30, true, DatabaseName);
+            }
+            
             //run refresh metadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionFunctionsSql);
 

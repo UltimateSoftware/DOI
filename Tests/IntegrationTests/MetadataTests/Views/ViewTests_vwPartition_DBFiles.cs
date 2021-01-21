@@ -52,6 +52,10 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             sqlHelper.Execute(metadataSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);//refresh metadata after metadata insert
 
+            //tear down...
+            sqlHelper.Execute(dbfTestHelper.GetDBFilesSql(partitionSchemeName, "Drop"), 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysFilegroupsSql);
+
             //partition function metadata has already been created, so views should show the filegroups & files that need to be created, plus the fact that they are missing.
             TestHelper.AssertMetadata(boundaryInterval, 1);
 

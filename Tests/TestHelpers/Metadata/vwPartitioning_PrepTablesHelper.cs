@@ -17,15 +17,6 @@ namespace DOI.Tests.TestHelpers.Metadata
         public const string UserTableName = "vwPartitionFunctionPartitions";
         public const string ViewName = "vwPartitioning_Tables_PrepTables";
 
-        public string GetPrepTablesSql(string partitionSchemeName)
-        {
-            return sqlHelper.ExecuteScalar<string>($@"
-            SELECT (SELECT CreatePrepTableSQL + ';'
-                    FROM DOI.{ViewName}
-                    WHERE PartitionSchemeName = '{partitionSchemeName}'
-                    FOR XML PATH(''), TYPE).value(N'.[1]', N'varchar(max)')");
-        }
-
         public static List<vwPartitionFunctionPartitions> GetExpectedValues(string partitionFunctionName)
         {
             SqlHelper sqlHelper = new SqlHelper();
