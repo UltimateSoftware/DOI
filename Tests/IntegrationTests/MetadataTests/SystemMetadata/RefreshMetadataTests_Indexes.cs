@@ -571,181 +571,180 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
         #region ChangeBitGroups Tests
         //different combinations of updates should set the 5 change bit groups correctly.
-/*        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateTests_ChangeBitGroups_DropRecreate(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "KeyColumnList_Desired = 'TempAId'", "DropRecreate", TestName = "IndexUpdateTests_ChangeBitGroups_DropRecreate_RowStore_KeyColumnList")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IsUnique_Desired = 'TempAId'", "DropRecreate", TestName = "IndexUpdateTests_ChangeBitGroups_DropRecreate_RowStore_IsUnique")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IncludedColumnList_Desired = 'TempAId'", "DropRecreate", TestName = "IndexUpdateTests_ChangeBitGroups_DropRecreate_RowStore_IncludedColumnList")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IsFiltered_Desired = 'TempAId', FilterPredicate_Desired = ''", "DropRecreate", TestName = "IndexUpdateTests_ChangeBitGroups_DropRecreate_RowStore_IsFiltered")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "KeyColumnList_Desired = 'TempAId'", "DropRecreate", TestName = "IndexUpdateTests_ChangeBitGroups_DropRecreate_RowStore_IsClustered")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "KeyColumnList_Desired = 'TempAId'", "DropRecreate", TestName = "IndexUpdateTests_ChangeBitGroups_DropRecreate_RowStore_Partitioning")]
+
+        public void IndexUpdateTests_ChangeBitGroups_DropRecreate_RowStore(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType)
         {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+            var indexRow = TestHelper.GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
 
+            //assert that the BitGroup = false
+            Assert.AreEqual(false, indexRow.AreDropRecreateOptionsChanging, "AreDropRecreateOptionsChanging, Pre-Change");
 
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
+            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+            indexRow = TestHelper.GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
+
+            //BitGroup should now = true
+            Assert.AreEqual(true,  indexRow.AreDropRecreateOptionsChanging, "AreDropRecreateOptionsChanging, Post-Change");
         }
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateTests_ChangeBitGroups_AlterRebuild(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+        /*   rebuilds = PadIndex, FillFactor, IgnoreDupKey, StatisticsNoRecompute, StatisticsIncremental, AllowRowLocks, AllowPageLocks, DataCompression,
+            rebuild only = PadIndex, FillFactor, StatisticsIncremental, DataCompression
+        WHAT ABOUT FRAG > 30%?
+         THERE MAY BE AN ISSUE HERE BETWEEN 'REBUILD' AND 'REBUILD ONLY' OPTIONS IN vwIndexes.  I think the logic is wrong.
+         [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
+                public void IndexUpdateTests_ChangeBitGroups_AlterRebuild(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+                {
+                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
+                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
 
 
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
+                    if (optionUpdateList != null)
+                    {
+                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                    }
 
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateTests_ChangeBitGroups_AlterReorganize(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
-
-
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
-
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }
-
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateTests_ChangeBitGroups_AlterSet(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
+                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+                }
+                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
+                public void IndexUpdateTests_ChangeBitGroups_AlterReorganize(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+                {
+                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
+                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
 
 
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
+                    if (optionUpdateList != null)
+                    {
+                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                    }
 
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }
+                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
+                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+                }
 
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateTests_ChangeBitGroups_NoChange(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+                //alter set = IgnoreDupKey, StatisticsNoRecompute, AllowRowLocks, AllowPageLocks
+                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
+                public void IndexUpdateTests_ChangeBitGroups_AlterSet(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+                {
+                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
+                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
 
 
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
+                    if (optionUpdateList != null)
+                    {
+                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                    }
 
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }
-*/
+                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
+                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+                }
+
+        /////////////////////////   COLUMNSTORE INDEXES
+        //DROPRECREATE = ColumnList, Filter, Clustered, Partitioning
+        //rebuild = DataCompression
+        //what about fragmentation?
+        */
         #endregion
 
         #region StrategyClassification Tests
-/*
-        //for the diff combinations of change bit values, make sure it chooses the right strategy
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateStrategyClassification_Tests_DropRecreate(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+        /*
+                //for the diff combinations of change bit values, make sure it chooses the right strategy
+                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
+                public void IndexUpdateStrategyClassification_Tests_DropRecreate(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+                {
+                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
+                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
 
 
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
+                    if (optionUpdateList != null)
+                    {
+                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                    }
 
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateClassification_Tests_AlterRebuild(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
-
-
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
-
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateClassification_Tests_AlterReorganize(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
+                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+                }
+                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
+                public void IndexUpdateClassification_Tests_AlterRebuild(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+                {
+                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
+                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
 
 
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
+                    if (optionUpdateList != null)
+                    {
+                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                    }
 
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }
-
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateClassification_Tests_AlterSet(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
-
-
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
-
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }
-
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-        public void IndexUpdateClassification_Tests_NoChanges(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-        {
-            sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-            sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
+                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+                }
+                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
+                public void IndexUpdateClassification_Tests_AlterReorganize(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+                {
+                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
+                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
 
 
-            if (optionUpdateList != null)
-            {
-                sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            }
+                    if (optionUpdateList != null)
+                    {
+                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                    }
 
-            var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-            Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-            Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-        }*/
+                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
+                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+                }
+
+                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
+                public void IndexUpdateClassification_Tests_AlterSet(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+                {
+                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
+                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+
+
+                    if (optionUpdateList != null)
+                    {
+                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                    }
+
+                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
+                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+                }
+
+                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
+                public void IndexUpdateClassification_Tests_NoChanges(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
+                {
+                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
+                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
+
+
+                    if (optionUpdateList != null)
+                    {
+                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                    }
+
+                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
+                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
+                }*/
         #endregion
 
         #region IndexSizeEstimate Tests
 
-        
+
 
         #endregion
     }

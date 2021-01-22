@@ -415,8 +415,8 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         #endregion
 
         #region Indexes
-        public const string CIndexName = "CDX_TempA_TempAId";
-        public const string NCIndexName = "IDX_TempA_TransactionUtcDt";
+        public const string CIndexName = "CDX_TempA";
+        public const string NCIndexName = "IDX_TempA";
         public const string NCCIIndexName = "NCCI_TempA";
         public const string CCIIndexName = "CCI_TempA";
 
