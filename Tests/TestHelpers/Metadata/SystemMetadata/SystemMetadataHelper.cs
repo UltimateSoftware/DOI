@@ -424,7 +424,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         public const string NCCIIndexName_ColumnStore_Partitioned = "NCCI_TempA_Partitioned";
         
         //clustered index
-        public static string CreateCIndexSql = $"CREATE CLUSTERED INDEX {CIndexName} ON dbo.{TableName}(TempAId) WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
+        public static string CreateCIndexSql = $"DROP INDEX IF EXISTS {CCIIndexName} ON dbo.{TableName}; CREATE CLUSTERED INDEX {CIndexName} ON dbo.{TableName}(TempAId) WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
 
         public static string CreateCIndexMetadataSql = $@"
             INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
@@ -435,6 +435,9 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                     0, NULL, 100, 1, 0, 0, 0, 
                     0, 0, 1, 1, N'PAGE', 'PRIMARY', N'ROWS_FILEGROUP', 
                     NULL, NULL)";
+
+        public static string DropCIndexMetadataSql = $"DELETE DOI.DOI.IndexesRowStore WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}' AND IndexName = '{CIndexName}'";
+
 
         public static string DropCIndexSql = $"DROP INDEX IF EXISTS {CIndexName} ON dbo.{TableName}";
 
@@ -463,7 +466,9 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                 'COLUMNSTORE', 0, N'PRIMARY', N'ROWS_FILEGROUP', NULL, 
                 NULL)";
 
-        public static string DropNCCIIndex = $"DROP INDEX IF EXISTS {NCCIIndexName} ON dbo.{TableName}";
+        public static string DropNCCIndexMetadataSql = $"DELETE DOI.DOI.IndexesColumnStore WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}' AND IndexName = '{CIndexName}'";
+
+        public static string DropNCCIIndexSql = $"DROP INDEX IF EXISTS {NCCIIndexName} ON dbo.{TableName}";
 
         //CCI index
         public static string CreateCCIIndexSql = $"CREATE CLUSTERED COLUMNSTORE INDEX {CCIIndexName} ON dbo.{TableName} WITH (DATA_COMPRESSION = COLUMNSTORE)";
@@ -477,7 +482,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                 'COLUMNSTORE', 0, N'PRIMARY', N'ROWS_FILEGROUP', NULL, 
                 NULL)";
 
-        public static string DropCCIIndex = $"DROP INDEX IF EXISTS {CCIIndexName} ON dbo.{TableName}";
+        public static string DropCCIIndexSql = $"DROP INDEX IF EXISTS {CCIIndexName} ON dbo.{TableName}";
 
 
         //PARTITIONED INDEX

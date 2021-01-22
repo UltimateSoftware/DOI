@@ -161,8 +161,8 @@ AS
 
     --SysIndexes, and friends...
     UPDATE ICS
-    SET IsClustered_Actual      = CASE WHEN i.type_desc = 'CLUSTERED' THEN 1 ELSE 0 END,
-        ColumnList_Actual       = i.included_column_list,
+    SET IsClustered_Actual      = CASE WHEN i.type_desc = 'CLUSTERED COLUMNSTORE' THEN 1 ELSE 0 END,
+        ColumnList_Actual       = CASE WHEN i.type_desc = 'CLUSTERED COLUMNSTORE' THEN NULL ELSE i.included_column_list END,
         IsFiltered_Actual       = i.has_filter,
         FilterPredicate_Actual  = i.filter_definition,
         Storage_Actual          = ActualDS.name,
@@ -209,7 +209,7 @@ AS
     UPDATE ICS
     SET IsColumnListChanging	        = CASE WHEN ICS.ColumnList_Desired <> ICS.ColumnList_Actual THEN 1 ELSE 0 END, 
 	    IsFilterChanging                = CASE WHEN ISNULL(ICS.FilterPredicate_Desired, '') <> ISNULL(ICS.FilterPredicate_Actual, '') THEN 1 ELSE 0 END, 
-	    IsClusteredChanging             = CASE WHEN ICS.IsClustered_Desired <> CASE ICS.IsClustered_Actual WHEN 1 THEN 1 ELSE 0 END  THEN 1 ELSE 0 END, 
+	    IsClusteredChanging             = CASE WHEN ICS.IsClustered_Desired <> CASE ISNULL(ICS.IsClustered_Actual, '') WHEN 1 THEN 1 ELSE 0 END  THEN 1 ELSE 0 END, 
 	    IsPartitioningChanging          = CASE WHEN ICS.IsStorageChanging = 1 AND T.IntendToPartition = 1 THEN 1 ELSE 0 END, 
 	    IsDataCompressionChanging       = CASE WHEN ICS.OptionDataCompression_Desired <> ISNULL(ICS.OptionDataCompression_Actual, '') THEN 1 ELSE 0 END,
 	    IsDataCompressionDelayChanging  = CASE WHEN ICS.OptionDataCompressionDelay_Desired <> ISNULL(ICS.OptionDataCompressionDelay_Actual, '') THEN 1 ELSE 0 END

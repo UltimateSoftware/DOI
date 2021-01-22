@@ -250,6 +250,9 @@ GO
 IF OBJECT_ID('[DOI].[Chk_IndexesColumnStore_OptionDataCompression]') IS NULL
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_OptionDataCompression] CHECK (([OptionDataCompression_Desired]='COLUMNSTORE_ARCHIVE' OR [OptionDataCompression_Desired]='COLUMNSTORE'))
 GO
+IF OBJECT_ID('[DOI].[Chk_IndexesColumnStore_ClusteredColumnListIsNull]') IS NULL
+ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_ClusteredColumnListIsNull] CHECK (([IsClustered_Desired]=1 AND [ColumnList_Desired] IS NULL) OR ([IsClustered_Desired]=0))
+GO
 IF OBJECT_ID('[DOI].[Def_IndexesColumnStore_StorageType_Actual]') IS NULL
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Def_IndexesColumnStore_StorageType_Actual] CHECK (([StorageType_Actual]='PARTITION_SCHEME' OR [StorageType_Actual]='ROWS_FILEGROUP'))
 GO

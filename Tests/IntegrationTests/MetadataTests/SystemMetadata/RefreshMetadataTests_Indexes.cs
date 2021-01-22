@@ -27,15 +27,13 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.CreateNCCIIndexMetadataSql);
             sqlHelper.Execute(TestHelper.CreateNCIndexSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreateNCIndexMetadataSql);
-            //sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
-            //sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
         }
 
         [TearDown]
         public void TearDown()
         {
             sqlHelper.Execute(TestHelper.MetadataDeleteSql);
-            sqlHelper.Execute(TestHelper.DropNCCIIndex, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropTableSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropSchemaSql, 30, true, DatabaseName);
@@ -150,13 +148,23 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_ChangeBits_IsClusteredChanging_ColumnStore_NonClustered")]
         public void IndexUpdateTests_ChangeBits_IsClusteredChanging(string databaseName, string tableName, string indexName)
         {
-            var isClusteredSetting = (indexName == "CDX_TempA_TempAId" || indexName == "CCI_TempA")? "0" : "1";
+            var isClusteredSetting = (indexName == TestHelper.CIndexName || indexName == TestHelper.CCIIndexName)? "0" : "1";
+
+            if (indexName == TestHelper.CCIIndexName)
+            {
+                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropCIndexMetadataSql);
+                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropNCCIndexMetadataSql);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
+            }
 
             //all change bits should be off
-            if (indexName == "CCI_TempA" || indexName == "NCCI_TempA")
+            if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
             {
                 TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
-                sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET IsClustered_Desired = {isClusteredSetting} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+                sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET IsClustered_Desired = {isClusteredSetting}, ColumnList_Desired = NULL WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
             }
             else
             {
@@ -167,7 +175,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             //only the correct change bit should be turned on.  All others should still be off.
-            if (indexName == "CCI_TempA" || indexName == "NCCI_TempA")
+            if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
             {
                 TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsClusteredChanging");
             }
@@ -185,8 +193,18 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
         public void IndexUpdateTests_ChangeBits_DataCompressionChanging(string databaseName, string tableName, string indexName)
         {
+            if (indexName == TestHelper.CCIIndexName)
+            {
+                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropCIndexMetadataSql);
+                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropNCCIndexMetadataSql);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
+            }
+
             //all change bits should be off
-            if (indexName == "CCI_TempA" || indexName == "NCCI_TempA")
+            if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
             {
                 TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
                 sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET OptionDataCompression_Desired = 'COLUMNSTORE_ARCHIVE' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
@@ -200,7 +218,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             //only the correct change bit should be turned on.  All others should still be off.
-            if (indexName == "CCI_TempA" || indexName == "NCCI_TempA")
+            if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
             {
                 TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsDataCompressionChanging");
             }
@@ -215,6 +233,15 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
         public void IndexUpdateTests_ChangeBits_DataCompressionDelayChanging(string databaseName, string tableName, string indexName)
         {
+            if (indexName == TestHelper.CCIIndexName)
+            {
+                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
+
+                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
+            }
+
             //all change bits should be off
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
 
@@ -245,27 +272,62 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [TestCase("DOIUnitTests", "TempA", "CDX_TempA_TempAId", TestName = "IndexUpdateTests_ChangeBits_FilterChanging_RowStore_Clustered")]
         [TestCase("DOIUnitTests", "TempA", "PK_TempA", TestName = "IndexUpdateTests_ChangeBits_FilterChanging_RowStore_PKNonClustered")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA_TransactionUtcDt", TestName = "IndexUpdateTests_ChangeBits_FilterChanging_RowStore_NonClustered")]
+        [TestCase("DOIUnitTests", "TempA", "CCI_TempA", TestName = "IndexUpdateTests_ChangeBits_FilterChanging_ColumnStore_Clustered")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_ChangeBits_FilterChanging_ColumnStore_NonClustered")]
+
         //need a NC, non-PK index for this.
         //need negative assertions for the 2 above indexes, which fail on this error:  "The UPDATE statement conflicted with the CHECK constraint "Chk_IndexesRowStore_Filter". The conflict occurred in database "DOI", table "DOI.IndexesRowStore".The statement has been terminated."
         public void IndexUpdateTests_ChangeBits_FilterChanging(string databaseName, string tableName, string indexName)
         {
+            if (indexName == TestHelper.CCIIndexName)
+            {
+                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropCIndexMetadataSql);
+                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropNCCIndexMetadataSql);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
+            }
+
+            var updateSql = string.Empty;
+
             //all change bits should be off
-            TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
+            if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
+            {
+                TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
+                updateSql = $"UPDATE DOI.IndexesColumnStore SET IsFiltered_Desired = 1, FilterPredicate_Desired = 'TransactionUtcDt > SYSDATETIME()' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'";
+            }
+            else
+            {
+                TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
+                updateSql = $"UPDATE DOI.IndexesRowStore SET IsFiltered_Desired = 1, FilterPredicate_Desired = 'TransactionUtcDt > SYSDATETIME()' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'";
+            }
 
-            var updateSql = $"UPDATE DOI.IndexesRowStore SET IsFiltered_Desired = 1, FilterPredicate_Desired = 'TransactionUtcDt > SYSDATETIME()' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'";
-
-            if (indexName == "PK_TempA" || indexName == "CDX_TempA_TempAId") //PK or Clustered indexes can't have filters.
+            if (indexName == "PK_TempA" || indexName == TestHelper.CIndexName) //PK or Clustered indexes can't have filters.
             {
                 Exception ex = Assert.Throws<SqlException>(() => sqlHelper.Execute(updateSql, 120));
                 Assert.That(ex.Message, Is.EqualTo("The UPDATE statement conflicted with the CHECK constraint \"Chk_IndexesRowStore_Filter\". The conflict occurred in database \"DOI\", table \"DOI.IndexesRowStore\".\r\nThe statement has been terminated."));
             }
-            else
+            else if (indexName == TestHelper.CCIIndexName) //PK or Clustered indexes can't have filters.
+            {
+                Exception ex = Assert.Throws<SqlException>(() => sqlHelper.Execute(updateSql, 120));
+                Assert.That(ex.Message, Is.EqualTo("The UPDATE statement conflicted with the CHECK constraint \"Chk_IndexesColumnStore_Filter\". The conflict occurred in database \"DOI\", table \"DOI.IndexesColumnStore\".\r\nThe statement has been terminated."));
+            }
+
+
+            if (indexName == TestHelper.NCIndexName)
             {
                 sqlHelper.Execute(updateSql, 120);
                 sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
-
-            //only the correct change bit should be turned on.  All others should still be off.
-            TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsFilterChanging");
+                //only the correct change bit should be turned on.  All others should still be off.
+                TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsFilterChanging");
+            }
+            else if (indexName == TestHelper.NCCIIndexName)
+            {
+                sqlHelper.Execute(updateSql, 120);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+                //only the correct change bit should be turned on.  All others should still be off.
+                TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsFilterChanging");
             }
         }
 
@@ -296,7 +358,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             var updateSql = $"UPDATE DOI.IndexesRowStore SET IncludedColumnList_Desired = 'IncludedColumn' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'";
 
-            if (indexName == "PK_TempA" || indexName == "CDX_TempA_TempAId") //PK or Clustered indexes can't have filters.
+            if (indexName == "PK_TempA" || indexName == TestHelper.CIndexName) //PK or Clustered indexes can't have filters.
             {
                 Exception ex = Assert.Throws<SqlException>(() => sqlHelper.Execute(updateSql, 120));
                 Assert.That(ex.Message, Is.EqualTo("The UPDATE statement conflicted with the CHECK constraint \"Chk_IndexesRowStore_IncludedColumnsNotAllowed\". The conflict occurred in database \"DOI\", table \"DOI.IndexesRowStore\".\r\nThe statement has been terminated."));
@@ -308,6 +370,40 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
                 //only the correct change bit should be turned on.  All others should still be off.
                 TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsIncludedColumnListChanging");
+            }
+        }
+
+        [TestCase("DOIUnitTests", "TempA", "CCI_TempA", TestName = "IndexUpdateTests_ChangeBits_ColumnListChanging_ColumnStore_Clustered")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_ChangeBits_ColumnListChanging_ColumnStore_NonClustered")]
+        public void IndexUpdateTests_ChangeBits_ColumnListChanging(string databaseName, string tableName, string indexName)
+        {
+            if (indexName == TestHelper.CCIIndexName)
+            {
+                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropCIndexMetadataSql);
+                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.DropNCCIndexMetadataSql);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
+            }
+
+            //all change bits should be off
+            TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
+
+            var updateSql = $"UPDATE DOI.IndexesColumnStore SET ColumnList_Desired = 'IncludedColumn' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'";
+
+            if (indexName == TestHelper.CCIIndexName) //CCIs must have all columns in them, so this column is not updatable.
+            {
+                Exception ex = Assert.Throws<SqlException>(() => sqlHelper.Execute(updateSql, 120));
+                Assert.That(ex.Message, Is.EqualTo("The UPDATE statement conflicted with the CHECK constraint \"Chk_IndexesColumnStore_ClusteredColumnListIsNull\". The conflict occurred in database \"DOI\", table \"DOI.IndexesColumnStore\".\r\nThe statement has been terminated."));
+            }
+            else
+            {
+                sqlHelper.Execute(updateSql, 120);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+
+                //only the correct change bit should be turned on.  All others should still be off.
+                TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsColumnListChanging");
             }
         }
 
