@@ -166,6 +166,39 @@ namespace DOI.Tests.TestHelpers
             return retVal;
         }
 
+        public T ExecuteScalar<T>(string sql, int commandTimeOut = 30, bool marsEnabled = true, string databaseName = "DOI")
+        {
+            T retVal = default(T);
+            SqlCommand command = null;
+            SqlConnection connection = null;
+            try
+            {
+                connection = new SqlConnection(this.GetConnectionString(databaseName));
+                command = new SqlCommand(sql, connection)
+                {
+                    CommandType = CommandType.Text,
+                    CommandTimeout = commandTimeOut
+                };
+                connection.Open();
+                object obj = command.ExecuteScalar();
+                if (obj != null && obj != DBNull.Value)
+                {
+                    retVal = (T)obj;
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                command?.Dispose();
+                connection?.Dispose();
+            }
+
+            return retVal;
+        }
+
         public T ExecuteScalar<T>(SqlConnection connection, string sql)
         {
             T retVal = default(T);

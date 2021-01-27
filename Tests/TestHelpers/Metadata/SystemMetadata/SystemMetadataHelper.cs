@@ -201,7 +201,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             IncludedColumn VARCHAR(50) NULL,
             TextCol VARCHAR(8000) NULL 
  
-            CONSTRAINT PK_TempA
+            CONSTRAINT {PKIndexName}
                 PRIMARY KEY NONCLUSTERED (TempAId)
                     WITH (  PAD_INDEX = ON,
                             DATA_COMPRESSION = PAGE)
@@ -223,7 +223,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
                                         IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
                                         OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
                                         PartitionFunction_Desired, PartitionColumn_Desired)
-        VALUES (N'{DatabaseName}', N'dbo', N'{TableName}', N'PK_TempA', 1, 1, 0, 0, 'TempAId ASC', NULL,  
+        VALUES (N'{DatabaseName}', N'dbo', N'{TableName}', N'{PKIndexName}', 1, 1, 0, 0, 'TempAId ASC', NULL,  
                 0, NULL, 100, 1, 0, 0, 0, 
                 0, 0, 1, 1, N'PAGE', 'PRIMARY', N'ROWS_FILEGROUP', 
                 NULL, NULL)";
@@ -244,7 +244,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
                 CONSTRAINT Chk_{TableName_Partitioned}_IncludedColumn
                     CHECK (IncludedColumn <> '!@#$%'),
             TextCol VARCHAR(8000) NULL 
-            CONSTRAINT PK_{TableName_Partitioned}
+            CONSTRAINT {PKIndexName_Partitioned}
                 PRIMARY KEY NONCLUSTERED (TempAId, TransactionUtcDt)
         )
         ON {PartitionSchemeNameYearly}(TransactionUtcDt)";       
@@ -259,7 +259,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
                 CONSTRAINT Chk_{TableName_Partitioned}_IncludedColumn
                     CHECK (IncludedColumn <> '!@#$%'),
             TextCol VARCHAR(8000) NULL 
-            CONSTRAINT PK_{TableName_Partitioned}
+            CONSTRAINT {PKIndexName_Partitioned}
                 PRIMARY KEY NONCLUSTERED (TempAId, TransactionUtcDt)
         )
         ON {PartitionSchemeNameMonthly}(TransactionUtcDt)";
@@ -273,7 +273,17 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt');
 
         INSERT INTO DOI.CheckConstraints(   DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,CheckDefinition                    ,IsDisabled , CheckConstraintName)
-        VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'IncludedColumn'  ,N'IncludedColumn <> ''!@#$%'''     ,0          , 'Chk_{TableName_Partitioned}_IncludedColumn');";
+        VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'IncludedColumn'  ,N'IncludedColumn <> ''!@#$%'''     ,0          , 'Chk_{TableName_Partitioned}_IncludedColumn');
+
+
+        INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
+                                        IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
+                                        OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
+                                        PartitionFunction_Desired, PartitionColumn_Desired)
+        VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{PKIndexName_Partitioned}', 1, 1, 0, 0, 'TempAId ASC', NULL,  
+                0, NULL, 100, 1, 0, 0, 0, 
+                0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameMonthly}', N'PARTITION_SCHEME', 
+                NULL, NULL)";
  
         public static string CreatePartitionedTableMonthlyMetadataSql = $@"
         DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName_Partitioned}'
@@ -284,7 +294,16 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt');
 
         INSERT INTO DOI.CheckConstraints(   DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,CheckDefinition                    ,IsDisabled , CheckConstraintName)
-        VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'IncludedColumn'  ,N'IncludedColumn <> ''!@#$%'''     ,0          , 'Chk_{TableName_Partitioned}_IncludedColumn');";
+        VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'IncludedColumn'  ,N'IncludedColumn <> ''!@#$%'''     ,0          , 'Chk_{TableName_Partitioned}_IncludedColumn');
+
+        INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
+                                        IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
+                                        OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
+                                        PartitionFunction_Desired, PartitionColumn_Desired)
+        VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{PKIndexName_Partitioned}', 1, 1, 0, 0, 'TempAId ASC', NULL,  
+                0, NULL, 100, 1, 0, 0, 0, 
+                0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', 
+                NULL, NULL)";
 
         public static string InsertOneRowIntoTableSql = $@"INSERT INTO dbo.{TableName}(TempAId, TransactionUtcDt, IncludedColumn, TextCol) VALUES('{Guid.Parse("0525CED4-4F7B-4212-B511-44D13C129DA9")}', SYSDATETIME(), 'BLA', 'BLA')";
 
@@ -419,12 +438,16 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         public const string NCIndexName = "IDX_TempA";
         public const string NCCIIndexName = "NCCI_TempA";
         public const string CCIIndexName = "CCI_TempA";
+        public const string PKIndexName = "PK_TempA";
+
 
         public const string CIndexName_Partitioned = "CDX_TempA_Partitioned";
         public const string NCCIIndexName_ColumnStore_Partitioned = "NCCI_TempA_Partitioned";
-        
+        public const string PKIndexName_Partitioned = "PK_TempA_Partitioned";
+
+
         //clustered index
-        public static string CreateCIndexSql = $"DROP INDEX IF EXISTS {CCIIndexName} ON dbo.{TableName}; CREATE CLUSTERED INDEX {CIndexName} ON dbo.{TableName}(TempAId) WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
+        public static string CreateCIndexSql = $"DROP INDEX IF EXISTS {CIndexName} ON dbo.{TableName}; CREATE CLUSTERED INDEX {CIndexName} ON dbo.{TableName}(TempAId) WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
 
         public static string CreateCIndexMetadataSql = $@"
             INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
@@ -453,6 +476,10 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                     0, NULL, 100, 1, 0, 0, 0, 
                     0, 0, 1, 1, N'PAGE', 'PRIMARY', N'ROWS_FILEGROUP', 
                     NULL, NULL)";
+
+        public static string DropNCIndexSql = $"DROP INDEX IF EXISTS {NCIndexName} ON dbo.{TableName}";
+
+        public static string CreateFilteredNCIndexSql = $"CREATE NONCLUSTERED INDEX {NCIndexName} ON dbo.{TableName}(TransactionUtcDt) WHERE TempAId <> '{Guid.Empty}' WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
 
         //NCCI index
         public static string CreateNCCIIndexSql = $"CREATE NONCLUSTERED COLUMNSTORE INDEX {NCCIIndexName} ON dbo.{TableName}(TransactionUtcDt) WITH (DATA_COMPRESSION = COLUMNSTORE)";
@@ -484,8 +511,22 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         public static string DropCCIIndexSql = $"DROP INDEX IF EXISTS {CCIIndexName} ON dbo.{TableName}";
 
+        //PK index
+        public static string DropPKIndexSql = $"IF EXISTS(SELECT 'True' FROM sys.indexes WHERE NAME = '{PKIndexName}') ALTER TABLE dbo.{TableName} DROP CONSTRAINT {PKIndexName}";
+        public static string CreatePKIndexSql = $@" 
+            IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE NAME = '{PKIndexName}')
+            BEGIN
+                ALTER TABLE dbo.{TableName}
+                    ADD CONSTRAINT {PKIndexName}
+                        PRIMARY KEY NONCLUSTERED (TempAId)
+                            WITH (  PAD_INDEX = ON,
+                                    DATA_COMPRESSION = PAGE)
+            END";
 
         //PARTITIONED INDEX
+
+        public static string DropPartitionedPKIndexSql = $"IF EXISTS(SELECT 'True' FROM sys.indexes WHERE NAME = '{PKIndexName_Partitioned}') ALTER TABLE dbo.{TableName_Partitioned} DROP CONSTRAINT {PKIndexName_Partitioned}";
+
 
         public static string CreatePartitionedIndexYearlySql = $@"
             CREATE UNIQUE CLUSTERED INDEX {CIndexName_Partitioned} 

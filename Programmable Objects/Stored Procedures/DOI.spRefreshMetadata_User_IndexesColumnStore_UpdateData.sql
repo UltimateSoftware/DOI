@@ -35,19 +35,17 @@ AS
     EXEC(@SQL)
 
     UPDATE ICS
-    SET IsIndexMissingFromSQLServer = 1
+    SET IsIndexMissingFromSQLServer = CASE WHEN I.NAME IS NULL THEN 1 ELSE 0 END
     FROM DOI.IndexesColumnStore ICS
-    WHERE NOT EXISTS(	SELECT 'True' 
-					    FROM DOI.SysSchemas s 
-                            INNER JOIN DOI.SysDatabases d ON s.database_id = d.database_id
-						    INNER JOIN DOI.SysTables t ON d.database_id = t.database_id
-                                AND t.schema_id = s.schema_id 
-						    INNER JOIN DOI.SysIndexes i ON i.database_id = d.database_id
-                                AND i.object_id = t.object_id
-					    WHERE d.name = ICS.DatabaseName
-                            AND s.name = ICS.SchemaName
-						    AND t.name = ICS.TableName
-						    AND i.name = ICS.IndexName)
+        INNER JOIN DOI.SysDatabases d ON d.name = ICS.DatabaseName
+        INNER JOIN DOI.SysSchemas s ON s.name = ICS.SchemaName
+            AND s.database_id = d.database_id            
+		INNER JOIN DOI.SysTables t ON t.name = ICS.TableName
+            AND t.database_id = s.database_id
+            AND s.schema_id = t.schema_id
+		LEFT JOIN DOI.SysIndexes i ON i.name = ICS.IndexName
+            AND i.database_id = t.database_id
+            AND i.object_id = t.object_id
         AND ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE ICS
