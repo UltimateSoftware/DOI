@@ -450,6 +450,7 @@
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTables.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTriggers.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysTypes.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwIndexes.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionFunctionPartitions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionFunctions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitioning_Tables_PrepTables.cs" />

@@ -22,13 +22,13 @@ AS
 
 SELECT	AllIdx.* 
         ,CASE
-            WHEN AllIdx.IndexUpdateType IN ('CreateMissing', 'AlterRebuild')
+            WHEN AllIdx.IndexUpdateType IN ('CreateMissing', 'AlterRebuild', 'AlterRebuild-PartitionLevel')
                     OR (AllIdx.IndexUpdateType = 'DropRecreate' AND AllIdx.IsClustered_Desired = 1)
             THEN 1
 			ELSE 0
          END AS NeedsSpaceOnTempDBDrive
 		,CASE 
-			WHEN AllIdx.IndexUpdateType IN ('AlterSet', 'AlterReorganize', 'AlterReorganize-PartitionLevel')
+			WHEN AllIdx.IndexUpdateType IN ('CreateMissing', 'AlterSet', 'AlterReorganize', 'AlterReorganize-PartitionLevel')
 				OR (AllIdx.IndexUpdateType IN ('AlterRebuild', 'AlterRebuild-PartitionLevel') 
 					AND (AllIdx.IndexType = 'RowStore' AND AllIdx.IndexHasLOBColumns = 0))
 			THEN 1

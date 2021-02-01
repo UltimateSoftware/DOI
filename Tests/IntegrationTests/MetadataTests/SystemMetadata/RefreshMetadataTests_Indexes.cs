@@ -4,6 +4,10 @@ using DOI.Tests.Integration;
 using DOI.Tests.IntegrationTests.Models;
 using DOI.Tests.TestHelpers;
 using TestHelper = DOI.Tests.TestHelpers.Metadata.IndexesHelper;
+using PfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionFunctionsHelper;
+using PsTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionSchemesHelper;
+using FgTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_FileGroupsHelper;
+using DbfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_DBFilesHelper;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
@@ -14,6 +18,11 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
     [Category("ReportingIntegration")]
     public class RefreshMetadataTests_Indexes : DOIBaseTest
     {
+        FgTestHelper fgTestHelper = new FgTestHelper();
+        DbfTestHelper dbfTestHelper = new DbfTestHelper();
+        PfTestHelper pfTestHelper = new PfTestHelper();
+        PsTestHelper psTestHelper = new PsTestHelper();
+
         [SetUp]
         public void Setup()
         {
@@ -324,18 +333,55 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         #endregion
 
         #region IndexSizing Tests
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", TestName = "IndexUpdateTests_IndexSizing_RowStore_Clustered")]
+        [TestCase("DOIUnitTests", "TempA", "PK_TempA", TestName = "IndexUpdateTests_IndexSizing_RowStore_NonClustered")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", TestName = "IndexUpdateTests_IndexSizing_RowStore_PK")]
+        public void IndexUpdateTests_IndexSizing_RowStore(string databaseName, string tableName, string indexName)
+        {
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
+            //assert that the size is 0.
+            var indexSizeMB = sqlHelper.ExecuteScalar<decimal>(
+                $"SELECT IndexSizeMB_Actual FROM DOI.IndexesRowStore WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'");
+
+            Assert.AreEqual(0, indexSizeMB, "IndexWithNoDataHas0Size");
+            //add 1 row of data
+            sqlHelper.Execute(TestHelper.InsertOneRowIntoTableSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+
+            //assert size > 0
+            indexSizeMB = sqlHelper.ExecuteScalar<decimal>(
+                $"SELECT IndexSizeMB_Actual FROM DOI.IndexesRowStore WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'");
+
+            Assert.Greater(indexSizeMB, 0, "IndexWithDataHasSizeGreaterThan0");
+        }
+
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_IndexSizing_ColumnStore_NonClustered")]
+        [TestCase("DOIUnitTests", "TempA", "CCI_TempA", TestName = "IndexUpdateTests_IndexSizing_ColumnStore_Clustered")]
+        public void IndexUpdateTests_IndexSizing_ColumnStore(string databaseName, string tableName, string indexName)
+        {
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            
+            //assert that the size is 0.
+            var indexSizeMB = sqlHelper.ExecuteScalar<decimal>(
+                $"SELECT IndexSizeMB_Actual FROM DOI.IndexesColumnStore WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'");
+
+            Assert.AreEqual(0, indexSizeMB, "IndexWithNoDataHas0Size");
+            //add 1 row of data
+            sqlHelper.Execute(TestHelper.InsertOneRowIntoTableSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+
+            //assert size > 0
+            indexSizeMB = sqlHelper.ExecuteScalar<decimal>(
+                    $"SELECT IndexSizeMB_Actual FROM DOI.IndexesColumnStore WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'");
+
+            Assert.Greater(indexSizeMB, 0, "IndexWithDataHasSizeGreaterThan0");
+        }
 
 
         #endregion
 
         #region IndexFragmentation Tests
-
-        #endregion
-
-        #region IndexPartitionFunction Tests
-
-
 
         #endregion
 
@@ -382,15 +428,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         {
             var isClusteredSetting = (indexName == TestHelper.CIndexName || indexName == TestHelper.CCIIndexName)? "0" : "1";
 
-            if (indexName == TestHelper.CCIIndexName)
-            {
-                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropCIndexMetadataSql);
-                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropNCCIndexMetadataSql);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
-            }
+            TestHelper.ReclusterTableWithColumnStore(indexName);
 
             //all change bits should be off
             if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
@@ -425,15 +463,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
         public void IndexUpdateTests_ChangeBits_DataCompressionChanging(string databaseName, string tableName, string indexName)
         {
-            if (indexName == TestHelper.CCIIndexName)
-            {
-                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropCIndexMetadataSql);
-                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropNCCIndexMetadataSql);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
-            }
+            TestHelper.ReclusterTableWithColumnStore(indexName);
 
             //all change bits should be off
             if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
@@ -465,14 +495,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
         public void IndexUpdateTests_ChangeBits_DataCompressionDelayChanging(string databaseName, string tableName, string indexName)
         {
-            if (indexName == TestHelper.CCIIndexName)
-            {
-                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
-
-                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
-            }
+            TestHelper.ReclusterTableWithColumnStore(indexName);
 
             //all change bits should be off
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
@@ -507,19 +530,9 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [TestCase("DOIUnitTests", "TempA", "CCI_TempA", TestName = "IndexUpdateTests_ChangeBits_FilterChanging_ColumnStore_Clustered")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_ChangeBits_FilterChanging_ColumnStore_NonClustered")]
 
-        //need a NC, non-PK index for this.
-        //need negative assertions for the 2 above indexes, which fail on this error:  "The UPDATE statement conflicted with the CHECK constraint "Chk_IndexesRowStore_Filter". The conflict occurred in database "DOI", table "DOI.IndexesRowStore".The statement has been terminated."
         public void IndexUpdateTests_ChangeBits_FilterChanging(string databaseName, string tableName, string indexName)
         {
-            if (indexName == TestHelper.CCIIndexName)
-            {
-                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropCIndexMetadataSql);
-                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropNCCIndexMetadataSql);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
-            }
+            TestHelper.ReclusterTableWithColumnStore(indexName);
 
             var updateSql = string.Empty;
 
@@ -582,7 +595,6 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [TestCase("DOIUnitTests", "TempA", "CDX_TempA", TestName = "IndexUpdateTests_ChangeBits_IncludedColumnListChanging_RowStore_Clustered")]
         [TestCase("DOIUnitTests", "TempA", "PK_TempA", TestName = "IndexUpdateTests_ChangeBits_IncludedColumnListChanging_RowStore_PKNonClustered")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", TestName = "IndexUpdateTests_ChangeBits_IncludedColumnListChanging_RowStore_NonClustered")]
-        //need negative assertions for the 2 above indexes, which fail on this error:  "The UPDATE statement conflicted with the CHECK constraint "Chk_IndexesRowStore_IncludedColumnsNotAllowed". The conflict occurred in database "DOI", table "DOI.IndexesRowStore".The statement has been terminated."
         public void IndexUpdateTests_ChangeBits_IncludedColumnListChanging(string databaseName, string tableName, string indexName)
         {
             //all change bits should be off
@@ -609,15 +621,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_ChangeBits_ColumnListChanging_ColumnStore_NonClustered")]
         public void IndexUpdateTests_ChangeBits_ColumnListChanging(string databaseName, string tableName, string indexName)
         {
-            if (indexName == TestHelper.CCIIndexName)
-            {
-                sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropCIndexMetadataSql);
-                sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.DropNCCIndexMetadataSql);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
-            }
+            TestHelper.ReclusterTableWithColumnStore(indexName);
 
             //all change bits should be off
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
@@ -797,7 +801,100 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             }
         }
 
-        //still need partitioning
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", TestName = "IndexUpdateTests_ChangeBits_StorageChanging_RowStore_Clustered")]
+        [TestCase("DOIUnitTests", "TempA", "PK_TempA", TestName = "IndexUpdateTests_ChangeBits_StorageChanging_RowStore_PKNonClustered")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", TestName = "IndexUpdateTests_ChangeBits_StorageChanging_RowStore_NonClustered")]
+        public void IndexUpdateTests_ChangeBits_IsStorageChanging_RowStore(string databaseName, string tableName, string indexName)
+        {
+            //all change bits should be off
+            TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
+
+            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+
+            //only the correct change bit should be turned on.  All others should still be off.
+            TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsStorageChanging");
+        }
+
+        [TestCase("DOIUnitTests", "TempA", "CCI_TempA", TestName = "IndexUpdateTests_ChangeBits_StorageChanging_ColumnStore_Clustered")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_ChangeBits_StorageChanging_ColumnStore_NonClustered")]
+        public void IndexUpdateTests_ChangeBits_IsStorageChanging_ColumnStore(string databaseName, string tableName, string indexName)
+        {
+            TestHelper.ReclusterTableWithColumnStore(indexName);
+            //all change bits should be off
+            TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
+
+            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+
+            //only the correct change bit should be turned on.  All others should still be off.
+            TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsStorageChanging");
+        }
+
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", TestName = "IndexUpdateTests_ChangeBits_PartitioningChanging_RowStore_Clustered")]
+        [TestCase("DOIUnitTests", "TempA", "PK_TempA", TestName = "IndexUpdateTests_ChangeBits_PartitioningChanging_RowStore_PKNonClustered")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", TestName = "IndexUpdateTests_ChangeBits_PartitioningChanging_RowStore_NonClustered")]
+        public void IndexUpdateTests_ChangeBits_IsPartitioningChanging_RowStore(string databaseName, string tableName, string indexName)
+        {
+            //all change bits should be off
+            TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
+
+            //create partition function
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlyMetadataSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);
+            sqlHelper.Execute(pfTestHelper.GetPartitionFunctionSql(TestHelper.PartitionFunctionNameYearly, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);
+
+            //create all needed storage containers
+            sqlHelper.Execute(fgTestHelper.GetFilegroupSql(TestHelper.PartitionSchemeNameYearly, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(dbfTestHelper.GetDBFilesSql(TestHelper.PartitionSchemeNameYearly, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDatabaseFilesSql);
+
+            //create partition scheme
+            sqlHelper.Execute(psTestHelper.GetPartitionSchemeSql(TestHelper.PartitionSchemeNameYearly, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionSchemesSql);
+
+            //action
+            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.PartitionSchemeNameYearly}', PartitionColumn_Desired = 'TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionColumn = 'TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+
+            //only the correct change bit should be turned on.  All others should still be off.
+            TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsPartitioningChanging");
+        }
+
+        [TestCase("DOIUnitTests", "TempA", "CCI_TempA", TestName = "IndexUpdateTests_ChangeBits_PartitioningChanging_ColumnStore_Clustered")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_ChangeBits_PartitioningChanging_ColumnStore_NonClustered")]
+        public void IndexUpdateTests_ChangeBits_IsPartitioningChanging_ColumnStore(string databaseName, string tableName, string indexName)
+        {
+            TestHelper.ReclusterTableWithColumnStore(indexName);
+            //all change bits should be off
+            TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
+
+            //create partition function
+            sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlyMetadataSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);
+            sqlHelper.Execute(pfTestHelper.GetPartitionFunctionSql(TestHelper.PartitionFunctionNameYearly, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);
+
+            //create all needed storage containers
+            sqlHelper.Execute(fgTestHelper.GetFilegroupSql(TestHelper.PartitionSchemeNameYearly, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(dbfTestHelper.GetDBFilesSql(TestHelper.PartitionSchemeNameYearly, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDatabaseFilesSql);
+
+            //create partition scheme
+            sqlHelper.Execute(psTestHelper.GetPartitionSchemeSql(TestHelper.PartitionSchemeNameYearly, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionSchemesSql);
+
+            //action
+            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET Storage_Desired = '{TestHelper.PartitionSchemeNameYearly}', PartitionColumn_Desired = 'TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionColumn = 'TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+
+            //only the correct change bit should be turned on.  All others should still be off.
+            TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsPartitioningChanging");
+        }
 
         #endregion
 
@@ -924,93 +1021,6 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             Assert.AreEqual(true, indexRow.AreSetOptionsChanging, "AreSetOptionsChanging, Post-Change");
         }
 
-        #endregion
-
-        #region StrategyClassification Tests
-        /*
-                //for the diff combinations of change bit values, make sure it chooses the right strategy
-                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-                public void IndexUpdateStrategyClassification_Tests_DropRecreate(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-                {
-                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
-
-
-                    if (optionUpdateList != null)
-                    {
-                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-                    }
-
-                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-                }
-                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-                public void IndexUpdateClassification_Tests_AlterRebuild(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-                {
-                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
-
-
-                    if (optionUpdateList != null)
-                    {
-                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-                    }
-
-                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-                }
-                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-                public void IndexUpdateClassification_Tests_AlterReorganize(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-                {
-                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
-
-
-                    if (optionUpdateList != null)
-                    {
-                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-                    }
-
-                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-                }
-
-                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-                public void IndexUpdateClassification_Tests_AlterSet(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-                {
-                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
-
-
-                    if (optionUpdateList != null)
-                    {
-                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-                    }
-
-                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-                }
-
-                [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks=0, OptionDataCompression='ROW', OptionIgnoreDupKey=1, OptionPadIndex=0, OptionStatisticsNoRecompute=1", "AlterRebuild", "AllowPageLocks, DataCompression, IgnoreDupKey, PadIndex, StatisticsNoRecompute", TestName = "IndexUpdateClassification_Tests_AlterRebuild_AllowPageLocks_DataCompression_IgnoreDupKey_PadIndex_StatisticsNoRecompute")]
-                public void IndexUpdateClassification_Tests_NoChanges(string databaseName, string tableName, string indexName, string optionUpdateList, string updateType, string listOfChanges)
-                {
-                    sqlHelper.Execute(TestHelper.CreateIndexMetadataSql);
-                    sqlHelper.Execute(TestHelper.CreateIndexSql, 30, true, DatabaseName);
-
-
-                    if (optionUpdateList != null)
-                    {
-                        sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-                    }
-
-                    var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
-                    Assert.AreEqual(updateType, indexRow.IndexUpdateType, "indexUpdateType");
-                    Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
-                }*/
         #endregion
 
         #region IndexSizeEstimate Tests

@@ -155,5 +155,45 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(1, actualRowRowStoreIndex.RowNum, "RowNum");
             }
         }
+
+        public static string GetColumnsToUpdateFromIndexTypeSql(string indexUpdateType)
+        {
+            string columnsToUpdateSql = string.Empty;
+
+            switch (indexUpdateType)
+            {
+                case "CreateMissing":
+                    columnsToUpdateSql = "IsIndexMissingFromSQLServer = 1";
+                    break;
+                case "DropRecreate":
+                    columnsToUpdateSql = "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 1";
+                    break;
+                case "AlterRebuild":
+                    columnsToUpdateSql =
+                        "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 0, AreRebuildOnlyOptionsChanging = 1, NeedsPartitionLevelOperations = 0";
+                    break;
+                case "AlterReorganize":
+                    columnsToUpdateSql = "FragmentationType = 'Light', NeedsPartitionLevelOperations = 0";
+                    break;
+                case "AlterSet":
+                    columnsToUpdateSql =
+                        "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 0, AreRebuildOnlyOptionsChanging = 0, NeedsPartitionLevelOperations = 0, AreSetOptionsChanging = 1";
+                    break;
+                case "AlterRebuild-PartitionLevel":
+                    columnsToUpdateSql =
+                        "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 0, FragmentationType = 'Heavy', NeedsPartitionLevelOperations = 1";
+                    break;
+                case "AlterReorganize-PartitionLevel":
+                    columnsToUpdateSql = "FragmentationType = 'Light', NeedsPartitionLevelOperations = 1";
+                    break;
+            }
+
+            return columnsToUpdateSql;
+        }
+
+        //public static void AssertSqlsAreNotNull(string tableName, string indexName)
+        //{
+
+        //}
     }
 }

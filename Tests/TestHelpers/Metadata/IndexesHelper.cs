@@ -556,5 +556,19 @@ namespace DOI.Tests.TestHelpers.Metadata
             }
         }
 
+        public static void ReclusterTableWithColumnStore(string indexName)
+        {
+            SqlHelper sqlHelper = new SqlHelper();
+
+            if (indexName == CCIIndexName)
+            {
+                sqlHelper.Execute(DropCIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(DropCIndexMetadataSql);
+                sqlHelper.Execute(DropNCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(DropNCCIndexMetadataSql);
+                sqlHelper.Execute(CreateCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(CreateCCIIndexMetadataSql);
+            }
+        }
     }
 }
