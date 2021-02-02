@@ -86,6 +86,62 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         //test also index with included columns, LOB columns.
         //test index partition metadata insert.
 
+        #region PartitioningMetadata Tests
+
+        [TestCase("pfTestsYearly", "CDX_TempA", TestName = "PartitioningUserMetadata_RowStore_Clustered_Yearly")]
+        [TestCase("pfTestsYearly", "IDX_TempA", TestName = "PartitioningUserMetadata_RowStore_NonClustered_Yearly")]
+        [TestCase("pfTestsYearly", "PK_TempA", TestName = "PartitioningUserMetadata_RowStore_PK_Yearly")]
+        [TestCase("pfTestsMonthly", "CDX_TempA", TestName = "PartitioningUserMetadata_RowStore_Clustered_Monthly")]
+        [TestCase("pfTestsMonthly", "IDX_TempA", TestName = "PartitioningUserMetadata_RowStore_NonClustered_Monthly")]
+        [TestCase("pfTestsMonthly", "PK_TempA", TestName = "PartitioningUserMetadata_RowStore_PK_Monthly")]
+        [Test]
+        public void PartitioningUserMetadata_RowStore(string partitionFunctionName, string indexName)
+        {
+            TestHelper.CreatePartitioningContainerObjects(partitionFunctionName);
+
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);
+
+            //update metadata to partition the table and indexes
+            TestHelper.UpdateTableMetadataForPartitioning(TestTableName1, partitionFunctionName, TestHelper.PartitionColumnName, indexName);
+
+            //run refresh metadata
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesPartitionsSql);
+
+            //and now they should match
+            TestHelper.AssertUserMetadata_Partitioning_RowStore(partitionFunctionName, indexName);
+        }
+
+
+
+        [TestCase("pfTestsYearly", "CCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_Clustered_Yearly")]
+        [TestCase("pfTestsYearly", "NCCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_NonClustered_Yearly")]
+        [TestCase("pfTestsMonthly", "CCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_Clustered_Monthly")]
+        [TestCase("pfTestsMonthly", "NCCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_NonClustered_Monthly")]
+        [Test]
+        public void PartitioningUserMetadata_ColumnStore(string partitionFunctionName, string indexName)
+        {
+            if (indexName == TestHelper.CCIIndexName)
+            {
+                TestHelper.ReclusterTableWithColumnStore(indexName);
+            }
+
+            TestHelper.CreatePartitioningContainerObjects(partitionFunctionName);
+
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);
+            
+            //update metadata to partition the table and indexes
+            TestHelper.UpdateTableMetadataForPartitioning(TestTableName1, partitionFunctionName, TestHelper.PartitionColumnName, indexName);
+
+            //run refresh metadata
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesPartitionsSql);
+
+            //and now they should match
+            TestHelper.AssertUserMetadata_Partitioning_ColumnStore(partitionFunctionName, indexName);
+        }
+
+
+        #endregion
+
         #region IndexIsMissing Tests
         //update index, and make sure the change bit was set correctly.
         [TestCase("DOIUnitTests", "TempA", "CDX_TempA", TestName = "IndexUpdateTests_IndexIsMissing_RowStore_Clustered")]

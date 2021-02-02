@@ -53,6 +53,8 @@ CREATE TABLE [DOI].[Tables]
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SchemaName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [TableName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[PartitionFunctionName_Desired] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[PartitionFunctionName_Actual] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [PartitionColumn] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Storage_Desired] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Storage_Actual] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -74,8 +76,7 @@ CREATE TABLE [DOI].[Tables]
 [ColumnListNoTypes] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListWithTypes] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [UpdateColumnList] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[NewPartitionedPrepTableName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[PartitionFunctionName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[NewPartitionedPrepTableName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 CONSTRAINT [PK_Tables] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName])
 )
 WITH
@@ -439,6 +440,14 @@ CREATE TABLE [DOI].[IndexPartitionsColumnStore]
 [IndexName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [PartitionNumber] [smallint] NOT NULL,
 [OptionDataCompression] [nvarchar] (60) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_OptionDataCompression] DEFAULT ('COLUMNSTORE'),
+[NumRows] [BIGINT] NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_NumRows] DEFAULT ((0)),
+[TotalPages] [BIGINT] NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_TotalPages] DEFAULT ((0)),
+[PartitionType] [VARCHAR] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_PartitionType] DEFAULT ('ColumnStore'),
+[TotalIndexPartitionSizeInMB] [DECIMAL] (10, 2) NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_TotalIndexPartitionSizeInMB] DEFAULT ((0.00)),
+[Fragmentation] [FLOAT] NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_Fragmentation] DEFAULT ((0)),
+[DataFileName] [NVARCHAR] (260) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_DataFileName] DEFAULT (''),
+[DriveLetter] [CHAR] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_DriveLetter] DEFAULT (''),
+[PartitionUpdateType] [VARCHAR] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_PartitionUpdateType] DEFAULT ('None'),
 CONSTRAINT [PK_IndexPartitionsColumnStore] PRIMARY KEY NONCLUSTERED  ([SchemaName], [TableName], [IndexName], [PartitionNumber])
 )
 WITH

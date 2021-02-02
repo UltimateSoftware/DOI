@@ -493,4 +493,7 @@
   <ItemGroup>
     <None Include="Programmable Objects\Views\vwPartitioning_PrepTables.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_UpdateData.sql" />
+  </ItemGroup>
 </Project>

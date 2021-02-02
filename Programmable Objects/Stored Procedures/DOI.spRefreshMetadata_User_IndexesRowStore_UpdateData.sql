@@ -161,7 +161,30 @@ AS
                             AND FN.IndexName = IRS.IndexName) F
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
-    --SysIndexes, and friends...
+    --partition functions & storage for partitioned tables
+    UPDATE IRS
+    SET Storage_Desired = PF.PartitionSchemeName
+    FROM DOI.IndexesRowStore IRS
+        INNER JOIN DOI.PartitionFunctions PF ON IRS.PartitionFunction_Desired = PF.PartitionFunctionName
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
+
+    UPDATE IRS
+    SET PartitionFunction_Actual = ExistingPf.name,
+        Storage_Actual = NewPs.name
+    FROM DOI.IndexesRowStore IRS 
+        INNER JOIN DOI.SysDatabases d on d.name = IRS.DatabaseName
+	    INNER JOIN DOI.SysPartitionSchemes ExistingPs ON d.database_id = ExistingPs.database_id
+            AND IRS.Storage_Actual = ExistingPs.name
+	    INNER JOIN DOI.SysPartitionFunctions ExistingPf ON d.database_id = ExistingPf.database_id
+            AND ExistingPs.function_id = ExistingPf.function_id
+	    INNER JOIN DOI.SysPartitionSchemes NewPs ON NewPs.database_id = D.database_id
+            AND NewPs.name = IRS.Storage_Desired
+	    INNER JOIN DOI.SysPartitionFunctions NewPf ON NewPf.database_id = NewPs.database_id
+            AND NewPf.function_id = NewPs.function_id
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
+
+
+    --SysIndexes, and friends...including storage for non-partitioned tables.
     UPDATE IRS
     SET IsUnique_Actual = i.is_unique,
         IsPrimaryKey_Actual = i.is_primary_key,
@@ -177,6 +200,7 @@ AS
         OptionAllowRowLocks_Actual = i.allow_row_locks,
         OptionAllowPageLocks_Actual = i.allow_page_locks,
         Storage_Actual = ActualDS.name,
+        Storage_Desired = DesiredDS.name,
         StorageType_Actual = ActualDS.type_desc,
         StorageType_Desired = DesiredDS.type_desc,
         IsStorageChanging = CASE WHEN ActualDS.name <> DesiredDS.name THEN 1 ELSE 0 END,
@@ -203,22 +227,7 @@ AS
             AND ActualDS.data_space_id = I.data_space_id
 	    INNER JOIN DOI.SysDataSpaces DesiredDS ON DesiredDS.database_id = d.database_id
             AND DesiredDS.name = IRS.Storage_Desired
-    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
-
-    UPDATE IRS
-    SET     PartitionFunction_Desired = NewPf.name,
-            PartitionFunction_Actual = ExistingPf.name
-    FROM DOI.IndexesRowStore IRS 
-        INNER JOIN DOI.SysDatabases d on d.name = IRS.DatabaseName
-	    LEFT JOIN DOI.SysPartitionSchemes ExistingPs ON d.database_id = ExistingPs.database_id
-            AND IRS.Storage_Actual = ExistingPs.name
-	    LEFT JOIN DOI.SysPartitionFunctions ExistingPf ON d.database_id = ExistingPf.database_id
-            AND ExistingPs.function_id = ExistingPf.function_id
-	    LEFT JOIN DOI.SysPartitionSchemes NewPs ON NewPs.database_id = D.database_id
-            AND NewPs.name = IRS.Storage_Desired
-	    LEFT JOIN DOI.SysPartitionFunctions NewPf ON NewPf.database_id = NewPs.database_id
-            AND NewPf.function_id = NewPs.function_id
-    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END
 
     --CHANGE BITS
 

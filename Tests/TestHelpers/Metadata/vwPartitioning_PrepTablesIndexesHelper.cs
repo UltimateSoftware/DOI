@@ -125,7 +125,11 @@ namespace DOI.Tests.TestHelpers.Metadata
                                    AND TableName = '{TableName_Partitioned}')x");
 
             var actualPrepTableIndexRowCount = sqlHelper.ExecuteScalar<int>(
-                $"SELECT COUNT(*) FROM DOI.{ViewName} WHERE DatabaseName = '{DatabaseName}' AND ParentTableName = '{TableName_Partitioned}' AND IsNewPartitionedPrepTable = 0");
+                $@" SELECT COUNT(*) 
+                        FROM DOI.{ViewName} 
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND ParentTableName = '{TableName_Partitioned}' 
+                            AND IsNewPartitionedPrepTable = 0");
 
             Assert.IsTrue(actual.Count > 0, "RowsReturned");
             Assert.AreEqual(expectedIndexCount * actualIndexCount, actualPrepTableIndexRowCount, "MatchingRowCounts"); //should have 'x' Indexes per partition.

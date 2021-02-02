@@ -133,6 +133,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'";
 
@@ -636,11 +637,14 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
             EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexPhysicalStats @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_InsertData @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_InsertData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_UpdateData @DatabaseName = '{DatabaseName}'";
 
 
         #endregion

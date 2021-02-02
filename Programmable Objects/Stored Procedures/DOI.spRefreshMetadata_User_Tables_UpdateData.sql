@@ -44,13 +44,10 @@ FROM DOI.Tables T
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 UPDATE T
-SET PartitionFunctionName = PF.PartitionFunctionName
-FROM DOI.Tables T
-    LEFT JOIN DOI.PartitionFunctions PF ON PF.PartitionSchemeName = T.Storage_Actual
-WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 UPDATE T
-SET StorageType_Desired = DS_Desired.type_desc
+SET Storage_Desired = DS_Desired.
+    StorageType_Desired = DS_Desired.type_desc
 FROM DOI.Tables T
     INNER JOIN DOI.SysDataSpaces DS_Desired ON T.Storage_Desired = DS_Desired.name
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 

@@ -9,11 +9,21 @@ using DOI.Tests.TestHelpers;
 using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 using Simple.Data.Ado.Schema;
 using Models = DOI.Tests.Integration.Models;
+using TestHelper = DOI.Tests.TestHelpers.Metadata.IndexesHelper;
+using PfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionFunctionsHelper;
+using PsTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionSchemesHelper;
+using FgTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_FileGroupsHelper;
+using DbfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_DBFilesHelper;
 
 namespace DOI.Tests.TestHelpers.Metadata
 {
     public class IndexesHelper : SystemMetadataHelper
     {
+        FgTestHelper fgTestHelper = new FgTestHelper();
+        DbfTestHelper dbfTestHelper = new DbfTestHelper();
+        PfTestHelper pfTestHelper = new PfTestHelper();
+        PsTestHelper psTestHelper = new PsTestHelper();
+
         public const string SysTableName = "SysIndexes";
         public const string SqlServerDmvName = "sys.indexes";
         public const string UserTableName_RowStore = "IndexesRowStore"; 
@@ -506,6 +516,72 @@ namespace DOI.Tests.TestHelpers.Metadata
             }
         }
 
+        public static void AssertUserMetadata_Partitioning_RowStore(string partitionFunctionName, string indexName)
+        {
+            //get # partitions
+            SqlHelper sqlHelper = new SqlHelper();
+
+            string partitionSchemeName = sqlHelper.ExecuteScalar<string>(
+                $@" SELECT partitionSchemeName 
+                            FROM DOI.PartitionFunctions 
+                            WHERE PartitionFunctionName = '{partitionFunctionName}'");
+
+            var numPartitions = sqlHelper.ExecuteScalar<short>($@"SELECT NumOfTotalPartitionSchemeIntervals 
+                                                                    FROM DOI.PartitionFunctions 
+                                                                    WHERE PartitionFunctionName = '{partitionFunctionName}'");
+
+            var actual = GetActualUserValues_RowStore(indexName);
+
+            Assert.AreEqual(1, actual.Count, "Actual_Count_IndexesRowStore");
+
+            foreach (var row in actual)
+            {
+                Assert.AreEqual(false, row.IsIndexMissingFromSQLServer, "IsIndexMissingFromSQLServer");
+                Assert.AreEqual(true, row.OptionStatisticsIncremental_Desired, "OptionStatisticsIncremental_Desired");
+                Assert.AreEqual(false, row.OptionStatisticsIncremental_Actual, "OptionStatisticsIncremental_Actual");   //table is actually not partitioned yet.
+                Assert.AreEqual(partitionSchemeName, row.Storage_Desired, "Storage_Desired");
+                Assert.AreEqual("PRIMARY", row.Storage_Actual, "Storage_Actual");                                       //table is actually not partitioned yet.
+                Assert.AreEqual("PARTITION_SCHEME", row.StorageType_Desired, "StorageType_Desired");
+                Assert.AreEqual("ROWS_FILEGROUP", row.StorageType_Actual, "StorageType_Actual");                        //table is actually not partitioned yet.
+                Assert.AreEqual(partitionFunctionName, row.PartitionFunction_Desired, "PartitionFunction_Desired");
+                Assert.AreEqual(string.Empty, row.PartitionFunction_Actual, "PartitionFunction_Actual");
+                Assert.AreEqual(true, row.AreDropRecreateOptionsChanging, "AreDropRecreateOptionsChanging");
+                Assert.AreEqual(true, row.IsPartitioningChanging, "IsPartitioningChanging");
+                Assert.AreEqual(numPartitions, row.TotalPartitionsInIndex, "TotalPartitionsInIndex");
+            }
+        }
+
+        public static void AssertUserMetadata_Partitioning_ColumnStore(string partitionFunctionName, string indexName)
+        {
+            SqlHelper sqlHelper = new SqlHelper();
+
+            string partitionSchemeName = sqlHelper.ExecuteScalar<string>(
+                $@" SELECT partitionSchemeName 
+                            FROM DOI.PartitionFunctions 
+                            WHERE PartitionFunctionName = '{partitionFunctionName}'");
+
+            var numPartitions = sqlHelper.ExecuteScalar<short>($@"SELECT NumOfTotalPartitionSchemeIntervals 
+                                                                    FROM DOI.PartitionFunctions 
+                                                                    WHERE PartitionFunctionName = '{partitionFunctionName}'");
+            var actual = GetActualUserValues_ColumnStore(indexName);
+
+            Assert.AreEqual(1, actual.Count, "Actual_Count_IndexesColumnStore");
+
+            foreach (var row in actual)
+            {
+                Assert.AreEqual(false, row.IsIndexMissingFromSQLServer, "IsIndexMissingFromSQLServer");
+                Assert.AreEqual(partitionSchemeName, row.Storage_Desired, "Storage_Desired");
+                Assert.AreEqual("PRIMARY", row.Storage_Actual, "Storage_Actual");                           //table is actually not partitioned yet.
+                Assert.AreEqual("PARTITION_SCHEME", row.StorageType_Desired, "StorageType_Desired");
+                Assert.AreEqual("ROWS_FILEGROUP", row.StorageType_Actual, "StorageType_Actual");            //table is actually not partitioned yet.
+                Assert.AreEqual(partitionFunctionName, row.PartitionFunction_Desired, "PartitionFunction_Desired");
+                Assert.AreEqual(string.Empty, row.PartitionFunction_Actual, "PartitionFunction_Actual");    //table is actually not partitioned yet.
+                Assert.AreEqual(true, row.AreDropRecreateOptionsChanging, "AreDropRecreateOptionsChanging");
+                Assert.AreEqual(true, row.IsPartitioningChanging, "IsPartitioningChanging");
+                Assert.AreEqual(numPartitions, row.TotalPartitionsInIndex, "TotalPartitionsInIndex");
+            }
+        }
+
         public static void AssertUserMetadata_ColumnStore(int expectedNumPages, int expectedNumRows, decimal expectedIndexSizeMB)
         {
             var actual = GetActualUserValues_ColumnStore();
@@ -569,6 +645,70 @@ namespace DOI.Tests.TestHelpers.Metadata
                 sqlHelper.Execute(CreateCCIIndexSql, 30, true, DatabaseName);
                 sqlHelper.Execute(CreateCCIIndexMetadataSql);
             }
+        }
+
+        public static void UpdateTableMetadataForPartitioning(string tableName, string partitionFunctionName, string partitionColumnName, string indexName)
+        {
+            SqlHelper sqlHelper = new SqlHelper();
+
+            sqlHelper.Execute($@"
+                        UPDATE DOI.Tables
+                        SET IntendToPartition = 1,
+                            PartitionFunctionName = '{partitionFunctionName}',
+                            PartitionColumn = '{partitionColumnName}'
+                        WHERE SchemaName = 'dbo'
+                            AND TableName = '{tableName}'");
+
+            //change metadata to partition indexes
+            sqlHelper.Execute($@"
+                        UPDATE DOI.IndexesRowStore
+                        SET PartitionFunction_Desired = '{partitionFunctionName}',
+                            PartitionColumn_Desired = '{partitionColumnName}',
+                            OptionStatisticsIncremental_Desired = 1
+                        WHERE SchemaName = 'dbo'
+                            AND TableName = '{tableName}'
+                            AND IndexName = '{indexName}'");
+
+            sqlHelper.Execute($@"
+                        UPDATE DOI.IndexesColumnStore
+                        SET PartitionFunction_Desired = '{partitionFunctionName}',
+                            PartitionColumn_Desired = '{partitionColumnName}'
+                        WHERE SchemaName = 'dbo'
+                            AND TableName = '{tableName}'
+                            AND IndexName = '{indexName}'");
+        }
+
+        public static void CreatePartitioningContainerObjects(string partitionFunctionName)
+        {
+            SqlHelper sqlHelper = new SqlHelper();
+            FgTestHelper fgTestHelper = new FgTestHelper();
+            DbfTestHelper dbfTestHelper = new DbfTestHelper();
+            PfTestHelper pfTestHelper = new PfTestHelper();
+            PsTestHelper psTestHelper = new PsTestHelper();
+
+            if (partitionFunctionName == TestHelper.PartitionFunctionNameYearly)
+            {
+                sqlHelper.Execute(TestHelper.CreatePartitionFunctionYearlyMetadataSql);
+            }
+            else if (partitionFunctionName == TestHelper.PartitionFunctionNameMonthly)
+            {
+                sqlHelper.Execute(TestHelper.CreatePartitionFunctionMonthlyMetadataSql);
+            }
+
+            sqlHelper.Execute(RefreshMetadata_PartitionFunctionsSql);
+
+            string partitionSchemeName = sqlHelper.ExecuteScalar<string>(
+                    $@" SELECT partitionSchemeName 
+                            FROM DOI.PartitionFunctions 
+                            WHERE PartitionFunctionName = '{partitionFunctionName}'");
+
+            sqlHelper.Execute(pfTestHelper.GetPartitionFunctionSql(partitionFunctionName, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(fgTestHelper.GetFilegroupSql(partitionSchemeName, "Create"), 30, true,
+                DatabaseName);
+            sqlHelper.Execute(psTestHelper.GetPartitionSchemeSql(partitionSchemeName, "Create"), 30, true,
+                DatabaseName);
+
+            sqlHelper.Execute(RefreshMetadata_SysPartitionSchemesSql);
         }
     }
 }

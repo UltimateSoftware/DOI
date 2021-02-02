@@ -60,27 +60,23 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             if (boundaryInterval == "Yearly")
             {
                 partitionFunctionMetadataSql = TestHelper.CreatePartitionFunctionYearlyMetadataSql;
-                tableMetadataSql = TestHelper.CreatePartitionedTableYearlyMetadataSql;
-                tableSql = TestHelper.CreatePartitionedTableYearlySql;
-                indexSql = TestHelper.CreatePartitionedIndexYearlySql;
-                indexMetadataSql = TestHelper.CreatePartitionedIndexYearlyMetadataSql;
-                indexColumnStoreSql = TestHelper.CreatePartitionedColumnStoreIndexMonthlySql;
-                indexColumnStoreMetadataSql = TestHelper.CreatePartitionedColumnStoreIndexMonthlyMetadataSql;
             }
-            else if (boundaryInterval == "Monthly")
+            else
             {
                 partitionFunctionMetadataSql = TestHelper.CreatePartitionFunctionMonthlyMetadataSql;
-                tableMetadataSql = TestHelper.CreatePartitionedTableMonthlyMetadataSql;
-                tableSql = TestHelper.CreatePartitionedTableMonthlySql;
-                indexSql = TestHelper.CreatePartitionedIndexMonthlySql;
-                indexMetadataSql = TestHelper.CreatePartitionedIndexMonthlyMetadataSql;
-                indexColumnStoreSql = TestHelper.CreatePartitionedColumnStoreIndexMonthlySql;
-                indexColumnStoreMetadataSql = TestHelper.CreatePartitionedColumnStoreIndexMonthlyMetadataSql;
             }
 
+            //create the objects UNPARTITIONED, and then update the metadata to partitioning.
+            tableMetadataSql = TestHelper.CreateTableMetadataSql;
+            tableSql = TestHelper.CreateTableSql; 
+            indexSql = TestHelper.CreateCIndexSql;
+            indexMetadataSql = TestHelper.CreateCIndexMetadataSql;
+            indexColumnStoreSql = TestHelper.CreateNCCIIndexSql;
+            indexColumnStoreMetadataSql = TestHelper.CreateNCCIIndexMetadataSql;
+
+            //create partition function
             sqlHelper.Execute(partitionFunctionMetadataSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);//refresh metadata after metadata insert
-            //create partition function
             sqlHelper.Execute(pfTestHelper.GetPartitionFunctionSql(partitionFunctionName, "Create"), 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql); //refresh metadata again to show the partition function as existing on the server.
 
@@ -101,6 +97,44 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             sqlHelper.Execute(indexMetadataSql);
             sqlHelper.Execute(indexColumnStoreMetadataSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysCheckConstraintsSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDefaultConstraintsSql);
+
+            //assert that PrepTablesIndexes view is empty, since table is not set to be partitioned.
+            var rowCount =
+                sqlHelper.ExecuteScalar<int>(
+                            $@" SELECT COUNT(*)
+                                    FROM DOI.vwPartitioning_Tables_PrepTables_Indexes 
+                                    WHERE DatabaseName = '{DatabaseName}' 
+                                        AND PartitionFunctionName = '{partitionFunctionName}'");
+
+            Assert.AreEqual(0, rowCount);
+
+            //change metadata to partition table
+            sqlHelper.Execute($@"
+                        UPDATE DOI.Tables
+                        SET IntendToPartition = 1,
+                            PartitionFunctionName = '{partitionFunctionName}',
+                            PartitionColumn = 'TransactionUtcDt'
+                        WHERE SchemaName = 'dbo'
+                            AND TableName = '{TestTableName1}'");
+
+            //change metadata to partition indexes
+            sqlHelper.Execute($@"
+                        UPDATE DOI.IndexesRowStore
+                        SET PartitionFunction_Desired = '{partitionFunctionName}',
+                            PartitionColumn_Desired = 'TransactionUtcDt'
+                        WHERE SchemaName = 'dbo'
+                            AND TableName = '{TestTableName1}'");
+
+            sqlHelper.Execute($@"
+                        UPDATE DOI.IndexesColumnStore
+                        SET PartitionFunction_Desired = '{partitionFunctionName}',
+                            PartitionColumn_Desired = 'TransactionUtcDt'
+                        WHERE SchemaName = 'dbo'
+                            AND TableName = '{TestTableName1}'");
+
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesPartitionsSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysCheckConstraintsSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysDefaultConstraintsSql);
 
