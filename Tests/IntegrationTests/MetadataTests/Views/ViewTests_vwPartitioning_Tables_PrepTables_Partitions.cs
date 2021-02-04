@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using DOI.Tests.Integration;
 using DOI.Tests.TestHelpers;
-using TestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_PrepTablesHelper;
+using TestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_PrepTablesPartitionsHelper;
 using PfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionFunctionsHelper;
 using PsTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionSchemesHelper;
 using FgTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_FileGroupsHelper;
@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace DOI.Tests.IntegrationTests.MetadataTests.Views
 {
-    public class ViewTests_vwPartitioning_Tables_PrepTables : DOIBaseTest
+    public class ViewTests_vwPartitioning_Tables_PrepTables_Partitions : DOIBaseTest
     {
         FgTestHelper fgTestHelper = new FgTestHelper();
         DbfTestHelper dbfTestHelper = new DbfTestHelper();
@@ -43,7 +43,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
         [TestCase("Yearly", "2016-01-01", 1)]
         [TestCase("Monthly", "2016-01-01", 12)]
         [Test]
-        public void Views_vwPartitioning_Tables_PrepTables_MetadataIsAccurate(string boundaryInterval, string initialDate, int numOfFutureIntervals, bool usesSlidingWindow = false, int? slidingWindowSize = null)
+        public void Views_vwPartitioning_Tables_PrepTables_Partitions_MetadataIsAccurate(string boundaryInterval, string initialDate, int numOfFutureIntervals, bool usesSlidingWindow = false, int? slidingWindowSize = null)
         {
             var partitionFunctionName = string.Concat("pfTests", boundaryInterval);
             var partitionSchemeName = string.Concat("psTests", boundaryInterval);

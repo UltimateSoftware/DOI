@@ -456,6 +456,7 @@
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitioning_Tables_PrepTables.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitioning_Tables_PrepTables_Constraints.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitioning_Tables_PrepTables_Indexes.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitioning_Tables_PrepTables_Partitions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartitionSchemes.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartition_DBFiles.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwPartition_FileGroups.cs" />
@@ -508,6 +509,7 @@
     <Compile Include="IntegrationTests\Models\vwPartitioning_Tables_PrepTables.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitioning_Tables_PrepTables_Constraints.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitioning_Tables_PrepTables_Indexes.cs" />
+    <Compile Include="IntegrationTests\Models\vwPartitioning_Tables_PrepTables_Partitions.cs" />
     <Compile Include="IntegrationTests\Models\vwPartitionSchemes.cs" />
     <Compile Include="IntegrationTests\OfflineRunTests.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
@@ -561,6 +563,7 @@
     <Compile Include="TestHelpers\Metadata\vwPartitioning_PrepTablesConstraintsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwPartitioning_PrepTablesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwPartitioning_PrepTablesIndexesHelper.cs" />
+    <Compile Include="TestHelpers\Metadata\vwPartitioning_PrepTablesPartitionsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwPartitionSchemesHelper.cs" />
     <Compile Include="TestHelpers\SetupSqlStatements_NonPartitioned.cs" />
     <Compile Include="TestHelpers\ObjectExtensions.cs" />

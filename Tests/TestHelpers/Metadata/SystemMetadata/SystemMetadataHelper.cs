@@ -267,8 +267,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string CreatePartitionedTableYearlyMetadataSql = $@"
         DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName_Partitioned}'
-        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue) 
-        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			, '{PartitionSchemeNameYearly}'			, 1					,  1);
+        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,PartitionFunctionName					, IntendToPartition	,  ReadyToQueue) 
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			, '{PartitionFunctionNameYearly}'			, 1					,  1);
 
         INSERT INTO DOI.DefaultConstraints( DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,DefaultDefinition, DefaultConstraintName)
         VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt');
@@ -288,8 +288,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
  
         public static string CreatePartitionedTableMonthlyMetadataSql = $@"
         DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName_Partitioned}'
-        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue) 
-        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			, '{PartitionSchemeNameMonthly}'			, 1					,  1)
+        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,PartitionFunctionName					, IntendToPartition	,  ReadyToQueue) 
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			,'{PartitionFunctionNameMonthly}'			, 1					,  1)
 
         INSERT INTO DOI.DefaultConstraints( DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,DefaultDefinition, DefaultConstraintName)
         VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt');

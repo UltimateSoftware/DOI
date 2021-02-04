@@ -23,6 +23,7 @@ AS
 SELECT	PTNonPartitioned.DatabaseName,
 		PTNonPartitioned.SchemaName,
 		PTNonPartitioned.TableName AS ParentTableName,
+		PTPartitioned.PartitionFunctionName,
 		PTPartitioned.NewPartitionedPrepTableName,
 		PTNonPartitioned.PrepTableName AS UnPartitionedPrepTableName,
 		PTNonPartitioned.BoundaryValue AS PartitionFunctionValue,
