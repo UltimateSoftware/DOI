@@ -26,7 +26,7 @@ namespace DOI.Tests.IntegrationTests.Models
         public string PrepTableFilegroup { get; set; }
         public decimal IndexSizeMB_Actual { get; set; }
         public string IndexType { get; set; }
-        public int IsClustered_Actual { get; set; }
+        public bool IsClustered_Actual { get; set; }
         public int RowNum { get; set; }
         public string PrepTableIndexCreateSQL { get; set; }
         public string OrigCreateSQL { get; set; }

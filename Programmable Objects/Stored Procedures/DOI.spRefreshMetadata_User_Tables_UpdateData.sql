@@ -43,13 +43,14 @@ FROM DOI.Tables T
         AND i.data_space_id = DS_Actual.data_space_id
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
-UPDATE T
 
+--UPDATE STORAGE DESIRED FOR PARTITIONED TABLES ONLY.
 UPDATE T
-SET Storage_Desired = DS_Desired.
-    StorageType_Desired = DS_Desired.type_desc
+SET Storage_Desired = PF.PartitionSchemeName,
+    StorageType_Desired = 'PARTITION_SCHEME'
 FROM DOI.Tables T
-    INNER JOIN DOI.SysDataSpaces DS_Desired ON T.Storage_Desired = DS_Desired.name
+    INNER JOIN DOI.PartitionFunctions PF ON PF.DatabaseName = T.DatabaseName
+        AND T.PartitionFunctionName = PF.PartitionFunctionName
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 UPDATE T

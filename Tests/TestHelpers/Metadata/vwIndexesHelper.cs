@@ -89,7 +89,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PrepTableFilegroup = row.First(x => x.First == "PrepTableFilegroup").Second.ToString();
                 columnValue.IndexSizeMB_Actual = row.First(x => x.First == "IndexSizeMB_Actual").Second.ObjectToDecimal();
                 columnValue.IndexType = row.First(x => x.First == "IndexType").Second.ToString();
-                columnValue.IsClustered_Actual = row.First(x => x.First == "IsClustered_Actual").Second.ObjectToInteger();
+                columnValue.IsClustered_Actual = (bool)row.First(x => x.First == "IsClustered_Actual").Second;
                 columnValue.RowNum = row.First(x => x.First == "RowNum").Second.ObjectToInteger();
 
                 actualVwPartitioning_Tables_PrepTables_Indexes.Add(columnValue);
@@ -134,7 +134,7 @@ namespace DOI.Tests.TestHelpers.Metadata
 
             foreach (var expectedRow in expected)
             {
-                var actualRowRowStoreIndex = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.IndexType == "RowStore" && x.IsClustered_Actual == 0);
+                var actualRowRowStoreIndex = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.IndexType == "RowStore" && x.IsClustered_Actual == false);
 
                 Assert.AreEqual(expectedRow.SchemaName, actualRowRowStoreIndex.SchemaName, "SchemaName");
                 Assert.AreEqual(expectedRow.TableName, actualRowRowStoreIndex.ParentTableName, "ParentTableName");

@@ -45,7 +45,7 @@ SELECT  PT.DatabaseName,
         I.IndexSizeMB_Actual,
 		I.IndexType,
 		I.IsClustered_Actual,
-		ROW_NUMBER() OVER(PARTITION BY PT.DatabaseName, PT.SchemaName, PT.TableName ORDER BY PT.IsNewPartitionedPrepTable, PT.PrepTableName) AS RowNum,
+		ROW_NUMBER() OVER(PARTITION BY PT.DatabaseName, PT.SchemaName, PT.TableName ORDER BY PT.IsNewPartitionedPrepTable, PT.BoundaryValue) AS RowNum,
         CASE 
             WHEN IndexType = 'RowStore'
             THEN '

@@ -44,6 +44,9 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
                 columnValue.NextBoundaryValue = row.First(x => x.First == "NextBoundaryValue").Second.ObjectToDateTime();
                 columnValue.IsNewPartitionedPrepTable = row.First(x => x.First == "IsNewPartitionedPrepTable").Second.ObjectToInteger();
+                columnValue.Storage_Desired = row.First(x => x.First == "Storage_Desired").Second.ToString();
+                columnValue.StorageType_Desired = row.First(x => x.First == "StorageType_Desired").Second.ToString();
+                columnValue.PrepTableFilegroup = row.First(x => x.First == "PrepTableFilegroup").Second.ToString();
 
                 expectedvwPartitioning_Tables_PrepTables.Add(columnValue);
             }
@@ -61,7 +64,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 AND PartitionFunctionName = '{partitionFunctionName}'
                 AND ParentTableName = '{tableName}'
                 AND IsNewPartitionedPrepTable = 0 
-            ORDER BY BoundaryValue"));
+            ORDER BY RowNum"));
 
 
             List<vwPartitioning_Tables_PrepTables_Indexes> actualVwPartitioning_Tables_PrepTables_Indexes = new List<vwPartitioning_Tables_PrepTables_Indexes>();
@@ -87,8 +90,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PrepTableFilegroup = row.First(x => x.First == "PrepTableFilegroup").Second.ToString();
                 columnValue.IndexSizeMB_Actual = row.First(x => x.First == "IndexSizeMB_Actual").Second.ObjectToDecimal();
                 columnValue.IndexType = row.First(x => x.First == "IndexType").Second.ToString();
-                columnValue.IsClustered_Actual = row.First(x => x.First == "IsClustered_Actual").Second.ObjectToInteger();
-                columnValue.RowNum = row.First(x => x.First == "RowNum").Second.ObjectToInteger();
+                columnValue.IsClustered_Actual = (bool)row.First(x => x.First == "IsClustered_Actual").Second;
 
                 actualVwPartitioning_Tables_PrepTables_Indexes.Add(columnValue);
             }
@@ -103,13 +105,13 @@ namespace DOI.Tests.TestHelpers.Metadata
             string partitionFunctionName = String.Concat("pfTests", boundaryInterval);
 
             var expected = GetExpectedValues(partitionFunctionName);
-            var actual = GetActualValues(partitionFunctionName, TableName_Partitioned);
+            var actual = GetActualValues(partitionFunctionName, TableName);
 
-            var expectedIndexCount = sqlHelper.ExecuteScalar<int>(
+            var expectedPartitionCount = sqlHelper.ExecuteScalar<int>(
                 $@"  SELECT COUNT(*)
                         FROM DOI.vwPartitioning_Tables_PrepTables
                         WHERE DatabaseName = '{DatabaseName}' 
-                            AND TableName = '{TableName_Partitioned}'
+                            AND TableName = '{TableName}'
                             AND IsNewPartitionedPrepTable = 0");
 
             var actualIndexCount = sqlHelper.ExecuteScalar<int>(
@@ -117,66 +119,64 @@ namespace DOI.Tests.TestHelpers.Metadata
                         FROM (  SELECT IndexName
                                 FROM DOI.IndexesRowStore 
                                 WHERE DatabaseName = '{DatabaseName}' 
-                                   AND TableName = '{TableName_Partitioned}'
+                                   AND TableName = '{TableName}'
                                 UNION ALL
                                 SELECT IndexName
                                 FROM DOI.IndexesColumnStore 
                                 WHERE DatabaseName = '{DatabaseName}' 
-                                   AND TableName = '{TableName_Partitioned}')x");
+                                   AND TableName = '{TableName}')x");
 
             var actualPrepTableIndexRowCount = sqlHelper.ExecuteScalar<int>(
                 $@" SELECT COUNT(*) 
                         FROM DOI.{ViewName} 
                         WHERE DatabaseName = '{DatabaseName}' 
-                            AND ParentTableName = '{TableName_Partitioned}' 
+                            AND ParentTableName = '{TableName}' 
                             AND IsNewPartitionedPrepTable = 0");
 
             Assert.IsTrue(actual.Count > 0, "RowsReturned");
-            Assert.AreEqual(expectedIndexCount * actualIndexCount, actualPrepTableIndexRowCount, "MatchingRowCounts"); //should have 'x' Indexes per partition.
+            Assert.AreEqual(expectedPartitionCount * actualIndexCount, actualPrepTableIndexRowCount, "MatchingRowCounts"); //should have 'x' Indexes per partition.
 
             foreach (var expectedRow in expected)
             {
                 //PK Non-Clustered RowStore Index
-                var actualRowRowStoreIndex = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.IndexType == "RowStore" && x.IsClustered_Actual == 0);
+                var actualRowRowStoreIndex = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.IndexType == "RowStore" && x.IsClustered_Actual == false);
 
                 Assert.AreEqual(expectedRow.SchemaName, actualRowRowStoreIndex.SchemaName, "SchemaName");
                 Assert.AreEqual(expectedRow.TableName, actualRowRowStoreIndex.ParentTableName, "ParentTableName");
                 Assert.AreEqual(expectedRow.PrepTableName, actualRowRowStoreIndex.PrepTableName, "PrepTableName");
-                Assert.AreEqual(CIndexName_Partitioned, actualRowRowStoreIndex.ParentIndexName, "ParentIndexName");
+                Assert.AreEqual(PKIndexName, actualRowRowStoreIndex.ParentIndexName, "ParentIndexName");
                 Assert.AreEqual(false, actualRowRowStoreIndex.IsIndexMissingFromSQLServer, "IsIndexMissingFromSQLServer");
                 Assert.AreEqual(expectedRow.PrepTableName, actualRowRowStoreIndex.PrepTableName, "PrepTableName");
-                Assert.AreEqual(CIndexName_Partitioned.Replace(expectedRow.TableName, expectedRow.PrepTableName), actualRowRowStoreIndex.PrepTableIndexName, "PrepTableIndexName");
+                Assert.AreEqual(PKIndexName.Replace(expectedRow.TableName, expectedRow.PrepTableName), actualRowRowStoreIndex.PrepTableIndexName, "PrepTableIndexName");
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowRowStoreIndex.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRowRowStoreIndex.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowRowStoreIndex.NextBoundaryValue, "NextBoundaryValue");
                 Assert.AreEqual(expectedRow.IsNewPartitionedPrepTable, actualRowRowStoreIndex.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
-                Assert.AreEqual(string.Concat("psTests", boundaryInterval), actualRowRowStoreIndex.Storage_Actual, "Storage_Actual");
-                Assert.AreEqual("PARTITION_SCHEME", actualRowRowStoreIndex.StorageType_Actual, "StorageType_Actual");
+                Assert.AreEqual("PRIMARY", actualRowRowStoreIndex.Storage_Actual, "Storage_Actual");
+                Assert.AreEqual("ROWS_FILEGROUP", actualRowRowStoreIndex.StorageType_Actual, "StorageType_Actual");
                 Assert.AreEqual(expectedRow.Storage_Desired, actualRowRowStoreIndex.Storage_Desired, "Storage_Desired");
                 Assert.AreEqual(expectedRow.StorageType_Desired, actualRowRowStoreIndex.StorageType_Desired, "StorageType_Desired");
                 Assert.AreEqual(expectedRow.PrepTableFilegroup, actualRowRowStoreIndex.PrepTableFilegroup, "PrepTableFilegroup");
-                Assert.AreEqual(1, actualRowRowStoreIndex.RowNum, "RowNum");
 
                 //Non-PK Clustered RowStore Index
-                actualRowRowStoreIndex = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.IndexType == "RowStore" && x.IsClustered_Actual == 1);
+                actualRowRowStoreIndex = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.IndexType == "RowStore" && x.IsClustered_Actual == true);
 
                 Assert.AreEqual(expectedRow.SchemaName, actualRowRowStoreIndex.SchemaName, "SchemaName");
                 Assert.AreEqual(expectedRow.TableName, actualRowRowStoreIndex.ParentTableName, "ParentTableName");
                 Assert.AreEqual(expectedRow.PrepTableName, actualRowRowStoreIndex.PrepTableName, "PrepTableName");
-                Assert.AreEqual(CIndexName_Partitioned, actualRowRowStoreIndex.ParentIndexName, "ParentIndexName");
+                Assert.AreEqual(CIndexName, actualRowRowStoreIndex.ParentIndexName, "ParentIndexName");
                 Assert.AreEqual(false, actualRowRowStoreIndex.IsIndexMissingFromSQLServer, "IsIndexMissingFromSQLServer");
                 Assert.AreEqual(expectedRow.PrepTableName, actualRowRowStoreIndex.PrepTableName, "PrepTableName");
-                Assert.AreEqual(CIndexName_Partitioned.Replace(expectedRow.TableName, expectedRow.PrepTableName), actualRowRowStoreIndex.PrepTableIndexName, "PrepTableIndexName");
+                Assert.AreEqual(CIndexName.Replace(expectedRow.TableName, expectedRow.PrepTableName), actualRowRowStoreIndex.PrepTableIndexName, "PrepTableIndexName");
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowRowStoreIndex.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRowRowStoreIndex.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowRowStoreIndex.NextBoundaryValue, "NextBoundaryValue");
                 Assert.AreEqual(expectedRow.IsNewPartitionedPrepTable, actualRowRowStoreIndex.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
-                Assert.AreEqual(string.Concat("psTests",boundaryInterval), actualRowRowStoreIndex.Storage_Actual, "Storage_Actual");
-                Assert.AreEqual("PARTITION_SCHEME", actualRowRowStoreIndex.StorageType_Actual, "StorageType_Actual");
+                Assert.AreEqual("PRIMARY", actualRowRowStoreIndex.Storage_Actual, "Storage_Actual");
+                Assert.AreEqual("ROWS_FILEGROUP", actualRowRowStoreIndex.StorageType_Actual, "StorageType_Actual");
                 Assert.AreEqual(expectedRow.Storage_Desired, actualRowRowStoreIndex.Storage_Desired, "Storage_Desired");
                 Assert.AreEqual(expectedRow.StorageType_Desired, actualRowRowStoreIndex.StorageType_Desired, "StorageType_Desired");
                 Assert.AreEqual(expectedRow.PrepTableFilegroup, actualRowRowStoreIndex.PrepTableFilegroup, "PrepTableFilegroup");
-                Assert.AreEqual(1, actualRowRowStoreIndex.RowNum, "RowNum");
 
                 //ColumnStore Index
                 var actualRowColumnStoreIndex = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.IndexType == "ColumnStore");
@@ -184,20 +184,19 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.SchemaName, actualRowColumnStoreIndex.SchemaName, "SchemaName");
                 Assert.AreEqual(expectedRow.TableName, actualRowColumnStoreIndex.ParentTableName, "ParentTableName");
                 Assert.AreEqual(expectedRow.PrepTableName, actualRowColumnStoreIndex.PrepTableName, "PrepTableName");
-                Assert.AreEqual(CIndexName_Partitioned, actualRowColumnStoreIndex.ParentIndexName, "ParentIndexName");
+                Assert.AreEqual(NCCIIndexName, actualRowColumnStoreIndex.ParentIndexName, "ParentIndexName");
                 Assert.AreEqual(false, actualRowColumnStoreIndex.IsIndexMissingFromSQLServer, "IsIndexMissingFromSQLServer");
                 Assert.AreEqual(expectedRow.PrepTableName, actualRowColumnStoreIndex.PrepTableName, "PrepTableName");
-                Assert.AreEqual(CIndexName_Partitioned.Replace(expectedRow.TableName, expectedRow.PrepTableName), actualRowColumnStoreIndex.PrepTableIndexName, "PrepTableIndexName");
+                Assert.AreEqual(NCCIIndexName.Replace(expectedRow.TableName, expectedRow.PrepTableName), actualRowColumnStoreIndex.PrepTableIndexName, "PrepTableIndexName");
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowColumnStoreIndex.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRowColumnStoreIndex.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowColumnStoreIndex.NextBoundaryValue, "NextBoundaryValue");
                 Assert.AreEqual(expectedRow.IsNewPartitionedPrepTable, actualRowColumnStoreIndex.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
-                Assert.AreEqual(string.Concat("psTests", boundaryInterval), actualRowColumnStoreIndex.Storage_Actual, "Storage_Actual");
-                Assert.AreEqual("PARTITION_SCHEME", actualRowColumnStoreIndex.StorageType_Actual, "StorageType_Actual");
+                Assert.AreEqual("PRIMARY", actualRowColumnStoreIndex.Storage_Actual, "Storage_Actual");
+                Assert.AreEqual("ROWS_FILEGROUP", actualRowColumnStoreIndex.StorageType_Actual, "StorageType_Actual");
                 Assert.AreEqual(expectedRow.Storage_Desired, actualRowColumnStoreIndex.Storage_Desired, "Storage_Desired");
                 Assert.AreEqual(expectedRow.StorageType_Desired, actualRowColumnStoreIndex.StorageType_Desired, "StorageType_Desired");
                 Assert.AreEqual(expectedRow.PrepTableFilegroup, actualRowColumnStoreIndex.PrepTableFilegroup, "PrepTableFilegroup");
-                Assert.AreEqual(1, actualRowColumnStoreIndex.RowNum, "RowNum");
             }
         }
     }
