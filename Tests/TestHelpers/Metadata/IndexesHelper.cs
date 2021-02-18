@@ -19,16 +19,12 @@ namespace DOI.Tests.TestHelpers.Metadata
 {
     public class IndexesHelper : SystemMetadataHelper
     {
-        FgTestHelper fgTestHelper = new FgTestHelper();
-        DbfTestHelper dbfTestHelper = new DbfTestHelper();
-        PfTestHelper pfTestHelper = new PfTestHelper();
-        PsTestHelper psTestHelper = new PsTestHelper();
-
         public const string SysTableName = "SysIndexes";
         public const string SqlServerDmvName = "sys.indexes";
         public const string UserTableName_RowStore = "IndexesRowStore"; 
         public const string UserTableName_ColumnStore = "IndexesColumnStore";
 
+        #region GetValue Helpers
 
         public static List<SysIndexes> GetExpectedSysValues()
         {
@@ -119,46 +115,6 @@ namespace DOI.Tests.TestHelpers.Metadata
 
             return actualSysIndexes;
         }
-
-        private static bool? GetNullableBooleanFromDB(object x)
-        {
-            return x == DBNull.Value ? null : (bool?) x;
-        }
-        public static void AssertIndexRowStoreChangeBits(string indexName, string preOrPostChange, string bitToAssert = null)
-        {
-            var indexRow = GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
-
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsAllowPageLocksChanging") ? true : false, indexRow.IsAllowPageLocksChanging, "IsAllowPageLocksChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsAllowRowLocksChanging") ? true : false, indexRow.IsAllowRowLocksChanging, "IsAllowRowLocksChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsClusteredChanging") ? true : false, indexRow.IsClusteredChanging, "IsClusteredChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsDataCompressionChanging") ? true : false, indexRow.IsDataCompressionChanging, "IsDataCompressionChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsFillfactorChanging") ? true : false, indexRow.IsFillfactorChanging, "IsFillfactorChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsFilterChanging") ? true : false, indexRow.IsFilterChanging, "IsFilterChanging");
-            Assert.AreEqual("None", indexRow.FragmentationType, "IndexFragmentation");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsIgnoreDupKeyChanging") ? true : false, indexRow.IsIgnoreDupKeyChanging, "IsIgnoreDupKeyChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsIncludedColumnListChanging") ? true : false, indexRow.IsIncludedColumnListChanging, "IsIncludedColumnListChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPrimaryKeyChanging") ? true : false, indexRow.IsPrimaryKeyChanging, "IsPrimaryKeyChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsKeyColumnListChanging") ? true : false, indexRow.IsKeyColumnListChanging, "IsKeyColumnListChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPadIndexChanging") ? true : false, indexRow.IsPadIndexChanging, "IsPadIndexChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPartitioningChanging") ? true : false, indexRow.IsPartitioningChanging, "IsPartitioningChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStatisticsNoRecomputeChanging") ? true : false, indexRow.IsStatisticsNoRecomputeChanging, "IsStatisticsNoRecomputeChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStatisticsIncrementalChanging") ? true : false, indexRow.IsStatisticsIncrementalChanging, "IsStatisticsIncrementalChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsUniquenessChanging") ? true : false, indexRow.IsUniquenessChanging, "IsUniquenessChanging");
-        }
-
-        public static void AssertIndexColumnStoreChangeBits(string indexName, string preOrPostChange, string bitToAssert = null)
-        {
-            var indexRow = GetActualUserValues_ColumnStore(indexName).Find(x => x.IndexName == indexName);
-
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsClusteredChanging") ? true : false, indexRow.IsClusteredChanging, "IsClusteredChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsColumnListChanging") ? true : false, indexRow.IsColumnListChanging, "IsColumnListChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsDataCompressionChanging") ? true : false, indexRow.IsDataCompressionChanging, "IsDataCompressionChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsDataCompressionDelayChanging") ? true : false, indexRow.IsDataCompressionDelayChanging, "IsDataCompressionDelayChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsFilterChanging") ? true : false, indexRow.IsFilterChanging, "IsFilterChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPartitioningChanging") ? true : false, indexRow.IsPartitioningChanging, "IsPartitioningChanging");
-            Assert.AreEqual("None", indexRow.FragmentationType, "IndexFragmentation");
-        }
-
 
         public static List<IndexesRowStore> GetActualUserValues_RowStore(string indexName = CIndexName)
         {
@@ -295,6 +251,48 @@ namespace DOI.Tests.TestHelpers.Metadata
             return actualIndexesRowStore;
         }
 
+        public static List<Tables> GetActualUserValues_IndexAggFromTables()
+        {
+            SqlHelper sqlHelper = new SqlHelper();
+            var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
+            SELECT *
+            FROM DOI.DOI.Tables 
+            WHERE DatabaseName = '{DatabaseName}'
+                AND SchemaName = 'dbo'
+            AND TableName = '{TableName}'"));
+
+            List<Tables> actualIndexAggInfoFromTables = new List<Tables>();
+
+            foreach (var row in actual)
+            {
+                var columnValue = new Tables();
+                columnValue.DatabaseName = row.First(x => x.First == "DatabaseName").Second.ToString();
+                columnValue.SchemaName = row.First(x => x.First == "SchemaName").Second.ToString();
+                columnValue.TableName = row.First(x => x.First == "TableName").Second.ToString();
+                columnValue.PartitionColumn = row.First(x => x.First == "PartitionColumn").Second.ToString();
+                columnValue.Storage_Desired = row.First(x => x.First == "Storage_Desired").Second.ToString();
+                columnValue.Storage_Actual = row.First(x => x.First == "Storage_Actual").Second.ToString();
+                columnValue.StorageType_Desired = row.First(x => x.First == "StorageType_Desired").Second.ToString();
+                columnValue.StorageType_Actual = row.First(x => x.First == "StorageType_Actual").Second.ToString();
+                columnValue.IntendToPartition = (bool)row.First(x => x.First == "IntendToPartition").Second;
+                columnValue.ReadyToQueue = (bool)row.First(x => x.First == "ReadyToQueue").Second;
+                columnValue.AreIndexesFragmented = (bool)row.First(x => x.First == "AreIndexesFragmented").Second;
+                columnValue.AreIndexesBeingUpdated = (bool)row.First(x => x.First == "AreIndexesBeingUpdated").Second;
+                columnValue.AreIndexesMissing = (bool)row.First(x => x.First == "AreIndexesMissing").Second;
+                columnValue.IsClusteredIndexBeingDropped = (bool)row.First(x => x.First == "IsClusteredIndexBeingDropped").Second;
+                columnValue.WhichUniqueConstraintIsBeingDropped = row.First(x => x.First == "WhichUniqueConstraintIsBeingDropped").Second.ToString();
+                columnValue.IsStorageChanging = (bool)row.First(x => x.First == "IsStorageChanging").Second;
+                columnValue.NeedsTransaction = (bool)row.First(x => x.First == "NeedsTransaction").Second;
+                columnValue.AreStatisticsChanging = (bool)row.First(x => x.First == "AreStatisticsChanging").Second;
+                columnValue.PKColumnList = row.First(x => x.First == "PKColumnList").Second.ToString();
+                columnValue.PartitionFunctionName = row.First(x => x.First == "PartitionFunctionName").Second.ToString();
+
+                actualIndexAggInfoFromTables.Add(columnValue);
+            }
+
+            return actualIndexAggInfoFromTables;
+        }
+
         public static List<IndexesColumnStore> GetActualUserValues_ColumnStore(string indexName = NCCIIndexName)
         {
             SqlHelper sqlHelper = new SqlHelper();
@@ -326,7 +324,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.OptionDataCompression_Desired = row.First(x => x.First == "OptionDataCompression_Desired").Second.ToString();
                 columnValue.OptionDataCompression_Actual = row.First(x => x.First == "OptionDataCompression_Actual").Second.ToString();
                 columnValue.OptionDataCompressionDelay_Desired = row.First(x => x.First == "OptionDataCompressionDelay_Desired").Second.ObjectToInteger();
-                columnValue.OptionDataCompressionDelay_Actual = row.First(x => x.First == "OptionDataCompressionDelay_Actual").Second.ObjectToInteger(); 
+                columnValue.OptionDataCompressionDelay_Actual = row.First(x => x.First == "OptionDataCompressionDelay_Actual").Second.ObjectToInteger();
                 columnValue.Storage_Desired = row.First(x => x.First == "Storage_Desired").Second.ToString();
                 columnValue.Storage_Actual = row.First(x => x.First == "Storage_Actual").Second.ToString();
                 columnValue.StorageType_Desired = row.First(x => x.First == "StorageType_Desired").Second.ToString();
@@ -371,6 +369,125 @@ namespace DOI.Tests.TestHelpers.Metadata
             return actualIndexesColumnStore;
         }
 
+        private static bool? GetNullableBooleanFromDB(object x)
+        {
+            return x == DBNull.Value ? null : (bool?) x;
+        }
+
+        #endregion
+
+        #region Assert Helpers
+
+        public static void AssertIndexRowStoreChangeBits(string indexName, string preOrPostChange, string bitToAssert = null)
+        {
+            var indexRow = GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
+
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsAllowPageLocksChanging") ? true : false, indexRow.IsAllowPageLocksChanging, "IsAllowPageLocksChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsAllowRowLocksChanging") ? true : false, indexRow.IsAllowRowLocksChanging, "IsAllowRowLocksChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsClusteredChanging") ? true : false, indexRow.IsClusteredChanging, "IsClusteredChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsDataCompressionChanging") ? true : false, indexRow.IsDataCompressionChanging, "IsDataCompressionChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsFillfactorChanging") ? true : false, indexRow.IsFillfactorChanging, "IsFillfactorChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsFilterChanging") ? true : false, indexRow.IsFilterChanging, "IsFilterChanging");
+            Assert.AreEqual("None", indexRow.FragmentationType, "IndexFragmentation");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsIgnoreDupKeyChanging") ? true : false, indexRow.IsIgnoreDupKeyChanging, "IsIgnoreDupKeyChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsIncludedColumnListChanging") ? true : false, indexRow.IsIncludedColumnListChanging, "IsIncludedColumnListChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPrimaryKeyChanging") ? true : false, indexRow.IsPrimaryKeyChanging, "IsPrimaryKeyChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsKeyColumnListChanging") ? true : false, indexRow.IsKeyColumnListChanging, "IsKeyColumnListChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPadIndexChanging") ? true : false, indexRow.IsPadIndexChanging, "IsPadIndexChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsStorageChanging" || bitToAssert == "IsPartitioningChanging")) ? true : false, indexRow.IsStorageChanging, "IsStorageChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsPartitioningChanging" || bitToAssert == "IsStorageChanging")) ? true : false, indexRow.IsPartitioningChanging, "IsPartitioningChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStatisticsNoRecomputeChanging") ? true : false, indexRow.IsStatisticsNoRecomputeChanging, "IsStatisticsNoRecomputeChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStatisticsIncrementalChanging") ? true : false, indexRow.IsStatisticsIncrementalChanging, "IsStatisticsIncrementalChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsUniquenessChanging") ? true : false, indexRow.IsUniquenessChanging, "IsUniquenessChanging");
+
+            //Assert vwTables flags...on pre change assert that = 0, on post change that it = 1.
+            AssertIndexAggMetadataFromTables(preOrPostChange, bitToAssert, null, indexRow);
+        }
+
+        public static void AssertIndexColumnStoreChangeBits(string indexName, string preOrPostChange, string bitToAssert = null)
+        {
+            var indexRow = GetActualUserValues_ColumnStore(indexName).Find(x => x.IndexName == indexName);
+
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsClusteredChanging") ? true : false, indexRow.IsClusteredChanging, "IsClusteredChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsColumnListChanging") ? true : false, indexRow.IsColumnListChanging, "IsColumnListChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsDataCompressionChanging") ? true : false, indexRow.IsDataCompressionChanging, "IsDataCompressionChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsDataCompressionDelayChanging") ? true : false, indexRow.IsDataCompressionDelayChanging, "IsDataCompressionDelayChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsFilterChanging") ? true : false, indexRow.IsFilterChanging, "IsFilterChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsStorageChanging" || bitToAssert == "IsPartitioningChanging")) ? true : false, indexRow.IsStorageChanging, "IsStorageChanging");
+
+            Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsPartitioningChanging")) ? true : false, indexRow.IsPartitioningChanging, "IsPartitioningChanging");
+            Assert.AreEqual("None", indexRow.FragmentationType, "IndexFragmentation");
+
+            //Assert vwTables flags...on pre change assert that = 0, on post change that it = 1.
+            AssertIndexAggMetadataFromTables(preOrPostChange, bitToAssert, indexRow, null);
+        }
+
+        private static void AssertIndexAggMetadataFromTables(string preOrPostChange, string bitToAssert, IndexesColumnStore indexColumnStoreRow = null, IndexesRowStore indexRowStoreRow = null)
+        {
+            //these are aggregate bits, so they don't map to the single change bits from above.
+            //
+            SqlHelper sqlHelper = new SqlHelper();
+
+            string indexName = string.Empty;
+            bool? isClustered = false;
+            bool areDropRecreateOptionsChanging = false;
+            bool areStatisticsChanging = false;
+            string whichUniqueConstraintIsBeingDropped = "None";
+            string indexType = string.Empty;
+            bool? isPrimaryKey_Actual = false;
+            bool? isUniqueKey_Actual = false;
+
+            if (indexColumnStoreRow is null)
+            {
+                indexType = "RowStore";
+                isClustered = indexRowStoreRow.IsClustered_Actual;
+                isPrimaryKey_Actual = indexRowStoreRow.IsPrimaryKey_Actual;
+                isUniqueKey_Actual = indexRowStoreRow.IsUnique_Actual;
+                areDropRecreateOptionsChanging = indexRowStoreRow.AreDropRecreateOptionsChanging;
+                areStatisticsChanging = sqlHelper.ExecuteScalar<bool>($@"SELECT * FROM DOI.[Statistics] WHERE DatabaseName = '{indexRowStoreRow.DatabaseName}' AND TableName = '{indexRowStoreRow.TableName}' AND StatisticsUpdateType <> 'None'");
+                switch (areDropRecreateOptionsChanging)
+                {
+                    case false:
+                        whichUniqueConstraintIsBeingDropped = "None";
+                        break;
+                    case true:
+                        if ((isPrimaryKey_Actual ?? false) && (isUniqueKey_Actual ?? false))
+                        {
+                            whichUniqueConstraintIsBeingDropped = "PK";
+                        }
+                        else if ((isUniqueKey_Actual ?? false) && (!isPrimaryKey_Actual ?? false))
+                        {
+                            whichUniqueConstraintIsBeingDropped = "UQ";
+                        }
+                        else
+                        {
+                            whichUniqueConstraintIsBeingDropped = "None";
+                        }
+                        break;
+                    default:
+                        whichUniqueConstraintIsBeingDropped = "None";
+                        break;
+                }
+            }
+            else if (indexRowStoreRow is null)
+            {
+                indexType = "ColumnStore";
+                isClustered = indexColumnStoreRow.IsClustered_Actual;
+                areDropRecreateOptionsChanging = indexColumnStoreRow.AreDropRecreateOptionsChanging;
+                areStatisticsChanging = sqlHelper.ExecuteScalar<bool>($@"SELECT * FROM DOI.[Statistics] WHERE DatabaseName = '{indexColumnStoreRow.DatabaseName}' AND TableName = '{indexColumnStoreRow.TableName}' AND StatisticsUpdateType <> 'None'");
+            }
+
+            var indexAggFromTableRow = GetActualUserValues_IndexAggFromTables().Find(x => x.TableName == TableName);
+            Assert.AreEqual(preOrPostChange == "Post" && bitToAssert == "FragmentationType" ? true : false, indexAggFromTableRow.AreIndexesFragmented, "AreIndexesFragmented");
+            Assert.AreEqual(preOrPostChange == "Post" ? true : false, indexAggFromTableRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
+            Assert.AreEqual(false, indexAggFromTableRow.AreIndexesMissing, "AreIndexesMissing"); //these tests are all about changes to existing indexes, not creation of new ones.
+            Assert.AreEqual(preOrPostChange == "Post" && (bool)isClustered && areDropRecreateOptionsChanging ? true : false, indexAggFromTableRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
+            Assert.AreEqual(preOrPostChange == "Post" ? whichUniqueConstraintIsBeingDropped : "None", indexAggFromTableRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStorageChanging" || bitToAssert == "IsPartitioningChanging") ? true : false, indexAggFromTableRow.IsStorageChanging, "IsStorageChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && areDropRecreateOptionsChanging) ? true : false, indexAggFromTableRow.NeedsTransaction, "NeedsTransaction");
+            Assert.AreEqual(preOrPostChange == "Post" ? areStatisticsChanging : false, indexAggFromTableRow.AreStatisticsChanging, "AreStatisticsChanging");
+        }
+
         //verify DOI Sys table data against expected values.
         public static void AssertSysMetadata()
         {
@@ -401,6 +518,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     case 0:
                         Assert.AreEqual(100, actualRow.fill_factor); //fill factors are translated from 0 to 100 in our system.
                         break;
+              
                     default:
                         Assert.AreEqual(expectedRow.fill_factor, actualRow.fill_factor);
                         break;
@@ -632,20 +750,9 @@ namespace DOI.Tests.TestHelpers.Metadata
             }
         }
 
-        public static void ReclusterTableWithColumnStore(string indexName)
-        {
-            SqlHelper sqlHelper = new SqlHelper();
+        #endregion
 
-            if (indexName == CCIIndexName)
-            {
-                sqlHelper.Execute(DropCIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(DropCIndexMetadataSql);
-                sqlHelper.Execute(DropNCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(DropNCCIndexMetadataSql);
-                sqlHelper.Execute(CreateCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(CreateCCIIndexMetadataSql);
-            }
-        }
+        #region Partitioning Helpers
 
         public static void UpdateTableMetadataForPartitioning(string tableName, string partitionFunctionName, string partitionColumnName, string indexName)
         {
@@ -709,6 +816,23 @@ namespace DOI.Tests.TestHelpers.Metadata
                 DatabaseName);
 
             sqlHelper.Execute(RefreshMetadata_SysPartitionSchemesSql);
+        }
+
+        #endregion
+
+        public static void ReclusterTableWithColumnStore(string indexName)
+        {
+            SqlHelper sqlHelper = new SqlHelper();
+
+            if (indexName == CCIIndexName)
+            {
+                sqlHelper.Execute(DropCIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(DropCIndexMetadataSql);
+                sqlHelper.Execute(DropNCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(DropNCCIIndexMetadataSql);
+                sqlHelper.Execute(CreateCCIIndexSql, 30, true, DatabaseName);
+                sqlHelper.Execute(CreateCCIIndexMetadataSql);
+            }
         }
     }
 }

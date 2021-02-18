@@ -142,6 +142,8 @@ ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_IndexesRowStore_UniqueCo
 GO
 ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_Indexes_FillFactor_Desired] CHECK (([Fillfactor_Desired]>=(0) AND [Fillfactor_Desired]<=(100)))
 GO
+ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_IndexesRowStore_PartitionFunction_PartitionColumn] CHECK ((PartitionFunction_Desired IS NULL AND PartitionColumn_Desired IS NULL) OR (PartitionFunction_Desired IS NOT NULL AND PartitionColumn_Desired IS NOT NULL))
+GO
 ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Def_IndexesRowStore_StorageType_Actual] CHECK (([StorageType_Actual]='PARTITION_SCHEME' OR [StorageType_Actual]='ROWS_FILEGROUP'))
 GO
 ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Def_IndexesRowStore_StorageType_Desired] CHECK (([StorageType_Desired]='PARTITION_SCHEME' OR [StorageType_Desired]='ROWS_FILEGROUP'))

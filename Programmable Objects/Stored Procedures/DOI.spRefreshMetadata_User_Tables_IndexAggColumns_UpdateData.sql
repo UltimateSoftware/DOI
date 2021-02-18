@@ -15,10 +15,7 @@ CREATE PROCEDURE [DOI].[spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData
 AS
 
 UPDATE T
-SET Storage_Actual = IndexAgg.ExistingTableStorage,
-    StorageType_Actual = IndexAgg.ExistingTableStorageType,
-    StorageType_Desired = IndexAgg.NewTableStorageType, 
-    AreIndexesFragmented =  CASE 
+SET AreIndexesFragmented =  CASE 
 			                    WHEN IndexAgg.FragmentationType = 'None'
 			                    THEN 0
 			                    ELSE 1 
@@ -58,69 +55,31 @@ FROM DOI.Tables T
                         MAX(CAST(I.IsStorageChanging AS TINYINT)) AS IsStorageChanging,
                         MAX(CAST(I.IsIndexMissingFromSQLServer AS TINYINT)) AS AreIndexesMissing,
                         MAX(CASE 
-                                WHEN IsClustered_Desired = 1 
-                                THEN I.Storage_Actual
-                                ELSE '' 
-                            END) AS ExistingTableStorage,
-                        MAX(CASE 
-                                WHEN IsClustered_Desired = 1 
-                                THEN I.StorageType_Actual
-                                ELSE '' 
-                            END) AS ExistingTableStorageType,
-                        MAX(CASE 
-                                WHEN IsClustered_Desired = 1 
-                                THEN I.StorageType_Desired
-                                ELSE '' 
-                            END) AS NewTableStorageType,
-                        MAX(CASE 
-                                WHEN IsClustered_Desired = 1 
-                                    AND (IsUnique_Desired <> ISNULL(IsUnique_Actual, '') 
-							                OR KeyColumnList_Desired <>ISNULL(KeyColumnList_Actual, '') 
-							                OR ISNULL(IncludedColumnList_Desired, '') <> ISNULL(IncludedColumnList_Actual, '') 
-							                OR ISNULL(FilterPredicate_Desired, '') <> ISNULL(FilterPredicate_Actual, '') 
-							                OR IsClustered_Desired <> IsClustered_Actual
-							                OR (PartitionFunction_Desired <> PartitionFunction_Actual
-								                AND TTP.IntendToPartition = 1))
+                                WHEN I.IsClustered_Actual = 1
+                                    AND AreDropRecreateOptionsChanging = 1
                                 THEN 1
                                 ELSE 0
                             END) AS IsClusteredIndexBeingDropped,
                         MAX(CASE 
-				                WHEN (IsUnique_Desired <> ISNULL(IsUnique_Actual, '') 
-						                OR KeyColumnList_Desired <>ISNULL(KeyColumnList_Actual, '') 
-						                OR ISNULL(IncludedColumnList_Desired, '') <> ISNULL(IncludedColumnList_Actual, '') 
-						                OR ISNULL(FilterPredicate_Desired, '') <> ISNULL(FilterPredicate_Actual, '') 
-						                OR IsClustered_Desired <> IsClustered_Actual
-						                OR (PartitionFunction_Desired <> PartitionFunction_Actual
-							                AND TTP.IntendToPartition = 1))
+				                WHEN AreDropRecreateOptionsChanging = 1
 				                THEN 1 
 				                ELSE 0 
-			                END) AS HasIndexDropAndRecreate, --this is the same logic as AreDropRecreateOptionsChanging
+			                END) AS HasIndexDropAndRecreate,
                         MAX(CASE
-                                WHEN (IsPrimaryKey_Desired = 1 AND IsUnique_Desired = 1)
-                                    AND (IsUnique_Desired <> ISNULL(IsUnique_Actual, '') 
-						                OR KeyColumnList_Desired <>ISNULL(KeyColumnList_Actual, '') 
-						                OR ISNULL(IncludedColumnList_Desired, '') <> ISNULL(IncludedColumnList_Actual, '') 
-						                OR ISNULL(FilterPredicate_Desired, '') <> ISNULL(FilterPredicate_Actual, '') 
-						                OR IsClustered_Desired <> IsClustered_Actual
-						                OR (PartitionFunction_Desired <> PartitionFunction_Actual
-							                AND TTP.IntendToPartition = 1)) --this is the same logic as AreDropRecreateOptionsChanging
+                                WHEN IsPrimaryKey_Actual = 1 
+									AND IsUnique_Actual = 1
+                                    AND AreDropRecreateOptionsChanging = 1
                                 THEN 1
                                 ELSE 0
                             END) AS IsPKDropped, 
                         MAX(CASE
-                                WHEN (IsPrimaryKey_Desired = 0 AND IsUnique_Desired = 1)
-                                    AND (IsUnique_Desired <> ISNULL(IsUnique_Actual, '') 
-						                OR KeyColumnList_Desired <>ISNULL(KeyColumnList_Actual, '') 
-						                OR ISNULL(IncludedColumnList_Desired, '') <> ISNULL(IncludedColumnList_Actual, '') 
-						                OR ISNULL(FilterPredicate_Desired, '') <> ISNULL(FilterPredicate_Actual, '') 
-						                OR IsClustered_Desired <> IsClustered_Actual
-						                OR (PartitionFunction_Desired <> PartitionFunction_Actual
-							                AND TTP.IntendToPartition = 1)) --this is the same logic as AreDropRecreateOptionsChanging
+                                WHEN IsPrimaryKey_Actual = 0 
+									AND IsUnique_Actual = 1
+                                    AND AreDropRecreateOptionsChanging = 1
                                 THEN 1
                                 ELSE 0
                             END) AS IsUQDropped
-
-                from DOI.vwIndexes I
+                FROM DOI.vwIndexes I --we should not be using the view here...circular reference?  But we need IndexUpdateType, which is calculated in the view.
                     INNER JOIN DOI.Tables TTP ON TTP.DatabaseName = I.DatabaseName
                         AND TTP.SchemaName = I.SchemaName
                         AND TTP.TableName = I.TableName

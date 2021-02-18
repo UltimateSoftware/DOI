@@ -10,9 +10,6 @@ GO
 SET ANSI_NULLS ON
 GO
 
---DROP PROCEDURE [DOI].[spRefreshMetadata_User_IndexesRowStore_UpdateData]
---go
-
 CREATE PROCEDURE [DOI].[spRefreshMetadata_User_IndexesRowStore_UpdateData]
     @DatabaseName NVARCHAR(128) = NULL
 
@@ -263,7 +260,8 @@ AS
 
     UPDATE IRS
     SET AreDropRecreateOptionsChanging =    CASE
-                                                WHEN (IsUniquenessChanging = 1
+                                                WHEN (IsPrimaryKeyChanging = 1
+                                                        OR IsUniquenessChanging = 1
                                                         OR IsKeyColumnListChanging = 1
                                                         OR IsIncludedColumnListChanging = 1
                                                         OR IsFilterChanging = 1

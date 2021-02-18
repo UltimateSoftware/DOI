@@ -66,13 +66,13 @@ MEMORY_OPTIMIZED = ON
 GO
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_AreReorgOptionsChanging] CHECK (([AreReorgOptionsChanging]=(0)))
 GO
-ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_AreSetOptionsChanging] CHECK (([AreSetOptionsChanging]=(0)))
-GO
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_Filter] CHECK (([IsFiltered_Desired]=(1) AND [FilterPredicate_Desired] IS NOT NULL AND [IsClustered_Desired]=(0) OR [IsFiltered_Desired]=(0) AND [FilterPredicate_Desired] IS NULL))
 GO
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_FragmentationType] CHECK (([FragmentationType]='Heavy' OR [FragmentationType]='Light' OR [FragmentationType]='None'))
 GO
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_OptionDataCompression] CHECK (([OptionDataCompression_Desired]='COLUMNSTORE_ARCHIVE' OR [OptionDataCompression_Desired]='COLUMNSTORE'))
+GO
+ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_PartitionFunction_PartitionColumn] CHECK ((PartitionFunction_Desired IS NULL AND PartitionColumn_Desired IS NULL) OR (PartitionFunction_Desired IS NOT NULL AND PartitionColumn_Desired IS NOT NULL))
 GO
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Def_IndexesColumnStore_StorageType_Actual] CHECK (([StorageType_Actual]='PARTITION_SCHEME' OR [StorageType_Actual]='ROWS_FILEGROUP'))
 GO

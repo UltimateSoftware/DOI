@@ -87,6 +87,9 @@ GO
 IF OBJECT_ID('[DOI].[Chk_Tables_PartitioningSetup]') IS NULL
 ALTER TABLE [DOI].[Tables] ADD CONSTRAINT [Chk_Tables_PartitioningSetup] CHECK (([IntendToPartition]=(1) AND [PartitionColumn] IS NOT NULL OR [IntendToPartition]=(0) AND [PartitionColumn] IS NULL))
 GO
+IF OBJECT_ID('[DOI].[Chk_Tables_PartitionFunction_PartitionColumn]') IS NULL
+ALTER TABLE DOI.Tables ADD CONSTRAINT Chk_Tables_PartitionFunction_PartitionColumn CHECK ((PartitionFunctionName IS NULL AND PartitionColumn IS NULL) OR (PartitionFunctionName IS NOT NULL AND PartitionColumn IS NOT NULL))
+GO
 IF OBJECT_ID('[DOI].[FK_Tables_Databases]') IS NULL
 ALTER TABLE [DOI].[Tables] ADD CONSTRAINT [FK_Tables_Databases] FOREIGN KEY ([DatabaseName]) REFERENCES [DOI].[Databases] ([DatabaseName])
 GO
@@ -239,11 +242,11 @@ GO
 IF OBJECT_ID('[DOI].[Chk_IndexesColumnStore_AreReorgOptionsChanging]') IS NULL
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_AreReorgOptionsChanging] CHECK (([AreReorgOptionsChanging]=(0)))
 GO
-IF OBJECT_ID('[DOI].[Chk_IndexesColumnStore_AreSetOptionsChanging]') IS NULL
-ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_AreSetOptionsChanging] CHECK (([AreSetOptionsChanging]=(0)))
-GO
 IF OBJECT_ID('[DOI].[Chk_IndexesColumnStore_Filter]') IS NULL
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_Filter] CHECK (([IsFiltered_Desired]=(1) AND [FilterPredicate_Desired] IS NOT NULL AND [IsClustered_Desired]=(0) OR [IsFiltered_Desired]=(0) AND [FilterPredicate_Desired] IS NULL))
+GO
+IF OBJECT_ID('[DOI].[Chk_IndexesColumnStore_PartitionFunction_PartitionColumn]') IS NULL
+ALTER TABLE DOI.IndexesColumnStore ADD CONSTRAINT Chk_IndexesColumnStore_PartitionFunction_PartitionColumn CHECK ((PartitionFunction_Desired IS NULL AND PartitionColumn_Desired IS NULL) OR (PartitionFunction_Desired IS NOT NULL AND PartitionColumn_Desired IS NOT NULL))
 GO
 IF OBJECT_ID('[DOI].[Chk_IndexesColumnStore_FragmentationType]') IS NULL
 ALTER TABLE [DOI].[IndexesColumnStore] ADD CONSTRAINT [Chk_IndexesColumnStore_FragmentationType] CHECK (([FragmentationType]='Heavy' OR [FragmentationType]='Light' OR [FragmentationType]='None'))
@@ -418,6 +421,8 @@ ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_IndexesRowStore_UniqueCo
 GO
 IF OBJECT_ID('[DOI].[Chk_Indexes_FillFactor_Desired]') IS NULL
 ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Chk_Indexes_FillFactor_Desired] CHECK (([Fillfactor_Desired]>=(0) AND [Fillfactor_Desired]<=(100)))
+IF OBJECT_ID('[DOI].[Chk_IndexesRowStore_PartitionFunction_PartitionColumn]') IS NULL
+ALTER TABLE DOI.IndexesRowStore ADD CONSTRAINT Chk_IndexesRowStore_PartitionFunction_PartitionColumn CHECK ((PartitionFunction_Desired IS NULL AND PartitionColumn_Desired IS NULL) OR (PartitionFunction_Desired IS NOT NULL AND PartitionColumn_Desired IS NOT NULL))
 GO
 IF OBJECT_ID('[DOI].[Def_IndexesRowStore_StorageType_Actual]') IS NULL
 ALTER TABLE [DOI].[IndexesRowStore] ADD CONSTRAINT [Def_IndexesRowStore_StorageType_Actual] CHECK (([StorageType_Actual]='PARTITION_SCHEME' OR [StorageType_Actual]='ROWS_FILEGROUP'))

@@ -210,22 +210,6 @@ AS
             AND DesiredDS.name = ICS.Storage_Desired
     WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
-    --Partition Functions
-    UPDATE ICS
-    SET     PartitionFunction_Desired   = NewPf.name,
-            PartitionFunction_Actual    = ExistingPf.name
-    FROM DOI.IndexesColumnStore ICS 
-        INNER JOIN DOI.SysDatabases d on d.name = ICS.DatabaseName
-	    LEFT JOIN DOI.SysPartitionSchemes ExistingPs ON d.database_id = ExistingPs.database_id
-            AND ICS.Storage_Actual = ExistingPs.name
-	    LEFT JOIN DOI.SysPartitionFunctions ExistingPf ON d.database_id = ExistingPf.database_id
-            AND ExistingPs.function_id = ExistingPf.function_id
-	    LEFT JOIN DOI.SysPartitionSchemes NewPs ON NewPs.database_id = D.database_id
-            AND NewPs.name = ICS.Storage_Desired
-	    LEFT JOIN DOI.SysPartitionFunctions NewPf ON NewPf.database_id = NewPs.database_id
-            AND NewPf.function_id = NewPs.function_id
-    WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
-
     --CHANGE BITS
     UPDATE ICS
     SET IsColumnListChanging	        = CASE WHEN ICS.ColumnList_Desired <> ICS.ColumnList_Actual THEN 1 ELSE 0 END, 
@@ -260,6 +244,11 @@ AS
                                             END,
         AreRebuildOnlyOptionsChanging   =   CASE    
                                                 WHEN (IsDataCompressionChanging = 1)
+                                                THEN 1
+                                                ELSE 0
+                                            END,
+        AreSetOptionsChanging           =   CASE    
+                                                WHEN (IsDataCompressionDelayChanging = 1)
                                                 THEN 1
                                                 ELSE 0
                                             END

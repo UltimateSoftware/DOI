@@ -241,11 +241,7 @@ namespace DOI.Tests.TestHelpers.Metadata
 
                     if (actualRow.UsesSlidingWindow)
                     {
-                        partitionFunctionIntervals += 2; //the date diff clips off a year at the end, so we add it back.  Plus, we add another 1 for the active partition in the sliding window.
-                    }
-                    else
-                    {
-                        partitionFunctionIntervals += 1; //the date diff clips off a year at the end, so we add it back.
+                        partitionFunctionIntervals += 1; //the date diff clips off a year at the end, so we add it back.  Plus, we add another 1 for the active partition in the sliding window.
                     }
 
                     Assert.AreEqual(DatabaseName, actualRow.DatabaseName, "DatabaseName");

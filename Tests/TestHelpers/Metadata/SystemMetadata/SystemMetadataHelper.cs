@@ -329,7 +329,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_PartitionedTablesSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
@@ -344,7 +345,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -494,7 +496,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                 'COLUMNSTORE', 0, N'PRIMARY', N'ROWS_FILEGROUP', NULL, 
                 NULL)";
 
-        public static string DropNCCIndexMetadataSql = $"DELETE DOI.DOI.IndexesColumnStore WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}' AND IndexName = '{CIndexName}'";
+        public static string DropNCCIIndexMetadataSql = $"DELETE DOI.DOI.IndexesColumnStore WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}' AND IndexName = '{NCCIIndexName}'";
 
         public static string DropNCCIIndexSql = $"DROP INDEX IF EXISTS {NCCIIndexName} ON dbo.{TableName}";
 
@@ -606,7 +608,8 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
             EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexPhysicalStats @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData @DatabaseName = '{DatabaseName}'";
+            EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysIndexColumnsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'

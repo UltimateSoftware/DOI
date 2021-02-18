@@ -195,6 +195,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             Assert.AreEqual(false, indexIsMissingInMetadataTable, "IndexIsNotMissingInMetadataAfterItIsCreated");
             Assert.AreEqual(indexName, indexIsMissingInSqlServer, "IndexIsNotMissingInSqlServerAfterItIsCreated");
+
+            //Assert vwTables isIndexMissingFlag
         }
 
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_IndexIsMissing_ColumnStore_NonClustered")]
@@ -246,6 +248,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             Assert.AreEqual(false, indexIsMissingInMetadataTable, "IndexIsNotMissingInMetadataAfterItIsCreated");
             Assert.AreEqual(indexName, indexIsMissingInSqlServer, "IndexIsNotMissingInSqlServerAfterItIsCreated");
+
+            //Assert vwTables isIndexMissingFlag
         }
         #endregion
 
@@ -439,6 +443,9 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
         #region IndexFragmentation Tests
 
+
+
+        //Assert vwTables AreIndexesFragmented flag.
         #endregion
 
         #region ChangeBits Tests
@@ -862,11 +869,15 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", TestName = "IndexUpdateTests_ChangeBits_StorageChanging_RowStore_NonClustered")]
         public void IndexUpdateTests_ChangeBits_IsStorageChanging_RowStore(string databaseName, string tableName, string indexName)
         {
+            TestHelper.CreatePartitioningContainerObjects(TestHelper.PartitionFunctionNameYearly);
+
             //all change bits should be off
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
 
-            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+ 
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsStorageChanging");
@@ -877,12 +888,15 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         public void IndexUpdateTests_ChangeBits_IsStorageChanging_ColumnStore(string databaseName, string tableName, string indexName)
         {
             TestHelper.ReclusterTableWithColumnStore(indexName);
+            TestHelper.CreatePartitioningContainerObjects(TestHelper.PartitionFunctionNameYearly);
+
             //all change bits should be off
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
 
-            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
 
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsStorageChanging");

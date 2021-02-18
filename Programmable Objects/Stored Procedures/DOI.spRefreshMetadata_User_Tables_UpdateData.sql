@@ -22,6 +22,15 @@ CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_Tables_UpdateData]
 AS
 
 UPDATE T
+SET Storage_Desired = CASE WHEN PF.PartitionFunctionName IS NOT NULL THEN PF.PartitionSchemeName ELSE 'PRIMARY' END,
+    StorageType_Desired = CASE WHEN PF.PartitionFunctionName IS NOT NULL THEN 'PARTITION_SCHEME' ELSE 'ROWS_FILEGROUP' END
+FROM DOI.Tables T
+    LEFT JOIN DOI.PartitionFunctions PF ON PF.DatabaseName = T.DatabaseName
+        AND T.PartitionFunctionName = PF.PartitionFunctionName
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
+
+
+UPDATE T
 SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL),
 	ColumnListWithTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL),
 	UpdateColumnList = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'T'),
@@ -43,15 +52,6 @@ FROM DOI.Tables T
         AND i.data_space_id = DS_Actual.data_space_id
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
-
---UPDATE STORAGE DESIRED FOR PARTITIONED TABLES ONLY.
-UPDATE T
-SET Storage_Desired = PF.PartitionSchemeName,
-    StorageType_Desired = 'PARTITION_SCHEME'
-FROM DOI.Tables T
-    INNER JOIN DOI.PartitionFunctions PF ON PF.DatabaseName = T.DatabaseName
-        AND T.PartitionFunctionName = PF.PartitionFunctionName
-WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 UPDATE T
 SET T.DSTriggerSQL = DSTrigger.DSTriggerSQL
