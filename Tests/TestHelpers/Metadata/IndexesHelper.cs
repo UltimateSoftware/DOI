@@ -395,7 +395,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsKeyColumnListChanging") ? true : false, indexRow.IsKeyColumnListChanging, "IsKeyColumnListChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPadIndexChanging") ? true : false, indexRow.IsPadIndexChanging, "IsPadIndexChanging");
             Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsStorageChanging" || bitToAssert == "IsPartitioningChanging")) ? true : false, indexRow.IsStorageChanging, "IsStorageChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsPartitioningChanging" || bitToAssert == "IsStorageChanging")) ? true : false, indexRow.IsPartitioningChanging, "IsPartitioningChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPartitioningChanging") ? true : false, indexRow.IsPartitioningChanging, "IsPartitioningChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStatisticsNoRecomputeChanging") ? true : false, indexRow.IsStatisticsNoRecomputeChanging, "IsStatisticsNoRecomputeChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStatisticsIncrementalChanging") ? true : false, indexRow.IsStatisticsIncrementalChanging, "IsStatisticsIncrementalChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsUniquenessChanging") ? true : false, indexRow.IsUniquenessChanging, "IsUniquenessChanging");

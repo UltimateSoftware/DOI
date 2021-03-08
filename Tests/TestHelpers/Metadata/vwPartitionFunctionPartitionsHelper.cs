@@ -158,21 +158,19 @@ namespace DOI.Tests.TestHelpers.Metadata
             {
                 var actualRow = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PartitionFunctionName == expectedRow.PartitionFunctionName);
 
-                Assert.AreEqual(expectedRow.NumOfTotalPartitionSchemeIntervals, actual.Count);
-                Assert.AreEqual(expectedNumOfTotalPartitionFunctionIntervals, expectedRow.NumOfTotalPartitionFunctionIntervals);
-                Assert.AreEqual(expectedNumOfTotalPartitionSchemeIntervals, expectedRow.NumOfTotalPartitionSchemeIntervals);
-                Assert.AreEqual("DATETIME2", expectedRow.PartitionFunctionDataType);
-                Assert.AreEqual(expectedNumCharsInSuffix, expectedRow.NumOfCharsInSuffix);
-                Assert.AreEqual(expectedLastBoundaryDate, expectedRow.LastBoundaryDate);
+                Assert.AreEqual(expectedRow.NumOfTotalPartitionSchemeIntervals, actual.Count, "NumOfTotalPartitionSchemeIntervals");
+                Assert.AreEqual(expectedNumOfTotalPartitionFunctionIntervals, expectedRow.NumOfTotalPartitionFunctionIntervals, "NumOfTotalPartitionFunctionIntervals");
+                Assert.AreEqual(expectedNumOfTotalPartitionSchemeIntervals, expectedRow.NumOfTotalPartitionSchemeIntervals, "NumOfTotalPartitionSchemeIntervals");
+                Assert.AreEqual("DATETIME2", expectedRow.PartitionFunctionDataType, "PartitionFunctionDataType");
+                Assert.AreEqual(expectedNumCharsInSuffix, expectedRow.NumOfCharsInSuffix, "NumOfCharsInSuffix");
+                Assert.AreEqual(expectedLastBoundaryDate, expectedRow.LastBoundaryDate, "LastBoundaryDate");
 
 
-                Assert.AreEqual(expectedRow.PartitionSchemeName, actualRow.PartitionSchemeName);
-                Assert.AreEqual(expectedRow.BoundaryInterval, actualRow.BoundaryInterval);
-                Assert.AreEqual(expectedRow.UsesSlidingWindow, actualRow.UsesSlidingWindow);
-                Assert.AreEqual(expectedRow.SlidingWindowSize, actualRow.SlidingWindowSize);
-                Assert.AreEqual(expectedRow.IsDeprecated, actualRow.IsDeprecated);
-                Assert.AreEqual(expectedRow.IsDeprecated, actualRow.IsDeprecated);
-                Assert.AreEqual(expectedRow.IsDeprecated, actualRow.IsDeprecated);
+                Assert.AreEqual(expectedRow.PartitionSchemeName, actualRow.PartitionSchemeName, "PartitionSchemeName");
+                Assert.AreEqual(expectedRow.BoundaryInterval, actualRow.BoundaryInterval, "BoundaryInterval");
+                Assert.AreEqual(expectedRow.UsesSlidingWindow, actualRow.UsesSlidingWindow, "UsesSlidingWindow");
+                Assert.AreEqual(expectedRow.SlidingWindowSize, actualRow.SlidingWindowSize, "SlidingWindowSize");
+                Assert.AreEqual(expectedRow.IsDeprecated, actualRow.IsDeprecated, "IsDeprecated");
                 //Assert.AreEqual(expectedRow.NextUsedFileGroupName, actualRow.NextUsedFileGroupName);
                 //Assert.AreEqual(expectedRow.BoundaryValue, actualRow.BoundaryValue);
                 //Assert.AreEqual(expectedRow.NextBoundaryValue, actualRow.NextBoundaryValue);

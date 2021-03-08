@@ -46,6 +46,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.DropCIndexSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropTableSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropSchemaSql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.DropFilegroup2Sql);
         }
         [TestCase(true, TestName = "RefreshMetadata_SysIndexes_RowStore_MetadataIsAccurate_EmptyTable")]
         [TestCase(false, TestName = "RefreshMetadata_SysIndexes_RowStore_MetadataIsAccurate_NonEmptyTable")]
@@ -869,12 +870,12 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", TestName = "IndexUpdateTests_ChangeBits_StorageChanging_RowStore_NonClustered")]
         public void IndexUpdateTests_ChangeBits_IsStorageChanging_RowStore(string databaseName, string tableName, string indexName)
         {
-            TestHelper.CreatePartitioningContainerObjects(TestHelper.PartitionFunctionNameYearly);
+            sqlHelper.Execute(TestHelper.CreateFilegroup2Sql);
 
             //all change bits should be off
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
 
-            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
  
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
@@ -888,13 +889,13 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         public void IndexUpdateTests_ChangeBits_IsStorageChanging_ColumnStore(string databaseName, string tableName, string indexName)
         {
             TestHelper.ReclusterTableWithColumnStore(indexName);
-            TestHelper.CreatePartitioningContainerObjects(TestHelper.PartitionFunctionNameYearly);
+            sqlHelper.Execute(TestHelper.CreateFilegroup2Sql);
 
             //all change bits should be off
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
 
-            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-
+            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.Tables SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'");
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
 
@@ -926,8 +927,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionSchemesSql);
 
             //action
-            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.PartitionSchemeNameYearly}', PartitionColumn_Desired = 'TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionColumn = 'TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.PartitionSchemeNameYearly}', PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             //only the correct change bit should be turned on.  All others should still be off.
@@ -958,8 +959,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionSchemesSql);
 
             //action
-            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET Storage_Desired = '{TestHelper.PartitionSchemeNameYearly}', PartitionColumn_Desired = 'TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionColumn = 'TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionColumn = '{TestHelper.PartitionColumnName}', PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             //only the correct change bit should be turned on.  All others should still be off.

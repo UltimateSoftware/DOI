@@ -233,6 +233,7 @@ AS
                                                 WHEN (IsColumnListChanging = 1
                                                         OR IsFilterChanging = 1
                                                         OR IsClusteredChanging = 1
+                                                        OR IsStorageChanging = 1
                                                         OR IsPartitioningChanging = 1)
                                                 THEN 1
                                                 ELSE 0

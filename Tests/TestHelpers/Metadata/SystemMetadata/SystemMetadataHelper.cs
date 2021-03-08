@@ -28,8 +28,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         public static string RefreshStorageContainers_PartitionFunctions = $@"EXEC DOI.spRefreshStorageContainers_PartitionFunctions @DatabaseName = '{DatabaseName}'";
         public static string RefreshStorageContainers_PartitionSchemes = $@"EXEC DOI.spRefreshStorageContainers_PartitionSchemes @DatabaseName = '{DatabaseName}'";
         
-        public static string DropFilegroupSql = $@"ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {FilegroupName};";
-        public static string DropFilegroup2Sql = $@"ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {Filegroup2Name};";
+        public static string DropFilegroupSql = $@"IF EXISTS(SELECT * FROM {DatabaseName}.sys.filegroups WHERE name = '{FilegroupName}') ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {FilegroupName};";
+        public static string DropFilegroup2Sql = $@"IF EXISTS(SELECT * FROM {DatabaseName}.sys.filegroups WHERE name = '{Filegroup2Name}') ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {Filegroup2Name};";
         
         public static string RefreshMetadata_SysFilegroupsSql = $@"
             EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
