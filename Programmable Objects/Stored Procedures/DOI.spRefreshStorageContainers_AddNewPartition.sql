@@ -25,7 +25,8 @@ AS
 */
 
 DECLARE @SetNextUseFileGroupSQL VARCHAR(MAX) = '',
-		@PartitionFunctionSplitSQL VARCHAR(MAX) = ''
+		@PartitionFunctionSplitSQL VARCHAR(MAX) = '',
+        @FinalSQL VARCHAR(MAX) = ''
 
 --1. create new file and filegroup
 EXEC DOI.spRefreshStorageContainers_FilegroupsAndFiles 
@@ -40,6 +41,21 @@ WHERE IsDeprecated = 0
     AND PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NULL THEN PartitionFunctionName ELSE @PartitionFunctionName END
 	AND IsPartitionMissing = 1
 
+--If we are doing SPLIT, need to disable and re-enable any Partitioned ColumnStore indexes...
+IF LTRIM(RTRIM(@PartitionFunctionSplitSQL)) <> ''
+BEGIN
+    DECLARE @RebuildColumnStoreIndexesSQL VARCHAR(MAX) = '',
+            @DisableColumnStoreIndexesSQL VARCHAR(MAX) = ''
+
+    SELECT @RebuildColumnStoreIndexesSQL +=  'ALTER INDEX [' + IndexName + '] ON ' + SchemaName + '.' + TableName + ' REBUILD PARTITION = ALL 	WITH (	DATA_COMPRESSION = ' + OptionDataCompression + ');' + CHAR(13) + CHAR(10),
+            @DisableColumnStoreIndexesSQL += 'ALTER INDEX [' + IndexName + '] ON ' + SchemaName + '.' + TableName + ' DISABLE;' + CHAR(13) + CHAR(10)
+    FROM DOI.vwIndexes
+    WHERE DatabaseName = @DatabaseName
+        AND PartitionColumn IS NOT NULL
+        AND IndexType = 'ColumnStore'
+END
+
+SET @FinalSQL += @DisableColumnStoreIndexesSQL + @PartitionFunctionSplitSQL + @RebuildColumnStoreIndexesSQL
 
 IF @Debug = 1
 BEGIN

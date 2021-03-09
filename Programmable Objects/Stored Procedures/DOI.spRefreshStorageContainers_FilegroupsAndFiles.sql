@@ -26,7 +26,7 @@ DECLARE @CreateFileGroupsSQL NVARCHAR(MAX) = '' + CHAR(13) + CHAR(10),
 
 
 SELECT @CreateFileGroupsSQL = (	SELECT DISTINCT AddFileGroupSQL + CHAR(13) + CHAR(10)
-								FROM DOI.vwPartitionFunctionPartitions
+								FROM DOI.vwPartitioning_Filegroups
 								WHERE DatabaseName = @DatabaseName
 								FOR XML PATH(''), TYPE).value(N'.[1]', N'nvarchar(max)')
 
@@ -43,7 +43,7 @@ END
 
 
 SELECT @CreateFilesSQL = (	SELECT DISTINCT AddFileSQL + CHAR(13) + CHAR(10)
-							FROM DOI.vwPartitionFunctionPartitions
+							FROM DOI.vwPartitioning_DBFiles
 							WHERE DatabaseName = @DatabaseName
 							FOR XML PATH(''), TYPE).value(N'.[1]', N'nvarchar(max)')
 FROM DOI.vwPartitionFunctionPartitions

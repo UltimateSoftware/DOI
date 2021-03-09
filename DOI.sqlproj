@@ -496,4 +496,7 @@
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_UpdateData.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshStorageContainers_AddNewPartitionToMetadata.sql" />
+  </ItemGroup>
 </Project>

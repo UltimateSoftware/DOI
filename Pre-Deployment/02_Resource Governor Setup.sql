@@ -1,6 +1,22 @@
 USE master
 GO
 
+/*************************************	MASTER DB OBJECTS *********************************************/
+IF '$(IsShadowDeployment)' = 0
+BEGIN
+	IF OBJECT_ID('dbo.JobsToGovern') IS NULL
+	BEGIN
+		CREATE TABLE dbo.JobsToGovern(
+			JobID UNIQUEIDENTIFIER NOT NULL,
+			JobName SYSNAME,
+			MatchString NVARCHAR(256) PRIMARY KEY CLUSTERED,
+			DateInserted DATETIME2 NOT NULL DEFAULT SYSDATETIME())
+
+		PRINT 'Created table dbo.JobsToGovern.'
+	END
+END
+GO
+
 IF '$(IsShadowDeployment)' = 0
 BEGIN
 	IF EXISTS(SELECT 'True' FROM sys.resource_governor_configuration rgc WHERE rgc.is_enabled = 0)

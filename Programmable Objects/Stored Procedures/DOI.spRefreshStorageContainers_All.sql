@@ -15,9 +15,10 @@ AS
 
 
 SELECT '
-	EXEC DOI.spRefreshStorageContainers_PartitionFunctions @DatabaseName = ''' + DatabaseName + '''
-	EXEC DOI.spRefreshStorageContainers_FilegroupsAndFiles @DatabaseName = ''' + DatabaseName + '''
-	EXEC DOI.spRefreshStorageContainers_PartitionSchemes   @DatabaseName = ''' + DatabaseName + ''''
+	EXEC DOI.spRefreshStorageContainers_PartitionFunctions @DatabaseName			= ''' + DatabaseName + '''
+	EXEC DOI.spRefreshStorageContainers_FilegroupsAndFiles @DatabaseName			= ''' + DatabaseName + '''
+	EXEC DOI.spRefreshStorageContainers_PartitionSchemes   @DatabaseName			= ''' + DatabaseName + '''
+	EXEC DOI.spRefreshStorageContainers_AddNewPartitionsToMetadata @DatabaseName	= ''' + DatabaseName + ''''
 
 FROM DOI.Databases
 

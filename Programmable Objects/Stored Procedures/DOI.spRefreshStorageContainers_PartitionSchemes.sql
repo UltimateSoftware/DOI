@@ -24,7 +24,7 @@ AS
 DECLARE @CreatePartitionSchemeSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
 
 SELECT @CreatePartitionSchemeSQL += CreatePartitionSchemeSQL + CHAR(13) + CHAR(10)
-FROM DOI.vwPartitionFunctions
+FROM DOI.vwPartitionSchemes
 WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NULL THEN PartitionFunctionName ELSE @PartitionFunctionName END
 
 IF @Debug = 1

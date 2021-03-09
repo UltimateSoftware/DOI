@@ -423,6 +423,7 @@
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_1_PartitionFunctions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_IndexPartitions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_SysSchemas.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_IndexPartitions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysCheckConstraints.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysColumns.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysDatabaseFiles.cs" />
