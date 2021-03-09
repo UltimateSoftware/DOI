@@ -46,12 +46,7 @@ FROM DOI.Tables T
                         I.SchemaName,
                         I.TableName,
                         MIN(I.IndexUpdateType) AS AreIndexesBeingUpdated,
-                        MIN(CASE 
-								WHEN NumPages_Actual > SS.MinNumPages AND Fragmentation > 30 
-								THEN 'Heavy' 
-								WHEN NumPages_Actual > SS.MinNumPages AND Fragmentation BETWEEN 5 AND 30 THEN 'Light' 
-								ELSE 'None' 
-							END) AS FragmentationType,
+                        MIN(I.FragmentationType) AS FragmentationType,
                         MAX(CAST(I.IsStorageChanging AS TINYINT)) AS IsStorageChanging,
                         MAX(CAST(I.IsIndexMissingFromSQLServer AS TINYINT)) AS AreIndexesMissing,
                         MAX(CASE 

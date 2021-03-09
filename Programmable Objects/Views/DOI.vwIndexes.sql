@@ -54,6 +54,7 @@ SELECT	AllIdx.*
 				+ CASE WHEN AllIdx.IsKeyColumnListChanging			= 1						THEN	', KeyColumnList'								ELSE '' END
 				+ CASE WHEN AllIdx.IsPadIndexChanging				= 1						THEN	', PadIndex'									ELSE '' END
 				+ CASE WHEN AllIdx.IsPartitioningChanging			= 1						THEN	', Partitioning'								ELSE '' END
+				+ CASE WHEN AllIdx.IsStorageChanging				= 1						THEN	', Storage'										ELSE '' END
 				+ CASE WHEN AllIdx.IsStatisticsNoRecomputeChanging	= 1						THEN	', StatisticsNoRecompute'						ELSE '' END
 				+ CASE WHEN AllIdx.IsStatisticsIncrementalChanging	= 1						THEN	', StatisticsIncremental'						ELSE '' END
 				+ CASE WHEN AllIdx.IsUniquenessChanging				= 1						THEN	', Uniqueness'									ELSE '' END, 1, 2, SPACE(0)) AS ListOfChanges
@@ -86,7 +87,7 @@ FROM (	SELECT	 IRS.*
 						AND IRS.AreDropRecreateOptionsChanging = 0 
 						AND IRS.AreRebuildOptionsChanging = 0
 						AND IRS.FragmentationType = 'Light'
-						AND IRS.AreSetOptionsChanging = 0)
+						AND IRS.AreSetOptionsChanging = 0) --we are not using AreReorgOptionsChanging column!?
 					THEN	CASE IRS.NeedsPartitionLevelOperations
 								WHEN 0 THEN 'AlterReorganize'
 								WHEN 1 THEN 'AlterReorganize-PartitionLevel'

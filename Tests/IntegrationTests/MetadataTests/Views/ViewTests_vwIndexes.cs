@@ -44,6 +44,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             sqlHelper.Execute(TestHelper.DropPartitionedTableMetadataSql);
             sqlHelper.Execute(TestHelper.DropPartitionSchemeYearlySql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.DropPartitionFunctionYearlySql, 30, true, DatabaseName);
+            sqlHelper.Execute(TestHelper.DropFilegroup2Sql);
             //sqlHelper.Execute(fgTestHelper.GetFilegroupSql(null, "Drop"), 30, true, DatabaseName);
             //sqlHelper.Execute(dbfTestHelper.GetDBFilesSql(null, "Drop"), 30, true, DatabaseName);
         }
@@ -210,52 +211,31 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
         #endregion
 
         #region ListOfChanges Tests
-        //test case for each ChangeBit and assert that the ListOfChanges follows this logic:
-        /*
-         * 		--KEEP THE ORDER OF THE CASE STATEMENTS BELOW IN ALPHABETICAL ORDER!!!
-		,STUFF(CASE WHEN AllIdx.IsAllowPageLocksChanging			= 1						THEN	', AllowPageLocks'								ELSE '' END
-				+ CASE WHEN AllIdx.IsAllowRowLocksChanging			= 1						THEN	', AllowRowLocks'									ELSE '' END
-				+ CASE WHEN AllIdx.IsClusteredChanging				= 1						THEN	', Clustered'									ELSE '' END
-				+ CASE WHEN AllIdx.IsDataCompressionDelayChanging	= 1						THEN	', CompressionDelay'							ELSE '' END
-				+ CASE WHEN AllIdx.IsDataCompressionChanging		= 1						THEN	', DataCompression'								ELSE '' END
-				+ CASE WHEN AllIdx.IsFillfactorChanging				= 1						THEN	', FillFactor'									ELSE '' END
-				+ CASE WHEN AllIdx.IsFilterChanging					= 1						THEN	', Filter'										ELSE '' END
-				+ CASE WHEN AllIdx.FragmentationType				IN ('Heavy', 'Light')	THEN	', Fragmentation:  ' + AllIdx.FragmentationType	ELSE '' END 
-				+ CASE WHEN AllIdx.IsIgnoreDupKeyChanging			= 1						THEN	', IgnoreDupKey'								ELSE '' END
-				+ CASE WHEN AllIdx.IsIncludedColumnListChanging		= 1						THEN	', IncludedColumnList'							ELSE '' END
-				+ CASE WHEN AllIdx.IsPrimaryKeyChanging				= 1						THEN	', IsPrimaryKey'								ELSE '' END
-				+ CASE WHEN AllIdx.IsKeyColumnListChanging			= 1						THEN	', KeyColumnList'								ELSE '' END
-				+ CASE WHEN AllIdx.IsPadIndexChanging				= 1						THEN	', PadIndex'									ELSE '' END
-				+ CASE WHEN AllIdx.IsPartitioningChanging			= 1						THEN	', Partitioning'								ELSE '' END
-				+ CASE WHEN AllIdx.IsStatisticsNoRecomputeChanging	= 1						THEN	', StatisticsNoRecompute'						ELSE '' END
-				+ CASE WHEN AllIdx.IsStatisticsIncrementalChanging	= 1						THEN	', StatisticsIncremental'						ELSE '' END
-				+ CASE WHEN AllIdx.IsUniquenessChanging				= 1						THEN	', Uniqueness'									ELSE '' END, 1, 2, SPACE(0)) AS ListOfChanges
-         */
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionAllowRowLocks", "0", "AllowRowLocks", TestName = "IndexUpdateTests_ListOfChanges_RowStore_AllowRowLocks")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionAllowPageLocks", "0", "AllowPageLocks", TestName = "IndexUpdateTests_ListOfChanges_RowStore_AllowPageLocks")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IsClustered", "1", "Clustered", TestName = "IndexUpdateTests_ListOfChanges_RowStore_IsClustered")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionDataCompression", "ROW", "DataCompression", TestName = "IndexUpdateTests_ListOfChanges_RowStore_DataCompression")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "FillFactor", "50", "FillFactor", TestName = "IndexUpdateTests_ListOfChanges_RowStore_FillFactor")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "Filter", "1", "Filter", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Filter")]
-        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "Storage", "FG2", "Storage", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Storage")]
-        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "Fragmentation", "0", "Fragmentation:  Light", TestName = "IndexUpdateTests_ListOfChanges_RowStore_FragmentationLight")]
-        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "Fragmentation", "0", "Fragmentation:  Heavy", TestName = "IndexUpdateTests_ListOfChanges_RowStore_FragmentationHeavy")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "Storage", "Test1FG2", "Storage", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Storage")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "Fragmentation", "Light", "Fragmentation:  Light", TestName = "IndexUpdateTests_ListOfChanges_RowStore_FragmentationLight")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "Fragmentation", "Heavy", "Fragmentation:  Heavy", TestName = "IndexUpdateTests_ListOfChanges_RowStore_FragmentationHeavy")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionIgnoreDupKey", "1", "IgnoreDupKey", TestName = "IndexUpdateTests_ListOfChanges_RowStore_IgnoreDupKey")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IncludedColumnList", "0", "IncludedColumnList", TestName = "IndexUpdateTests_ListOfChanges_RowStore_IncludedColumnList")]
-        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IsPrimaryKey", "1", "IsPrimaryKey", TestName = "IndexUpdateTests_ListOfChanges_RowStore_IsPrimaryKey")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IsPrimaryKey", "1", "IsPrimaryKey, Uniqueness", TestName = "IndexUpdateTests_ListOfChanges_RowStore_IsPrimaryKey")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "KeyColumnList", "0", "KeyColumnList", TestName = "IndexUpdateTests_ListOfChanges_RowStore_KeyColumnList")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionPadIndex", "0", "PadIndex", TestName = "IndexUpdateTests_ListOfChanges_RowStore_PadIndex")]
-        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "PartitionFunction", "pfTestsYearly", "Partitioning", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Partitioning")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "PartitionFunction", "pfTestsYearly", "Partitioning, Storage", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Partitioning")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionStatisticsNoRecompute", "1", "StatisticsNoRecompute", TestName = "IndexUpdateTests_ListOfChanges_RowStore_StatisticsNoRecompute")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionStatisticsIncremental", "1", "StatisticsIncremental", TestName = "IndexUpdateTests_ListOfChanges_RowStore_StatisticsIncremental")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IsUnique", "1", "Uniqueness", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Uniqueness")]
 
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "IsClustered", "1", "Clustered", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Clustered")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "ColumnList", "0", "KeyColumnList", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_ColumnList")]
-        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "PartitionFunction", "pfTestsYearly", "Partitioning", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Partitioning")]
-        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Fragmentation", "0", "Fragmentation:  Heavy", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_FragmentationLight")]
-        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Fragmentation", "0", "Fragmentation:  Light", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_FragmentationHeavy")]
-        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Storage", "FG2", "Storage", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Storage")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "PartitionFunction", "pfTestsYearly", "Partitioning, Storage", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Partitioning")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Fragmentation", "Light", "Fragmentation:  Light", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_FragmentationLight")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Fragmentation", "Heavy", "Fragmentation:  Heavy", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_FragmentationHeavy")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Storage", "Test1FG2", "Storage", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Storage")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Filter", "1", "Filter", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Filter")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "OptionDataCompressionDelay", "100", "CompressionDelay", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_CompressionDelay")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "OptionDataCompression", "COLUMNSTORE_ARCHIVE", "DataCompression", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_DataCompression")]
@@ -273,14 +253,22 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             {
                 TestHelper_Indexes.CreatePartitioningContainerObjects(TestHelper.PartitionFunctionNameYearly);
             }
+            else if (columnToUpdate == "Storage")
+            {
+                sqlHelper.Execute(TestHelper.CreateFilegroup2Sql, 30, true, DatabaseName);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_SysFilegroupsSql);
+            }
 
             var indexType = indexName == "IDX_TempA" ? "RowStore" : "ColumnStore";
             string setStatement = string.Empty;
 
             switch (columnToUpdate)
             {
+                case "IsPrimaryKey":
+                    setStatement = $"IsPrimaryKey_Desired = '{newValue}', IsUnique_Desired = '{newValue}'";
+                    break;
                 case "Fragmentation":
-                    setStatement = $"Fragmentation = '{newValue}'";
+                    setStatement = $"FragmentationType = '{newValue}'";
                     break;
                 case "Filter":
                     setStatement = "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TransactionUtcDt > SYSDATETIME()'";
@@ -316,8 +304,10 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                         AND TableName = '{tableName}'");
             }
 
-
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            if (columnToUpdate != "Fragmentation") //we are mocking fragmentation, so if we run the command below it will overwrite our mocked value with actual fragmentation value.
+            {
+                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            }
 
             var actualListOfChanges = sqlHelper.ExecuteScalar<string>($@"
                 SELECT ListOfChanges 

@@ -442,6 +442,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         public const string NCCIIndexName = "NCCI_TempA";
         public const string CCIIndexName = "CCI_TempA";
         public const string PKIndexName = "PK_TempA";
+        public const string UQIndexName = "UQ_TempA";
 
 
         public const string CIndexName_Partitioned = "CDX_TempA_Partitioned";
@@ -525,6 +526,27 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                             WITH (  PAD_INDEX = ON,
                                     DATA_COMPRESSION = PAGE)
             END";
+
+        //UQ index
+        public static string DropUQIndexSql = $"IF EXISTS(SELECT 'True' FROM sys.indexes WHERE NAME = '{UQIndexName}') DROP INDEX IF EXISTS {UQIndexName} ON dbo.{TableName}";
+        public static string CreateUQIndexSql = $@" 
+            IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE NAME = '{UQIndexName}')
+            BEGIN
+                CREATE UNIQUE NONCLUSTERED INDEX {UQIndexName}
+                    ON dbo.{TableName} (TempAId)
+                            WITH (  PAD_INDEX = ON,
+                                    DATA_COMPRESSION = PAGE)
+            END";
+
+        public static string CreateUQIndexMetadataSql = $@"
+            INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
+                                            IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
+                                            OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
+                                            PartitionFunction_Desired, PartitionColumn_Desired)
+            VALUES (N'{DatabaseName}', N'dbo', N'{TableName}', N'{UQIndexName}', 1, 0, 0, 0, 'TempAId ASC', NULL,  
+                    0, NULL, 100, 1, 0, 0, 0, 
+                    0, 0, 1, 1, N'PAGE', 'PRIMARY', N'ROWS_FILEGROUP', 
+                    NULL, NULL)";
 
         //PARTITIONED INDEX
 
