@@ -453,6 +453,7 @@ CREATE TABLE [DOI].[IndexPartitionsColumnStore]
 [DataFileName] [NVARCHAR] (260) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_DataFileName] DEFAULT (''),
 [DriveLetter] [CHAR] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_DriveLetter] DEFAULT (''),
 [PartitionUpdateType] [VARCHAR] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_PartitionUpdateType] DEFAULT ('None'),
+[IsMissingFromSQLServer] BIT NOT NULL CONSTRAINT [Def_IndexPartitionsColumnStore_IsMissingFromSQLServer] DEFAULT ((0)),
 CONSTRAINT [PK_IndexPartitionsColumnStore] PRIMARY KEY NONCLUSTERED  ([SchemaName], [TableName], [IndexName], [PartitionNumber])
 )
 WITH
@@ -488,6 +489,7 @@ CREATE TABLE [DOI].[IndexPartitionsRowStore]
 [DataFileName] [NVARCHAR] (260) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_DataFileName] DEFAULT (''),
 [DriveLetter] [CHAR] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_DriveLetter] DEFAULT (''),
 [PartitionUpdateType] [VARCHAR] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_PartitionUpdateType] DEFAULT ('None'),
+[IsMissingFromSQLServer] BIT NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_IsMissingFromSQLServer] DEFAULT ((0)),
 CONSTRAINT [PK_IndexPartitionsRowStore] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [PartitionNumber])
 )
 WITH

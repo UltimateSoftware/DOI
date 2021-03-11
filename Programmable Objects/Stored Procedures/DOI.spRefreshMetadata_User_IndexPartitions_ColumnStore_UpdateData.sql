@@ -68,6 +68,17 @@ SET PartitionUpdateType =   CASE
 FROM DOI.IndexPartitionsColumnStore ICSP
 WHERE ICSP.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICSP.DatabaseName ELSE @DatabaseName END 
 
+UPDATE ICSP
+SET IsMissingFromSQLServer = PFP.IsPartitionMissing
+FROM DOI.IndexPartitionsColumnStore ICSP
+    INNER JOIN DOI.IndexesColumnStore ICS ON ICSP.DatabaseName = ICS.DatabaseName
+        AND ICSP.SchemaName = ICS.SchemaName
+        AND ICSP.TableName = ICS.TableName
+        AND ICSP.IndexName = ICS.IndexName
+    INNER JOIN DOI.vwPartitionFunctionPartitions PFP ON PFP.DatabaseName = ICS.DatabaseName
+        AND PFP.PartitionFunctionName = ICS.PartitionFunction_Actual
+        AND PFP.PartitionNumber = ICSP.PartitionNumber
+WHERE ICSP.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICSP.DatabaseName ELSE @DatabaseName END 
 
 UPDATE ICS
 SET TotalPartitionsInIndex = ICSP.TotalPartitionsInIndex,

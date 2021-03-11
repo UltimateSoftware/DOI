@@ -417,9 +417,9 @@
   <ItemGroup>
     <Compile Include="IntegrationTests\BusinessHoursScheduleTableTest.cs" />
     <Compile Include="IntegrationTests\ErrorHandlingTests\ErrorHandlingTests.cs" />
-    <Compile Include="IntegrationTests\IndexMaintenanceTests\HighFragmentationTests.cs" />
-    <Compile Include="IntegrationTests\IndexesViewTests.cs" />
-    <Compile Include="IntegrationTests\IndexMaintenanceTests\LowFragmentationTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\HighFragmentationTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\IndexesViewTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\LowFragmentationTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_1_PartitionFunctions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_IndexPartitions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_SysSchemas.cs" />
@@ -516,13 +516,13 @@
     <Compile Include="IntegrationTests\Models\vwPartitionSchemes.cs" />
     <Compile Include="IntegrationTests\Models\vwStatistics.cs" />
     <Compile Include="IntegrationTests\Models\vwTables.cs" />
-    <Compile Include="IntegrationTests\OfflineRunTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\OfflineRunTests.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
-    <Compile Include="IntegrationTests\StatisticsTests.cs" />
-    <Compile Include="IntegrationTests\StorageContainersTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\StatisticsTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\StorageContainersTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemSettingsTableTest.cs" />
-    <Compile Include="IntegrationTests\TablePartitioningTests\ApplicationLockTests.cs" />
-    <Compile Include="IntegrationTests\TablePartitioningTests\TablePartitioningTest.cs" />
+    <Compile Include="IntegrationTests\Run Tests\TablePartitioningTests\ApplicationLockTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\TablePartitioningTests\TablePartitioningTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\ApplicationLockTestsHelper.cs" />
     <Compile Include="TestHelpers\DataDrivenIndexTestHelper.cs" />
@@ -600,7 +600,7 @@
     <None Include="Resources\dbo.TempA_format.fmt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="IntegrationTests\TablePartitioningTests\utebcp.exe" />
+    <Content Include="IntegrationTests\Run Tests\TablePartitioningTests\utebcp.exe" />
     <EmbeddedResource Include="Resources\Create Test Database.sql" />
     <EmbeddedResource Include="Resources\IndexesViewTests_Setup.sql" />
     <EmbeddedResource Include="Resources\IndexesViewTests_TearDown.sql" />
@@ -611,6 +611,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IntegrationTests\FunctionTests\" />
+    <Folder Include="IntegrationTests\Logging Tests\" />
+    <Folder Include="IntegrationTests\Queue Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

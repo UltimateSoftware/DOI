@@ -464,9 +464,6 @@
     <None Include="Programmable Objects\Stored Procedures\Utility.spGetIndexCreationProgress.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Pre-Deployment\02_Resource Governor Setup.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Migrations\001_Create_Database.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -498,5 +495,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshStorageContainers_AddNewPartitionToMetadata.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Pre-Deployment\02_Resource Governor Setup.sql" />
   </ItemGroup>
 </Project>

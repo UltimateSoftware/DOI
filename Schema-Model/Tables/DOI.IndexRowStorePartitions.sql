@@ -19,6 +19,7 @@ CREATE TABLE [DOI].[IndexPartitionsRowStore]
 [DataFileName] [nvarchar] (260) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_DataFileName] DEFAULT (''),
 [DriveLetter] [char] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_DriveLetter] DEFAULT (''),
 [PartitionUpdateType] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_PartitionUpdateType] DEFAULT ('None'),
+[IsMissingFromSQLServer] BIT NOT NULL CONSTRAINT [Def_IndexPartitionsRowStore_IsMissingFromSQLServer] DEFAULT ((0)),
 CONSTRAINT [PK_IndexPartitionsRowStore] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [PartitionNumber])
 )
 WITH

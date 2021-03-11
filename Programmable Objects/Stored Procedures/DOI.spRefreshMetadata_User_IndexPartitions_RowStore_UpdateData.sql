@@ -10,7 +10,6 @@ GO
 SET ANSI_NULLS ON
 GO
 
-
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData]
     @DatabaseName NVARCHAR(128) = NULL
 
@@ -68,6 +67,17 @@ SET PartitionUpdateType =   CASE
 FROM DOI.IndexPartitionsRowStore IRSP
 WHERE IRSP.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRSP.DatabaseName ELSE @DatabaseName END 
 
+UPDATE IRSP
+SET IsMissingFromSQLServer = PFP.IsPartitionMissing
+FROM DOI.IndexPartitionsRowStore IRSP
+    INNER JOIN DOI.IndexesRowStore IRS ON IRSP.DatabaseName = IRS.DatabaseName
+        AND IRSP.SchemaName = IRS.SchemaName
+        AND IRSP.TableName = IRS.TableName
+        AND IRSP.IndexName = IRS.IndexName
+    INNER JOIN DOI.vwPartitionFunctionPartitions PFP ON PFP.DatabaseName = IRS.DatabaseName
+        AND PFP.PartitionFunctionName = IRS.PartitionFunction_Actual
+        AND PFP.PartitionNumber = IRSP.PartitionNumber
+WHERE IRSP.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRSP.DatabaseName ELSE @DatabaseName END 
 
 UPDATE IRS
 SET TotalPartitionsInIndex = IRSP.TotalPartitionsInIndex,

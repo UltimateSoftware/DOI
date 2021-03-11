@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 using DOI.Tests.Integration;
 using DOI.Tests.IntegrationTests.Models;
 using DOI.Tests.TestHelpers;
-using TestHelper = DOI.Tests.TestHelpers.Metadata.IndexesHelper;
+using TestHelper = DOI.Tests.TestHelpers.Metadata.IndexPartitionsHelper;
 using PfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionFunctionsHelper;
 using PsTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionSchemesHelper;
 using FgTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_FileGroupsHelper;
