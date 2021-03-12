@@ -21,7 +21,7 @@ using TestHelper = Reporting.TestHelpers;
     SetFilegroupToNextUsedSQL
 */
 
-namespace DOI.Tests.Integration
+namespace DOI.Tests.IntegrationTests.RunTests
 {
     [TestFixture]
     [Category("Integration")]

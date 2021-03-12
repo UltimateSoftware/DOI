@@ -2,7 +2,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
-namespace DOI.Tests.Integration
+namespace DOI.Tests.IntegrationTests
 {
     using DOI.Tests.TestHelpers;
     using NUnit.Framework;

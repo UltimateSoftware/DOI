@@ -420,9 +420,6 @@
     <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\HighFragmentationTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexesViewTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\LowFragmentationTests.cs" />
-    <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_1_PartitionFunctions.cs" />
-    <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_IndexPartitions.cs" />
-    <Compile Include="IntegrationTests\MetadataTests\RefreshMetadataTests_SysSchemas.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_IndexPartitions.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysCheckConstraints.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\RefreshMetadataTests_SysColumns.cs" />
@@ -520,7 +517,7 @@
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
     <Compile Include="IntegrationTests\Run Tests\StatisticsTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\StorageContainersTests.cs" />
-    <Compile Include="IntegrationTests\MetadataTests\SystemSettingsTableTest.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\SystemSettingsTableTest.cs" />
     <Compile Include="IntegrationTests\Run Tests\TablePartitioningTests\ApplicationLockTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\TablePartitioningTests\TablePartitioningTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

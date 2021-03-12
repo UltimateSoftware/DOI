@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Security.Permissions;
+using DOI.Tests.Integration;
 using DOI.Tests.Integration.Models;
 using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
-namespace DOI.Tests.Integration.ErrorHandling
+namespace DOI.Tests.IntegrationTests.ErrorHandling
 {
     [TestFixture]
     [Category("Integration")]

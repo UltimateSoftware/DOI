@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using TestHelper = DOI.Tests.TestHelpers;
 
-namespace DOI.Tests.Integration
+namespace DOI.Tests.IntegrationTests.RunTests
 {
     [TestFixture]
     [Category("Integration")]

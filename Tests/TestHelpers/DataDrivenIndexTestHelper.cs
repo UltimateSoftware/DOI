@@ -39,7 +39,7 @@ namespace DOI.Tests.TestHelpers
             return this.sqlHelper.GetList<IndexView>($"select * FROM DOI.DOI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND TableName = '{tableName}'");
         }
 
-        public void ExecuteSPQueue(bool onlineOperations, bool isBeingRunDuringADeployment = false, string databaseName = null, string schemaName = null, string tableName = null)
+        public void ExecuteSPQueue(bool onlineOperations, bool isBeingRunDuringADeployment = false, string databaseName = DatabaseName, string schemaName = null, string tableName = null)
         {
             var sql = $"DECLARE @BatchId UNIQUEIDENTIFIER " +
                       $"EXEC DOI.DOI.[spQueue]  " +

@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
-namespace DOI.Tests.Integration
+namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 {
     [TestFixture]
     [Category("Integration")]

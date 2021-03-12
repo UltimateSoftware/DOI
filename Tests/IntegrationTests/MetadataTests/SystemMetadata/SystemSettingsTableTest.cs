@@ -4,7 +4,7 @@ using Castle.Core;
 using DOI.Tests.TestHelpers;
 using  NUnit.Framework;
 
-namespace DOI.Tests.Integration.Metadata
+namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 {
     [TestFixture]
     [Category("Integration")]

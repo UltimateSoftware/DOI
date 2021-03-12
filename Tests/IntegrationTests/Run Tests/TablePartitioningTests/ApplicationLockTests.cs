@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Data.SqlClient;
 using DOI.Tests.TestHelpers;
-using DOI.Tests.Integration;
-using DOI.Tests.Integration.TablePartitioning;
 using NUnit.Framework;
 
 
-namespace DOI.Tests.Integration.TablePartitioning
+namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
 {
     [TestFixture]
     [Category("Integration")]
