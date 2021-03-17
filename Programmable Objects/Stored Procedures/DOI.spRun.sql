@@ -261,7 +261,7 @@ BEGIN TRY
 							COMMIT TRAN
 						END
 						ELSE
-						IF @CurrentIndexOperation IN ('Synch Deletes', 'Synch Inserts', 'Synch Updates',  'Loading Data', 
+						IF @CurrentIndexOperation IN ('Get Application Lock', 'Release Application Lock', 'Synch Deletes', 'Synch Inserts', 'Synch Updates',  'Loading Data', 
 														'Free Data Space Validation', 'Free Log Space Validation', 
 														'Free TempDB Space Validation')
 						BEGIN

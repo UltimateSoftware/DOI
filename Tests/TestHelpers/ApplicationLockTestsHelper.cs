@@ -79,21 +79,21 @@ namespace DOI.Tests.TestHelpers
         public static string RunAppLockStatementsThroughQueue(int isOnlineOperation, string databaseName)
         {
             return $@"
-            DECLARE @GetApplicationLockSQL      NVARCHAR(300) = '
-                            EXEC DOI.spRun_GetApplicationLock
-                                @DatabaseName = '{databaseName}',
+            DECLARE @GetApplicationLockSQL      NVARCHAR(500) = '
+                            EXEC DOI.DOI.spRun_GetApplicationLock
+                                @DatabaseName = ''{databaseName}'',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation},
                                 @LockTimeout = 1000',
 
-        			@ReleaseApplicationLockSQL	NVARCHAR(300) = '
-                            EXEC DOI.spRun_ReleaseApplicationLock
-                                @DatabaseName = '{databaseName}',
+        			@ReleaseApplicationLockSQL	NVARCHAR(500) = '
+                            EXEC DOI.DOI.spRun_ReleaseApplicationLock
+                                @DatabaseName = ''{databaseName}'',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation}'
 
-            EXEC DOI.spQueueInsert
-                @DatabaseName = '{databaseName}',
+            EXEC DOI.DOI.spQueue_Insert
+                @CurrentDatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
                 @CurrentIndexName = 'N/A', 
@@ -110,8 +110,8 @@ namespace DOI.Tests.TestHelpers
                 @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
                 @ExitTableLoopOnError = 1
 
-            EXEC DOI.spQueueInsert
-                @DatabaseName = '{databaseName}',
+            EXEC DOI.DOI.spQueue_Insert
+                @CurrentDatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
                 @CurrentIndexName = 'N/A', 
@@ -132,14 +132,14 @@ namespace DOI.Tests.TestHelpers
         public static string RunAppLockStatementsThroughQueueWithError(int isOnlineOperation, string databaseName)
         {
             return $@"
-            DECLARE @GetApplicationLockSQL      NVARCHAR(300) = '
+            DECLARE @GetApplicationLockSQL      NVARCHAR(500) = '
                             EXEC DOI.spRun_ReleaseApplicationLock
-                                @DatabaseName = '{databaseName}',
+                                @DatabaseName = ''{databaseName}'',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
                                 @IsOnlineOperation = {isOnlineOperation}'
 
-            EXEC DOI.spQueueInsert
-                @DatabaseName = '{databaseName}',
+            EXEC DOI.spQueue_Insert
+                @CurrentDatabaseName = '{databaseName}',
                 @CurrentSchemaName = 'N/A',
                 @CurrentTableName = 'N/A', 
                 @CurrentIndexName = 'N/A', 

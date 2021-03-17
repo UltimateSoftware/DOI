@@ -63,7 +63,7 @@ namespace DOI.Tests.IntegrationTests.Models
         public bool NeedsPartitionLevelOperations   { get; set; }
         public int TotalPartitionsInIndex  { get; set; }
         public bool IndexMeetsMinimumSize   { get; set; }
-        public int FragmentationType   { get; set; }
+        public string FragmentationType   { get; set; }
         public bool AreDropRecreateOptionsChanging  { get; set; }
         public bool AreRebuildOptionsChanging   { get; set; }
         public bool AreRebuildOnlyOptionsChanging   { get; set; }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.IntegrationTests.Models;
 using NUnit.Framework;
 using DOI.Tests.TestHelpers;
 
@@ -41,7 +42,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 var indexName = "NIDX_TempA_Report";
                 var minimumPageSize = this.sqlHelper.ExecuteScalar<int>("SELECT CAST(SettingValue AS INT) FROM DOI.DOISettings WHERE SettingName = 'MinNumPagesForIndexDefrag'");
 
-                if (this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Exists(i => i.IndexFragmentation >= MinimumFragmentation && i.IndexFragmentation < MaximumFragmentation && i.TotalPages > minimumPageSize && i.IndexName == indexName))
+                if (this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Exists(i => i.Fragmentation >= MinimumFragmentation && i.Fragmentation < MaximumFragmentation && i.NumPages_Actual > minimumPageSize && i.IndexName == indexName))
                 {
                     break;
                 }
@@ -75,17 +76,17 @@ namespace DOI.Tests.IntegrationTests.RunTests
             var indexName = "NIDX_TempA_Report";
 
             // Fragmentation needs to be between 5% and 30% and TotalPages is configurable
-            IndexView indexToReorganize = null;
-            indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.IndexFragmentation >= MinimumFragmentation && i.TotalPages > MinimumIndexPages && i.IndexName == indexName);
+            vwIndexes indexToReorganize = null;
+            indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.Fragmentation >= MinimumFragmentation && i.NumPages_Actual > MinimumIndexPages && i.IndexName == indexName);
 
             // Update property
             if (!string.IsNullOrEmpty(propertyName))
             {
                 this.sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
-                indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.IndexFragmentation >= MinimumFragmentation && i.TotalPages > MinimumIndexPages && i.IndexName == indexName);
+                indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.Fragmentation >= MinimumFragmentation && i.NumPages_Actual > MinimumIndexPages && i.IndexName == indexName);
             }
 
-            Assert.IsFalse(indexToReorganize.IndexFragmentation > MaximumFragmentation, "Check if exceeds maximumFragmentation. Might be a flaky test.");
+            Assert.IsFalse(indexToReorganize.Fragmentation > MaximumFragmentation, "Check if exceeds maximumFragmentation. Might be a flaky test.");
             Assert.IsNotNull(indexToReorganize, "Index exist that meet alter index fragmentation");
             Assert.AreEqual(indexUpdateType, indexToReorganize.IndexUpdateType, "IndexUpdateType");
         }

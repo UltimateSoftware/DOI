@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.IntegrationTests.Models;
 using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
@@ -51,7 +52,7 @@ namespace DOI.Tests.IntegrationTests.Maintenance
         {
             // Fragmentation needs to be above 30% and TotalPages is configurable
             this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = {minimumNumPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
-            IndexView indexToReorganize = null;
+            vwIndexes indexToReorganize = null;
             var watch = Stopwatch.StartNew();
 
             // Add items until fragmentation is >= 31%.
@@ -61,9 +62,9 @@ namespace DOI.Tests.IntegrationTests.Maintenance
 
                 var indexRows = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName);
 
-                if (indexRows.Exists(i => i.IndexFragmentation >= MinimumFragmentation && i.TotalPages > minimumNumPages))
+                if (indexRows.Exists(i => i.Fragmentation >= MinimumFragmentation && i.NumPages_Actual > minimumNumPages))
                 {
-                    indexToReorganize = indexRows.Find(i => i.IndexFragmentation >= MinimumFragmentation && i.TotalPages >= minimumNumPages);
+                    indexToReorganize = indexRows.Find(i => i.Fragmentation >= MinimumFragmentation && i.NumPages_Actual >= minimumNumPages);
                     break;
                 }
 

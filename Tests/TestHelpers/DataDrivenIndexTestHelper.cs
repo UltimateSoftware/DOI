@@ -34,9 +34,9 @@ namespace DOI.Tests.TestHelpers
                 AND IsOnlineOperation = 0";
         }
 
-        public List<IndexView> GetIndexViews(string tableName)
+        public List<vwIndexes> GetIndexViews(string tableName)
         {
-            return this.sqlHelper.GetList<IndexView>($"select * FROM DOI.DOI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND TableName = '{tableName}'");
+            return this.sqlHelper.GetList<vwIndexes>($"select * FROM DOI.DOI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND TableName = '{tableName}'");
         }
 
         public void ExecuteSPQueue(bool onlineOperations, bool isBeingRunDuringADeployment = false, string databaseName = DatabaseName, string schemaName = null, string tableName = null)
@@ -403,7 +403,7 @@ namespace DOI.Tests.TestHelpers
         public void SeedDataAndDefrag(int numberOfRowsToInsertPerLoop)
         {
             var pageSize = this.sqlHelper.ExecuteScalar<int>($"SELECT CAST(SettingValue AS INT) FROM DOI.DOISettings WHERE DatabaseName = '{DatabaseName}' AND SettingName = 'MinNumPagesForIndexDefrag'");
-            var indexRows = new List<IndexView>();
+            var indexRows = new List<vwIndexes>();
             var watch = Stopwatch.StartNew();
 
             // Seed data to get page size over specified amount and defrag.
@@ -413,9 +413,9 @@ namespace DOI.Tests.TestHelpers
 
                 indexRows = this.GetIndexViews("TempA");
 
-                if (indexRows.Exists(i => i.TotalPages > pageSize))
+                if (indexRows.Exists(i => i.NumPages_Actual > pageSize))
                 {
-                    if (indexRows.Exists(j => j.IndexFragmentation > 5 && j.IndexFragmentation < 30))
+                    if (indexRows.Exists(j => j.Fragmentation > 5 && j.Fragmentation < 30))
                     {
                         break;
                     }

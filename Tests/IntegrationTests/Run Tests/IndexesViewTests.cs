@@ -15,21 +15,21 @@ namespace DOI.Tests.IntegrationTests.RunTests
     [Category("DataDrivenIndex")]
     public class IndexesViewTests : DOIBaseTest
     {
-        private List<IndexView> expectedIndexViews;
+        private List<vwIndexes> expectedIndexViews;
         private List<ForeignKeys> expectedForeignKeys;
         protected const string TempTableName = "TempA";
 
         [SetUp]
         public virtual void Setup()
         {
-            this.expectedIndexViews = new List<IndexView>();
+            this.expectedIndexViews = new List<vwIndexes>();
             this.expectedForeignKeys = new List<ForeignKeys>();
             this.TearDown();
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
             this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
             this.tempARepository = new TempARepository(this.sqlHelper);
 
-            this.expectedIndexViews.Add(new IndexView()
+            this.expectedIndexViews.Add(new vwIndexes()
             {
                 DatabaseName = DatabaseName,
                 SchemaName = "dbo",
@@ -44,10 +44,10 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 AlterReorganizeStatement = "ALTER INDEX CDX_TempA ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.CDX_TempA',   @newname = 'CDX_TempA_OLD',   @objtype = 'INDEX'",
                 RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.CDX_TempA_OLD',   @newname = 'CDX_TempA',   @objtype = 'INDEX'",
-                IsOnlineOperation = true
+                IsOnlineOperation = 1
             });
 
-            this.expectedIndexViews.Add(new IndexView()
+            this.expectedIndexViews.Add(new vwIndexes()
             {
                 DatabaseName = DatabaseName,
                 SchemaName = "dbo",
@@ -61,10 +61,10 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 AlterReorganizeStatement = "ALTER INDEX NIDX_TempA_Report ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)    ",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_Report',   @newname = 'NIDX_TempA_OLD_Report',   @objtype = 'INDEX'",
                 RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_OLD_Report',   @newname = 'NIDX_TempA_Report',   @objtype = 'INDEX'",
-                IsOnlineOperation = true
+                IsOnlineOperation = 1
             });
 
-            this.expectedIndexViews.Add(new IndexView()
+            this.expectedIndexViews.Add(new vwIndexes()
             {
                 DatabaseName = DatabaseName,
                 SchemaName = "dbo",
@@ -80,7 +80,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_OLD_Report2',   @newname = 'NIDX_TempA_Report2',   @objtype = 'INDEX'"
             });
 
-            this.expectedIndexViews.Add(new IndexView()
+            this.expectedIndexViews.Add(new vwIndexes()
             {
                 DatabaseName = DatabaseName,
                 SchemaName = "dbo",
@@ -94,10 +94,10 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 AlterReorganizeStatement = "ALTER INDEX PK_TempA ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)    ",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.PK_TempA',   @newname = 'PK_TempA_OLD',   @objtype = 'INDEX'",
                 RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.PK_TempA_OLD',   @newname = 'PK_TempA',   @objtype = 'INDEX'",
-                IsOnlineOperation = true
+                IsOnlineOperation = 1
             });
 
-            this.expectedIndexViews.Add(new IndexView()
+            this.expectedIndexViews.Add(new vwIndexes()
             {
                 DatabaseName = DatabaseName,
                 SchemaName = "dbo",
@@ -111,10 +111,10 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 AlterReorganizeStatement = "  ALTER INDEX NCCI_TempA_Report ON dbo.TempA   REORGANIZE PARTITION = ALL    WITH (COMPRESS_ALL_ROW_GROUPS = OFF)    ",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NCCI_TempA_Report',   @newname = 'NCCI_TempA_OLD_Report',   @objtype = 'INDEX'",
                 RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NCCI_TempA_OLD_Report',   @newname = 'NCCI_TempA_Report',   @objtype = 'INDEX'",
-                IsOnlineOperation = true
+                IsOnlineOperation = 1
             });
 
-            this.expectedIndexViews.Add(new IndexView()
+            this.expectedIndexViews.Add(new vwIndexes()
             {
                 DatabaseName = DatabaseName,
                 SchemaName = "dbo",
@@ -129,7 +129,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 AlterReorganizeStatement = "  ALTER INDEX CCI_TempB_Report ON dbo.TempB   REORGANIZE PARTITION = ALL    WITH (COMPRESS_ALL_ROW_GROUPS = OFF)    ",
                 RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.CCI_TempB_Report',   @newname = 'CCI_TempB_OLD_Report',   @objtype = 'INDEX'",
                 RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.CCI_TempB_OLD_Report',   @newname = 'CCI_TempB_Report',   @objtype = 'INDEX'",
-                IsOnlineOperation = true
+                IsOnlineOperation = 1
             });
 
             this.expectedForeignKeys.Add(new ForeignKeys()
@@ -164,7 +164,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
             this.dataDrivenIndexTestHelper.CreateIndex("NIDX_TempA_Report2");
             this.dataDrivenIndexTestHelper.CreateForeignKeys();
 
-            this.expectedIndexViews.ForEach(x => x.IsOnlineOperation = false);
+            this.expectedIndexViews.ForEach(x => x.IsOnlineOperation = 0);
 
             this.AssertIndexViews(TempTableName, null);
             this.AssertForeignKeys();
@@ -179,22 +179,21 @@ namespace DOI.Tests.IntegrationTests.RunTests
             this.dataDrivenIndexTestHelper.CreateIndex(indexName);
 
             sqlHelper.Execute($"USE {DatabaseName}; DROP INDEX IF EXISTS {indexName} on dbo.{tableName}", 120);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
-            var indexRow = this.expectedIndexViews.Find(x => x.IndexName == indexName);
+            var result = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x=> x.IndexName == indexName);
 
-            indexRow.IsIndexMissing = true;
-            indexRow.IndexUpdateType = "CreateMissing";
-
-            this.AssertIndexViews(tableName, indexName);
+            Assert.IsTrue(result.IsIndexMissingFromSQLServer, "IndexIsMissing");
+            Assert.AreEqual("CreateMissing", result.IndexUpdateType, "IndexUpdateType");
 
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(true, true);
-            this.dataDrivenIndexTestHelper.ExecuteSPRun(true, "dbo", tableName);
-            
-            indexRow.IsIndexMissing = false;
-            indexRow.IndexUpdateType = "None";
-            indexRow.IsOnlineOperation = false;
-            
-            this.AssertIndexViews(tableName, indexName);
+            this.dataDrivenIndexTestHelper.ExecuteSPRun(true, DatabaseName, "dbo", tableName);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+
+            result = this.dataDrivenIndexTestHelper.GetIndexViews(tableName).Find(x => x.IndexName == indexName);
+
+            Assert.IsFalse(result.IsIndexMissingFromSQLServer, "IndexIsNotMissing");
+            Assert.AreEqual("None", result.IndexUpdateType, "IndexUpdateType");
         }
 
         [Test]
@@ -203,13 +202,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
             this.dataDrivenIndexTestHelper.CreateIndex("PK_TempA");
 
             sqlHelper.Execute($"USE {DatabaseName}; ALTER TABLE dbo.TempA DROP CONSTRAINT PK_TempA", 120);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
-            var indexRow = this.expectedIndexViews.Find(x => x.IndexName == "PK_TempA");
+            var result = this.dataDrivenIndexTestHelper.GetIndexViews("TempA").Find(x => x.IndexName == "PK_TempA");
 
-            indexRow.IsIndexMissing = true;
-            indexRow.IndexUpdateType = "CreateMissing";
-
-            this.AssertIndexViews(TempTableName, "PK_TempA");
+            Assert.IsTrue(result.IsIndexMissingFromSQLServer, "IndexIsMissing");
+            Assert.AreEqual("CreateMissing", result.IndexUpdateType, "IndexUpdateType");
         }
 
         [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsUnique", "1", "IsUniquenessChanging", "DropRecreate", "Uniqueness", TestName = "Update IsUnique index property on CDX_TempA")]
@@ -279,8 +277,10 @@ namespace DOI.Tests.IntegrationTests.RunTests
             Assert.AreEqual(indexUpdateType, indexRow.IndexUpdateType, "indexUpdateType");
             Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
 
-            this.dataDrivenIndexTestHelper.ExecuteSPQueue(indexRow.IsOnlineOperation);
-            this.dataDrivenIndexTestHelper.ExecuteSPRun(indexRow.IsOnlineOperation, DatabaseName, "dbo", tableName);
+            bool isOnlineOperation = indexRow.IsOnlineOperation == 1 ? true : false;
+
+            this.dataDrivenIndexTestHelper.ExecuteSPQueue(isOnlineOperation);
+            this.dataDrivenIndexTestHelper.ExecuteSPRun(isOnlineOperation, DatabaseName, "dbo", tableName);
 
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
@@ -1026,14 +1026,14 @@ namespace DOI.Tests.IntegrationTests.RunTests
             }
         }
 
-        private void AssertSpecificIndexViews(IndexView expectedIndexModel, IndexView actualIndexModel)
+        private void AssertSpecificIndexViews(vwIndexes expectedIndexModel, vwIndexes actualIndexModel)
         {
             Assert.AreEqual(expectedIndexModel.IndexName, actualIndexModel.IndexName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IndexName");
             Assert.AreEqual(expectedIndexModel.TableName, actualIndexModel.TableName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:TableName");
             Assert.AreEqual(expectedIndexModel.SchemaName, actualIndexModel.SchemaName, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:SchemaName");
             Assert.AreEqual(expectedIndexModel.IsClustered_Desired, actualIndexModel.IsClustered_Actual, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsClustered");
-            Assert.AreEqual(expectedIndexModel.IsIndexMissing, actualIndexModel.IsIndexMissing, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIndexMissing");
-            Assert.AreEqual(expectedIndexModel.IsIndexStorageChanging, actualIndexModel.IsIndexStorageChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIndexStorageChanging");
+            Assert.AreEqual(expectedIndexModel.IsIndexMissingFromSQLServer, actualIndexModel.IsIndexMissingFromSQLServer, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIndexMissing");
+            Assert.AreEqual(expectedIndexModel.IsStorageChanging, actualIndexModel.IsStorageChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsIndexStorageChanging");
             Assert.AreEqual(expectedIndexModel.AreDropRecreateOptionsChanging, actualIndexModel.AreDropRecreateOptionsChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AreDropRecreateOptionsChanging");
             Assert.AreEqual(expectedIndexModel.AreRebuildOptionsChanging, actualIndexModel.AreRebuildOptionsChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AreRebuildOptionsChanging");
             Assert.AreEqual(expectedIndexModel.AreReorgOptionsChanging, actualIndexModel.AreReorgOptionsChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:AreReorgOptionsChanging");
@@ -1052,7 +1052,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
             Assert.AreEqual(expectedIndexModel.IsAllowRowLocksChanging, actualIndexModel.IsAllowRowLocksChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsAllowRowLocksChanging");
             Assert.AreEqual(expectedIndexModel.IsAllowPageLocksChanging, actualIndexModel.IsAllowPageLocksChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsAllowPageLocksChanging");
             Assert.AreEqual(expectedIndexModel.IsDataCompressionChanging, actualIndexModel.IsDataCompressionChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsDataCompressionChanging");
-            Assert.AreEqual(expectedIndexModel.IsCompressionDelayChanging, actualIndexModel.IsCompressionDelayChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsCompressionDelayChanging");
+            Assert.AreEqual(expectedIndexModel.IsDataCompressionDelayChanging, actualIndexModel.IsDataCompressionDelayChanging, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsCompressionDelayChanging");
             Assert.AreEqual(expectedIndexModel.IndexUpdateType, actualIndexModel.IndexUpdateType, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IndexUpdateType");
             Assert.AreEqual(expectedIndexModel.IsOnlineOperation, actualIndexModel.IsOnlineOperation, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:IsOnlineOperation");
             Assert.AreEqual(expectedIndexModel.ListOfChanges, actualIndexModel.ListOfChanges, $"{expectedIndexModel.TableName}.{expectedIndexModel.IndexName}:ListOfChanges");

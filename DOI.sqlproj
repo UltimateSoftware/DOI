@@ -499,4 +499,7 @@
   <ItemGroup>
     <None Include="Pre-Deployment\02_Resource Governor Setup.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_InsertSQLCommand.sql" />
+  </ItemGroup>
 </Project>
