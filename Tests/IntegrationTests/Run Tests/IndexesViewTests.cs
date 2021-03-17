@@ -241,7 +241,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "FilterPredicate", "([TransactionUtcDt] IS NOT NULL)", "IsFilterChanging", "DropRecreate", "Filter", TestName = "Update FilterPredicate index property on NCCI_TempA_Report")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "OptionDataCompression", "COLUMNSTORE_ARCHIVE", "IsDataCompressionChanging", "AlterRebuild", "DataCompression", TestName = "Update DataCompression index property on NCCI_TempA_Report")]
         //clustered columnstore index:
-        [TestCase("DOIUnitTests", "TempB", "CCI_TempB_Report", "IsClustered", "0", "IsClusteredChanging", "DropRecreate", "Clustered, KeyColumnList", TestName = "Update IsClustered index property on CCI_TempB_Report")]
+        [TestCase("DOIUnitTests", "TempB", "CCI_TempB_Report", "IsClustered", "0", "IsClusteredChanging", "DropRecreate", "Clustered", TestName = "Update IsClustered index property on CCI_TempB_Report")]
         [TestCase("DOIUnitTests", "TempB", "CCI_TempB_Report", "OptionDataCompression", "COLUMNSTORE_ARCHIVE", "IsDataCompressionChanging", "AlterRebuild", "DataCompression", TestName = "Update DataCompression index property on CCI_TempB_Report")]
         public void Update_IndexSinglePropertyChangeTests(string databaseName, string tableName, string indexName, string propertyName, string propertyValue, string assertColumnName, string indexUpdateType, string listOfChanges)
         {
@@ -252,23 +252,23 @@ namespace DOI.Tests.IntegrationTests.RunTests
 
             var indexUtilityTableName = indexRow.IndexType == "RowStore" ? "DOI.IndexesRowStore" : "DOI.IndexesColumnStore";
 
-            var aDOItionalChanges = string.Empty;
+            var additionalChanges = string.Empty;
 
             if (indexRow.IndexType == "ColumnStore" && propertyName == "IsClustered")
             {
                 var columnListValue = propertyValue == "1" ? "null" : "'TransactionUtcDt'";
-                aDOItionalChanges += $", ColumnList = {columnListValue} ";
+                additionalChanges += $", ColumnList_Desired = {columnListValue} ";
             }
             else if (propertyName == "IsPrimaryKey" && propertyValue == "1")
             {
-                aDOItionalChanges += ", IsUnique = 1";
+                additionalChanges += ", IsUnique_Desired = 1";
             }
             else if (propertyName == "FilterPredicate" && propertyValue.Length > 0)
             {
-                aDOItionalChanges += ", IsFiltered = 1";
+                additionalChanges += ", IsFiltered_Desired = 1";
             }
 
-            sqlHelper.Execute($"UPDATE {indexUtilityTableName} SET [{propertyName}_Desired] = '{propertyValue}' {aDOItionalChanges} WHERE SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($"UPDATE {indexUtilityTableName} SET [{propertyName}_Desired] = '{propertyValue}' {additionalChanges} WHERE SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
 
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
@@ -280,7 +280,9 @@ namespace DOI.Tests.IntegrationTests.RunTests
             Assert.AreEqual(listOfChanges, indexRow.ListOfChanges, "listOfChanges");
 
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(indexRow.IsOnlineOperation);
-            this.dataDrivenIndexTestHelper.ExecuteSPRun(indexRow.IsOnlineOperation, "dbo", tableName);
+            this.dataDrivenIndexTestHelper.ExecuteSPRun(indexRow.IsOnlineOperation, DatabaseName, "dbo", tableName);
+
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName)
                 .Find(x => x.IndexName == indexName);

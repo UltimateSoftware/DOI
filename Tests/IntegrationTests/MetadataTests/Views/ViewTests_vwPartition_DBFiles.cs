@@ -6,7 +6,7 @@ using TestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_DBFilesHelper;
 using PfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionFunctionsHelper;
 using FgTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_FileGroupsHelper;
 using DbfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_DBFilesHelper;
-using TablePartitioning = DOI.Tests.IntegrationTests.TablePartitioning;
+using TablePartitioning = DOI.Tests.IntegrationTests.RunTests.TablePartitioning;
 using NUnit.Framework;
 
 namespace DOI.Tests.IntegrationTests.MetadataTests.Views

@@ -297,7 +297,7 @@ DROP INDEX IF EXISTS '+ ICS.SchemaName + '.' + ICS.TableName + '.' + ICS.IndexNa
 'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + ICS.SchemaName + ''' AND t.name = ''' + ICS.TableName + ''' AND i.name = ''' + ICS.IndexName + ''')
 BEGIN
 	CREATE' + CASE WHEN ICS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED COLUMNSTORE INDEX ' + ICS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
-										'	ON ' + ICS.SchemaName + '.' + ICS.TableName + CASE WHEN ICS.IsClustered_Desired = 1 THEN '' ELSE '(' + ICS.KeyColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										'	ON ' + ICS.SchemaName + '.' + ICS.TableName + CASE WHEN ICS.IsClustered_Desired = 1 THEN '' ELSE '(' + ICS.IncludedColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										CASE
 											WHEN ICS.IsFiltered_Desired = 0
 											THEN ''

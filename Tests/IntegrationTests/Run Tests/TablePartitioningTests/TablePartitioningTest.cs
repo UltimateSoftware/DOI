@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SqlHelper = DOI.Tests.TestHelpers.SqlHelper;
 
-namespace DOI.Tests.IntegrationTests.TablePartitioning
+namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
 {
     [TestFixture]
     [Category("Integration")]

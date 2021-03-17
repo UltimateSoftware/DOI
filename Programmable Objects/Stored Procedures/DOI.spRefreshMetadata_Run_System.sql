@@ -24,7 +24,7 @@ EXEC [DOI].[spRefreshMetadata_System_SysDatabases]
 
 DECLARE @SQL VARCHAR(MAX) = ''
 
-SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10) + CHAR(9) + '@DatabaseId = ' + CASE WHEN @DatabaseId IS NOT NULL THEN CAST(@DatabaseId AS VARCHAR(20)) ELSE 'NULL' END + /*',' +*/ CHAR(13) + CHAR(10) COLLATE DATABASE_DEFAULT-- + CHAR(9) + '@Debug = ' + CAST(@Debug AS CHAR(1)) + CHAR(13) + CHAR(10)
+SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10) + CHAR(9) + '@DatabaseName = ''' + CASE WHEN @DatabaseId IS NOT NULL THEN D.name ELSE 'NULL' END + '''' + /*',' +*/ CHAR(13) + CHAR(10) COLLATE DATABASE_DEFAULT-- + CHAR(9) + '@Debug = ' + CAST(@Debug AS CHAR(1)) + CHAR(13) + CHAR(10)
 FROM SYS.procedures P
     INNER JOIN sys.schemas s ON p.schema_id = s.schema_id
     INNER JOIN DOI.SysDatabases D ON D.database_id = @DatabaseId

@@ -2,7 +2,7 @@
 using DOI.Tests.Integration;
 using DOI.Tests.TestHelpers;
 using TestHelper = DOI.Tests.TestHelpers.Metadata.SysPartitionFunctionsHelper;
-using TablePartitioning = DOI.Tests.IntegrationTests.TablePartitioning;
+using TablePartitioning = DOI.Tests.IntegrationTests.RunTests.TablePartitioning;
 using NUnit.Framework;
 
 

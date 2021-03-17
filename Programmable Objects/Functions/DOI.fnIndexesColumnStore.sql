@@ -33,10 +33,10 @@ RETURN(
                     ,NULL AS IsUniqueConstraint_Actual
                     ,ICS.IsClustered_Desired
 				    ,ICS.IsClustered_Actual
-				    ,ICS.ColumnList_Desired AS KeyColumnList_Desired
-				    ,ICS.ColumnList_Actual AS KeyColumnList_Actual
-					,CAST(NULL AS VARCHAR(MAX)) AS IncludedColumnList_Desired
-					,CAST(NULL AS VARCHAR(MAX)) AS IncludedColumnList_Actual
+					,CAST(NULL AS VARCHAR(MAX)) AS KeyColumnList_Desired
+					,CAST(NULL AS VARCHAR(MAX)) AS KeyColumnList_Actual
+				    ,ICS.ColumnList_Desired AS IncludedColumnList_Desired
+				    ,ICS.ColumnList_Actual AS IncludedColumnList_Actual
 				    ,ICS.IsFiltered_Desired
 				    ,ICS.IsFiltered_Actual
 				    ,ICS.FilterPredicate_Desired

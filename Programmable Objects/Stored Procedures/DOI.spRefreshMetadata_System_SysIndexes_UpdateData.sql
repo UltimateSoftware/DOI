@@ -56,7 +56,7 @@ FROM DOI.SysIndexes T
     INNER JOIN DOI.SysDatabases D ON D.database_id = T.database_id
     INNER JOIN (SELECT database_id, object_id, index_id, STUFF(IndexIncludedColumnList,LEN(X.IndexIncludedColumnList),1,'') AS IndexIncludedColumnList
                 FROM DOI.SysIndexes T
-                    CROSS APPLY (   SELECT C.NAME + CASE WHEN ic.is_descending_key = 1 THEN ' DESC' ELSE ' ASC' END + ','
+                    CROSS APPLY (   SELECT C.NAME + ','
                                     FROM DOI.SysIndexColumns ic 
                                         INNER JOIN DOI.SysColumns C ON C.column_id = ic.column_id
                                             AND C.object_id = ic.OBJECT_ID

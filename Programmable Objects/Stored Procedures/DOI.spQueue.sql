@@ -313,6 +313,32 @@ EXEC DOI.DOI.spRun_ReleaseApplicationLock
 				        IF (@OnlineOperations = 0)
 					        AND NOT (@IsBCPTable = 1 AND @IsStorageChanging = 1) --IF WE'RE DOING BCP ON A TABLE THEN DO NOTHING ELSE.
 				        BEGIN
+							IF (@WhichUniqueConstraintIsBeingDropped <> 'None' OR @IsClusteredIndexBeingDroppedForTable = 1) --DROP REF FKs IF PK OR UQ CONSTRAINTS ARE BEING UPDATED.
+					        BEGIN
+						        SET @DropRefFKs = '
+        EXEC DOI.DOI.spForeignKeysDrop	
+	        @DatabaseName = ''' + @CurrentDatabaseName + ''',
+	        @ReferencedSchemaName = ''' + @CurrentSchemaName + ''' , 
+	        @ReferencedTableName = ''' + @CurrentTableName + ''''
+
+						        EXEC DOI.spQueue_Insert
+							        @CurrentDatabaseName			= @CurrentDatabaseName ,
+							        @CurrentSchemaName				= @CurrentSchemaName ,
+							        @CurrentTableName				= @CurrentTableName, 
+							        @CurrentIndexName				= 'N/A',
+							        @CurrentPartitionNumber			= 0, 
+							        @IndexSizeInMB					= 0,
+							        @CurrentParentSchemaName		= @CurrentSchemaName ,
+							        @CurrentParentTableName			= @CurrentTableName, 
+							        @CurrentParentIndexName			= 'N/A',
+							        @IndexOperation					= 'Drop Ref FKs', 
+							        @IsOnlineOperation				= @OnlineOperations, 
+							        @SQLStatement					= @DropRefFKs,
+							        @TransactionId					= @TransactionId,
+							        @BatchId						= @BatchIdOUT,
+							        @ExitTableLoopOnError			= 1
+					        END
+
 					        IF @NeedsTransaction = 1
 					        BEGIN
 						        SET @TransactionId = NEWID()
@@ -331,32 +357,6 @@ EXEC DOI.DOI.spRun_ReleaseApplicationLock
 							        @IsOnlineOperation				= @OnlineOperations, 
 							        @SQLStatement					= 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
         BEGIN TRAN', 
-							        @TransactionId					= @TransactionId,
-							        @BatchId						= @BatchIdOUT,
-							        @ExitTableLoopOnError			= 1
-					        END
-
-					        IF (@WhichUniqueConstraintIsBeingDropped <> 'None' OR @IsClusteredIndexBeingDroppedForTable = 1) --DROP REF FKs IF PK OR UQ CONSTRAINTS ARE BEING UPDATED.
-					        BEGIN
-						        SET @DropRefFKs = '
-        EXEC DOI.spForeignKeysDrop	
-	        @DatabaseName = ''' + @CurrentDatabaseName + ''',
-	        @ReferencedSchemaName = ''' + @CurrentSchemaName + ''' , 
-	        @ReferencedTableName = ''' + @CurrentTableName + ''''
-
-						        EXEC DOI.spQueue_Insert
-							        @CurrentDatabaseName			= @CurrentDatabaseName ,
-							        @CurrentSchemaName				= @CurrentSchemaName ,
-							        @CurrentTableName				= @CurrentTableName, 
-							        @CurrentIndexName				= 'N/A',
-							        @CurrentPartitionNumber			= 0, 
-							        @IndexSizeInMB					= 0,
-							        @CurrentParentSchemaName		= @CurrentSchemaName ,
-							        @CurrentParentTableName			= @CurrentTableName, 
-							        @CurrentParentIndexName			= 'N/A',
-							        @IndexOperation					= 'Drop Ref FKs', 
-							        @IsOnlineOperation				= @OnlineOperations, 
-							        @SQLStatement					= @DropRefFKs,
 							        @TransactionId					= @TransactionId,
 							        @BatchId						= @BatchIdOUT,
 							        @ExitTableLoopOnError			= 1
@@ -595,7 +595,32 @@ EXEC DOI.DOI.spRun_ReleaseApplicationLock
                             DEALLOCATE CreateOrUpdateStatistics_Cur
 				        END  --if we are doing BCP strategy, then do nothing else on the table.       
                                 
-				        IF (@OnlineOperations = 0)
+			        IF (@OnlineOperations = 0)
+				        AND NOT (@IsBCPTable = 1 AND @IsStorageChanging = 1)
+			        BEGIN
+				        IF @NeedsTransaction = 1
+				        BEGIN 
+					        EXEC DOI.spQueue_Insert
+						        @CurrentDatabaseName			= @CurrentDatabaseName ,
+						        @CurrentSchemaName				= @CurrentSchemaName ,
+						        @CurrentTableName				= @CurrentTableName, 
+						        @CurrentIndexName				= 'N/A',  
+						        @CurrentPartitionNumber			= 0, 
+						        @IndexSizeInMB					= 0,
+						        @CurrentParentSchemaName		= @CurrentSchemaName ,
+						        @CurrentParentTableName			= @CurrentTableName, 
+						        @CurrentParentIndexName			= 'N/A',
+						        @IndexOperation					= 'Commit Tran',
+						        @IsOnlineOperation				= @OnlineOperations ,
+						        @TableChildOperationId			= 2,
+						        @SQLStatement					= 'COMMIT TRAN', 
+						        @TransactionId					= @TransactionId,
+						        @BatchId						= @BatchIdOUT,
+						        @ExitTableLoopOnError			= 0
+				        END 
+			        END
+
+						IF (@OnlineOperations = 0)
 					        AND NOT (@IsBCPTable = 1 AND @IsStorageChanging = 1)
 					        AND @IsBeingRunDuringADeployment = 0 --IF THIS IS RUNNING DURING A DEPLOYMENT, LET THE ALWAYSRUN SCRIPT ADD THE FKs BACK.
 					        AND (@WhichUniqueConstraintIsBeingDropped <> 'None' OR @IsClusteredIndexBeingDroppedForTable = 1) --RECREATE REF FKs
@@ -623,31 +648,6 @@ EXEC DOI.DOI.spRun_ReleaseApplicationLock
 						        @BatchId						= @BatchIdOUT,
 						        @ExitTableLoopOnError			= 0
 				        END
-
-			        IF (@OnlineOperations = 0)
-				        AND NOT (@IsBCPTable = 1 AND @IsStorageChanging = 1)
-			        BEGIN
-				        IF @NeedsTransaction = 1
-				        BEGIN 
-					        EXEC DOI.spQueue_Insert
-						        @CurrentDatabaseName			= @CurrentDatabaseName ,
-						        @CurrentSchemaName				= @CurrentSchemaName ,
-						        @CurrentTableName				= @CurrentTableName, 
-						        @CurrentIndexName				= 'N/A',  
-						        @CurrentPartitionNumber			= 0, 
-						        @IndexSizeInMB					= 0,
-						        @CurrentParentSchemaName		= @CurrentSchemaName ,
-						        @CurrentParentTableName			= @CurrentTableName, 
-						        @CurrentParentIndexName			= 'N/A',
-						        @IndexOperation					= 'Commit Tran',
-						        @IsOnlineOperation				= @OnlineOperations ,
-						        @TableChildOperationId			= 2,
-						        @SQLStatement					= 'COMMIT TRAN', 
-						        @TransactionId					= @TransactionId,
-						        @BatchId						= @BatchIdOUT,
-						        @ExitTableLoopOnError			= 0
-				        END 
-			        END
 
 			        EXEC DOI.spQueue_Insert
 				        @CurrentDatabaseName			= @CurrentDatabaseName ,

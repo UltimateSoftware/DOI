@@ -55,8 +55,9 @@ BEGIN TRY
 		@ReferencedSchemaName = @ReferencedSchemaName,
 		@ReferencedTableName = @ReferencedTableName
 
-	DECLARE @AddFKsSQL VARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
-
+	DECLARE @UseDbSQL VARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10),
+			@AddFKsSQL VARCHAR(MAX) = ''
+	
 	SELECT @AddFKsSQL += CASE WHEN @UseExistenceCheck = 1 THEN CreateFKWithExistenceCheckSQL ELSE CreateFKSQL END + CHAR(13) + CHAR(10)
 	--select *
 	FROM DOI.vwForeignKeys
@@ -70,10 +71,19 @@ BEGIN TRY
         AND DeploymentTime = @CallingProcess
 	ORDER BY ReferencedTableName
 
-    SELECT @AddFKsSQL += '
+	IF @AddFKsSQL = ''
+	BEGIN
+		SET @UseDbSQL = ''
+	END
+	ELSE
+    BEGIN
+	    SELECT @AddFKsSQL += '
     EXEC DOI.DOI.spEnableDisableAllFKs 
 		@DatabaseName = ''' + @DatabaseName + ''',
 		@Action = ''DISABLE'''
+
+		SET @AddFKsSQL = @UseDbSQL + @AddFKsSQL
+	END
 
     IF @Debug = 1
     BEGIN
