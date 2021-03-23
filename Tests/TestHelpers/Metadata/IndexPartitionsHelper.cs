@@ -151,7 +151,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             var actual = GetActualValues_RowStore();
 
             Assert.AreEqual(expected.Count, actual.Count);
-            Assert.Greater(actual.Count, 0);
+            Assert.GreaterOrEqual(actual.Count, 0);
 
             foreach (var expectedRow in expected)
             {

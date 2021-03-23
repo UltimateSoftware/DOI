@@ -145,10 +145,15 @@ GO
 IF OBJECT_ID('[DOI].[ForeignKeys]') IS NULL
 CREATE TABLE [DOI].[ForeignKeys]
 (
+[ForeignKeyId] [sys].[UNIQUEIDENTIFIER] NOT NULL
+	CONSTRAINT Def_ForeignKeys_ForeignKeyId
+		DEFAULT (NEWID()),
 [DatabaseName] [sys].[sysname] NOT NULL,
 [ParentSchemaName] [sys].[sysname] NOT NULL,
 [ParentTableName] [sys].[sysname] NOT NULL,
-[FKName] [sys].[sysname] NOT NULL,
+[FKName] [sys].[sysname] NOT NULL
+	CONSTRAINT Def_ForeignKeys_FKName
+		DEFAULT ('NameNotUpdatedYet'),
 [ParentColumnList_Desired] [varchar] (MAX) NOT NULL,
 [ReferencedSchemaName] [sys].[sysname] NOT NULL,
 [ReferencedTableName] [sys].[sysname] NOT NULL,
@@ -156,7 +161,7 @@ CREATE TABLE [DOI].[ForeignKeys]
 [ParentColumnList_Actual] [varchar] (MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ReferencedColumnList_Actual] [varchar] (MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [DeploymentTime] [varchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-CONSTRAINT [PK_ForeignKeys] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [ParentSchemaName], [ParentTableName], [FKName])
+CONSTRAINT [PK_ForeignKeys] PRIMARY KEY NONCLUSTERED  ([ForeignKeyId])
 )
 WITH
 (

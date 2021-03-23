@@ -401,7 +401,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         #region ForeignKeys
 
-        public static string ForeignKeyName = "FK_TempB_TempAId";
+        public static string ForeignKeyName = "FK_TempB_TempA_TempAId";
 
         public static string CreateForeignKeySql = $@"
             ALTER TABLE dbo.{ChildTableName} 
@@ -493,7 +493,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                 (DatabaseName, SchemaName, TableName, IndexName, IsClustered_Desired, ColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,
                  OptionDataCompression_Desired, OptionDataCompressionDelay_Desired, Storage_Desired, StorageType_Desired, PartitionFunction_Desired,
                  PartitionColumn_Desired)
-            VALUES(N'{DatabaseName}', N'dbo', N'{TableName}', N'{NCCIIndexName}', 0, N'TransactionUtcDt ASC', 0, NULL, 
+            VALUES(N'{DatabaseName}', N'dbo', N'{TableName}', N'{NCCIIndexName}', 0, N'TransactionUtcDt', 0, NULL, 
                 'COLUMNSTORE', 0, N'PRIMARY', N'ROWS_FILEGROUP', NULL, 
                 NULL)";
 

@@ -10,7 +10,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
     [Category("Integration")]
     [Category("ReportingIntegration")]
     [Category("ExcludePreflight")]
-    public class SystemSettingsTableTest
+    public class SystemSettingsTableTest : DOIBaseTest
     {
         private List<Pair<string, string>> expectedSettingList;
 
@@ -32,13 +32,13 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
                     new Pair<string, string>("FreeSpaceCheckerPercentBuffer", @"10")
                 };
             var sqlHelper = new SqlHelper();
-            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
+            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings @DatabaseName = '{DatabaseName}'");
         }
 
         [Test]
         public void ValidateSystemSettings()
         {
-            var reader = new SqlHelper().ExecuteReader(" SELECT SettingName, SettingValue FROM DOI.DOISettings ORDER BY SettingName ");
+            var reader = new SqlHelper().ExecuteReader($" SELECT SettingName, SettingValue FROM DOI.DOISettings WHERE DatabaseName = '{DatabaseName}' ORDER BY SettingName ");
             var actualSettingList = new List<Pair<string, string>>();
 
             while (reader.Read())

@@ -10,31 +10,31 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
     [Category("Integration")]
     [Category("ReportingIntegration")]
     [Category("ExcludePreflight")]
-    public class BusinessHoursScheduleTableTest
+    public class BusinessHoursScheduleTableTest : DOIBaseTest
     {
-        private readonly SqlHelper sqlHelper = new SqlHelper();
         private readonly List<BusinessHoursScheduleResult> expectedSchedules = new List<BusinessHoursScheduleResult>()
          {
-             new BusinessHoursScheduleResult(1, "Sunday",    TimeSpan.Parse("00:00:00.0000000"), false),
-             new BusinessHoursScheduleResult(1, "Sunday",    TimeSpan.Parse("17:00:00.0000000"), true),
-             new BusinessHoursScheduleResult(2, "Monday",    TimeSpan.Parse("00:00:00.0000000"), true),
-             new BusinessHoursScheduleResult(3, "Tuesday",   TimeSpan.Parse("00:00:00.0000000"), true),
-             new BusinessHoursScheduleResult(4, "Wednesday", TimeSpan.Parse("00:00:00.0000000"), true),
-             new BusinessHoursScheduleResult(5, "Thursday",  TimeSpan.Parse("00:00:00.0000000"), true),
-             new BusinessHoursScheduleResult(6, "Friday",    TimeSpan.Parse("00:00:00.0000000"), true),
-             new BusinessHoursScheduleResult(7, "Saturday",  TimeSpan.Parse("00:00:00.0000000"), false),
+             new BusinessHoursScheduleResult(1, "Sunday",    TimeSpan.Parse("00:00:00.0000000"), false, true),
+             new BusinessHoursScheduleResult(1, "Sunday",    TimeSpan.Parse("17:00:00.0000000"), true, true),
+             new BusinessHoursScheduleResult(2, "Monday",    TimeSpan.Parse("00:00:00.0000000"), true, true),
+             new BusinessHoursScheduleResult(3, "Tuesday",   TimeSpan.Parse("00:00:00.0000000"), true, true),
+             new BusinessHoursScheduleResult(4, "Wednesday", TimeSpan.Parse("00:00:00.0000000"), true, true),
+             new BusinessHoursScheduleResult(5, "Thursday",  TimeSpan.Parse("00:00:00.0000000"), true, true),
+             new BusinessHoursScheduleResult(6, "Friday",    TimeSpan.Parse("00:00:00.0000000"), true, true),
+             new BusinessHoursScheduleResult(7, "Saturday",  TimeSpan.Parse("00:00:00.0000000"), false, true),
          };
 
        [SetUp]
         public void Setup()
         {
-            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_3_DOISettings");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_3_DOISettings @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             var rows = this.sqlHelper.ExecuteQuery(
                 new SqlCommand(
                     @"   Select 
-                                DayOfWeekId, DayOfWeekName, StartUtcMilitaryTime, IsBusinessHours
+                                DayOfWeekId, DayOfWeekName, StartUtcMilitaryTime, IsBusinessHours, IsEnabled
                                 From DOI.DOI.BusinessHoursSchedule "));
             var result = new List<BusinessHoursScheduleResult>();
             foreach (var row in rows)
@@ -75,8 +75,9 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
                 string name = row[1].Second.ToString();
                 TimeSpan time = TimeSpan.Parse(row[2].Second.ToString());
                 bool isBusinessHours = Convert.ToBoolean(row[3].Second);
+                bool isEnabled = Convert.ToBoolean(row[4].Second);
                 
-                result.Add(new BusinessHoursScheduleResult(id, name, time, isBusinessHours));
+                result.Add(new BusinessHoursScheduleResult(id, name, time, isBusinessHours, isEnabled));
             }
 
             return result;
@@ -88,17 +89,20 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             private readonly string dayOfWeekName;
             private readonly TimeSpan startUtcMilitaryTime;
             private readonly bool isBusinessHours;
+            private readonly bool isEnabled;
 
             public BusinessHoursScheduleResult(
                 int dayOfWeek,
                 string dayOfWeekName,
                 TimeSpan startUtcMilitaryTime,
-                bool isBusinessHours)
+                bool isBusinessHours,
+                bool isEnabled)
             {
                 this.dayOfWeek = dayOfWeek;
                 this.dayOfWeekName = dayOfWeekName;
                 this.startUtcMilitaryTime = startUtcMilitaryTime;
                 this.isBusinessHours = isBusinessHours;
+                this.isEnabled = isEnabled;
             }
             
             public override bool Equals(object o)

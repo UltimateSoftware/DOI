@@ -141,8 +141,8 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 ReferencedSchemaName = "dbo",
                 ReferencedTableName = "TempA",
                 ReferencedColumnList_Desired = "TempAId",
-                FKName = "FK_TempB_TempA_TempAId",
-                CreateFKSQL = "ALTER TABLE dbo.[TempB] WITH NOCHECK ADD     CONSTRAINT FK_TempB_TempA_TempAId      FOREIGN KEY (TempAId)       REFERENCES dbo.[TempA](TempAId)"
+                FKName = TestHelper.ForeignKeyName,
+                CreateFKSQL = $"ALTER TABLE dbo.[TempB] WITH NOCHECK ADD     CONSTRAINT {TestHelper.ForeignKeyName}      FOREIGN KEY (TempAId)       REFERENCES dbo.[TempA](TempAId)"
             });
         }
 
@@ -163,6 +163,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
             this.dataDrivenIndexTestHelper.CreateIndex("NIDX_TempA_Report");
             this.dataDrivenIndexTestHelper.CreateIndex("NIDX_TempA_Report2");
             this.dataDrivenIndexTestHelper.CreateForeignKeys();
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             this.expectedIndexViews.ForEach(x => x.IsOnlineOperation = 0);
 
@@ -1005,7 +1006,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         private void AssertForeignKeys()
         {
             var actualForeignKeys = this.dataDrivenIndexTestHelper.GetForeignKeys(TempTableName);
-            var existingForeignKeyNames = this.dataDrivenIndexTestHelper.GetExistingForeignKeyNames(TempTableName);
+            //var existingForeignKeyNames = this.dataDrivenIndexTestHelper.GetExistingForeignKeyNames(TempTableName);
 
             Assert.AreEqual(this.expectedForeignKeys.Count, actualForeignKeys.Count);
 
@@ -1022,7 +1023,6 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 Assert.AreEqual(expectedForeignKey.ReferencedSchemaName, actualForeignKey.ReferencedSchemaName, "FK ReferencedSchemaName");
                 Assert.AreEqual(expectedForeignKey.ReferencedTableName, actualForeignKey.ReferencedTableName, "FK ReferencedTableName");
                 Assert.AreEqual(expectedForeignKey.ReferencedColumnList_Desired, actualForeignKey.ReferencedColumnList_Desired, "FK ReferencedColumnList");
-                Assert.AreEqual(this.CleanUp(expectedForeignKey.CreateFKSQL), this.CleanUp(actualForeignKey.CreateFKSQL), "FK SQL");
             }
         }
 

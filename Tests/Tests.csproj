@@ -417,6 +417,7 @@
   <ItemGroup>
     <Compile Include="IntegrationTests\BusinessHoursScheduleTableTest.cs" />
     <Compile Include="IntegrationTests\ErrorHandlingTests\ErrorHandlingTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwForeignKeys.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\HighFragmentationTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexesViewTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\LowFragmentationTests.cs" />

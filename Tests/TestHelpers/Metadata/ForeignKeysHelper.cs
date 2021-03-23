@@ -117,7 +117,10 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
-            SELECT FK.ParentColumnList_Desired,
+            SELECT  FK.FKName,
+                    FK.ParentTableName,
+                    FK.ReferencedTableName,
+                    FK.ParentColumnList_Desired,
                     FK.ParentColumnList_Actual,
                     FK.ReferencedColumnList_Desired,
                     FK.ReferencedColumnList_Actual,
@@ -132,6 +135,9 @@ namespace DOI.Tests.TestHelpers.Metadata
             foreach (var row in actual)
             {
                 var columnValue = new ForeignKeys();
+                columnValue.FKName = row.First(x => x.First == "FKName").Second.ToString();
+                columnValue.ParentTableName = row.First(x => x.First == "ParentTableName").Second.ToString();
+                columnValue.ReferencedTableName = row.First(x => x.First == "ReferencedTableName").Second.ToString();
                 columnValue.ParentColumnList_Desired = row.First(x => x.First == "ParentColumnList_Desired").Second.ToString();
                 columnValue.ParentColumnList_Actual = row.First(x => x.First == "ParentColumnList_Actual").Second.ToString();
                 columnValue.ReferencedColumnList_Desired = row.First(x => x.First == "ReferencedColumnList_Desired").Second.ToString();
@@ -191,13 +197,14 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var actual = GetActualUserValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(1, actual.Count, "RowCount");
             
             foreach (var row in actual)
             {
-                Assert.AreEqual(row.ParentColumnList_Desired, row.ParentColumnList_Actual);
-                Assert.AreEqual(row.ReferencedColumnList_Desired, row.ReferencedColumnList_Actual);
-                Assert.AreEqual("Deployment", row.DeploymentTime);
+                Assert.AreEqual(string.Concat("FK_", row.ParentTableName, "_", row.ReferencedTableName, "_", row.ParentColumnList_Desired.Replace(",", "_")), row.FKName, "FKName");
+                Assert.AreEqual(row.ParentColumnList_Desired, row.ParentColumnList_Actual, "ParentColumnList_Actual");
+                Assert.AreEqual(row.ReferencedColumnList_Desired, row.ReferencedColumnList_Actual, "ReferencedColumnList_Actual");
+                Assert.AreEqual("Deployment", row.DeploymentTime, "DeploymentTime");
             }
         }
     }

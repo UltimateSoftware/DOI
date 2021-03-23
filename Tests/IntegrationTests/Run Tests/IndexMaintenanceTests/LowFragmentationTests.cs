@@ -5,7 +5,7 @@ using DOI.Tests.IntegrationTests.Models;
 using NUnit.Framework;
 using DOI.Tests.TestHelpers;
 
-namespace DOI.Tests.IntegrationTests.RunTests
+namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
 {
     [TestFixture]
     [Category("Integration")]

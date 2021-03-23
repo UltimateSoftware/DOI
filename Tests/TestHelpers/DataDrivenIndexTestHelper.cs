@@ -8,6 +8,7 @@ using NUnit.Framework;
 using DOI.Tests.Integration.Models;
 using DOI.Tests.IntegrationTests.Models;
 using TestHelper = DOI.Tests.TestHelpers.SqlHelper;
+using FKTestHelper = DOI.Tests.TestHelpers.Metadata.SystemMetadata.SystemMetadataHelper;
 
 namespace DOI.Tests.TestHelpers
 {
@@ -366,11 +367,13 @@ namespace DOI.Tests.TestHelpers
 
         public void CreateForeignKeys()
         {
-            this.sqlHelper.Execute($@"INSERT INTO DOI.DOI.[ForeignKeys]    (DatabaseName, [ParentSchemaName]	,[ParentTableName]	,[ParentColumnList_Desired]	,[ReferencedSchemaName]	,[ReferencedTableName]	,[ReferencedColumnList_Desired])
-                                                                 VALUES ('{DatabaseName}', 'dbo'				,'TempB'			,'TempAId'			,'dbo'					,'TempA'				,'TempAId')");
+            this.sqlHelper.Execute($@"INSERT INTO DOI.DOI.[ForeignKeys]  (DatabaseName      , [FKName]              , [ParentSchemaName]	,[ParentTableName]	,[ParentColumnList_Desired]	,[ReferencedSchemaName]	,[ReferencedTableName]	,[ReferencedColumnList_Desired])
+                                                                 VALUES     ('{DatabaseName}'   , '{FKTestHelper.ForeignKeyName}'    , 'dbo'				,'TempB'			,'TempAId'			        ,'dbo'					,'TempA'				,'TempAId')");
+            this.sqlHelper.Execute(FKTestHelper.RefreshMetadata_SysForeignKeysSql);
+
             this.sqlHelper.Execute($@"EXEC DOI.DOI.spForeignKeysAdd 
-                                       @DatabaseName = '{DatabaseName}',
-                                       @ReferencedSchemaName = 'dbo'
+                                       @DatabaseName = '{DatabaseName}'
+                                      ,@ReferencedSchemaName = 'dbo'
                                       ,@ReferencedTableName = 'TempA'
                                       ,@ParentSchemaName = 'dbo'
                                       ,@ParentTableName = 'TempB'");

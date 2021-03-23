@@ -9,7 +9,7 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_Run_System]
-    @DatabaseId INT = NULL,
+    @DatabaseName SYSNAME = NULL,
     @Debug BIT = 0
 AS
 
@@ -20,31 +20,90 @@ AS
 
         select * from doi.sysdatabases
 */
-EXEC [DOI].[spRefreshMetadata_System_SysDatabases]
+EXEC DOI.spRefreshMetadata_System_SysDatabases
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysFileGroups
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysMasterFiles
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysAllocationUnits
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysDataSpaces
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats
+	@DatabaseName = @DatabaseName
 
-DECLARE @SQL VARCHAR(MAX) = ''
 
-SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10) + CHAR(9) + '@DatabaseName = ''' + CASE WHEN @DatabaseId IS NOT NULL THEN D.name ELSE 'NULL' END + '''' + /*',' +*/ CHAR(13) + CHAR(10) COLLATE DATABASE_DEFAULT-- + CHAR(9) + '@Debug = ' + CAST(@Debug AS CHAR(1)) + CHAR(13) + CHAR(10)
-FROM SYS.procedures P
-    INNER JOIN sys.schemas s ON p.schema_id = s.schema_id
-    INNER JOIN DOI.SysDatabases D ON D.database_id = @DatabaseId
-WHERE p.NAME LIKE 'spRefreshMetadata_System%'
-    AND p.name NOT LIKE '%CreateTables'
-    AND p.name NOT IN ('spRefreshMetadata_System_SysDmDbStatsProperties')
+EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysPartitions
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes
+	@DatabaseName = @DatabaseName
 
-SELECT @SQL += 'EXEC ' + s.name + '.' + p.name + CHAR(13) + CHAR(10) + CHAR(9) + '@DatabaseName = ''' + CASE WHEN @DatabaseId IS NOT NULL THEN D.name ELSE 'NULL' END + '''' + CHAR(13) + CHAR(10) COLLATE DATABASE_DEFAULT-- + CHAR(9) + '@Debug = ' + CAST(@Debug AS CHAR(1)) + CHAR(13) + CHAR(10)
-FROM SYS.procedures P
-    INNER JOIN sys.schemas s ON p.schema_id = s.schema_id
-    INNER JOIN DOI.SysDatabases D ON D.database_id = @DatabaseId
-WHERE p.NAME LIKE 'spRefreshMetadata_User%_UpdateData'
-    AND ISNUMERIC(SUBSTRING(p.name, CHARINDEX('User_', p.name, 1) + 5, 1)) = 0
 
-IF @Debug = 1
-BEGIN
-    PRINT @SQL
-END
-ELSE
-BEGIN
-    EXEC(@SQL)
-END
+EXEC DOI.spRefreshMetadata_System_SysSchemas
+	@DatabaseName = @DatabaseName
+
+EXEC DOI.spRefreshMetadata_System_SysTypes
+	@DatabaseName = @DatabaseName
+ 
+--TABLES
+EXEC DOI.spRefreshMetadata_System_SysTables
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysColumns
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysCheckConstraints
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysDefaultConstraints
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysForeignKeys
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysIndexes
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysIndexColumns
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysIndexes_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysIndexPhysicalStats
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysStats
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysStatsColumns
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysStats_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_System_SysTriggers
+	@DatabaseName = @DatabaseName
+
+--DERIVED SYSTEM METADATA
+EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_Tables_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_Constraints_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_ForeignKeys_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_Statistics_UpdateData
+	@DatabaseName = @DatabaseName
+EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData
+	@DatabaseName = @DatabaseName
+
 GO

@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[vwForeignKeys]') IS NOT NULL
 	DROP VIEW [DOI].[vwForeignKeys];
 
@@ -20,7 +18,6 @@ CREATE   VIEW [DOI].[vwForeignKeys]
 AS
 
 SELECT  FK.*,
-		('FK_' + ParentTableName + '_' + ReferencedTableName + '_' + REPLACE(FK.ParentColumnList_Desired, ',', '_')) AS FKName,
         ('
 USE ' + DatabaseName + ';
 ALTER TABLE ' + FK.DatabaseName + '.' + ParentSchemaName + '.[' + ParentTableName + '] WITH NOCHECK ADD 
@@ -37,8 +34,8 @@ IF NOT EXISTS(  SELECT ''True''
                     AND fku.ParentTableName = ''' + ParentTableName + '''
                     AND fku.ReferencedSchemaName = ''' + ReferencedSchemaName + '''
                     AND fku.ReferencedTableName = ''' + ReferencedTableName + '''
-                    AND fku.ParentColumnList_Desired = ''' + ParentColumnList_Actual + '''
-                    AND fku.ReferencedColumnList_Desired = ''' + ReferencedColumnList_Actual + ''')
+                    AND fku.ParentColumnList_Desired = ''' + ParentColumnList_Desired + '''
+                    AND fku.ReferencedColumnList_Desired = ''' + ReferencedColumnList_Desired + ''')
     AND EXISTS( SELECT ''True''
                 FROM DOI.SysTables t
                     INNER JOIN DOI.SysDatabases d ON d.database_id = t.database_id
@@ -68,8 +65,8 @@ IF EXISTS(  SELECT ''True''
                 AND fku.ParentTableName = ''' + ParentTableName + '''
                 AND fku.ReferencedSchemaName = ''' + ReferencedSchemaName + '''
                 AND fku.ReferencedTableName = ''' + ReferencedTableName + '''
-                AND fku.ParentColumnList_Desired = ''' + ParentColumnList_Actual + '''
-                AND fku.ReferencedColumnList_Desired = ''' + ReferencedColumnList_Actual + ''')
+                AND fku.ParentColumnList_Desired = ''' + ParentColumnList_Desired + '''
+                AND fku.ReferencedColumnList_Desired = ''' + ReferencedColumnList_Desired + ''')
     AND EXISTS( SELECT ''True''
                 FROM DOI.SysTables t
                     INNER JOIN DOI.SysDatabases d ON d.database_id = t.database_id
@@ -92,37 +89,6 @@ USE ' + DatabaseName + ';
 ALTER TABLE ' + FK.DatabaseName + '.' + ParentSchemaName + '.[' + ParentTableName + '] NOCHECK CONSTRAINT FK_' + ParentTableName + '_' + ReferencedTableName + '_' + REPLACE(ParentColumnList_Desired, ',', '_')) 
 AS DisableFKSQL
 
-
 FROM DOI.ForeignKeys FK
-    --OUTER APPLY (   SELECT  CASE 
-				--		  WHEN ISNULL(NewPf.name, '') <> ISNULL(ExistingPf.name, '') 
-				--			 AND TTP.IntendToPartition = 1 
-				--		  THEN 1 
-				--		  ELSE 0 
-				--	   END AS IsPartitioningChanging
-    --                FROM DOI.Tables TTP
-				--    INNER JOIN ' + DatabaseName + '.sys.schemas s ON TTP.SchemaName = s.name
-				--    INNER JOIN ' + DatabaseName + '.sys.tables t ON s.schema_id = t.schema_id
-				--	   AND t.name = TTP.TableName
-				--    INNER JOIN ' + DatabaseName + '.sys.indexes i ON i.object_id = t.object_id
-				--    INNER JOIN DOI.IndexesRowStore IRS ON s.name = IRS.SchemaName
-				--	   AND t.name = IRS.TableName
-				--	   AND i.name = IRS.IndexName 
-				--    INNER JOIN (SELECT name AS ExistingStorage, data_space_id, type_desc COLLATE DATABASE_DEFAULT AS ExistingStorageType
-				--			 FROM ' + DatabaseName + '.sys.data_spaces) ExistingDS 
-				--	   ON ExistingDS.data_space_id = I.data_space_id
-				--    INNER JOIN (SELECT name AS NewStorage, data_space_id, type_desc COLLATE DATABASE_DEFAULT AS NewStorageType
-				--			 FROM ' + DatabaseName + '.sys.data_spaces) NewDS 
-				--	   ON NewDS.NewStorage = IRS.NewStorage
-				--    LEFT JOIN ' + DatabaseName + '.sys.partition_schemes ExistingPs ON ExistingDS.ExistingStorage = ExistingPs.name
-				--    LEFT JOIN ' + DatabaseName + '.sys.partition_functions ExistingPf ON ExistingPs.function_id = ExistingPf.function_id
-				--    LEFT JOIN ' + DatabaseName + '.sys.partition_schemes NewPs ON NewPs.name = NewDS.NewStorage
-				--    LEFT JOIN ' + DatabaseName + '.sys.partition_functions NewPf ON NewPf.function_id = NewPs.function_id
-    --                WHERE s.name = FK.ParentSchemaName
-    --                    AND t.name = FK.ParentTableName
-    --                    AND s.name  <> 'DOI'
-    --                    AND (ISNULL(NewPf.name, '') <> ISNULL(ExistingPf.name, '')))ipc2
-
-
 
 GO

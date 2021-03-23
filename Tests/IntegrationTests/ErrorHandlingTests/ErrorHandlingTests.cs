@@ -4,6 +4,7 @@ using DOI.Tests.Integration;
 using DOI.Tests.Integration.Models;
 using DOI.Tests.TestHelpers;
 using NUnit.Framework;
+using TestHelper = DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 
 namespace DOI.Tests.IntegrationTests.ErrorHandling
 {
@@ -34,6 +35,7 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
         public virtual void Setup()
         {
             this.TearDown();
+            sqlHelper.Execute(TestHelper.SystemMetadataHelper.RefreshMetadata_SysDatabasesSql);
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
             this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
             this.tempARepository = new TempARepository(this.sqlHelper);
@@ -51,6 +53,9 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
         [TearDown]
         public virtual void TearDown()
         {
+            this.sqlHelper.Execute("DELETE DOI.DOI.DefaultConstraintsNotInMetadata");
+            this.sqlHelper.Execute("DELETE DOI.DOI.CheckConstraintsNotInMetadata");
+            this.sqlHelper.Execute("DELETE DOI.DOI.IndexesNotInMetadata");
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
             this.sqlHelper.Execute($"UPDATE DOI.DOI.DOISettings SET SettingValue = '1' WHERE DatabaseName = '{DatabaseName}' AND SettingName LIKE 'FreeSpaceCheckerTestMultiplier%'");
             this.sqlHelper.Execute("ALTER RESOURCE GOVERNOR RECONFIGURE");
@@ -141,7 +146,7 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
             this.sqlHelper.Execute($"USE {DatabaseName} INSERT INTO dbo.{SpaceErrorTableName}(SenselessText, SenselessText2) SELECT TOP 5000 CONVERT(char(255), NEWID()), CONVERT(char(255), NEWID()) FROM sys.objects a CROSS JOIN sys.objects b");
 
             int dbId = sqlHelper.ExecuteScalar<int>($"SELECT database_id FROM sys.databases WHERE NAME = '{DatabaseName}'");
-            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Run_System @DatabaseId = {dbId}");
+            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Run_System @DatabaseName = '{DatabaseName}'");
 
             // set multiplier setting to always guarantee a space failure.
             string dbName = fileType == "TempDB" ? "tempdb" : DatabaseName;
@@ -218,6 +223,8 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
             // check that the other table's changes were made
             indexRow.IndexUpdateType = "None";
             indexRow.AreRebuildOptionsChanging = false;
+            
+            sqlHelper.Execute(TestHelper.SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
 
             indexChangesReader = this.sqlHelper.ExecuteReader($@"
             SELECT  IndexUpdateType, 
@@ -258,6 +265,9 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
             // 2. Make index change.
             this.sqlHelper.Execute($"UPDATE IRS SET OptionPadIndex_Desired = CASE WHEN OptionPadIndex_Desired = 0 THEN 1 ELSE 0 END FROM DOI.DOI.IndexesRowStore IRS WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{TestTableName1}' AND IndexName = 'CDX_{TestTableName1}'");
 
+            //refresh metadata
+            this.sqlHelper.Execute(TestHelper.SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
+
             // 3. Run queue and Run SPs.
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(true, false, DatabaseName, null, null);
             try
@@ -286,6 +296,7 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
                                             AND IndexName = 'CDX_{TestTableName1}'");
 
             // 2. Run Queue SP.
+            this.sqlHelper.Execute(TestHelper.SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
             this.sqlHelper.Execute($"TRUNCATE TABLE DOI.DOI.Queue");
             this.sqlHelper.Execute($"TRUNCATE TABLE DOI.DOI.Log");
             this.dataDrivenIndexTestHelper.ExecuteSPQueue(false, false, DatabaseName, SchemaName, TestTableName1);

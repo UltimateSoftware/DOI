@@ -53,26 +53,32 @@ WHERE t.name NOT LIKE '%|_OLD' ESCAPE '|'
 	AND d.name = CASE WHEN @DatabaseName IS NULL THEN d.name ELSE @DatabaseName END 
 																		
 INSERT INTO DOI.DefaultConstraintsNotInMetadata ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition )
-SELECT d2.name, s.name, t.name, c.name, d.definition
-FROM DOI.SysDefaultConstraints d 
-    INNER JOIN DOI.SysDatabases d2 ON d2.database_id = d.database_id 
-	INNER JOIN DOI.SysSchemas s ON s.schema_id = d.schema_id
-	INNER JOIN (SELECT	name , 
+SELECT d.name, s.name, t.name, c.name, df.definition
+FROM DOI.SysDefaultConstraints df 
+    INNER JOIN DOI.SysDatabases d ON d.database_id = df.database_id 
+	INNER JOIN DOI.SysSchemas s ON s.database_id = df.database_id
+		AND s.schema_id = df.schema_id
+	INNER JOIN (SELECT	database_id,
+						name , 
 						object_id 
-				FROM DOI.SysTables) t ON t.object_id = d.parent_object_id
-	INNER JOIN DOI.SysColumns c ON c.object_id = t.object_id
-		AND d.parent_column_id = c.column_id
+				FROM DOI.SysTables) t ON t.database_id = df.database_id
+		AND t.object_id = df.parent_object_id
+	INNER JOIN DOI.SysColumns c ON c.database_id = t.database_id
+		AND c.object_id = t.object_id
+		AND df.parent_column_id = c.column_id
 WHERE t.name NOT LIKE '%|_OLD' ESCAPE '|'
 	AND t.name NOT IN ('DBDefragLog')
 	AND NOT EXISTS (SELECT 'True' 
 					FROM DOI.DefaultConstraints CC 
-					WHERE s.name = cc.SchemaName COLLATE DATABASE_DEFAULT 
+					WHERE d.name = CC.DatabaseName
+						AND s.name = cc.SchemaName COLLATE DATABASE_DEFAULT 
 						AND t.name = cc.TableName COLLATE DATABASE_DEFAULT 
-						AND d.name = cc.DefaultConstraintName COLLATE DATABASE_DEFAULT)
+						AND df.name = cc.DefaultConstraintName COLLATE DATABASE_DEFAULT)
 	AND NOT EXISTS(	SELECT 'True' 
 					FROM DOI.DefaultConstraintsNotInMetadata D2 
-					WHERE s.Name = D2.SchemaName COLLATE DATABASE_DEFAULT 
+					WHERE d.name = d2.DatabaseName
+						AND s.Name = D2.SchemaName COLLATE DATABASE_DEFAULT 
 						AND t.Name = D2.TableName COLLATE DATABASE_DEFAULT 
 						AND c.Name = D2.ColumnName COLLATE DATABASE_DEFAULT )--check definition here as well.
-	AND d2.name = CASE WHEN @DatabaseName IS NULL THEN d2.name ELSE @DatabaseName END 
+	AND d.name = CASE WHEN @DatabaseName IS NULL THEN d.name ELSE @DatabaseName END 
 GO

@@ -40,10 +40,9 @@ SET QUOTED_IDENTIFIER ON
 
 BEGIN TRY
 	SET @BatchIdOUT = NEWID()
-	DECLARE @DatabaseId INT = DB_ID(@DatabaseName)
 
     EXEC DOI.spRefreshMetadata_Run_System
-		@DatabaseId = @DatabaseId
+		@DatabaseName = @DatabaseName
 
 	--TRACK INDEXES NOT IN METADATA...DO THIS LATER
 	EXEC DOI.spQueue_IndexesNotInMetadata

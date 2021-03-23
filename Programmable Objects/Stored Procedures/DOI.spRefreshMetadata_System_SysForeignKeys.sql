@@ -24,7 +24,7 @@ EXEC DOI.spRefreshMetadata_System_SysForeignKeys_InsertData
     @DatabaseName = @DatabaseName
 EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData
     @DatabaseName = @DatabaseName
-EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns_InsertData
+EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns
     @DatabaseName = @DatabaseName
 
 GO
