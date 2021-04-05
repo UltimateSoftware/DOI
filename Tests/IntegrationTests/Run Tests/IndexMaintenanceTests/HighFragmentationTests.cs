@@ -23,7 +23,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
         {
             this.sqlHelper = new SqlHelper();
             this.OneTimeTearDown();
-            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
+            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120, true, DatabaseName);
             this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
             this.tempARepository = new TempARepository(this.sqlHelper);
         }
@@ -31,8 +31,8 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
+            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120, true, DatabaseName);
+            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings @DatabaseName = '{DatabaseName}'");
         }
 
         [SetUp]
@@ -51,7 +51,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
         public void HighFragmentationShouldTriggerAlterIndexRebuild(int minimumNumPages)
         {
             // Fragmentation needs to be above 30% and TotalPages is configurable
-            this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = {minimumNumPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
+            this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = {minimumNumPages} WHERE SettingName = 'MinNumPagesForIndexDefrag' AND DatabaseName = '{DatabaseName}'");
             vwIndexes indexToReorganize = null;
             var watch = Stopwatch.StartNew();
 

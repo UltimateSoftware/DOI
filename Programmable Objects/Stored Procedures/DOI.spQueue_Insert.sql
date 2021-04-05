@@ -35,7 +35,7 @@ AS
 --BEGIN ATOMIC WITH  ( TRANSACTION ISOLATION LEVEL = SNAPSHOT, LANGUAGE = N'us_english')
     BEGIN TRY 
 	    DECLARE @SeqNo SMALLINT = ISNULL((	SELECT MAX(SeqNo)
-										    FROM DOI.Queue
+										    FROM DOI.Queue WITH(NOLOCK)
 										    WHERE DatabaseName = @CurrentDatabaseName
 												AND ParentSchemaName = @CurrentParentSchemaName
 											    AND ParentTableName = @CurrentParentTableName), 0) + 1 

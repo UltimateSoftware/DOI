@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Security.Cryptography;
 using DOI.Tests.TestHelpers;
 using DOI.Tests.Integration.Models;
 using DOI.Tests.IntegrationTests.Models;
 using NUnit.Framework;
-using TestHelper = DOI.Tests.TestHelpers;
+using TestHelper = DOI.Tests.TestHelpers.Metadata.SystemMetadata.SystemMetadataHelper;
 
 namespace DOI.Tests.IntegrationTests.RunTests
 {
@@ -12,25 +15,22 @@ namespace DOI.Tests.IntegrationTests.RunTests
     [Category("ReportingIntegration")]
     [Category("ExcludePreflight")]
     [Category("DataDrivenIndex")]
-    public class StatisticsTests
+    public class StatisticsTests : DOIBaseTest
     {
-        protected TestHelper.SqlHelper sqlHelper;
         protected const string StatisticsName = "ST_TempA_TempAId";
         protected const string TempTableName = "TempA";
-        protected const string SchemaName = "dbo";
 
         [SetUp]
         public virtual void Setup()
         {
-            this.sqlHelper = new TestHelper.SqlHelper();
             this.TearDown();
-            sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
+            sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120, true, DatabaseName);
         }
 
         [TearDown]
         public virtual void TearDown()
         {
-            sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
+            sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120, true, DatabaseName);
             sqlHelper.Execute("TRUNCATE TABLE DOI.Queue");
             sqlHelper.Execute("TRUNCATE TABLE DOI.Log");
         }
@@ -49,72 +49,81 @@ namespace DOI.Tests.IntegrationTests.RunTests
          * 4. NoRecompute setting changes
          * 
          */
-        [TestCase("ST_TempA", "SampleSizePct=90", "Update Statistics", "SampleSize", TestName = "Changing sample Size", Ignore ="Test fails on CI")]
-        [TestCase("ST_TempA", "IsIncremental = 1", "Update Statistics", "Incremental", TestName = "Changing isIncremental")]
-        [TestCase("ST_TempA", "IsFiltered = 1, FilterPredicate = 'TempAId <> 0'", "DropRecreate Statistics", "Filter", TestName = "Changing filter")]
-        [TestCase("ST_TempA", "NoRecompute = 1", "Update Statistics", "NoRecompute", TestName ="Changing isNoRecompute")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 90", "Update Statistics", "SampleSize", TestName = "Changing sample Size", Ignore ="Test fails on CI")]
+        [TestCase("ST_TempA", "IsIncremental_Desired = 1", "Update Statistics", "Incremental", TestName = "Changing isIncremental")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0'", "DropRecreate Statistics", "Filter", TestName = "Changing filter")]
+        [TestCase("ST_TempA", "NoRecompute_Desired = 1", "Update Statistics", "NoRecompute", TestName ="Changing isNoRecompute")]
 
         //2 settings:
-        [TestCase("ST_TempA", "SampleSizePct=90, IsIncremental = 1", "Update Statistics", "Incremental, SampleSize", TestName = "Changing sample size and isIncremental", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "SampleSizePct=90, IsFiltered = 1, FilterPredicate = 'TempAId <> 0'", "DropRecreate Statistics", "Filter, SampleSize", TestName = "Changing sample size and filter", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "SampleSizePct=90, NoRecompute = 1", "Update Statistics", "NoRecompute, SampleSize", TestName = "Changing sample size and isNoRecompute", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "IsFiltered = 1, FilterPredicate = 'TempAId <> 0', IsIncremental = 1", "DropRecreate Statistics", "Filter, Incremental", TestName = "Changing isIncremental and filter")]
-        [TestCase("ST_TempA", "IsIncremental = 1, NoRecompute = 1", "Update Statistics", "Incremental, NoRecompute", TestName = "Changing isIncremental and isNoRecompute")]
-        [TestCase("ST_TempA", "IsFiltered = 1, FilterPredicate = 'TempAId <> 0', NoRecompute = 1", "DropRecreate Statistics", "Filter, NoRecompute", TestName = "Changing filter and isNoRecompute")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, IsIncremental_Desired = 1", "Update Statistics", "Incremental, SampleSize", TestName = "Changing sample size and isIncremental", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0'", "DropRecreate Statistics", "Filter, SampleSize", TestName = "Changing sample size and filter", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, NoRecompute_Desired = 1", "Update Statistics", "NoRecompute, SampleSize", TestName = "Changing sample size and isNoRecompute", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1", "DropRecreate Statistics", "Filter, Incremental", TestName = "Changing isIncremental and filter")]
+        [TestCase("ST_TempA", "IsIncremental_Desired = 1, NoRecompute_Desired = 1", "Update Statistics", "Incremental, NoRecompute", TestName = "Changing isIncremental and isNoRecompute")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', NoRecompute_Desired = 1", "DropRecreate Statistics", "Filter, NoRecompute", TestName = "Changing filter and isNoRecompute")]
 
         //3 settings
-        [TestCase("ST_TempA", "IsFiltered = 1, FilterPredicate = 'TempAId <> 0', IsIncremental = 1, SampleSizePct=90", "DropRecreate Statistics", "Filter, Incremental, SampleSize", TestName ="Changing sample size, isIncremental, and filter", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "IsIncremental = 1, NoRecompute = 1, SampleSizePct=90", "Update Statistics", "Incremental, NoRecompute, SampleSize", TestName ="Changing sample size, isIncremental, and isNoRecompute", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "IsFiltered = 1, FilterPredicate = 'TempAId <> 0', NoRecompute = 1, SampleSizePct=90", "DropRecreate Statistics", "Filter, NoRecompute, SampleSize", TestName ="Changing sample size, filter, and isNoRecompute", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "IsFiltered = 1, FilterPredicate = 'TempAId <> 0', IsIncremental = 1, NoRecompute=1", "DropRecreate Statistics", "Filter, Incremental, NoRecompute", TestName ="Changing isIncremental, filter, and isNoRecompute")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, Incremental, SampleSize", TestName ="Changing sample size, isIncremental, and filter", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "IsIncremental_Desired = 1, NoRecompute_Desired = 1, SampleSizePct_Desired = 90", "Update Statistics", "Incremental, NoRecompute, SampleSize", TestName ="Changing sample size, isIncremental, and isNoRecompute", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', NoRecompute_Desired = 1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, NoRecompute, SampleSize", TestName ="Changing sample size, filter, and isNoRecompute", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1, NoRecompute_Desired = 1", "DropRecreate Statistics", "Filter, Incremental, NoRecompute", TestName ="Changing isIncremental, filter, and isNoRecompute")]
 
         //4 settings:
-        [TestCase("ST_TempA", "IsFiltered = 1, FilterPredicate = 'TempAId <> 0', IsIncremental = 1, NoRecompute=1, SampleSizePct=90", "DropRecreate Statistics", "Filter, Incremental, NoRecompute, SampleSize", TestName ="Changing all 4 settings", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1, NoRecompute_Desired=1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, Incremental, NoRecompute, SampleSize", TestName ="Changing all 4 settings", Ignore = "Test fails on CI")]
 
         public void StatisticsUpdateStrategyTests(string statisticsName, string optionUpdateList, string expectedUpdateType, string expectedListOfChanges)
         {
-            this.sqlHelper = new TestHelper.SqlHelper();
-
             if (optionUpdateList.Contains("SampleSize"))
             {                
                 var bulkInsertFile = ResourceLoader.GetFullResourceFilePath("dbo.TempA.bcp");
                 //load data and then create stats to get sample size to come down
-                sqlHelper.Execute(
-                    $@"BULK INSERT dbo.TempA FROM '{bulkInsertFile}' WITH (DATAFILETYPE = 'native')");
+                sqlHelper.Execute($@"BULK INSERT dbo.TempA FROM '{bulkInsertFile}' WITH (DATAFILETYPE = 'native')", 30, true, DatabaseName);
 
-                sqlHelper.Execute(
-                    $@"UPDATE STATISTICS dbo.TempA(ST_TempA_TempAId) WITH SAMPLE 20 PERCENT, INCREMENTAL = OFF");
+                sqlHelper.Execute($@"UPDATE STATISTICS dbo.TempA(ST_TempA_TempAId) WITH SAMPLE 20 PERCENT, INCREMENTAL = OFF", 30, true, DatabaseName);
             }
 
             //UpdateTypes do not match
             string actualUpdateType =
                 sqlHelper.ExecuteScalar<string>(
-                    $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
-                            SchemaName
-                        }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
+                    $@" SELECT StatisticsUpdateType 
+                            FROM DOI.vwStatistics 
+                            WHERE DatabaseName = '{DatabaseName}' 
+                                AND SchemaName = '{SchemaName}' 
+                                AND TableName = '{TempTableName}' 
+                                AND StatisticsName = '{StatisticsName}'");
             Assert.AreNotEqual(expectedUpdateType, actualUpdateType);
 
             //change metadata
             sqlHelper.Execute(
-                $@"UPDATE DOI.[Statistics] SET {optionUpdateList} WHERE StatisticsName = '{StatisticsName}'");
+                $@" UPDATE DOI.[Statistics] 
+                        SET {optionUpdateList} 
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND StatisticsName = '{StatisticsName}'");
+
+            //refresh metadata
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysStatsSql);
 
             //UpdateTypes now match
             actualUpdateType =
                 sqlHelper.ExecuteScalar<string>(
-                    $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
-                            SchemaName
-                        }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
+                    $@" SELECT StatisticsUpdateType 
+                            FROM DOI.vwStatistics 
+                            WHERE DatabaseName = '{DatabaseName}' 
+                                AND SchemaName = '{SchemaName}' 
+                                AND TableName = '{TempTableName}' 
+                                AND StatisticsName = '{StatisticsName}'");
 
             Assert.AreEqual(expectedUpdateType, actualUpdateType);
         }
 
         [Test]
         //[Quarantine("ULTI-388423: Flaky in CI.")]
-        [TestCase("ST_TempA_TempAId", "Droprecreate Statistics", true, TestName = "DropRecreate")]
-        [TestCase("ST_TempA_TempAId", "Create Statistics", true, TestName = "Create")]
-        [TestCase("ST_TempA_TempAId", "Update Statistics", true, TestName = "Update")]
-        [TestCase("ST_TempA_TempAId", "Update Statistics", false, TestName = "Not ReadyToQueue")]
-        public void StatisticsRunTests(string statisticsName, string statisticsUpdateType, bool readyToQueue)
+        [TestCase("DropRecreate Statistics", true, TestName = "DropRecreate")]
+        [TestCase("Create Statistics", true, TestName = "Create")]
+        [TestCase("Update Statistics", true, TestName = "Update")]
+        [TestCase("Update Statistics", false, TestName = "Not ReadyToQueue")]
+        public void StatisticsRunTests(string statisticsUpdateType, bool readyToQueue)
         {
             //create missing & update existing stats
             /*
@@ -124,192 +133,132 @@ namespace DOI.Tests.IntegrationTests.RunTests
              * 3. Assert vwStatistics for After State
              * 
              */
-            this.sqlHelper = new TestHelper.SqlHelper();
-            List<Statistics> expectedStatisticsDetails;
-            Statistics expectedStatisticsDetail;
-            List<Statistics> actualStatisticsDetails;
-            Statistics actualStatisticsDetail;
+            List<Statistics> statisticsDetails;
+            string updateSetClause = string.Empty;
+            short isOnlineOperation = 1;
 
-            sqlHelper.Execute(@"
-            INSERT INTO DOI.IndexesRowStore
-            (SchemaName, TableName, IndexName, IsUnique_Desired,IsPrimaryKey_Desired,IsUniqueConstraint_Desired,IsClustered_Desired,KeyColumnList_Desired,IncludedColumnList_Desired,IsFiltered_Desired,FilterPredicate,Fillfactor_Desired,OptionPadIndex_Desired,OptionStatisticsNoRecompute_Desired,OptionStatisticsIncremental_Desired,OptionIgnoreDupKey_Desired,OptionResumable_Desired,OptionMaxDuration_Desired,OptionAllowRowLocks_Desired,OptionAllowPageLocks_Desired,OptionDataCompression_Desired,Storage_Desired,PartitionColumn_Desired)
-            VALUES(N'dbo', N'TempA', N'NIDX_TempA_Report2', 0, 0, 0, 0, N'TransactionUtcDt ASC', NULL, 0, NULL, 90, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, DEFAULT, 'NONE', 'PRIMARY', NULL)");
+            switch (statisticsUpdateType)
+            {
+                case
+                    "DropRecreate Statistics":
+                    isOnlineOperation = 0;
+                    break;
+            }
+
+
 
             string actualUpdateType =
                 sqlHelper.ExecuteScalar<string>(
-                    $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
-                            SchemaName
-                        }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
+                    $@" SELECT StatisticsUpdateType 
+                            FROM DOI.vwStatistics 
+                            WHERE DatabaseName = '{DatabaseName}' 
+                                AND SchemaName = '{SchemaName}' 
+                                AND TableName = '{TempTableName}' 
+                                AND StatisticsName = '{StatisticsName}'");
             Assert.AreNotEqual(statisticsUpdateType, actualUpdateType);
 
             if (statisticsUpdateType == "DropRecreate Statistics")
             {
-                sqlHelper.Execute(
-                    $@"UPDATE DOI.[Statistics] SET IsFiltered = 1, FilterPredicate = 'TempAId <> 0' WHERE StatisticsName = '{
-                            StatisticsName
-                        }'");
-
-                if (readyToQueue == false)
-                {
-                    sqlHelper.Execute(
-                        $@"UPDATE DOI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
-
-                    expectedStatisticsDetails =
-                        new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName); //if the table is not ready to queue, then we expect to see no changes.
-                    expectedStatisticsDetail = expectedStatisticsDetails.Find(e => e.StatisticsName == StatisticsName);
-                }
-                else
-                {
-                    expectedStatisticsDetails =
-                        new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetExpectedStatisticsDetails(StatisticsName);
-
-                    expectedStatisticsDetail = expectedStatisticsDetails.Find(e => e.StatisticsName == StatisticsName);
-                }
-
-                actualUpdateType =
-                    sqlHelper.ExecuteScalar<string>(
-                        $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
-                                SchemaName
-                            }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
-
-                Assert.AreEqual(statisticsUpdateType, actualUpdateType);
-
-                sqlHelper.Execute(
-                    $@" DECLARE @BatchIdOUT UNIQUEIDENTIFIER;
-                        EXEC DOI.spQueue 
-                            @OnlineOperations = 0,
-                            @IsBeingRunDuringADeployment = 1,
-                            @BatchIdOUT = @BatchIdOUT OUTPUT
-
-                        EXEC DOI.spRun
-                            @OnlineOperations = 0,
-                            @SchemaName = N'{SchemaName}',
-                            @TableName = N'{TempTableName}',
-                            @BatchId = @BatchIdOUT");
-
-                //Assert that statistics is there...all values.
-                actualStatisticsDetails =
-                    new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName);
-                actualStatisticsDetail = actualStatisticsDetails.Find(a => a.StatisticsName == StatisticsName);
-
-                AssertStatistics(expectedStatisticsDetail, actualStatisticsDetail);
-            }
-            else if (statisticsUpdateType == "Create Statistics")
-            {
-                sqlHelper.Execute($@"DROP STATISTICS {TempTableName}.{StatisticsName}");
-
-                if (readyToQueue == false)
-                {
-                    sqlHelper.Execute(
-                        $@"UPDATE DOI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
-
-                    expectedStatisticsDetails =
-                        new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName); //if the table is not ready to queue, then we expect to see no changes.
-                    expectedStatisticsDetail = expectedStatisticsDetails.Find(e => e.StatisticsName == StatisticsName);
-                }
-                else
-                {
-                    expectedStatisticsDetails =
-                        new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetExpectedStatisticsDetails(StatisticsName);
-
-                    expectedStatisticsDetail = expectedStatisticsDetails.Find(e => e.StatisticsName == StatisticsName);
-                }
-
-                actualUpdateType =
-                    sqlHelper.ExecuteScalar<string>(
-                        $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
-                                SchemaName
-                            }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
-
-                Assert.AreEqual(statisticsUpdateType, actualUpdateType);
-
-                sqlHelper.Execute(
-                    $@" DECLARE @BatchIdOUT UNIQUEIDENTIFIER;
-                        EXEC DOI.spQueue 
-                            @OnlineOperations = 1,
-                            @IsBeingRunDuringADeployment = 0,
-                            @BatchIdOUT = @BatchIdOUT OUTPUT
-
-                        EXEC DOI.spRun
-                            @OnlineOperations = 1,
-                            @SchemaName = N'{SchemaName}',
-                            @TableName = N'{TempTableName}',
-                            @BatchId = @BatchIdOUT");
-
-                //Assert that statistics is there...all values.
-                actualStatisticsDetails =
-                    new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName);
-                actualStatisticsDetail = actualStatisticsDetails.Find(a => a.StatisticsName == StatisticsName);
-
-                AssertStatistics(expectedStatisticsDetail, actualStatisticsDetail);
+                updateSetClause = $"IsFiltered_Desired = 1, FilterPredicate_Desired = '([TempAId]<>''00000000-0000-0000-0000-000000000000'')'";
             }
             else if (statisticsUpdateType == "Update Statistics")
             {
+                updateSetClause = "NoRecompute_Desired = 1";
+            }
+            else if (statisticsUpdateType == "Create Statistics")
+            {
+                sqlHelper.Execute($@"DROP STATISTICS {TempTableName}.{StatisticsName}", 30, true, DatabaseName);
+            }
+
+
+            if (updateSetClause != string.Empty)
+            {
                 sqlHelper.Execute(
-                    $@"UPDATE DOI.[Statistics] SET NoRecompute = 1 WHERE StatisticsName = '{
-                            StatisticsName
-                        }'");
+                    $@" UPDATE DOI.[Statistics] 
+                            SET {updateSetClause}
+                            WHERE DatabaseName = '{DatabaseName}'
+                                AND SchemaName = '{SchemaName}' 
+                                AND TableName = '{TempTableName}' 
+                                AND StatisticsName = '{StatisticsName}'");
+            }
 
-                if (readyToQueue == false)
-                {
-                    sqlHelper.Execute(
-                        $@"UPDATE DOI.[Statistics] SET ReadyToQueue = 0 WHERE StatisticsName = '{StatisticsName}'");
-
-                    expectedStatisticsDetails =
-                        new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName); //if the table is not ready to queue, then we expect to see no changes.
-                    expectedStatisticsDetail = expectedStatisticsDetails.Find(e => e.StatisticsName == StatisticsName);
-                }
-                else
-                {
-                    expectedStatisticsDetails =
-                        new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetExpectedStatisticsDetails(StatisticsName);
-
-                    expectedStatisticsDetail = expectedStatisticsDetails.Find(e => e.StatisticsName == StatisticsName);
-                }
-
-                actualUpdateType =
-                    sqlHelper.ExecuteScalar<string>(
-                        $@"SELECT StatisticsUpdateType FROM DOI.vwStatistics WHERE SchemaName = '{
-                                SchemaName
-                            }' AND TableName = '{TempTableName}' AND StatisticsName = '{StatisticsName}'");
-
-                Assert.AreEqual(statisticsUpdateType, actualUpdateType);
-
+            if (readyToQueue == false)
+            {
                 sqlHelper.Execute(
-                    $@" DECLARE @BatchIdOUT UNIQUEIDENTIFIER;
+                    $@"UPDATE DOI.[Statistics] 
+                            SET ReadyToQueue = 0 
+                            WHERE DatabaseName = '{DatabaseName}' 
+                                AND SchemaName = '{SchemaName}' 
+                                AND TableName = '{TempTableName}' 
+                                AND StatisticsName = '{StatisticsName}'");
+            }
+
+            //refresh metadata
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysStatsSql);
+
+            //assert that UpdateTypes are equal now.
+            actualUpdateType =
+                sqlHelper.ExecuteScalar<string>(
+                    $@"SELECT StatisticsUpdateType 
+                            FROM DOI.vwStatistics 
+                            WHERE DatabaseName = '{DatabaseName}' 
+                                AND SchemaName = '{SchemaName}' 
+                                AND TableName = '{TempTableName}' 
+                                AND StatisticsName = '{StatisticsName}'");
+
+            Assert.AreEqual(statisticsUpdateType, actualUpdateType);
+            
+            //deploy the change
+            sqlHelper.Execute(
+                $@" DECLARE @BatchIdOUT UNIQUEIDENTIFIER;
                         EXEC DOI.spQueue 
-                            @OnlineOperations = 1,
+                            @DatabaseName = N'{DatabaseName}',                            
+                            @SchemaName = N'{SchemaName}',
+                            @TableName = N'{TempTableName}',
+                            @OnlineOperations = {isOnlineOperation},
                             @IsBeingRunDuringADeployment = 0,
                             @BatchIdOUT = @BatchIdOUT OUTPUT
 
                         EXEC DOI.spRun
-                            @OnlineOperations = 1,
+                            @OnlineOperations = {isOnlineOperation},
+                            @DatabaseName = N'{DatabaseName}',
                             @SchemaName = N'{SchemaName}',
                             @TableName = N'{TempTableName}',
                             @BatchId = @BatchIdOUT");
 
-                //Assert that statistics is there...all values.
-                actualStatisticsDetails =
-                    new DataDrivenIndexTestHelper(new TestHelper.SqlHelper()).GetActualStatisticsDetails(StatisticsName);
-                actualStatisticsDetail = actualStatisticsDetails.Find(a => a.StatisticsName == StatisticsName);
+            //refresh metadata
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysStatsSql);
 
-                AssertStatistics(expectedStatisticsDetail, actualStatisticsDetail);
-            }
+            //Assert that statistics is there...all values.
+            statisticsDetails = sqlHelper.GetList<Statistics>($"SELECT * FROM DOI.[Statistics] WHERE StatisticsName = '{StatisticsName}'");
+
+            //AssertStatistics(expectedStatisticsDetail, actualStatisticsDetail);
+            AssertStatistics(statisticsDetails, readyToQueue);
         }
 
-        public void AssertStatistics(Statistics expectedStatisticsDetail, Statistics actualStatisticsDetail)
+        public void AssertStatistics(List<Statistics> statisticsDetails, bool readyToQueue)
         {
-            Assert.NotNull(actualStatisticsDetail, "actualStatisticsDetail");
+            var statisticsDetail = statisticsDetails.Find(x => x.StatisticsName == StatisticsName);
 
-            Assert.AreEqual(expectedStatisticsDetail.SchemaName, actualStatisticsDetail.SchemaName, "Stat SchemaName");
-            Assert.AreEqual(expectedStatisticsDetail.TableName, actualStatisticsDetail.TableName, "Stat TableName");
-            Assert.AreEqual(expectedStatisticsDetail.StatisticsName, actualStatisticsDetail.StatisticsName, "Stat StatisticsName");
-            Assert.AreEqual(expectedStatisticsDetail.StatisticsColumnList_Desired, actualStatisticsDetail.StatisticsColumnList_Actual, "Stat StatisticsColumnList");
-            Assert.AreEqual(expectedStatisticsDetail.SampleSizePct_Desired, actualStatisticsDetail.SampleSizePct_Actual, "Stat SampleSizePct");
-            Assert.AreEqual(expectedStatisticsDetail.IsFiltered_Desired, actualStatisticsDetail.IsFiltered_Actual, "Stat IsFiltered");
-            Assert.AreEqual(expectedStatisticsDetail.FilterPredicate_Desired, actualStatisticsDetail.FilterPredicate_Actual, "Stat FilterPredicate");
-            Assert.AreEqual(expectedStatisticsDetail.IsIncremental_Desired, actualStatisticsDetail.IsIncremental_Actual, "Stat IsIncremental");
-            Assert.AreEqual(expectedStatisticsDetail.NoRecompute_Desired, actualStatisticsDetail.NoRecompute_Actual, "Stat NoRecompute");
+            Assert.NotNull(statisticsDetail, "StatisticsDetail");
+
+            Assert.AreEqual(statisticsDetail.StatisticsColumnList_Desired, statisticsDetail.StatisticsColumnList_Actual, "Stat StatisticsColumnList");
+            Assert.AreEqual(statisticsDetail.SampleSizePct_Desired, statisticsDetail.SampleSizePct_Actual, "Stat SampleSizePct");
+            Assert.AreEqual(statisticsDetail.IsFiltered_Desired, statisticsDetail.IsFiltered_Actual, "Stat IsFiltered");
+            Assert.AreEqual(statisticsDetail.FilterPredicate_Desired, statisticsDetail.FilterPredicate_Actual, "Stat FilterPredicate");
+            Assert.AreEqual(statisticsDetail.IsIncremental_Desired, statisticsDetail.IsIncremental_Actual, "Stat IsIncremental");
+
+            if (readyToQueue)
+            {
+
+                Assert.AreEqual(statisticsDetail.NoRecompute_Desired, statisticsDetail.NoRecompute_Actual, "Stat NoRecompute");
+            }
+            else
+            {
+                Assert.AreNotEqual(statisticsDetail.NoRecompute_Desired, statisticsDetail.NoRecompute_Actual, "Stat NoRecompute");
+            }
         }
     }
 }

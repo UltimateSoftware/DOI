@@ -373,10 +373,10 @@ namespace DOI.Tests.TestHelpers
             return retVal;
         }
 
-        public List<T> GetList<T>(string sql, int commandTimeOut = 30)
+        public List<T> GetList<T>(string sql, int commandTimeOut = 30, string databaseName = "DOI")
         {
             var results = new List<T>();
-            using (var connection = new SqlConnection(this.GetConnectionString()))
+            using (var connection = new SqlConnection(this.GetConnectionString(databaseName)))
             {
                 using (var command = new SqlCommand(sql, connection)
                 {

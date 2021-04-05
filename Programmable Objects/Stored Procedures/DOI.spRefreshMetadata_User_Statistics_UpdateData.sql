@@ -63,11 +63,11 @@ WHERE St.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN St.DatabaseName ELS
 UPDATE St
 SET StatisticsUpdateType = 
         CASE 
-            WHEN IsStatisticsMissing = 1
+            WHEN St.IsStatisticsMissingFromSQLServer = 1
             THEN 'Create Statistics'
-            WHEN (IsStatisticsMissing = 0 AND HasFilterChanged = 1)
+            WHEN (IsStatisticsMissingFromSQLServer = 0 AND HasFilterChanged = 1)
             THEN 'DropRecreate Statistics'
-            WHEN (IsStatisticsMissing = 0
+            WHEN (IsStatisticsMissingFromSQLServer = 0
                     AND HasFilterChanged = 0
                     AND (DoesSampleSizeNeedUpdate = 1 
                             OR HasIncrementalChanged = 1
@@ -80,7 +80,7 @@ SET StatisticsUpdateType =
 				+ CASE WHEN HasNoRecomputeChanged	= 1 THEN ', NoRecompute'	ELSE '' END
 				+ CASE WHEN DoesSampleSizeNeedUpdate	= 1 THEN ', SampleSize'		ELSE '' END, 1, 2, SPACE(0)),
     IsOnlineOperation = CASE 
-                            WHEN (IsStatisticsMissing = 0 AND HasFilterChanged = 1)
+                            WHEN (IsStatisticsMissingFromSQLServer = 0 AND HasFilterChanged = 1)
                             THEN 0
                             ELSE 1
                         END

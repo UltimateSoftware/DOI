@@ -283,50 +283,6 @@ namespace DOI.Tests.TestHelpers
                     AND UT.ReadyToQueue =1");
         }
 
-        public List<Statistics> GetActualStatisticsDetails(string statisticsName)
-        {
-            return this.sqlHelper.GetList<Statistics>($@"
-                USE {DatabaseName}
-                SELECT  s.name AS SchemaName, 
-                        t.name AS TableName, 
-                        st.name AS StatisticsName, 
-                        STUFF(StatsColumn.ColumnList, LEN(StatsColumn.ColumnList), 1, SPACE(0)) AS StatisticsColumnList, 
-                        CAST((((sp.rows_sampled * 1.00)/sp.rows) * 100) AS DECIMAL(5,2)) AS SampleSizePct,
-                        CASE WHEN st.filter_definition IS NULL THEN 0 ELSE 1 END AS IsFiltered, 
-                        st.filter_definition AS FilterPredicate,
-                        st.is_incremental AS IsIncremental,
-                        st.no_recompute AS NoRecompute 
-                FROM sys.stats st
-                    INNER JOIN sys.tables t ON t.object_id = st.object_id
-                    INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
-                    CROSS APPLY sys.dm_db_stats_properties(st.object_id, st.stats_id) sp
-                    CROSS APPLY (   SELECT c.name + ','
-                                    FROM SYS.stats_columns sc 
-                                        INNER JOIN sys.columns c ON c.object_id = sc.object_id
-                                            AND c.column_id = sc.column_id
-                                    WHERE sc.object_id = st.object_id 
-                                        AND sc.stats_id = st.stats_id
-                                    FOR XML PATH('')) StatsColumn(ColumnList)
-                WHERE st.name = '{statisticsName}'");
-        }
-
-        public List<Statistics> GetExpectedStatisticsDetails(string statisticsName)
-        {
-            return this.sqlHelper.GetList<Statistics>($@"
-                SELECT  st.SchemaName, 
-                        st.TableName, 
-                        st.StatisticsName, 
-                        st.StatisticsColumnList, 
-                        st.SampleSizePct,
-                        st.IsFiltered, 
-                        st.FilterPredicate,
-                        st.IsIncremental,
-                        st.NoRecompute 
-                FROM DOI.DOI.[Statistics] st
-                WHERE DatabaseName = '{DatabaseName}'
-                    AND st.StatisticsName = '{statisticsName}'");
-        }
-
         public List<ForeignKeys> GetForeignKeys(string parentTableName)
         {
             return this.sqlHelper.GetList<ForeignKeys>($"select * FROM DOI.DOI.ForeignKeys WHERE DatabaseName = '{DatabaseName}' AND ReferencedTableName = '{parentTableName}'");

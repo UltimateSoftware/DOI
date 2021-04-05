@@ -12,24 +12,22 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
     [Category("ReportingIntegration")]
     [Category("ExcludePreflight")]
     [Category("DataDrivenIndex")]
-    public class LowFragmentationTests
+    public class LowFragmentationTests : DOIBaseTest
     {
         protected const string TempTableName = "TempA";
         protected const int MinimumFragmentation = 5;
         protected const int MaximumFragmentation = 30;
-        protected const int MinimumIndexPages = 5; private SqlHelper sqlHelper;
-        protected DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
-        protected TempARepository tempARepository;
+        protected const int MinimumIndexPages = 5;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             this.sqlHelper = new SqlHelper();
             this.OneTimeTearDown();
-            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120);
+            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_Setup.sql")), 120, true, DatabaseName);
             this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
             this.tempARepository = new TempARepository(this.sqlHelper);
-            this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = {MinimumIndexPages} WHERE SettingName = 'MinNumPagesForIndexDefrag'");
+            this.sqlHelper.Execute($"UPDATE DOI.DOISettings SET SettingValue = {MinimumIndexPages} WHERE SettingName = 'MinNumPagesForIndexDefrag' AND DatabaseName = '{DatabaseName}'");
 
             this.dataDrivenIndexTestHelper.CreateIndex("NIDX_TempA_Report");
             var watch = Stopwatch.StartNew();
@@ -55,14 +53,14 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
-            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings");
+            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120, true, DatabaseName);
+            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings @DatabaseName = '{DatabaseName}'");
         }
 
         [SetUp]
         public void SetupFragmentation()
         {
-            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("FragmentationTests_Setup.sql")), 120);
+            this.sqlHelper.Execute(string.Format(ResourceLoader.Load("FragmentationTests_Setup.sql")), 120, true, DatabaseName);
         }
 
         [TestCase(null, null, "AlterReorganize", TestName = "LowFragmentation no changes to index")]
@@ -82,7 +80,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
             // Update property
             if (!string.IsNullOrEmpty(propertyName))
             {
-                this.sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
+                this.sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
                 indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.Fragmentation >= MinimumFragmentation && i.NumPages_Actual > MinimumIndexPages && i.IndexName == indexName);
             }
 

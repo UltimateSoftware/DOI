@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 
 namespace DOI.Tests.TestHelpers
 {
-    public class TempARepository
+    public class TempARepository : SystemMetadataHelper
     {
-        private SqlHelper sqlHelper;
-
         public TempARepository(SqlHelper sqlHelper)
         {
             this.sqlHelper = sqlHelper;
@@ -23,7 +22,7 @@ namespace DOI.Tests.TestHelpers
                 sqlBuilder.Append((i == 0 ? string.Empty : ", ") + $"('{row.TempAid.ToString()}','{row.TransactionUtcDt.ToString("yyyy-MM-dd HH:mm:ss")}')\n");
             }
 
-            this.sqlHelper.Execute(sqlBuilder.ToString());
+            this.sqlHelper.Execute(sqlBuilder.ToString(), 30, true, DatabaseName);
         }
     }
 }
