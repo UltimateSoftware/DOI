@@ -69,23 +69,23 @@ namespace DOI.Tests.IntegrationTests.Models
         public bool AreRebuildOnlyOptionsChanging   { get; set; }
         public bool AreReorgOptionsChanging { get; set; }
         public bool AreSetOptionsChanging   { get; set; }
-        public int IsUniquenessChanging    { get; set; }
-        public int IsPrimaryKeyChanging { get; set; }
+        public bool IsUniquenessChanging    { get; set; }
+        public bool IsPrimaryKeyChanging { get; set; }
         public bool IsKeyColumnListChanging { get; set; }
-        public int IsIncludedColumnListChanging { get; set; }
+        public bool IsIncludedColumnListChanging { get; set; }
         public bool IsFilterChanging    { get; set; }
         public bool IsClusteredChanging { get; set; }
         public bool IsPartitioningChanging  { get; set; }
-        public int IsPadIndexChanging { get; set; }
-        public int IsFillfactorChanging { get; set; }
-        public int IsIgnoreDupKeyChanging { get; set; }
-        public int IsStatisticsNoRecomputeChanging { get; set; }
-        public int IsStatisticsIncrementalChanging { get; set; }
-        public int IsAllowRowLocksChanging { get; set; }
-        public int IsAllowPageLocksChanging { get; set; }
+        public bool IsPadIndexChanging { get; set; }
+        public bool IsFillfactorChanging { get; set; }
+        public bool IsIgnoreDupKeyChanging { get; set; }
+        public bool IsStatisticsNoRecomputeChanging { get; set; }
+        public bool IsStatisticsIncrementalChanging { get; set; }
+        public bool IsAllowRowLocksChanging { get; set; }
+        public bool IsAllowPageLocksChanging { get; set; }
         public bool IsDataCompressionChanging   { get; set; }
-        public int IsDataCompressionDelayChanging { get; set; }
-        public int IndexHasLOBColumns { get; set; }
+        public bool IsDataCompressionDelayChanging { get; set; }
+        public bool IndexHasLOBColumns { get; set; }
         public int NumPages_Actual { get; set; }
         public string IndexType   { get; set; }
         public bool IsIndexLarge    { get; set; }
