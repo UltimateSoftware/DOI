@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[spRefreshStorageContainers_PartitionFunctions]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshStorageContainers_PartitionFunctions];
 
@@ -43,7 +41,7 @@ BEGIN TRY
 	                                    WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END 
                                         FOR XML PATH, TYPE).value('.', 'varchar(max)')
 
-	SET @DropPartitionFunctionSQL += (	SELECT CreatePartitionFunctionSQL + CHAR(13) + CHAR(10)
+	SET @DropPartitionFunctionSQL += (	SELECT DropPartitionFunctionSQL + CHAR(13) + CHAR(10)
 	                                    FROM DOI.vwPartitionFunctions
 	                                    WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END 
                                         FOR XML PATH, TYPE).value('.', 'varchar(max)')
@@ -51,13 +49,13 @@ BEGIN TRY
 
 	IF @Debug = 1
 	BEGIN
-		PRINT @CreatePartitionFunctionSQL
 		PRINT @DropPartitionFunctionSQL
+		PRINT @CreatePartitionFunctionSQL
 	END
 	ELSE
 	BEGIN
-		EXEC sp_executesql @CreatePartitionFunctionSQL;  
 		EXEC sp_executesql @DropPartitionFunctionSQL;  
+		EXEC sp_executesql @CreatePartitionFunctionSQL;  
 	END
 END TRY
 BEGIN CATCH

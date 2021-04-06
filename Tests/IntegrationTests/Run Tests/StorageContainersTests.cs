@@ -4,10 +4,15 @@ using System.Data.SqlClient;
 using System.Linq;
 using DOI.Tests.Integration.Models;
 using DOI.Tests.TestHelpers;
+using DOI.Tests.TestHelpers.Metadata;
 using DOI.Tests.TestHelpers.Metadata.StorageContainers;
+using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 using FluentAssertions;
 using NUnit.Framework;
 using SmartHub.Hosting.Extensions;
+using FgTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_FileGroupsHelper;
+using DbfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_DBFilesHelper;
+
 
 /*
 using Reporting.Ingestion.Integration.Tests.Database.DataDrivenIndexEngine.Models;
@@ -37,9 +42,6 @@ namespace DOI.Tests.IntegrationTests.RunTests
         private const string PartitionFunctionNameMonthly = "PfMonthlyUnitTest";
         private const string PartitionSchemeNameMonthly = "psMonthlyUnitTest";
         private const string TableTestFuturePartitionFailsDueToLocking = "TestFuturePartitionFailsDueToLocking";
-        private const string DatabaseName = "DOIUnitTests";
-
-        private DataDrivenIndexTestHelper dataDrivenIndexTestHelper;
 
         [SetUp]
         public void Setup()
@@ -58,42 +60,55 @@ namespace DOI.Tests.IntegrationTests.RunTests
         [TearDown]
         public void TearDown()
         {
+            this.sqlHelper = new SqlHelper();
+
+            FgTestHelper fgTestHelper = new FgTestHelper();
+            DbfTestHelper dbfTestHelper = new DbfTestHelper();
+
             this.sqlHelper.Execute($@"
             IF OBJECT_ID('dbo.{TableTestFuturePartitionFailsDueToLocking}', 'U') IS NOT NULL
-            DROP TABLE {TableTestFuturePartitionFailsDueToLocking}");
+            DROP TABLE {TableTestFuturePartitionFailsDueToLocking}", 30, true, DatabaseName);
 
             this.sqlHelper.Execute($@"
             IF EXISTS(SELECT * FROM sys.partition_schemes ps WHERE ps.name = '{PartitionSchemeName}')
-            DROP PARTITION SCHEME {PartitionSchemeName}");
+            DROP PARTITION SCHEME {PartitionSchemeName}", 30, true, DatabaseName);
 
             this.sqlHelper.Execute($@"
             IF EXISTS(SELECT * FROM sys.partition_functions WHERE name = '{PartitionFunctionName}')
-            DROP PARTITION FUNCTION {PartitionFunctionName}");
+            DROP PARTITION FUNCTION {PartitionFunctionName}", 30, true, DatabaseName);
 
             this.sqlHelper.Execute($@"
             DELETE DOI.DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionName}'");
 
             this.sqlHelper.Execute($@"
             IF EXISTS(SELECT * FROM sys.partition_schemes ps WHERE ps.name = '{PartitionSchemeNameNoSlidingWindow}')
-            DROP PARTITION SCHEME {PartitionSchemeNameNoSlidingWindow}");
+            DROP PARTITION SCHEME {PartitionSchemeNameNoSlidingWindow}", 30, true, DatabaseName);
 
             this.sqlHelper.Execute($@"
             IF EXISTS(SELECT * FROM sys.partition_functions WHERE name = '{PartitionFunctionNameNoSlidingWindow}')
-            DROP PARTITION FUNCTION {PartitionFunctionNameNoSlidingWindow}");
+            DROP PARTITION FUNCTION {PartitionFunctionNameNoSlidingWindow}", 30, true, DatabaseName);
 
             this.sqlHelper.Execute($@"
             DELETE DOI.DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
 
-            this.sqlHelper.Execute($@"
-            IF EXISTS(SELECT * FROM sys.partition_schemes ps WHERE ps.name = '{PartitionSchemeNameMonthly}')
-            DROP PARTITION SCHEME {PartitionSchemeNameMonthly}");
+            var dropFilegroupSql = fgTestHelper.GetFilegroupSql(SystemMetadataHelper.PartitionSchemeNameYearly, "Drop");
+            var dropFilesSql = dbfTestHelper.GetDBFilesSql(SystemMetadataHelper.PartitionSchemeNameYearly, "Drop");
 
-            this.sqlHelper.Execute($@"
-            IF EXISTS(SELECT * FROM sys.partition_functions WHERE name = '{PartitionFunctionNameMonthly}')
-            DROP PARTITION FUNCTION {PartitionFunctionNameMonthly}");
+            this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionSchemeMonthlySql, 30, true, DatabaseName);
+            this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionSchemeYearlySql, 30, true, DatabaseName);
+            this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionFunctionMonthlySql, 30, true, DatabaseName);
+            this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionFunctionYearlySql, 30, true, DatabaseName);
+            this.sqlHelper.Execute(SystemMetadataHelper.MetadataDeleteSql);
 
-            this.sqlHelper.Execute($@"
-            DELETE DOI.DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameMonthly}'");
+            if (dropFilesSql != null)
+            {
+                sqlHelper.Execute(dropFilesSql, 30, true, DatabaseName);
+            }
+
+            if (dropFilegroupSql != null)
+            {
+                sqlHelper.Execute(dropFilegroupSql, 30, true, DatabaseName);
+            }
 
             // re-enable job
             this.sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DOI - Refresh Metadata',@enabled = 1");
@@ -208,8 +223,8 @@ namespace DOI.Tests.IntegrationTests.RunTests
             this.sqlHelper.Execute($@"
             DECLARE @DayOfYear INT = (SELECT datename(dy, SYSDATETIME())) - {numToSubtract}
 
-            INSERT INTO DOI.DOI.PartitionFunctions ( PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
-            VALUES ( '{PartitionFunctionName}', 'DATETIME2', 'Yearly', 5, '2016-01-01', 1, @DayOfYear, 0)");
+            INSERT INTO DOI.DOI.PartitionFunctions ( DatabaseName, PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
+            VALUES ( '{DatabaseName}', '{PartitionFunctionName}', 'DATETIME2', 'Yearly', 5, '2016-01-01', 1, @DayOfYear, 0)");
 
             // Act
             this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionFunction(PartitionFunctionName);
@@ -236,18 +251,20 @@ namespace DOI.Tests.IntegrationTests.RunTests
             // Setup future partitions
             if (nextUsedFilegroupAlreadyExists)
             {
-                var setFilegroupToNextUsedSQL = this.sqlHelper.ExecuteScalar<string>($"SELECT TOP 1 SetFilegroupToNextUsedSQL FROM DOI.DOI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}' ORDER BY BoundaryValue ASC");
+                var setFilegroupToNextUsedSQL = this.sqlHelper.ExecuteScalar<string>($"SELECT TOP 1 SetFilegroupToNextUsedSQL FROM DOI.DOI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{SystemMetadataHelper.PartitionFunctionNameYearly}' ORDER BY BoundaryValue ASC");
 
                 // set Filegroup to "NextUsed"
                 this.sqlHelper.Execute(setFilegroupToNextUsedSQL);
 
                 // Assert that there are no missing partitions
-                Assert.IsNull(this.sqlHelper.ExecuteScalar<string>($"SELECT 'True' FROM DOI.DOI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}' AND IsPartitionMissing = 1"));
+                Assert.IsNull(this.sqlHelper.ExecuteScalar<string>($"SELECT 'True' FROM DOI.DOI.vwPartitionFunctionPartitions WHERE PartitionFunctionName = '{SystemMetadataHelper.PartitionFunctionNameYearly}' AND IsPartitionMissing = 1"));
             }
 
             this.sqlHelper.Execute($@"
-            DISABLE TRIGGER DOI.DOI.trUpdPartitionFunctions ON DOI.DOI.PartitionFunctions
-            UPDATE DOI.DOI.PartitionFunctions SET NumOfFutureIntervals = {numOfFutureIntervals} WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
+            --DISABLE TRIGGER DOI.trUpdPartitionFunctions ON DOI.PartitionFunctions
+            UPDATE DOI.DOI.PartitionFunctions SET NumOfFutureIntervals = {numOfFutureIntervals} WHERE PartitionFunctionName = '{SystemMetadataHelper.PartitionFunctionNameYearly}'");
+
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_PartitionFunctionsSql);
 
             // add new expected values
             var futureMaxYear = DateTime.Now.Year + numOfFutureIntervals;
@@ -255,7 +272,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
             {
                 this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
                 {
-                    Name = PartitionFunctionNameNoSlidingWindow,
+                    Name = SystemMetadataHelper.PartitionFunctionNameYearly,
                     Type = "R",
                     BoundaryValueOnRight = true,
                     BoundaryId = boundaryId,
@@ -265,7 +282,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
                 {
                     DestinationFilegroupId = boundaryId + 1,
-                    PartitionSchemeName = PartitionSchemeNameNoSlidingWindow,
+                    PartitionSchemeName = SystemMetadataHelper.PartitionSchemeNameYearly,
                     DataSpaceType = "FG",
                     FilegroupName = $"{DatabaseName}_{boundaryYear}"
                 });
@@ -276,10 +293,10 @@ namespace DOI.Tests.IntegrationTests.RunTests
             while (boundaryYear <= futureMaxYear);
 
             // Act
-            this.dataDrivenIndexTestHelper.ExecuteSPAddFuturePartitions(PartitionFunctionNameNoSlidingWindow);
+            this.dataDrivenIndexTestHelper.ExecuteSPAddFuturePartitions(SystemMetadataHelper.PartitionFunctionNameYearly);
 
             // Assert
-            this.AssertBoundariesAndFileGroups(PartitionFunctionNameNoSlidingWindow);
+            this.AssertBoundariesAndFileGroups(SystemMetadataHelper.PartitionFunctionNameYearly);
         }
 
         [Test]
@@ -302,11 +319,14 @@ namespace DOI.Tests.IntegrationTests.RunTests
 
             this.expectedPartitionSchemeFilegroups = dataDrivenIndexTestHelper.SetupExpectedPartitionSchemeFilegroups(PartitionFunctionNameMonthly);
 
-            this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionFunction(PartitionFunctionNameMonthly);
+            IndexesHelper.CreatePartitioningContainerObjects(PartitionFunctionNameMonthly);
 
-            this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionScheme(PartitionFunctionNameMonthly);
+            //this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionFunction(PartitionFunctionNameMonthly);
+
+            //this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionScheme(PartitionFunctionNameMonthly);
 
             this.AssertBoundariesAndFileGroups(PartitionFunctionNameMonthly);
+
 
             // ADD FUTURE PARTITIONS
             if (nextUsedFilegroupAlreadyExists)

@@ -47,11 +47,11 @@ BEGIN
     DECLARE @RebuildColumnStoreIndexesSQL VARCHAR(MAX) = '',
             @DisableColumnStoreIndexesSQL VARCHAR(MAX) = ''
 
-    SELECT @RebuildColumnStoreIndexesSQL +=  'ALTER INDEX [' + IndexName + '] ON ' + SchemaName + '.' + TableName + ' REBUILD PARTITION = ALL 	WITH (	DATA_COMPRESSION = ' + OptionDataCompression + ');' + CHAR(13) + CHAR(10),
+    SELECT @RebuildColumnStoreIndexesSQL +=  'ALTER INDEX [' + IndexName + '] ON ' + SchemaName + '.' + TableName + ' REBUILD PARTITION = ALL 	WITH (	DATA_COMPRESSION = ' + OptionDataCompression_Desired + ');' + CHAR(13) + CHAR(10),
             @DisableColumnStoreIndexesSQL += 'ALTER INDEX [' + IndexName + '] ON ' + SchemaName + '.' + TableName + ' DISABLE;' + CHAR(13) + CHAR(10)
     FROM DOI.vwIndexes
     WHERE DatabaseName = @DatabaseName
-        AND PartitionColumn IS NOT NULL
+        AND PartitionColumn_Desired IS NOT NULL
         AND IndexType = 'ColumnStore'
 END
 

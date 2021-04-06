@@ -5,17 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using DOI.Tests.TestHelpers;
 using DOI.Tests.Integration.Models;
+using DOI.Tests.IntegrationTests;
+using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 using FluentAssertions;
 using NUnit.Framework;
 
 namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
 {
-    public class StorageContainerHelper
+    public class StorageContainerHelper : DOIBaseTest
     {
         protected List<PartitionFunctionBoundary> expectedPartitionFunctionBoundaries;
         protected List<PartitionSchemeFilegroup> expectedPartitionSchemeFilegroups;
-        protected SqlHelper sqlHelper = new SqlHelper();
-        private DataDrivenIndexTestHelper dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(new SqlHelper());
         private const string PartitionFunctionName = "PfSlidingWindowUnitTest";
         private const string PartitionSchemeName = "psSlidingWindowUnitTest";
         private const string PartitionFunctionNameNoSlidingWindow = "PfNoSlidingWindowUnitTest";
@@ -23,7 +23,6 @@ namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
         private const string PartitionFunctionNameMonthly = "PfMonthlyUnitTest";
         private const string PartitionSchemeNameMonthly = "psMonthlyUnitTest";
         private const string TableTestFuturePartitionFailsDueToLocking = "TestFuturePartitionFailsDueToLocking";
-        private const string DatabaseName = "DOIUnitTests";
 
         protected void AssertBoundariesAndFileGroups(string partitionFunctionName)
         {
@@ -70,9 +69,14 @@ namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
         protected Tuple<int, int> SetupInitialStateForYearlyPartitionsWith1FuturePartition()
         {
             // Arrange (Initial state - Only 1 future interval)
-            this.sqlHelper.Execute($@"
-            INSERT INTO DOI.DOI.PartitionFunctions ( PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
-            VALUES ( '{PartitionFunctionNameNoSlidingWindow}', 'DATETIME2', 'Yearly', 1, '2016-01-01', 0, NULL, 0)");
+            //this.sqlHelper.Execute($@"
+            //INSERT INTO DOI.DOI.PartitionFunctions ( DatabaseName, PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
+            //VALUES ( '{DatabaseName}', '{SystemMetadataHelper.PartitionFunctionNameYearly}', 'DATETIME2', 'Yearly', 1, '2016-01-01', 0, NULL, 0)");
+
+            //sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_PartitionFunctionsSql);
+
+            IndexesHelper.CreatePartitioningContainerObjects(SystemMetadataHelper.PartitionFunctionNameYearly);
+
 
             var boundaryId = 1;
             var boundaryYear = 2016;
@@ -81,7 +85,7 @@ namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
             this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
             {
                 DestinationFilegroupId = 1,
-                PartitionSchemeName = PartitionSchemeNameNoSlidingWindow,
+                PartitionSchemeName = SystemMetadataHelper.PartitionSchemeNameYearly,
                 DataSpaceType = "FG",
                 FilegroupName = $"{DatabaseName}_Historical"
             });
@@ -90,7 +94,7 @@ namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
             {
                 this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
                 {
-                    Name = PartitionFunctionNameNoSlidingWindow,
+                    Name = SystemMetadataHelper.PartitionFunctionNameYearly,
                     Type = "R",
                     BoundaryValueOnRight = true,
                     BoundaryId = boundaryId,
@@ -100,7 +104,7 @@ namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
                 this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
                 {
                     DestinationFilegroupId = boundaryId + 1,
-                    PartitionSchemeName = PartitionSchemeNameNoSlidingWindow,
+                    PartitionSchemeName = SystemMetadataHelper.PartitionSchemeNameYearly,
                     DataSpaceType = "FG",
                     FilegroupName = $"{DatabaseName}_{boundaryYear}"
                 });
@@ -111,11 +115,11 @@ namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
             while (boundaryYear <= initialFutureMaxYear);
 
             // Act
-            this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionFunction(PartitionFunctionNameNoSlidingWindow);
-            this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionScheme(PartitionFunctionNameNoSlidingWindow);
+            //this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionFunction(SystemMetadataHelper.PartitionFunctionNameYearly);
+            //this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionScheme(SystemMetadataHelper.PartitionFunctionNameYearly);
 
             // Assert
-            this.AssertBoundariesAndFileGroups(PartitionFunctionNameNoSlidingWindow);
+            this.AssertBoundariesAndFileGroups(SystemMetadataHelper.PartitionFunctionNameYearly);
 
             return new Tuple<int, int>(boundaryId, boundaryYear);
         }

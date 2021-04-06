@@ -20,21 +20,34 @@ AS
 	EXEC DOI.spRefreshStorageContainers_PartitionSchemes
 		@Debug = 1
 */
+BEGIN TRY
+	DECLARE @CreatePartitionSchemeSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10),
+			@DropPartitionSchemeSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
 
-DECLARE @CreatePartitionSchemeSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10)
 
-SELECT @CreatePartitionSchemeSQL += CreatePartitionSchemeSQL + CHAR(13) + CHAR(10)
-FROM DOI.vwPartitionSchemes
-WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NULL THEN PartitionFunctionName ELSE @PartitionFunctionName END
+		SET @CreatePartitionSchemeSQL += (	SELECT CreatePartitionSchemeSQL + CHAR(13) + CHAR(10)
+											FROM DOI.vwPartitionSchemes
+											WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END 
+											FOR XML PATH, TYPE).value('.', 'varchar(max)')
 
-IF @Debug = 1
-BEGIN
-	PRINT @CreatePartitionSchemeSQL
-END
-ELSE
-BEGIN
-	EXEC sp_executesql @CreatePartitionSchemeSQL;  
-END
+		SET @DropPartitionSchemeSQL += (	SELECT DropPartitionSchemeSQL + CHAR(13) + CHAR(10)
+											FROM DOI.vwPartitionSchemes
+											WHERE PartitionFunctionName = CASE WHEN @PartitionFunctionName IS NOT NULL THEN @PartitionFunctionName ELSE PartitionFunctionName END 
+											FOR XML PATH, TYPE).value('.', 'varchar(max)')
 
+	IF @Debug = 1
+	BEGIN
+		PRINT @DropPartitionSchemeSQL
+		PRINT @CreatePartitionSchemeSQL
+	END
+	ELSE
+	BEGIN
+		EXEC sp_executesql @DropPartitionSchemeSQL;
+		EXEC sp_executesql @CreatePartitionSchemeSQL;  
+	END
+END TRY
+BEGIN CATCH
+	THROW;
+END CATCH
 
 GO

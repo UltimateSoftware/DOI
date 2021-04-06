@@ -81,8 +81,7 @@ namespace DOI.Tests.TestHelpers
                                         @DatabaseName = '{DatabaseName}',
                                         @PartitionFunctionName = '{partitionFunctionName}'");
 
-            this.sqlHelper.Execute(@"EXEC DOI.DOI.spRefreshMetadata_System_PartitionFunctionsAndSchemes");
-            this.sqlHelper.Execute($@"EXEC DOI.DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
+            this.sqlHelper.Execute(FKTestHelper.RefreshMetadata_PartitionFunctionsSql);
         }
 
         public void ExecuteSPCreateNewPartitionScheme(string partitionFunctionName)
@@ -234,7 +233,7 @@ namespace DOI.Tests.TestHelpers
 
         public void ExecuteSPAddFuturePartitions(string partitionFunctionName, int commandTimeoutSec = 30)
         {
-            var sql = $@"EXEC DOI.DOI.[spRefreshStorageContainers_AddNewPartition] 
+            var sql = $@"EXEC DOI.DOI.spRefreshStorageContainers_AddNewPartition
                             @DatabaseName = '{DatabaseName}',
                             @PartitionFunctionName = '{partitionFunctionName}'";
 

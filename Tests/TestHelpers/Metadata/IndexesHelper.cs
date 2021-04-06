@@ -815,6 +815,8 @@ namespace DOI.Tests.TestHelpers.Metadata
             sqlHelper.Execute(psTestHelper.GetPartitionSchemeSql(partitionSchemeName, "Create"), 30, true,
                 DatabaseName);
 
+            fgTestHelper.
+
             sqlHelper.Execute(RefreshMetadata_SysPartitionSchemesSql);
         }
 
