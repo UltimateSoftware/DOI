@@ -309,7 +309,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
             INSERT INTO DOI.DOI.PartitionFunctions ( DatabaseName, PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
             VALUES ( '{DatabaseName}', '{PartitionFunctionNameMonthly}', 'DATETIME2', 'Monthly', 13, '2018-01-01', 0, NULL, 0)");
 
-            this.sqlHelper.Execute($@"EXEC DOI.DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
+            this.sqlHelper.Execute($@"EXEC DOI.DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'");
 
             this.expectedPartitionFunctionBoundaries = new List<PartitionFunctionBoundary>();
 
@@ -356,11 +356,11 @@ namespace DOI.Tests.IntegrationTests.RunTests
             WHERE DatabaseName = '{DatabaseName}'
                 AND PartitionFunctionName = '{PartitionFunctionNameMonthly}'");
 
-            this.sqlHelper.Execute(@"EXEC DOI.DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData");
-            this.sqlHelper.Execute(@"EXEC DOI.DOI.spRefreshMetadata_System_SysPartitionFunctions");
+            this.sqlHelper.Execute($@"EXEC DOI.DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute(@"EXEC DOI.DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'");
 
             dataDrivenIndexTestHelper.ExecuteSPAddFuturePartitions(PartitionFunctionNameMonthly);
-            this.sqlHelper.Execute(@"EXEC DOI.DOI.spRefreshMetadata_System_PartitionFunctions");
+            this.sqlHelper.Execute(@"EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'");
 
             //add new expected value
             var maxBoundaryId = this.expectedPartitionFunctionBoundaries.Max(x => x.BoundaryId);

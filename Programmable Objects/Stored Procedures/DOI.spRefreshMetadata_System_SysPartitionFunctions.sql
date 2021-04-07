@@ -17,7 +17,7 @@ AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysPartitionFunctions]
-        @DatabaseId = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 DELETE PF
