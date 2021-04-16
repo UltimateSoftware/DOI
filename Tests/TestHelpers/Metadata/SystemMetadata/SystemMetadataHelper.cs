@@ -32,7 +32,10 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         public static string DropFilegroup2Sql = $@"IF EXISTS(SELECT * FROM {DatabaseName}.sys.filegroups WHERE name = '{Filegroup2Name}') ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {Filegroup2Name};";
         
         public static string RefreshMetadata_SysFilegroupsSql = $@"
+            EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysAllocationUnits @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysMasterFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
@@ -341,6 +344,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'    
             EXEC DOI.[spRefreshMetadata_User_PartitionFunctions_UpdateData] @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = '{DatabaseName}'
+            EXEC DOI.spRefreshMetadata_System_SysTypes @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
             EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'

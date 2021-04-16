@@ -12,7 +12,7 @@ GO
 
 
 CREATE   PROCEDURE [DOI].[spForeignKeysAdd]
-    @DatabaseName           SYSNAME,
+    @DatabaseName           SYSNAME = NULL,
 	@ReferencedSchemaName	SYSNAME = NULL,
 	@ReferencedTableName	SYSNAME = NULL,
 	@ParentSchemaName		SYSNAME = NULL,
@@ -61,7 +61,7 @@ BEGIN TRY
 	SELECT @AddFKsSQL += CASE WHEN @UseExistenceCheck = 1 THEN CreateFKWithExistenceCheckSQL ELSE CreateFKSQL END + CHAR(13) + CHAR(10)
 	--select *
 	FROM DOI.vwForeignKeys
-	WHERE DatabaseName = @DatabaseName
+	WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END
         AND ParentSchemaName <> 'DOI'
         AND ReferencedSchemaName <> 'DOI'
         AND ReferencedSchemaName = CASE WHEN @ReferencedSchemaName IS NOT NULL THEN @ReferencedSchemaName ELSE ReferencedSchemaName END
@@ -79,7 +79,7 @@ BEGIN TRY
     BEGIN
 	    SELECT @AddFKsSQL += '
     EXEC DOI.DOI.spEnableDisableAllFKs 
-		@DatabaseName = ''' + @DatabaseName + ''',
+		@DatabaseName = ' + CASE WHEN @DatabaseName IS NULL THEN 'NULL' ELSE '''' + @DatabaseName + '''' END + ',
 		@Action = ''DISABLE'''
 
 		SET @AddFKsSQL = @UseDbSQL + @AddFKsSQL

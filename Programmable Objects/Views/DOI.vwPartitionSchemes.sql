@@ -75,7 +75,8 @@ FROM DOI.PartitionFunctions PFM
 										WHERE pf.database_id = ps.database_id
 											AND ps.function_id = pf.function_id
 											AND prv.Value IS NULL) x
-                    WHERE x.PartitionSchemeName = PFM.PartitionSchemeName) AS NUF
+                    WHERE x.PartitionSchemeName = PFM.PartitionSchemeName
+						AND x.dest_rank = 2) AS NUF
     OUTER APPLY (   SELECT prv.function_id, COUNT(prv.boundary_id) AS NumFutureIntervals
                     FROM DOI.SysDestinationDataSpaces AS DDS 
 						INNER JOIN DOI.SysFilegroups AS FG ON FG.data_space_id = DDS.data_space_ID 
@@ -84,8 +85,5 @@ FROM DOI.PartitionFunctions PFM
 					WHERE DDS.partition_scheme_id = ps.data_space_id
                         AND prv.value > GETDATE()
                     GROUP BY PRV.function_id)FI
-
-
-
 
 GO

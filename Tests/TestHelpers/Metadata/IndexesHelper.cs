@@ -810,14 +810,16 @@ namespace DOI.Tests.TestHelpers.Metadata
                             WHERE PartitionFunctionName = '{partitionFunctionName}'");
 
             sqlHelper.Execute(pfTestHelper.GetPartitionFunctionSql(partitionFunctionName, "Create"), 30, true, DatabaseName);
-            sqlHelper.Execute(fgTestHelper.GetFilegroupSql(partitionSchemeName, "Create"), 30, true,
-                DatabaseName);
-            sqlHelper.Execute(psTestHelper.GetPartitionSchemeSql(partitionSchemeName, "Create"), 30, true,
-                DatabaseName);
+            sqlHelper.Execute(RefreshMetadata_PartitionFunctionsSql);
 
-            fgTestHelper.
+            sqlHelper.Execute(fgTestHelper.GetFilegroupSql(partitionSchemeName, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(RefreshMetadata_SysFilegroupsSql);
 
-            sqlHelper.Execute(RefreshMetadata_SysPartitionSchemesSql);
+            sqlHelper.Execute(dbfTestHelper.GetDBFilesSql(partitionSchemeName, "Create"), 30, true, DatabaseName);
+            sqlHelper.Execute(RefreshMetadata_SysDatabaseFilesSql);
+
+            sqlHelper.Execute(psTestHelper.GetPartitionSchemeSql(partitionSchemeName, "Create"), 30, true, DatabaseName);
+            fgTestHelper.sqlHelper.Execute(RefreshMetadata_SysPartitionSchemesSql);
         }
 
         #endregion

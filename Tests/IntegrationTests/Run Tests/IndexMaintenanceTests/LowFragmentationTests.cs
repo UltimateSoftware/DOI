@@ -4,6 +4,7 @@ using DOI.Tests.Integration.Models;
 using DOI.Tests.IntegrationTests.Models;
 using NUnit.Framework;
 using DOI.Tests.TestHelpers;
+using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 
 namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
 {
@@ -36,6 +37,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
             do
             {
                 this.dataDrivenIndexTestHelper.AddRowsToTempA(700);
+                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesPartitionsSql);
 
                 var indexName = "NIDX_TempA_Report";
                 var minimumPageSize = this.sqlHelper.ExecuteScalar<int>("SELECT CAST(SettingValue AS INT) FROM DOI.DOISettings WHERE SettingName = 'MinNumPagesForIndexDefrag'");
@@ -61,14 +63,15 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
         public void SetupFragmentation()
         {
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("FragmentationTests_Setup.sql")), 120, true, DatabaseName);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesPartitionsSql);
         }
 
         [TestCase(null, null, "AlterReorganize", TestName = "LowFragmentation no changes to index")]
-        [TestCase("OptionIgnoreDupKey", "1", "AlterRebuild", TestName = "LowFragmentation changing OptionIgnoreDupKey")]
-        [TestCase("OptionStatisticsNoRecompute", "1", "AlterRebuild", TestName = "LowFragmentation changing OptionStatisticsNoRecompute")]
-        [TestCase("OptionStatisticsIncremental", "1", "AlterRebuild", TestName = "LowFragmentation changing OptionStatisticsIncremental")]
-        [TestCase("OptionAllowRowLocks", "0", "AlterRebuild", TestName = "LowFragmentation changing OptionAllowRowLocks")]
-        [TestCase("OptionAllowPageLocks", "0", "AlterRebuild", TestName = "LowFragmentation changing OptionAllowPageLocks")]
+        [TestCase("OptionIgnoreDupKey_Desired", "1", "AlterRebuild", TestName = "LowFragmentation changing OptionIgnoreDupKey")]
+        [TestCase("OptionStatisticsNoRecompute_Desired", "1", "AlterRebuild", TestName = "LowFragmentation changing OptionStatisticsNoRecompute")]
+        [TestCase("OptionStatisticsIncremental_Desired", "1", "AlterRebuild", TestName = "LowFragmentation changing OptionStatisticsIncremental")]
+        [TestCase("OptionAllowRowLocks_Desired", "0", "AlterRebuild", TestName = "LowFragmentation changing OptionAllowRowLocks")]
+        [TestCase("OptionAllowPageLocks_Desired", "0", "AlterRebuild", TestName = "LowFragmentation changing OptionAllowPageLocks")]
         public void LowFragmentationShouldTriggerAlterIndexReorganizeUnlessSpecificPropertiesAreModified(string propertyName, string propertyValue, string indexUpdateType)
         {
             var indexName = "NIDX_TempA_Report";
@@ -81,6 +84,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
             if (!string.IsNullOrEmpty(propertyName))
             {
                 this.sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
+                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesPartitionsSql);
                 indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.Fragmentation >= MinimumFragmentation && i.NumPages_Actual > MinimumIndexPages && i.IndexName == indexName);
             }
 

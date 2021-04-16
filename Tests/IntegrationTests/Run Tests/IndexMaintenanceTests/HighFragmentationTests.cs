@@ -2,6 +2,7 @@
 using DOI.Tests.Integration.Models;
 using DOI.Tests.IntegrationTests.Models;
 using DOI.Tests.TestHelpers;
+using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 using NUnit.Framework;
 
 namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
@@ -59,6 +60,8 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
             do
             {
                 this.dataDrivenIndexTestHelper.AddRowsToTempA(2000);
+                
+                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesPartitionsSql);
 
                 var indexRows = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName);
 

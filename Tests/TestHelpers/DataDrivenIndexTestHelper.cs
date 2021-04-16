@@ -144,14 +144,14 @@ namespace DOI.Tests.TestHelpers
 
             if (tableName != null)
             {
-                whereStatement = $"WHERE FN.ParentTableName = '{tableName}'";
+                whereStatement = $"WHERE ParentTableName = '{tableName}'";
             }
 
             return this.sqlHelper.GetList<PrepTable>($@"
-               	    SELECT FN.PartitionFunctionValue, COUNT(*)
-                    FROM DOI.DOI.fnDataDrivenIndexes_GetPartitionSQL () FN
+               	    SELECT PartitionFunctionValue, COUNT(*)
+                    FROM DOI.DOI.vwPartitioning_Tables_PrepTables_Partitions
                     {whereStatement}
-                    GROUP BY FN.PartitionFunctionValue
+                    GROUP BY PartitionFunctionValue
                     HAVING COUNT(*) > 1");
         }
 

@@ -10,7 +10,7 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DOI].[spForeignKeysDrop]
-    @DatabaseName           SYSNAME,
+    @DatabaseName           SYSNAME = NULL,
 	@ReferencedSchemaName	SYSNAME = NULL,
 	@ReferencedTableName	SYSNAME = NULL,
 	@ParentSchemaName		SYSNAME = NULL,
@@ -38,7 +38,7 @@ AS
 BEGIN TRY 
 	DECLARE @UseDbSQL NVARCHAR(MAX) = 'USE ' + @DatabaseName + CHAR(13) + CHAR(10),
 			@SQL NVARCHAR(MAX) = ''
-
+			--CHANGE SQL BELOW TO USE DROP STATEMENT FROM TABLE.
 	SELECT @SQL += '
 IF EXISTS(  SELECT ''True''
             FROM ' + @DatabaseName + '.sys.foreign_keys fk 

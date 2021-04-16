@@ -92,7 +92,18 @@ namespace DOI.Tests.IntegrationTests.RunTests
             DELETE DOI.DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
 
             var dropFilegroupSql = fgTestHelper.GetFilegroupSql(SystemMetadataHelper.PartitionSchemeNameYearly, "Drop");
+
+            if (dropFilegroupSql == null)
+            {
+                dropFilegroupSql = fgTestHelper.GetFilegroupSql(SystemMetadataHelper.PartitionSchemeNameMonthly, "Drop");
+            }
+
             var dropFilesSql = dbfTestHelper.GetDBFilesSql(SystemMetadataHelper.PartitionSchemeNameYearly, "Drop");
+
+            if (dropFilesSql == null)
+            {
+                dropFilesSql = dbfTestHelper.GetDBFilesSql(SystemMetadataHelper.PartitionSchemeNameMonthly, "Drop");
+            }
 
             this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionSchemeMonthlySql, 30, true, DatabaseName);
             this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionSchemeYearlySql, 30, true, DatabaseName);
@@ -114,125 +125,124 @@ namespace DOI.Tests.IntegrationTests.RunTests
             this.sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DOI - Refresh Metadata',@enabled = 1");
         }
 
-        [Test]
-        [TestCase(0, TestName = "YearlySlidingWindow_BegOfYear")]
-        [TestCase(1, TestName = "YearlySlidingWindow_EndOfLastYear")]
-        [TestCase(2, TestName = "YearlySlidingWindow_Jan2nd")]
-        //[Quarantine("ULTI-413328: Flaky test in the CI.")]
-        public void PartitionFunctionSlidingWindowDuplicateBoundaryTest(int? numToSubtract)
-        {
-            // SETUP
-            var boundaryYear = 2016;
-            var boundaryId = 1;
-            var currentYear = DateTime.Now.Year;
+        //[TestCase(0, TestName = "YearlySlidingWindow_BegOfYear")]
+        //[TestCase(1, TestName = "YearlySlidingWindow_EndOfLastYear")]
+        //[TestCase(2, TestName = "YearlySlidingWindow_Jan2nd")]
+        ////[Quarantine("Ignore:  not supporting Sliding Windows yet.")]
+        //public void PartitionFunctionSlidingWindowDuplicateBoundaryTest(int? numToSubtract)
+        //{
+        //    // SETUP
+        //    var boundaryYear = 2016;
+        //    var boundaryId = 1;
+        //    var currentYear = DateTime.Now.Year;
 
-            this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
-            {
-                DatabaseName = DatabaseName,
-                DestinationFilegroupId = 1,
-                PartitionSchemeName = PartitionSchemeName,
-                DataSpaceType = "FG",
-                FilegroupName = $"{DatabaseName}_Historical"
-            });
+        //    this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
+        //    {
+        //        DatabaseName = DatabaseName,
+        //        DestinationFilegroupId = 1,
+        //        PartitionSchemeName = PartitionSchemeName,
+        //        DataSpaceType = "FG",
+        //        FilegroupName = $"{DatabaseName}_Historical"
+        //    });
 
-            do
-            {
-                this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
-                {
-                    DatabaseName = DatabaseName,
-                    Name = PartitionFunctionName,
-                    Type = "R",
-                    BoundaryValueOnRight = true,
-                    BoundaryId = boundaryId,
-                    Value = $"{boundaryYear}-01-01".ObjectToDateTime()
-                });
+        //    do
+        //    {
+        //        this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
+        //        {
+        //            DatabaseName = DatabaseName,
+        //            Name = PartitionFunctionName,
+        //            Type = "R",
+        //            BoundaryValueOnRight = true,
+        //            BoundaryId = boundaryId,
+        //            Value = $"{boundaryYear}-01-01".ObjectToDateTime()
+        //        });
 
-                this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
-                {
-                    DatabaseName = DatabaseName,
-                    DestinationFilegroupId = boundaryId + 1,
-                    PartitionSchemeName = PartitionSchemeName,
-                    DataSpaceType = "FG",
-                    FilegroupName = $"{DatabaseName}_{boundaryYear}"
-                });
+        //        this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
+        //        {
+        //            DatabaseName = DatabaseName,
+        //            DestinationFilegroupId = boundaryId + 1,
+        //            PartitionSchemeName = PartitionSchemeName,
+        //            DataSpaceType = "FG",
+        //            FilegroupName = $"{DatabaseName}_{boundaryYear}"
+        //        });
 
-                boundaryId++;
-                boundaryYear++;
-            }
-            while (boundaryYear < currentYear);
+        //        boundaryId++;
+        //        boundaryYear++;
+        //    }
+        //    while (boundaryYear < currentYear);
 
-            // EXPECTED BOUNDARIES AND FILEGROUPS, TEST CASE SPECIFIC
-            switch (numToSubtract)
-            {
-                case 2:
-                    this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
-                    {
-                        DatabaseName = DatabaseName,
-                        Name = PartitionFunctionName,
-                        Type = "R",
-                        BoundaryValueOnRight = true,
-                        BoundaryId = 4,
-                        Value = $"{DateTime.Now.Year}-01-01".ObjectToDateTime()
-                    });
-                    this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
-                    {
-                        DatabaseName = DatabaseName,
-                        Name = PartitionFunctionName,
-                        Type = "R",
-                        BoundaryValueOnRight = true,
-                        BoundaryId = 5,
-                        Value = $"{DateTime.Now.Year}-01-02".ObjectToDateTime()
-                    });
-                    this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
-                    {
-                        DatabaseName = DatabaseName,
-                        DestinationFilegroupId = 5,
-                        PartitionSchemeName = PartitionSchemeName,
-                        DataSpaceType = "FG",
-                        FilegroupName = $"{DatabaseName}_{DateTime.Now.Year}"
-                    });
-                    this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
-                    {
-                        DestinationFilegroupId = 6,
-                        PartitionSchemeName = PartitionSchemeName,
-                        DataSpaceType = "FG",
-                        FilegroupName = $"{DatabaseName}_Active"
-                    });
-                    break;
-                default:
-                    this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
-                    {
-                        DatabaseName = DatabaseName,
-                        Name = PartitionFunctionName,
-                        Type = "R",
-                        BoundaryValueOnRight = true,
-                        BoundaryId = 4,
-                        Value = $"{DateTime.Now.Year - 1}-12-31".ObjectToDateTime()
-                    });
-                    this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
-                    {
-                        DatabaseName = DatabaseName,
-                        DestinationFilegroupId = 5,
-                        PartitionSchemeName = PartitionSchemeName,
-                        DataSpaceType = "FG",
-                        FilegroupName = $"{DatabaseName}_Active"
-                    });
-                    break;
-            }
+        //    // EXPECTED BOUNDARIES AND FILEGROUPS, TEST CASE SPECIFIC
+        //    switch (numToSubtract)
+        //    {
+        //        case 2:
+        //            this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
+        //            {
+        //                DatabaseName = DatabaseName,
+        //                Name = PartitionFunctionName,
+        //                Type = "R",
+        //                BoundaryValueOnRight = true,
+        //                BoundaryId = 4,
+        //                Value = $"{DateTime.Now.Year}-01-01".ObjectToDateTime()
+        //            });
+        //            this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
+        //            {
+        //                DatabaseName = DatabaseName,
+        //                Name = PartitionFunctionName,
+        //                Type = "R",
+        //                BoundaryValueOnRight = true,
+        //                BoundaryId = 5,
+        //                Value = $"{DateTime.Now.Year}-01-02".ObjectToDateTime()
+        //            });
+        //            this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
+        //            {
+        //                DatabaseName = DatabaseName,
+        //                DestinationFilegroupId = 5,
+        //                PartitionSchemeName = PartitionSchemeName,
+        //                DataSpaceType = "FG",
+        //                FilegroupName = $"{DatabaseName}_{DateTime.Now.Year}"
+        //            });
+        //            this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
+        //            {
+        //                DestinationFilegroupId = 6,
+        //                PartitionSchemeName = PartitionSchemeName,
+        //                DataSpaceType = "FG",
+        //                FilegroupName = $"{DatabaseName}_Active"
+        //            });
+        //            break;
+        //        default:
+        //            this.expectedPartitionFunctionBoundaries.Add(new PartitionFunctionBoundary()
+        //            {
+        //                DatabaseName = DatabaseName,
+        //                Name = PartitionFunctionName,
+        //                Type = "R",
+        //                BoundaryValueOnRight = true,
+        //                BoundaryId = 4,
+        //                Value = $"{DateTime.Now.Year - 1}-12-31".ObjectToDateTime()
+        //            });
+        //            this.expectedPartitionSchemeFilegroups.Add(new PartitionSchemeFilegroup()
+        //            {
+        //                DatabaseName = DatabaseName,
+        //                DestinationFilegroupId = 5,
+        //                PartitionSchemeName = PartitionSchemeName,
+        //                DataSpaceType = "FG",
+        //                FilegroupName = $"{DatabaseName}_Active"
+        //            });
+        //            break;
+        //    }
 
-            this.sqlHelper.Execute($@"
-            DECLARE @DayOfYear INT = (SELECT datename(dy, SYSDATETIME())) - {numToSubtract}
+        //    this.sqlHelper.Execute($@"
+        //    DECLARE @DayOfYear INT = (SELECT datename(dy, SYSDATETIME())) - {numToSubtract}
 
-            INSERT INTO DOI.DOI.PartitionFunctions ( DatabaseName, PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
-            VALUES ( '{DatabaseName}', '{PartitionFunctionName}', 'DATETIME2', 'Yearly', 5, '2016-01-01', 1, @DayOfYear, 0)");
+        //    INSERT INTO DOI.DOI.PartitionFunctions ( DatabaseName, PartitionFunctionName ,PartitionFunctionDataType ,BoundaryInterval ,NumOfFutureIntervals ,InitialDate ,UsesSlidingWindow ,SlidingWindowSize ,IsDeprecated )
+        //    VALUES ( '{DatabaseName}', '{PartitionFunctionName}', 'DATETIME2', 'Yearly', 5, '2016-01-01', 1, @DayOfYear, 0)");
 
-            // Act
-            this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionFunction(PartitionFunctionName);
-            this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionScheme(PartitionFunctionName);
+        //    // Act
+        //    this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionFunction(PartitionFunctionName);
+        //    this.dataDrivenIndexTestHelper.ExecuteSPCreateNewPartitionScheme(PartitionFunctionName);
 
-            // Assert
-            AssertBoundariesAndFileGroups(PartitionFunctionName);
-        }
+        //    // Assert
+        //    AssertBoundariesAndFileGroups(PartitionFunctionName);
+        //}
 
         [Test]
         [TestCase(2, true, TestName = "YearlyAdd_2_FuturePartitions_WithNextUsedFilegroup")]
@@ -357,10 +367,10 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 AND PartitionFunctionName = '{PartitionFunctionNameMonthly}'");
 
             this.sqlHelper.Execute($@"EXEC DOI.DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'");
-            this.sqlHelper.Execute(@"EXEC DOI.DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($@"EXEC DOI.DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'");
 
             dataDrivenIndexTestHelper.ExecuteSPAddFuturePartitions(PartitionFunctionNameMonthly);
-            this.sqlHelper.Execute(@"EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($@"EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'");
 
             //add new expected value
             var maxBoundaryId = this.expectedPartitionFunctionBoundaries.Max(x => x.BoundaryId);
@@ -419,33 +429,35 @@ namespace DOI.Tests.IntegrationTests.RunTests
                                          CONSTRAINT [PK_{TableTestFuturePartitionFailsDueToLocking}] PRIMARY KEY CLUSTERED
                                         (
 	                                        [Date] ASC
-                                        )WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90) ON {PartitionSchemeNameNoSlidingWindow}([Date])
-                                        ) ");
+                                        )WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90) ON {SystemMetadataHelper.PartitionSchemeNameYearly}([Date])
+                                        ) ", 30, true, DatabaseName);
 
             // Add future interval to metadata so that job has something to do
-            this.sqlHelper.Execute(" DISABLE TRIGGER DOI.DOI.trUpdPartitionFunctions ON DOI.DOI.PartitionFunctions"); //disable this trigger or we will not be able to update table.
+            //this.sqlHelper.Execute(" DISABLE TRIGGER DOI.DOI.trUpdPartitionFunctions ON DOI.DOI.PartitionFunctions"); //disable this trigger or we will not be able to update table.
 
             this.sqlHelper.Execute(
-                $@" UPDATE PF 
-                    SET NumOfFutureIntervals = NumOfFutureIntervals + 1 
-                    FROM DOI.DOI.PartitionFunctions PF 
-                    WHERE DatabaseName = '{DatabaseName}'
-                        AND PF.PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
+                $@" 
+                        UPDATE PF 
+                        SET NumOfFutureIntervals = NumOfFutureIntervals + 1 
+                        FROM DOI.DOI.PartitionFunctions PF 
+                        WHERE DatabaseName = '{DatabaseName}'
+                            AND PF.PartitionFunctionName = '{SystemMetadataHelper.PartitionFunctionNameYearly}'");
 
-            this.sqlHelper.Execute(" ENABLE TRIGGER DOI.DOI.trUpdPartitionFunctions ON DOI.DOI.PartitionFunctions"); //re-enable trigger.
+            this.sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_PartitionFunctionsSql);
+
+            //this.sqlHelper.Execute(" ENABLE TRIGGER DOI.DOI.trUpdPartitionFunctions ON DOI.DOI.PartitionFunctions"); //re-enable trigger.
 
             // Insert into the table with open transaction for 5 seconds.  This will serve as the "blocking" operation for this test.
             var task1 = this.sqlHelper.ExecuteAsync(
                 $@"BEGIN TRAN
                     INSERT INTO [dbo].[{TableTestFuturePartitionFailsDueToLocking}] VALUES (GETDATE(), 'Test')
                     WAITFOR DELAY '00:00:05';
-                   ROLLBACK",
-                marsEnabled: false);
+                   ROLLBACK", 30, false, DatabaseName);
 
             // Now, run Add Future Partitions SP with a 2 second timeout, so that it blocks with above insert and never completes.
             try
             {
-                this.dataDrivenIndexTestHelper.ExecuteSPAddFuturePartitions(PartitionFunctionNameNoSlidingWindow, 2);
+                this.dataDrivenIndexTestHelper.ExecuteSPAddFuturePartitions(SystemMetadataHelper.PartitionFunctionNameYearly, 2);
             }
             catch (SqlException e)
             {
@@ -460,14 +472,14 @@ namespace DOI.Tests.IntegrationTests.RunTests
             // NextUsed FileGroup should not exist, because above operation should have rolled back.
             var nextUsedFilegroupName =
                 this.sqlHelper.ExecuteScalar<string>(
-                    $"SELECT NextUsedFileGroupName FROM DOI.DOI.vwPartitionFunctions WITH (NOLOCK) WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
+                    $"SELECT NextUsedFileGroupName FROM DOI.DOI.vwPartitionSchemes WITH (NOLOCK) WHERE PartitionFunctionName = '{SystemMetadataHelper.PartitionFunctionNameYearly}'");
             Assert.IsNull(nextUsedFilegroupName);
 
             // Make sure that the process really failed and that no future partitions were created.
-            this.AssertBoundariesAndFileGroups(PartitionFunctionNameNoSlidingWindow);
+            this.AssertBoundariesAndFileGroups(SystemMetadataHelper.PartitionFunctionNameYearly);
 
             // Make sure that no duplicates occur in the PrepTables function or in the PartitionState refresh because of this rollback.
-            this.dataDrivenIndexTestHelper.GetPrepTableFunctionDuplicates(PartitionFunctionNameNoSlidingWindow).Count.Should().Be(0);
+            this.dataDrivenIndexTestHelper.GetPrepTableFunctionDuplicates(SystemMetadataHelper.PartitionFunctionNameYearly).Count.Should().Be(0);
             this.dataDrivenIndexTestHelper.GetPartitionStateFunctionDuplicates(TableTestFuturePartitionFailsDueToLocking).Count.Should().Be(0);
         }
 
@@ -481,11 +493,11 @@ namespace DOI.Tests.IntegrationTests.RunTests
 
             if (nextUsedFilegroupAlreadyExists)
             {
-                this.sqlHelper.Execute($@"ALTER PARTITION SCHEME {PartitionSchemeNameNoSlidingWindow} NEXT USED [{DatabaseName}_2021]");
+                this.sqlHelper.Execute($@"ALTER PARTITION SCHEME {SystemMetadataHelper.PartitionSchemeNameYearly} NEXT USED [{DatabaseName}_2021]", 30, true, DatabaseName);
             }
 
             // Assert
-            this.dataDrivenIndexTestHelper.GetPrepTableFunctionDuplicates(PartitionFunctionNameNoSlidingWindow).Count.Should().Be(0);
+            this.dataDrivenIndexTestHelper.GetPrepTableFunctionDuplicates(SystemMetadataHelper.PartitionFunctionNameYearly).Count.Should().Be(0);
         }
     }
 }

@@ -115,10 +115,10 @@ namespace DOI.Tests.TestHelpers
             return retVal;
         }
 
-        public async Task<int> ExecuteAsync(string sql, int commandTimeOut = 30, bool marsEnabled = true)
+        public async Task<int> ExecuteAsync(string sql, int commandTimeOut = 30, bool marsEnabled = true, string databaseName = "DOI")
         {
             int retVal;
-            var connectionString = this.GetConnectionString();
+            var connectionString = this.GetConnectionString(databaseName);
             using (var connection = new SqlConnection(connectionString))
             {
                 using (var command = new SqlCommand(sql, connection))

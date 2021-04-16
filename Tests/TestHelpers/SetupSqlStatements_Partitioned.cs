@@ -93,110 +93,117 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                          INCREMENTAL = OFF;
                                             END;";
 
-        public static string RowStoreIndexes = @"            
-    INSERT INTO DOI.IndexesRowStore (DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)
+        public static string RowStoreIndexes = $@"            
+    INSERT INTO DOI.IndexesRowStore (DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, PartitionFunction_Desired, PartitionColumn_Desired, Storage_Desired)
                       
     Select 
-        SchemaName					 = N'dbo'
-        ,TableName                      = N'PartitioningTestAutomationTable'
-        ,IndexName                      = N'CDX_PartitioningTestAutomationTable'
-        ,IsUnique                       = 0
-        ,IsPrimaryKey                   = 0
-        ,IsUniqueConstraint             = 0
-        ,IsClustered                    = 1
-        ,KeyColumnList                  = N'MyDatetime ASC'
-        ,IncludedColumnList             = NULL
-        ,IsFiltered                     = 0
-        ,FilterPredicate                = NULL
-        ,[Fillfactor]                   = 80
-        ,OptionPadIndex                 = 1
-        ,OptionStatisticsNoRecompute    = 0
-        ,OptionStatisticsIncremental    = 0
-        ,OptionIgnoreDupKey             = 0
-        ,OptionResumable                = 0
-        ,OptionMaxDuration              = 0
-        ,OptionAllowRowLocks            = 1
-        ,OptionAllowPageLocks           = 1
-        ,OptionDataCompression          = 'PAGE'
-        ,NewStorage                     = 'psMonthlyTest'
-        ,PartitionColumn                = 'MyDatetime'
+        DatabaseName                            = N'{DatabaseName}'
+        ,SchemaName					            = N'dbo'
+        ,TableName                              = N'PartitioningTestAutomationTable'
+        ,IndexName                              = N'CDX_PartitioningTestAutomationTable'
+        ,IsUnique_Desired                       = 0
+        ,IsPrimaryKey_Desired                   = 0
+        ,IsUniqueConstraint_Desired             = 0
+        ,IsClustered_Desired                    = 1
+        ,KeyColumnList_Desired                  = N'MyDatetime ASC'
+        ,IncludedColumnList_Desired             = NULL
+        ,IsFiltered_Desired                     = 0
+        ,FilterPredicate_Desired                = NULL
+        ,Fillfactor_Desired                     = 80
+        ,OptionPadIndex_Desired                 = 1
+        ,OptionStatisticsNoRecompute_Desired    = 0
+        ,OptionStatisticsIncremental_Desired    = 0
+        ,OptionIgnoreDupKey_Desired             = 0
+        ,OptionResumable_Desired                = 0
+        ,OptionMaxDuration_Desired              = 0
+        ,OptionAllowRowLocks_Desired            = 1
+        ,OptionAllowPageLocks_Desired           = 1
+        ,OptionDataCompression_Desired          = 'PAGE'
+        ,PartitionFunction_Desired              = 'psMonthlyTest'
+        ,PartitionColumn_Desired                = 'MyDatetime'
+        ,Storage_Desired                        = 'psMonthlyTest'
                      
         UNION  ALL 
                        
-	   Select 
-        SchemaName					 = N'dbo'
-        ,TableName                      = N'PartitioningTestAutomationTable'
-        ,IndexName                      = N'PK_PartitioningTestAutomationTable'
-        ,IsUnique                       = 1
-        ,IsPrimaryKey                   = 1
-        ,IsUniqueConstraint             = 0
-        ,IsClustered                    = 0
-        ,KeyColumnList                  = N'ID ASC,MyDateTime ASC'
-        ,IncludedColumnList             = NULL
-        ,IsFiltered                     = 0
-        ,FilterPredicate                = NULL
-        ,[Fillfactor]                   = 80
-        ,OptionPadIndex                 = 1
-        ,OptionStatisticsNoRecompute    = 0
-        ,OptionStatisticsIncremental    = 0
-        ,OptionIgnoreDupKey             = 0
-        ,OptionResumable                = 0
-        ,OptionMaxDuration              = 0
-        ,OptionAllowRowLocks            = 1
-        ,OptionAllowPageLocks           = 1
-        ,OptionDataCompression          = 'PAGE'
-        ,NewStorage                     = 'psMonthlyTest'
-        ,PartitionColumn                = 'MyDatetime'
-                     
+	   Select  
+        DatabaseName                            = N'{DatabaseName}'
+        ,SchemaName					            = N'dbo'
+        ,TableName                              = N'PartitioningTestAutomationTable'
+        ,IndexName                              = N'PK_PartitioningTestAutomationTable'
+        ,IsUnique_Desired                       = 1
+        ,IsPrimaryKey_Desired                   = 1
+        ,IsUniqueConstraint_Desired             = 0
+        ,IsClustered_Desired                    = 0
+        ,KeyColumnList_Desired                  = N'ID ASC,MyDateTime ASC'
+        ,IncludedColumnList_Desired             = NULL
+        ,IsFiltered_Desired                     = 0
+        ,FilterPredicate_Desired                = NULL
+        ,Fillfactor_Desired                     = 80
+        ,OptionPadIndex_Desired                 = 1
+        ,OptionStatisticsNoRecompute_Desired    = 0
+        ,OptionStatisticsIncremental_Desired    = 0
+        ,OptionIgnoreDupKey_Desired             = 0
+        ,OptionResumable_Desired                = 0
+        ,OptionMaxDuration_Desired              = 0
+        ,OptionAllowRowLocks_Desired            = 1
+        ,OptionAllowPageLocks_Desired           = 1
+        ,OptionDataCompression_Desired          = 'PAGE'
+        ,PartitionFunction_Desired              = 'psMonthlyTest'
+        ,PartitionColumn_Desired                = 'MyDatetime'
+        ,Storage_Desired                        = 'psMonthlyTest'
+    
 	   UNION ALL
 				 
-	   Select 
-        SchemaName					 = N'dbo'
-        ,TableName                      = N'PartitioningTestAutomationTable'
-        ,IndexName                      = N'IDX_PartitioningTestAutomationTable_Comments'
-        ,IsUnique                       = 0
-        ,IsPrimaryKey                   = 0
-        ,IsUniqueConstraint             = 0
-        ,IsClustered                    = 0
-        ,KeyColumnList                  = N'Comments ASC,MyDatetime ASC'
-        ,IncludedColumnList             = NULL
-        ,IsFiltered                     = 0
-        ,FilterPredicate                = NULL
-        ,[Fillfactor]                   = 80
-        ,OptionPadIndex                 = 1
-        ,OptionStatisticsNoRecompute    = 0
-        ,OptionStatisticsIncremental    = 0
-        ,OptionIgnoreDupKey             = 0
-        ,OptionResumable                = 0
-        ,OptionMaxDuration              = 0
-        ,OptionAllowRowLocks            = 1
-        ,OptionAllowPageLocks           = 1
-        ,OptionDataCompression          = 'PAGE'
-        ,NewStorage                     = 'psMonthlyTest'
-        ,PartitionColumn                = 'MyDatetime'
+	   Select  
+        DatabaseName                            = N'{DatabaseName}'
+        ,SchemaName					            = N'dbo'
+        ,TableName                              = N'PartitioningTestAutomationTable'
+        ,IndexName                              = N'IDX_PartitioningTestAutomationTable_Comments'
+        ,IsUnique_Desired                       = 0
+        ,IsPrimaryKey_Desired                   = 0
+        ,IsUniqueConstraint_Desired             = 0
+        ,IsClustered_Desired                    = 0
+        ,KeyColumnList_Desired                  = N'Comments ASC,MyDatetime ASC'
+        ,IncludedColumnList_Desired             = NULL
+        ,IsFiltered_Desired                     = 0
+        ,FilterPredicate_Desired                = NULL
+        ,[Fillfactor_Desired]                   = 80
+        ,OptionPadIndex_Desired                 = 1
+        ,OptionStatisticsNoRecompute_Desired    = 0
+        ,OptionStatisticsIncremental_Desired    = 0
+        ,OptionIgnoreDupKey_Desired             = 0
+        ,OptionResumable_Desired                = 0
+        ,OptionMaxDuration_Desired              = 0
+        ,OptionAllowRowLocks_Desired            = 1
+        ,OptionAllowPageLocks_Desired           = 1
+        ,OptionDataCompression_Desired          = 'PAGE'
+        ,PartitionFunction_Desired              = 'psMonthlyTest'
+        ,PartitionColumn_Desired                = 'MyDatetime'
+        ,Storage_Desired                        = 'psMonthlyTest'
                   
                     ";
 
         public static string ColumnStoreIndexes = $@"
-            INSERT INTO DOI.IndexesColumnStore ( SchemaName ,TableName ,IndexName ,IsClustered_Desired,ColumnList_Desired,IsFiltered_Desired,FilterPredicate_Desired,OptionDataCompression_Desired,OptionDataCompressionDelay_Desired_Desired,NewStorage_Desired,PartitionColumn_Desired )
+            INSERT INTO DOI.IndexesColumnStore ( DatabaseName, SchemaName ,TableName ,IndexName ,IsClustered_Desired,ColumnList_Desired,IsFiltered_Desired,FilterPredicate_Desired,OptionDataCompression_Desired,OptionDataCompressionDelay_Desired,PartitionFunction_Desired,PartitionColumn_Desired, Storage_Desired )
                     SELECT 
-                      [DatabaseName]            = N'{DatabaseName}'
-                    , [SchemaName]              = N'dbo'
-                    , [TableName]               = N'PartitioningTestAutomationTable'	
-                    , [IndexName]               = N'NCCI_PartitioningTestAutomationTable_Comments'	
-                    , [IsClustered]             = 0
-                    , [ColumnList]              = N'Comments,MyDatetime'				
-                    , [IsFiltered]              = 0
-                    , [FilterPredicate]         = NULL
-                    , [OptionDataCompression]   = N'COLUMNSTORE'
+                      [DatabaseName]                = N'{DatabaseName}'
+                    , [SchemaName]                  = N'dbo'
+                    , [TableName]                   = N'PartitioningTestAutomationTable'	
+                    , [IndexName]                   = N'NCCI_PartitioningTestAutomationTable_Comments'	
+                    , [IsClustered]                 = 0
+                    , [ColumnList]                  = N'Comments,MyDatetime'				
+                    , [IsFiltered]                  = 0
+                    , [FilterPredicate]             = NULL
+                    , [OptionDataCompression]       = N'COLUMNSTORE'
                     , [OptionDataCompressionDelay]  = 0
-                    , NewStorage                = 'psMonthlyTest'
-                    , PartitionColumn           = 'MyDatetime'
+                    , PartitionFunction_Desired     = 'psMonthlyTest'
+                    , PartitionColumn               = 'MyDatetime'
+                    , Storage_Desired               = 'psMonthlyTest'
                     ";
 
-        public static string StartJob = @"  exec msdb.dbo.sp_start_job          @job_name =  'Refresh Index Structures - Online' ";
+        public static string StartJob = @"  exec msdb.dbo.sp_start_job @job_name =  'DOI-Refresh Indexes - Online' ";
 
-        public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'Refresh Index Structures - Online'";
+        public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'DOI-Refresh Indexes - Online'";
 
         public static string DropTableAndDeleteMetadata = $@"
                         DELETE FROM  [DOI].[Statistics]         WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
@@ -362,9 +369,9 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
 
         public static string UpdateJobStepForTest = @"
                                                     EXEC msdb.dbo.sp_update_jobstep  
-                                                     @job_name =  'Refresh Index Structures - Online' 
+                                                     @job_name =  'DOI-Refresh Indexes - Online' 
                                                     ,@step_id = 2
-                                                    ,@step_name = 'Populate Index Structures Queue - Online'
+                                                    ,@step_name = 'Populate Queue - Online'
                                                     ,@command = N' 
                                                            DECLARE @BatchId UNIQUEIDENTIFIER
                                                            
@@ -377,9 +384,9 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
 
         public static string RestoreJobStep = @"
                                                     EXEC msdb.dbo.sp_update_jobstep  
-                                                     @job_name =  'Refresh Index Structures - Online' 
+                                                     @job_name =  'DOI-Refresh Indexes - Online' 
                                                     ,@step_id = 2
-                                                    ,@step_name = 'Populate Index Structures Queue - Online'
+                                                    ,@step_name = 'Populate Queue - Online'
                                                     ,@command = N' 
 	                                                       DECLARE @BatchId UNIQUEIDENTIFIER
                                                            
@@ -472,21 +479,23 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
         public static string LogHasNoErrors = @"SELECT * FROM DOI.Log WHERE SchemaName = 'dbo' and TableName = 'PartitioningTestAutomationTable' and ErrorText IS NOT NULL";
 
         public static string PartitionStateMetadata = @"
-                                                    INSERT INTO DOI._PartitionState ( SchemaName ,ParentTableName , PrepTableName, PartitionFromValue ,PartitionToValue ,DataSynchState ,LastUpdateDateTime )
-                                                    SELECT SchemaName, ParentTableName, UnPartitionedPrepTableName, PartitionFunctionValue, NextPartitionFunctionValue, 0, GETDATE()
-                                                    FROM DOI.fnDataDrivenIndexes_GetPartitionSQL () FN
+                                                    INSERT INTO DOI.Run_PartitionState ( DatabaseName, SchemaName ,ParentTableName , PrepTableName, PartitionFromValue ,PartitionToValue ,DataSynchState ,LastUpdateDateTime )
+                                                    SELECT DatabaseName, SchemaName, ParentTableName, UnPartitionedPrepTableName, PartitionFunctionValue, NextPartitionFunctionValue, 0, GETDATE()
+                                                    FROM DOI.vwPartitioning_Tables_PrepTables_Partitions FN
                                                     WHERE ParentTableName IN ('PartitioningTestAutomationTable')
 	                                                    AND NOT EXISTS (SELECT 'True' 
-					                                                    FROM DOI._PartitionState PS 
-					                                                    WHERE PS.SchemaName = FN.SchemaName
+					                                                    FROM DOI.Run_PartitionState PS 
+					                                                    WHERE PS.DatabaseName = FN.DatabaseName
+                                                                            AND PS.SchemaName = FN.SchemaName
 						                                                    AND PS.ParentTableName = FN.ParentTableName
 						                                                    AND PS.PrepTableName = FN.UnPartitionedPrepTableName)
 
                                                     DELETE PS
-                                                    FROM DOI._PartitionState PS
+                                                    FROM DOI.Run_PartitionState PS
                                                     WHERE NOT EXISTS(	SELECT 'True' 
-					                                                    FROM DOI._PartitionState PS2
-					                                                    WHERE PS.SchemaName = PS2.SchemaName
+					                                                    FROM DOI.Run_PartitionState PS2
+					                                                    WHERE PS.DatabaseName = PS2.DatabaseName
+                                                                            AND PS.SchemaName = PS2.SchemaName
 						                                                    AND PS.ParentTableName = PS2.ParentTableName
 						                                                    AND PS.PrepTableName = PS2.PrepTableName)";
 
@@ -498,7 +507,7 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                         , @LatestRunTime =  max(jh.run_time ) 
                                                     from msdb.dbo.sysjobs j
                                                     JOIN msdb.dbo.sysjobhistory jh on jh.job_id = j.job_id
-                                                    where  j.name = N'Refresh Index Structures - Online'
+                                                    where  j.name = N'DOI-Refresh Indexes - Online'
                                                         AND jh.step_id = 1
 
                                                     select jh. step_id,  step_name , message , sql_severity, run_date , run_time, run_status
@@ -511,7 +520,7 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
         public static string CheckForEmptyPartitionStateMetadata(string schemaName, string tableName)
         {
             return $@"
-            SELECT 1 FROM DOI._PartitionState
+            SELECT 1 FROM DOI.Run_PartitionState
             WHERE SchemaName = '{schemaName}'
             AND ParentTableName = '{tableName}'";   
         }

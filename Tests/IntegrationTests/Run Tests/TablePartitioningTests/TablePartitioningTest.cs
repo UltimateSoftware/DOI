@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using DOI.Tests.TestHelpers;
+using DOI.Tests.TestHelpers.Metadata;
+using DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 using Microsoft.Practices.Unity.Utility;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -19,9 +21,8 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
     [Category("ExcludePreflight")]
     [Category("DataDrivenIndex")]
     [Parallelizable(ParallelScope.Fixtures)]
-    public class TablePartitioningTest
+    public class TablePartitioningTest : DOIBaseTest
     {
-        private SqlHelper sqlHelper = new SqlHelper();
         private const long TimeoutMilliseconds = 5 * 60 * 1000;
         private string standardBcpFileFullPath = @"c:\tmp\user-management\utebcp\utebcp.exe";
 
@@ -60,7 +61,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
         {
             sqlHelper.Execute(SetupSqlStatements_Partitioned.DropTableAndDeleteMetadata);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.RestoreJobStep);
-         }
+        }
 
         [Test]
         public void HappyPath_PartitionTable()
@@ -117,13 +118,25 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
         {
             sqlHelper.Execute("UPDATE DOI.Tables SET ReadyToQueue = 0");
             sqlHelper.Execute(SetupSqlStatements_Partitioned.PartitionFunction_Setup_Metadata);
-            sqlHelper.Execute(SetupSqlStatements_Partitioned.TableCreation);
-            sqlHelper.Execute(SetupSqlStatements_Partitioned.DataInsert);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_PartitionFunctionsSql);
+            IndexesHelper.CreatePartitioningContainerObjects("pfMonthlyTest"); //move this to param and have 2 test cases, one monthly and one yearly.
+
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.TableCreation, 30, true, DatabaseName);
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.DataInsert, 30, true, DatabaseName);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.TableToMetadata);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_PartitionedTablesSql);
+
             sqlHelper.Execute(SetupSqlStatements_Partitioned.RowStoreIndexes);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.ColumnStoreIndexes);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
+            
             sqlHelper.Execute(SetupSqlStatements_Partitioned.StatisticsToMetadata);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysStatsSql);
+
             sqlHelper.Execute(SetupSqlStatements_Partitioned.ConstraintsToMetadata);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysCheckConstraintsSql);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysDefaultConstraintsSql);
+
             sqlHelper.Execute(SetupSqlStatements_Partitioned.UpdateJobStepForTest);
 
 
@@ -319,7 +332,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
 
         private void ValidateThatPartitionStateMetadataTableIsEmptyAfterPartitioning()
         {
-            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckForEmptyPartitionStateMetadata("dbo", "PartitioningTestAutomationTable"))), "Expecting the PartitionState Metadata table [DOI._PartitionState] to be empty but found records.");
+            Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckForEmptyPartitionStateMetadata("dbo", "PartitioningTestAutomationTable"))), "Expecting the PartitionState Metadata table [DOI.Run_PartitionState] to be empty but found records.");
         }
 
         private bool IsTestRunningInLocalEnvironment()

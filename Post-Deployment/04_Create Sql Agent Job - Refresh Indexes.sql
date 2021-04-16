@@ -81,7 +81,7 @@ EXEC DOI.spQueue
 				@command=N'
 EXEC DOI.spRun @OnlineOperations = 1
     
-EXEC Utility.spForeignKeysAdd
+EXEC DOI.spForeignKeysAdd
     @CallingProcess = ''Job''', 
 				@database_name=N'DOI', 
 				@flags=0
