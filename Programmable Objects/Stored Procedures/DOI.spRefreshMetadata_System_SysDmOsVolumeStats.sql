@@ -29,12 +29,19 @@ FROM DOI.SysDmOsVolumeStats VS
     INNER JOIN DOI.SysDatabases D ON VS.database_id = D.database_id
 WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
+DELETE VS
+FROM DOI.SysDmOsVolumeStats VS
+    INNER JOIN DOI.SysDatabases D ON VS.database_id = D.database_id
+WHERE D.name = 'TempDb'
+
 SELECT  FN.*
 INTO #SysDmOsVolumeStats
 FROM DOI.SysDatabaseFiles p 
-    INNER JOIN DOI.SysDatabases D ON d.Database_id = p.database_id
-    CROSS APPLY sys.dm_os_volume_stats(p.database_id, p.file_id) FN 
-WHERE D.name = @DatabaseName
+            INNER JOIN DOI.SysDatabases D ON d.Database_id = p.database_id
+            CROSS APPLY sys.dm_os_volume_stats(p.database_id, p.file_id) FN 
+        WHERE D.name IN (@DatabaseName, 'TempDB')
+
+
 
 INSERT INTO DOI.SysDmOsVolumeStats
 SELECT * FROM #SysDmOsVolumeStats

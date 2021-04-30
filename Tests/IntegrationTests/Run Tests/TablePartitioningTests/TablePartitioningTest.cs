@@ -124,7 +124,6 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             sqlHelper.Execute(SetupSqlStatements_Partitioned.TableCreation, 30, true, DatabaseName);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.DataInsert, 30, true, DatabaseName);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.TableToMetadata);
-            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_PartitionedTablesSql);
 
             sqlHelper.Execute(SetupSqlStatements_Partitioned.RowStoreIndexes);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.ColumnStoreIndexes);
@@ -136,6 +135,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             sqlHelper.Execute(SetupSqlStatements_Partitioned.ConstraintsToMetadata);
             sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysCheckConstraintsSql);
             sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysDefaultConstraintsSql);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysTablesSql);
 
             sqlHelper.Execute(SetupSqlStatements_Partitioned.UpdateJobStepForTest);
 

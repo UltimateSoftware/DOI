@@ -211,10 +211,8 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_BCPTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_IndexesNotInMetadata.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_6_Tables_IndexAggColumns_UpdateData.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_4_Tables_IndexAggColumns.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Run_All.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Run_System.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Run_User.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysAllocationUnits.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysColumns.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysDatabaseFiles.sql" />
@@ -225,7 +223,6 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysDmOsVolumeStats.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysFileGroups.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysIndexColumns.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysIndexes_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysIndexes_UpdateData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysIndexPhysicalStats.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysPartitionFunctions.sql" />
@@ -233,45 +230,20 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysPartitions.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysPartitionSchemes.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysSchemas.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysStats_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysStats_UpdateData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysStatsColumns_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysTypes.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_1_PartitionFunctions.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_2_Constraints.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_3_DOISettings.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_4_Tables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_5_Indexes.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_7_IndexColumns.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_9_Statistics.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_91_IndexPartitions.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Constraints_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Constraints_InsertData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_DOISettings_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_DOISettings_InsertData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexColumns_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexColumns_InsertData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexesColumnStore_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexesColumnStore_InsertData.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_PartitionFunctions.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Setup_DOISettings.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Import_IndexColumns_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexesRowStore_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexesRowStore_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_InsertData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexPartitions_RowStore_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexPartitions_RowStore_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_PartitionFunctions_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_PartitionFunctions_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Statistics_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Statistics_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Statistics_UpdateData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Tables_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Tables_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Tables_UpdateData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshStorageContainers_All.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshStorageContainers_FilegroupsAndFiles.sql" />
@@ -345,14 +317,9 @@
     <None Include="Migrations\006_DOISettings_Table.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spForeignKeysAdd.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spForeignKeysDrop.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeyColumns_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeyColumns.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeys.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeys_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeys_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_ForeignKeys_CreateTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_ForeignKeys_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_ForeignKeys_UpdateData.sql" />
     <None Include="Programmable Objects\Views\DOI.vwForeignKeys.sql" />
     <None Include="Schema-Model\Tables\DOI.ForeignKeys.sql" />
@@ -360,20 +327,10 @@
     <None Include="Schema-Model\Tables\DOI.SysForeignKeys.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_95_ForeignKeys.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spIndexValidations.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Tables_AddRefFKs.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Tables_DropRefFKs.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_0_Databases.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Databases_InsertData.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_0_Databases.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\007_Queue_and_Run_Tables.sql" />
@@ -382,13 +339,9 @@
     <None Include="Migrations\008_Table_Types.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_ConstraintsNotInMetadata.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysCheckConstraints.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysCheckConstraints_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysDefaultConstraints.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysDefaultConstraints_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysMasterFiles.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysMasterFiles_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysTriggers.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysTriggers_CreateTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_DropObjects.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_GetApplicationLock.sql" />
@@ -445,7 +398,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\009_BusinessHoursSchedule_Table.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_96_BusinessHoursSchedule.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Setup_BusinessHoursSchedule.sql" />
     <None Include="Programmable Objects\Views\DOI.vwBusinessHoursSchedule.sql" />
     <None Include="Schema-Model\Tables\DOI.BusinessHoursSchedule.sql" />
   </ItemGroup>
@@ -501,5 +454,77 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_InsertSQLCommand.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_FileGroups.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_DBFiles.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_AllocationUnits.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_DataSpaces.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_2_DmOsVolumeStats.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_PartitionRangeValues.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_Partitions.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_PartitionSchemes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_Schemas.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_Types.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_Columns.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_CheckConstraints.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_DefaultConstraints.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_3_ForeignKeys.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_ForeignKeyColumns.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_IndexColumns.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_IndexPhysicalStats.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_2_Statistics.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_StatsProperties.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_Triggers.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_StatsColumns.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_2_Tables.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_3_Indexes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_4_IndexPartitions.sql" />
   </ItemGroup>
 </Project>

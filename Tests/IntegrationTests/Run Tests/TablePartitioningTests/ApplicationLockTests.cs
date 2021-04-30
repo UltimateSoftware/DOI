@@ -55,7 +55,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             }
             sqlHelper.Execute("TRUNCATE TABLE DOI.DOI.Log");
             sqlHelper.Execute("TRUNCATE TABLE DOI.DOI.Queue");
-            sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
+            sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_Setup_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
         }
 
         [Test]
@@ -157,6 +157,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
         }
 
         [Test]
+        [Ignore("We are going to remove the need for this.")]
         public void KilledByBusinessHoursCheckBeforeRun()
         {
             //Make sure Business Hours are set so that it will fail and kill the job.
@@ -177,6 +178,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
         }
 
         [Test]
+        [Ignore("We are going to remove the need for this.")]
         public void KilledByBusinessHoursCheckDuringRun()
         {
             //Make sure Business Hours are set so that it will start the run.

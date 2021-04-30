@@ -37,7 +37,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
             do
             {
                 this.dataDrivenIndexTestHelper.AddRowsToTempA(700);
-                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesPartitionsSql);
+                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
 
                 var indexName = "NIDX_TempA_Report";
                 var minimumPageSize = this.sqlHelper.ExecuteScalar<int>("SELECT CAST(SettingValue AS INT) FROM DOI.DOISettings WHERE SettingName = 'MinNumPagesForIndexDefrag'");
@@ -56,14 +56,14 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
         public void OneTimeTearDown()
         {
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120, true, DatabaseName);
-            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Setup_DOISettings @DatabaseName = '{DatabaseName}'");
         }
 
         [SetUp]
         public void SetupFragmentation()
         {
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("FragmentationTests_Setup.sql")), 120, true, DatabaseName);
-            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesPartitionsSql);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
         }
 
         [TestCase(null, null, "AlterReorganize", TestName = "LowFragmentation no changes to index")]
@@ -84,7 +84,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
             if (!string.IsNullOrEmpty(propertyName))
             {
                 this.sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET [{propertyName}] = '{propertyValue}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{TempTableName}' AND IndexName = '{indexName}'", 120);
-                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesPartitionsSql);
+                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
                 indexToReorganize = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName).Find(i => i.Fragmentation >= MinimumFragmentation && i.NumPages_Actual > MinimumIndexPages && i.IndexName == indexName);
             }
 

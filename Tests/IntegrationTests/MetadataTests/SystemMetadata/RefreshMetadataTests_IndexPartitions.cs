@@ -59,7 +59,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             }
 
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesPartitionsSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             //and now they should match
             //TestHelper.AssertSysMetadata();
@@ -77,7 +77,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             }
 
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesPartitionsSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             //and now they should match
             //TestHelper.AssertSysMetadata();

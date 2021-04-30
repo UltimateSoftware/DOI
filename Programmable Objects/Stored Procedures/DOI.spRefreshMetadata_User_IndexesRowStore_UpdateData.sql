@@ -197,9 +197,9 @@ AS
         OptionAllowRowLocks_Actual = i.allow_row_locks,
         OptionAllowPageLocks_Actual = i.allow_page_locks,
         Storage_Actual = ActualDS.name,
-        Storage_Desired = DesiredDS.name,
+        Storage_Desired = DesiredDS.name,--THIS IS A PROBLEM.  WE ARE USING THIS COLUMN IN THE JOIN BELOW AND ARE UPDATING IT HERE AS WELL?
         StorageType_Actual = ActualDS.type_desc,
-        StorageType_Desired = DesiredDS.type_desc,
+        StorageType_Desired = DesiredDS.type_desc, 
         IsStorageChanging = CASE WHEN ActualDS.name <> DesiredDS.name THEN 1 ELSE 0 END,
         IndexHasLOBColumns = i.has_LOB_columns,
         OptionStatisticsIncremental_Actual = s2.is_incremental,

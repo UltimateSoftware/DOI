@@ -91,7 +91,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 SqlHelper sqlHelper = new SqlHelper();
                 var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
                 SELECT ST.* 
-                FROM DOI.DOI.[{UserTableName}] ST 
+                FROM DOI.[{UserTableName}] ST 
                 WHERE ST.DatabaseName = '{DatabaseName}'
                     AND ST.TableName = '{TableName}'
                     AND ST.StatisticsName = '{StatsName}'"));
@@ -151,27 +151,27 @@ namespace DOI.Tests.TestHelpers.Metadata
             {
                 var expected = GetExpectedSysValues();
 
-                Assert.AreEqual(1, expected.Count);
+                Assert.AreEqual(1, expected.Count, "Expected RowCount");
 
                 var actual = GetActualSysValues();
 
-                Assert.AreEqual(1, actual.Count);
+                Assert.AreEqual(1, actual.Count, "Actual RowCount");
 
                 foreach (var expectedRow in expected)
                 {
                     var actualRow = actual.Find(x => x.database_id == expectedRow.database_id && x.object_id == expectedRow.object_id && x.stats_id == expectedRow.stats_id);
 
-                    Assert.AreEqual(expectedRow.object_id, actualRow.object_id);
-                    Assert.AreEqual(expectedRow.name, actualRow.name);
-                    Assert.AreEqual(expectedRow.stats_id, actualRow.stats_id);
-                    Assert.AreEqual(expectedRow.auto_created, actualRow.auto_created);
-                    Assert.AreEqual(expectedRow.user_created, actualRow.user_created);
-                    Assert.AreEqual(expectedRow.no_recompute, actualRow.no_recompute);
-                    Assert.AreEqual(expectedRow.has_filter, actualRow.has_filter);
-                    Assert.AreEqual(expectedRow.filter_definition, actualRow.filter_definition);
-                    Assert.AreEqual(expectedRow.is_temporary, actualRow.is_temporary);
-                    Assert.AreEqual(expectedRow.is_incremental, actualRow.is_incremental);
-                    Assert.AreEqual(expectedRow.column_list, actualRow.column_list);
+                    Assert.AreEqual(expectedRow.object_id, actualRow.object_id, "object_id");
+                    Assert.AreEqual(expectedRow.name, actualRow.name, "name");
+                    Assert.AreEqual(expectedRow.stats_id, actualRow.stats_id, "stats_id");
+                    Assert.AreEqual(expectedRow.auto_created, actualRow.auto_created, "auto_created");
+                    Assert.AreEqual(expectedRow.user_created, actualRow.user_created, "user_created");
+                    Assert.AreEqual(expectedRow.no_recompute, actualRow.no_recompute, "no_recompute");
+                    Assert.AreEqual(expectedRow.has_filter, actualRow.has_filter, "has_filter");
+                    Assert.AreEqual(expectedRow.filter_definition, actualRow.filter_definition, "filter_definition");
+                    Assert.AreEqual(expectedRow.is_temporary, actualRow.is_temporary, "is_temporary");
+                    Assert.AreEqual(expectedRow.is_incremental, actualRow.is_incremental, "is_incremental");
+                    Assert.AreEqual(expectedRow.column_list, actualRow.column_list, "column_list");
                 }
             }
 

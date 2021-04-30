@@ -97,7 +97,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             sqlHelper.Execute(indexColumnStoreSql, 30, true, DatabaseName);
             sqlHelper.Execute(indexMetadataSql);
             sqlHelper.Execute(indexColumnStoreMetadataSql);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysTablesSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysCheckConstraintsSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysDefaultConstraintsSql);
 
@@ -135,7 +135,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                         WHERE SchemaName = 'dbo'
                             AND TableName = '{TestTableName1}'");
 
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesPartitionsSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysCheckConstraintsSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysDefaultConstraintsSql);
 

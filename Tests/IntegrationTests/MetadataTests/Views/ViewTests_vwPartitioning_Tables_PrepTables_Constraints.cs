@@ -84,7 +84,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             //create table metadata
             sqlHelper.Execute(tableMetadataSql);
             sqlHelper.Execute(tableSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysTablesSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysCheckConstraintsSql);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysDefaultConstraintsSql);
 

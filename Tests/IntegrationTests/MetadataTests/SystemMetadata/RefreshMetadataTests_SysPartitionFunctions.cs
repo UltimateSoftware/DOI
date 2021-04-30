@@ -46,7 +46,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             }
             
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionFunctionsSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionFunctionsSql);
 
             //and now they should match
             TestHelper.AssertSysMetadata(partitionFunctionName);

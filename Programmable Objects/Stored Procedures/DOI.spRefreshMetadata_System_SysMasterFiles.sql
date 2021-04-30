@@ -17,7 +17,7 @@ AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysMasterFiles]
-        @DatabaseId = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 DELETE MF
@@ -25,7 +25,10 @@ FROM DOI.SysMasterFiles MF
     INNER JOIN DOI.SysDatabases D ON MF.database_id = D.database_id
 WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
-
+DELETE MF
+FROM DOI.SysMasterFiles MF
+    INNER JOIN DOI.SysDatabases D ON MF.database_id = D.database_id
+WHERE D.name = 'TempDb'
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
     @TableName = 'SysMasterFiles',

@@ -53,15 +53,4 @@ FROM DOI.Tables T
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 
-UPDATE T
-SET T.DSTriggerSQL = DSTrigger.DSTriggerSQL
-FROM DOI.Tables T
-	CROSS APPLY(SELECT STUFF((  SELECT PT.PrepTableTriggerSQLFragment
-								FROM DOI.vwPartitioning_Tables_PrepTables PT
-								WHERE PT.SchemaName = T.SchemaName
-									AND PT.TableName = T.TableName
-								FOR XML PATH(''), TYPE).value(N'.[1]', N'nvarchar(max)'), 1, 1, '')) DSTrigger(DSTriggerSQL)
-WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
-
-
 GO

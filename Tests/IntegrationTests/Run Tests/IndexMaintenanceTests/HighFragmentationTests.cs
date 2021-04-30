@@ -33,7 +33,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
         public void OneTimeTearDown()
         {
             this.sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120, true, DatabaseName);
-            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Setup_DOISettings @DatabaseName = '{DatabaseName}'");
         }
 
         [SetUp]
@@ -61,7 +61,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
             {
                 this.dataDrivenIndexTestHelper.AddRowsToTempA(2000);
                 
-                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesPartitionsSql);
+                sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
 
                 var indexRows = this.dataDrivenIndexTestHelper.GetIndexViews(TempTableName);
 

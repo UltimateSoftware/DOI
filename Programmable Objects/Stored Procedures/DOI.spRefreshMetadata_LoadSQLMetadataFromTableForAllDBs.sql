@@ -225,7 +225,7 @@ BEGIN
         INSERT INTO #' + @TableName + '
         SELECT *
         FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + '
-        WHERE database_id = ' + CAST(SD.database_id AS VARCHAR(20))
+        WHERE database_id IN (2, ' + CAST(SD.database_id AS VARCHAR(20)) + ')'
         --select count(*)
         FROM DOI.Databases D
             INNER JOIN DOI.SysDatabases SD ON D.DatabaseName = SD.name

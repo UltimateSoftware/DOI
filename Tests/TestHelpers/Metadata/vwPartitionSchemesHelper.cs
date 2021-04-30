@@ -45,7 +45,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                     AND ps.name = '{partitionSchemeName}'");
 
             var nextUsedFileGroupName = sqlHelper.ExecuteScalar<string>($@"
-                SELECT NextUsedFileGroupName, *
+                SELECT NextUsedFileGroupName
 				FROM DOI.SysPartitionFunctions pf
                     OUTER APPLY (	SELECT	FG.Name AS NextUsedFileGroupName,
 								            prv.value, 
@@ -166,6 +166,11 @@ namespace DOI.Tests.TestHelpers.Metadata
             foreach (var expectedRow in expected)
             {
                 var actualRow = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PartitionSchemeName == expectedRow.PartitionSchemeName);
+
+                if (expectedRow.NextUsedFileGroupName == null)
+                {
+                    expectedRow.NextUsedFileGroupName = String.Empty;
+                }
 
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRow.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual("DATETIME2", expectedRow.PartitionFunctionDataType, "PartitionFunctionDataType");

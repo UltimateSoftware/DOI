@@ -154,10 +154,10 @@ RECONFIGURE
 		AND PTI.ParentTableName = @TableName
 								
 	DECLARE PrepTable_Cur CURSOR LOCAL FAST_FORWARD FOR
-		SELECT	TTP.DatabaseName,
-                TTP.SchemaName, 
-				TTP.TableName,
-				TTP.PartitionColumn,
+		SELECT	PT.DatabaseName,
+                PT.SchemaName, 
+				PT.TableName,
+				PT.PartitionColumn,
 				PT.PrepTableName,
 				PT.CreatePrepTableSQL,
 				TTP.CreateDataSynchTriggerSQL,
@@ -182,7 +182,8 @@ RECONFIGURE
 				PT.FinalRepartitioningValidationSQL,
                 TTP.DeletePartitionStateMetadataSQL
 		FROM DOI.vwTables TTP
-			INNER JOIN DOI.vwPartitioning_Tables_PrepTables PT ON PT.SchemaName = TTP.SchemaName
+			INNER JOIN DOI.vwPartitioning_Tables_PrepTables PT ON PT.DatabaseName = TTP.DatabaseName
+				AND PT.SchemaName = TTP.SchemaName
 				AND PT.TableName = TTP.TableName
 		WHERE TTP.IntendToPartition = 1
 			AND PT.PrepTableName IS NOT NULL

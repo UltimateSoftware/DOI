@@ -106,7 +106,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.UpdateTableMetadataForPartitioning(TestTableName1, partitionFunctionName, TestHelper.PartitionColumnName, indexName);
 
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesPartitionsSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             //and now they should match
             TestHelper.AssertUserMetadata_Partitioning_RowStore(partitionFunctionName, indexName);
@@ -134,7 +134,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.UpdateTableMetadataForPartitioning(TestTableName1, partitionFunctionName, TestHelper.PartitionColumnName, indexName);
 
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesPartitionsSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             //and now they should match
             TestHelper.AssertUserMetadata_Partitioning_ColumnStore(partitionFunctionName, indexName);
@@ -419,6 +419,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", TestName = "IndexUpdateTests_IndexSizing_ColumnStore_NonClustered")]
         [TestCase("DOIUnitTests", "TempA", "CCI_TempA", TestName = "IndexUpdateTests_IndexSizing_ColumnStore_Clustered")]
+        [Ignore("Need proper algoriths for calculating sizes on ColumnStore indexes.")]
         public void IndexUpdateTests_IndexSizing_ColumnStore(string databaseName, string tableName, string indexName)
         {
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
@@ -878,7 +879,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
  
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysTablesSql);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsStorageChanging");
@@ -897,7 +898,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
             sqlHelper.Execute($"UPDATE DOI.Tables SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'");
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysTablesSql);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsStorageChanging");

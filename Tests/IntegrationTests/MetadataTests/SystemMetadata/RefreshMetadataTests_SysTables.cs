@@ -84,7 +84,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
                 sqlHelper.Execute(psTestHelper.GetPartitionSchemeSql(partitionSchemeName, "Create"), 30, true, DatabaseName);
                 sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionSchemesSql);
 
-                refreshMetadataSql = TestHelper.RefreshMetadata_PartitionedTablesSql;
+                refreshMetadataSql = TestHelper.RefreshMetadata_SysTablesSql;
             }
             else
             {

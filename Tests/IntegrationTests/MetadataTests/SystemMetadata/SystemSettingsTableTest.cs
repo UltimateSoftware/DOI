@@ -32,7 +32,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
                     new Pair<string, string>("FreeSpaceCheckerPercentBuffer", @"10")
                 };
             var sqlHelper = new SqlHelper();
-            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_3_DOISettings @DatabaseName = '{DatabaseName}'");
+            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Setup_DOISettings @DatabaseName = '{DatabaseName}'");
         }
 
         [Test]

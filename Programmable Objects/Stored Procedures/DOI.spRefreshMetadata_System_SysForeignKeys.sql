@@ -1,5 +1,4 @@
 
-GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_System_SysForeignKeys]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_System_SysForeignKeys];
@@ -16,15 +15,17 @@ AS
 
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysForeignKeys]
-        @DatabaseId = 18
+        @DatabaseName = 'DOIUnitTests'
 */
 
 
-EXEC DOI.spRefreshMetadata_System_SysForeignKeys_InsertData
-    @DatabaseName = @DatabaseName
-EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData
-    @DatabaseName = @DatabaseName
-EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns
+DELETE FK
+FROM DOI.SysForeignKeys FK
+    INNER JOIN DOI.SysDatabases D ON FK.database_id = D.database_id
+WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
+
+EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
+    @TableName = 'SysForeignKeys',
     @DatabaseName = @DatabaseName
 
 GO

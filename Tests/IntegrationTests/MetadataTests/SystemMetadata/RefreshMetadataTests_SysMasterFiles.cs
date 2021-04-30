@@ -29,7 +29,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         public void RefreshMetadata_SysMasterFiles_MetadataIsAccurate()
         {
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysMasterFilesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDatabaseFilesSql);
 
             //and now they should match
             TestHelper.AssertMetadata();

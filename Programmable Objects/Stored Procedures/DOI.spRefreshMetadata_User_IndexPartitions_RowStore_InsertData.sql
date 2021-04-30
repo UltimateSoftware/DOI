@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_IndexPartitions_RowStore_InsertData]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_User_IndexPartitions_RowStore_InsertData];
 
@@ -20,7 +18,6 @@ DELETE DOI.IndexPartitionsRowStore
 WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END
 
 INSERT INTO DOI.IndexPartitionsRowStore (DatabaseName, SchemaName,TableName,IndexName,PartitionNumber)
-
 SELECT IRS.DatabaseName, IRS.SchemaName, IRS.TableName, IRS.IndexName, P.PartitionNumber
 FROM DOI.IndexesRowStore IRS
     INNER JOIN DOI.vwPartitionFunctionPartitions P ON IRS.Storage_Desired = P.PartitionSchemeName

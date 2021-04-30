@@ -89,8 +89,8 @@ namespace DOI.Tests.IntegrationTests.RunTests
             ON [PRIMARY];
     END;");
 
-            sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_User_3_DOISettings");
-            sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_Setup_DOISettings");
+            sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_Setup_BusinessHoursSchedule");
         }
 
         [TearDown]
@@ -99,11 +99,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
             sqlHelper.Execute(string.Format(TestHelper.ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120);
             sqlHelper.Execute("TRUNCATE TABLE DOI.DOI.Queue");
             sqlHelper.Execute("TRUNCATE TABLE DOI.DOI.Log");
-            sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_User_3_DOISettings");
-            sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule");
+            sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_Setup_DOISettings");
+            sqlHelper.Execute("EXEC DOI.DOI.spRefreshMetadata_Setup_BusinessHoursSchedule");
         }
 
         [Test]
+        [Ignore("We are removing the need for these tests." )]
         public virtual void HappyPath()
         {
             //make some changes...
@@ -144,6 +145,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         }
 
         [Test]
+        [Ignore("We are removing the need for these tests.")]
         public void RunIntoBusinessHoursLogsError_StopBeforeQueue()
         {
             // Arrange
@@ -180,6 +182,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         }
         
         [Test]
+        [Ignore("We are removing the need for these tests.")]
         public void RunIntoBusinessHoursLogsError_StopAtBeginningOfQueue()
         {
             // Arrange
@@ -218,6 +221,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         }
 
         [Test]
+        [Ignore("We are removing the need for these tests.")]
         public void RunIntoBusinessHoursLogsError_StopInsideTransaction()
         {
             // Arrange
@@ -256,6 +260,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         }
 
         [Test]
+        [Ignore("We are removing the need for these tests.")]
         public void RunIntoBusinessHoursLogsError_StopOutsideTransaction()
         {
             // Arrange
@@ -294,6 +299,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         }
 
         [Test]
+        [Ignore("We are removing the need for these tests.")]
         public void RunIntoBusinessHoursLogsError_StopAtTheEndOfQueue()
         {
             // Arrange
@@ -332,6 +338,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         }
 
         [Test]
+        [Ignore("We are removing the need for these tests.")]
         public virtual void StoppedRun()
         {
             this.sqlHelper.Execute(TestHelper.OfflineRunTestsHelper.SetToNonBusinessHoursSql);

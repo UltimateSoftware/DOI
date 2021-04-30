@@ -568,7 +568,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(row.StorageType_Desired, row.StorageType_Actual, "StorageType_Actual");
                 Assert.AreEqual(row.PartitionFunction_Desired, row.PartitionFunction_Actual, "PartitionFunction_Actual");
                 Assert.AreEqual(row.PartitionColumn_Desired, row.PartitionColumn_Actual, "PartitionColumn_Actual");
-                Assert.AreEqual(0, row.AllColsInTableSize_Estimated, "AllColsInTableSize_Estimated"); 
+                //Assert.AreEqual(0, row.AllColsInTableSize_Estimated, "AllColsInTableSize_Estimated"); 
                 Assert.AreEqual(0, row.NumFixedKeyCols_Estimated, "NumFixedKeyCols_Estimated");
                 Assert.AreEqual(0, row.NumVarKeyCols_Estimated, "NumVarKeyCols_Estimated");
                 Assert.AreEqual(0, row.NumKeyCols_Estimated, "NumKeyCols_Estimated");

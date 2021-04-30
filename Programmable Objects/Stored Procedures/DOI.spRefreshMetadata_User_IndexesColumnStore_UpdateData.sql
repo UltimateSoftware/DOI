@@ -186,7 +186,7 @@ AS
         IsFiltered_Actual       = i.has_filter,
         FilterPredicate_Actual  = i.filter_definition,
         Storage_Actual          = ActualDS.name,
-        Storage_Desired         = DesiredDS.name,
+        Storage_Desired         = DesiredDS.name, --THIS IS A PROBLEM BECAUSE THIS COLUMN IS BEING UPDATED HERE AND ALSO USED IN A JOIN...CIRCULAR REFERENCE.
         StorageType_Actual      = ActualDS.type_desc,
         StorageType_Desired     = DesiredDS.type_desc,
         IsStorageChanging       = CASE WHEN ActualDS.name <> DesiredDS.name THEN 1 ELSE 0 END

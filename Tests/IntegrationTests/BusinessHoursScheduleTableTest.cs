@@ -27,14 +27,14 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
        [SetUp]
         public void Setup()
         {
-            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_3_DOISettings @DatabaseName = '{DatabaseName}'");
-            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_Setup_DOISettings @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_Setup_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_User_96_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute($"EXEC DOI.DOI.spRefreshMetadata_Setup_BusinessHoursSchedule @DatabaseName = '{DatabaseName}'");
         }
 
         [Test]

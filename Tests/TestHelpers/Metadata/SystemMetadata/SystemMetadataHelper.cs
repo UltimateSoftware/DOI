@@ -13,7 +13,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         #region Databases
 
         public const string DatabaseName = "DOIUnitTests";
-        public static string RefreshMetadata_SysDatabasesSql = $@"EXEC DOI.spRefreshMetadata_System_SysDatabases @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDatabasesSql = $@"EXEC DOI.spRefreshMetadata_0_Databases @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -31,27 +31,10 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         public static string DropFilegroupSql = $@"IF EXISTS(SELECT * FROM {DatabaseName}.sys.filegroups WHERE name = '{FilegroupName}') ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {FilegroupName};";
         public static string DropFilegroup2Sql = $@"IF EXISTS(SELECT * FROM {DatabaseName}.sys.filegroups WHERE name = '{Filegroup2Name}') ALTER DATABASE {DatabaseName} REMOVE FILEGROUP {Filegroup2Name};";
         
-        public static string RefreshMetadata_SysFilegroupsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysAllocationUnits @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysMasterFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'    
-            EXEC DOI.[spRefreshMetadata_User_PartitionFunctions_UpdateData] @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysFilegroupsSql = $@"EXEC DOI.spRefreshMetadata_1_FileGroups @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysDataSpacesSql = $"EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'";
-        public static string RefreshMetadata_SysDestinationDataSpacesSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'";
-        
+        public static string RefreshMetadata_SysDataSpacesSql = $"EXEC DOI.spRefreshMetadata_1_DataSpaces @DatabaseName = '{DatabaseName}'";
+      
 
         #endregion
         #region DatabaseFiles
@@ -100,11 +83,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             ALTER DATABASE {DatabaseName} REMOVE FILE {DatabaseFileName_Partition2}";
 
 
-        public static string RefreshMetadata_SysDatabaseFilesSql = $"EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'";
-        public static string RefreshMetadata_SysMasterFilesSql = $"EXEC DOI.spRefreshMetadata_System_SysMasterFiles @DatabaseName = '{DatabaseName}'";
-        public static string RefreshMetadata_SysDmOsVolumeStatsSql = $@"
-        EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}' 
-        EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDatabaseFilesSql = $"EXEC DOI.spRefreshMetadata_1_DBFiles @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDmOsVolumeStatsSql = $@"EXEC DOI.spRefreshMetadata_2_DmOsVolumeStats @DatabaseName = '{DatabaseName}'";
 
         #endregion
         #region PartitionFunctions
@@ -121,24 +101,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string DropPartitionFunctionMonthlySql = $"IF EXISTS(SELECT 'True' FROM sys.partition_functions WHERE name = '{PartitionFunctionNameMonthly}') DROP PARTITION FUNCTION {PartitionFunctionNameMonthly}";
 
-        public static string RefreshMetadata_SysPartitionFunctionsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysFileGroups @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
-";
+        public static string RefreshMetadata_PartitionFunctionsSql = $@"EXEC DOI.spRefreshMetadata_1_PartitionFunctions @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_PartitionFunctionsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysFileGroups @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'";
 
         public static string CreatePartitionFunctionYearlyMetadataSql = $@"
             INSERT INTO DOI.PartitionFunctions( DatabaseName    ,PartitionFunctionName              ,PartitionFunctionDataType  ,BoundaryInterval   ,NumOfFutureIntervals   ,InitialDate    ,UsesSlidingWindow  ,SlidingWindowSize  ,IsDeprecated   ,LastBoundaryDate)
@@ -169,14 +133,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         public static string DropPartitionSchemeMonthlySql = $"IF EXISTS(SELECT 'True' FROM sys.partition_schemes WHERE name = '{PartitionSchemeNameMonthly}') DROP PARTITION SCHEME {PartitionSchemeNameMonthly}";
 
 
-        public static string RefreshMetadata_SysPartitionSchemesSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionRangeValues @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysPartitionSchemesSql = $@"EXEC DOI.spRefreshMetadata_1_PartitionSchemes @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -185,7 +142,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string CreateSchemaSql = "CREATE SCHEMA TEST AUTHORIZATION DBO";
         public static string DropSchemaSql = "DROP SCHEMA IF EXISTS TEST";
-        public static string RefreshMetadata_SysSchemasSql = $"EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = {DatabaseName}";
+        public static string RefreshMetadata_SysSchemasSql = $"EXEC DOI.spRefreshMetadata_1_Schemas @DatabaseName = {DatabaseName}";
         #endregion
 
         #region Tables
@@ -323,34 +280,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         public static string DropPartitionedTableSql = $"DROP TABLE IF EXISTS dbo.{TableName_Partitioned}";
         public static string DropPartitionedTableMetadataSql = $@"DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName_Partitioned}'";
 
-
-
-        public static string RefreshMetadata_SysTablesSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'";
-
-        public static string RefreshMetadata_PartitionedTablesSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'    
-            EXEC DOI.[spRefreshMetadata_User_PartitionFunctions_UpdateData] @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysTypes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysTablesSql = $@"EXEC DOI.spRefreshMetadata_2_Tables @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -365,9 +295,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string DropCheckConstraintSql = $@"ALTER TABLE {TableName} DROP CONSTRAINT {CheckConstraintName}";
 
-        public static string RefreshMetadata_SysCheckConstraintsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysCheckConstraints @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysCheckConstraintsSql = $@"EXEC DOI.spRefreshMetadata_1_CheckConstraints @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -382,9 +310,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string DropDefaultConstraintSql = $@"ALTER TABLE {TableName} DROP CONSTRAINT {DefaultConstraintName}";
 
-        public static string RefreshMetadata_SysDefaultConstraintsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDefaultConstraints @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDefaultConstraintsSql = $@"EXEC DOI.spRefreshMetadata_1_DefaultConstraints @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -397,9 +323,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string DropTriggersql = $@"DROP TRIGGER dbo.{TriggerName}";
 
-        public static string RefreshMetadata_SysTriggersSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysTriggers @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysTriggersSql = $@"EXEC DOI.spRefreshMetadata_1_Triggers @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -423,20 +347,9 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         public static string DropForeignKeySql = $@"ALTER TABLE dbo.{ChildTableName} DROP CONSTRAINT {ForeignKeyName}";
 
-        public static string RefreshMetadata_SysForeignKeysSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeys @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_ForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysForeignKeysSql = $@"EXEC DOI.spRefreshMetadata_3_ForeignKeys @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysForeignKeyColumnsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeys @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeyColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysForeignKeys_UpdateData @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysForeignKeyColumnsSql = $@"EXEC DOI.spRefreshMetadata_1_ForeignKeyColumns @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -619,63 +532,11 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                 'COLUMNSTORE', 0, N'{PartitionSchemeNameMonthly}', N'PARTITION_SCHEME', '{PartitionFunctionNameMonthly}', 
                 'TransactionUtcDt')";
 
-        public static string RefreshMetadata_SysIndexesSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysAllocationUnits @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexPhysicalStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysIndexesSql = $@"EXEC DOI.spRefreshMetadata_3_Indexes @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysIndexColumnsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysIndexColumnsSql = $@"EXEC DOI.spRefreshMetadata_1_IndexColumns @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysIndexPhysicalStatsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexPhysicalStats @DatabaseName = '{DatabaseName}'";
-
-        public static string RefreshMetadata_SysIndexesPartitionsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysFilegroups @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionFunctions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitionSchemes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysSchemas @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysAllocationUnits @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexPhysicalStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_InsertData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_InsertData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'";
-
+        public static string RefreshMetadata_SysIndexPhysicalStatsSql = $@"EXEC DOI.spRefreshMetadata_1_IndexPhysicalStats @DatabaseName = '{DatabaseName}'";
 
         #endregion
 
@@ -691,26 +552,11 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         public static string DropStatsSql = $"DROP STATISTICS dbo.{TableName}.{StatsName}";
 
-        public static string RefreshMetadata_SysStatsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStatsColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStats_UpdateData @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_User_Statistics_UpdateData @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysStatsSql = $@"EXEC DOI.spRefreshMetadata_2_Statistics @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysStatsColumnsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStatsColumns @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysStatsColumnsSql = $@"EXEC DOI.spRefreshMetadata_1_StatsColumns @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysDmDbStatsPropertiesSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStats @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysStatsColumns @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysDmDbStatsProperties @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDmDbStatsPropertiesSql = $@"EXEC DOI.spRefreshMetadata_1_StatsProperties @DatabaseName = '{DatabaseName}'";
 
 
         #endregion
@@ -721,26 +567,18 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         public static string CreateUserDefinedTypeSql = $@"CREATE TYPE {UserDefinedTypeName} FROM varchar(11) NOT NULL";
         public static string DropUserDefinedTypeSql = $@"DROP TYPE {UserDefinedTypeName}";
 
-        public static string RefreshMetadata_SysTypesSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTypes @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysTypesSql = $@"EXEC DOI.spRefreshMetadata_1_Types @DatabaseName = '{DatabaseName}'";
         #endregion
 
         #region RefreshMetadata
 
-        public static string RefreshMetadata_SysPartitionsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitions @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysPartitionsSql = $@"EXEC DOI.spRefreshMetadata_1_Partitions @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysAllocationUnitsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysIndexes @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysPartitions @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysAllocationUnits @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysAllocationUnitsSql = $@"EXEC DOI.spRefreshMetadata_1_AllocationUnits @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysColumnsSql = $@"
-            EXEC DOI.spRefreshMetadata_System_SysTables @DatabaseName = '{DatabaseName}'
-            EXEC DOI.spRefreshMetadata_System_SysColumns @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysColumnsSql = $@"EXEC DOI.spRefreshMetadata_1_Columns @DatabaseName = '{DatabaseName}'";
+
+        public static string RefreshMetadata_All = $@"EXEC DOI.spRefreshMetadata_Run_All @DatabaseName = '{DatabaseName}'";
 
         #endregion
 

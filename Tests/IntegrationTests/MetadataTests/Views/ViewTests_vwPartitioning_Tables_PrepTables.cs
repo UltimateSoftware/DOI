@@ -83,7 +83,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             //create table metadata
             sqlHelper.Execute(tableMetadataSql);
             sqlHelper.Execute(tableSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_PartitionedTablesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysTablesSql);
 
             //partition function metadata has already been created, so views should show the filegroups & files that need to be created, plus the fact that they are missing.
             TestHelper.AssertMetadata(boundaryInterval);

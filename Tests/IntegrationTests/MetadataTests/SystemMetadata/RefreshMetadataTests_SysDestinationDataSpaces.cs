@@ -36,7 +36,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         {
             //run refresh metadata
 
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDestinationDataSpacesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDataSpacesSql);
 
             //and now they should match
             TestHelper.AssertMetadata();
