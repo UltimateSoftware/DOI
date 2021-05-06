@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.InteropServices;
 using DOI.Tests.IntegrationTests.Models;
 using NUnit.Framework;
 using DOI.Tests.TestHelpers;
@@ -19,14 +20,13 @@ namespace DOI.Tests.TestHelpers.Metadata
         public static List<SysDmDbStatsProperties> GetExpectedValues()
         {
             SqlHelper sqlHelper = new SqlHelper();
+
+            var objectId = sqlHelper.ExecuteScalar<int>($"SELECT object_id FROM {DatabaseName}.sys.tables WHERE name = '{TableName}'");
+            var statsId = sqlHelper.ExecuteScalar<int>($"SELECT stats_id FROM {DatabaseName}.sys.stats WHERE object_id = {objectId} AND name = '{StatsName}'");
+
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
-
-            DECLARE @TableId INT = (SELECT object_id FROM {DatabaseName}.sys.tables WHERE name = '{TableName}')
-
-            DECLARE @StatsId INT = (SELECT stats_id FROM {DatabaseName}.sys.stats WHERE object_id = @TableId AND name = '{StatsName}')
-
             SELECT * 
-            FROM {DatabaseName}.{SqlServerDmvName}(@TableId, @StatsId)"));
+            FROM {DatabaseName}.{SqlServerDmvName}({objectId}, {statsId})"));
 
             List<SysDmDbStatsProperties> expectedSysDmDbStatsProperties = new List<SysDmDbStatsProperties>();
 
@@ -52,18 +52,17 @@ namespace DOI.Tests.TestHelpers.Metadata
         public static List<SysDmDbStatsProperties> GetActualValues()
         {
             SqlHelper sqlHelper = new SqlHelper();
+
+            var databaseId = sqlHelper.ExecuteScalar<int>($"SELECT database_id FROM sys.databases WHERE name = '{DatabaseName}'");
+            var objectId = sqlHelper.ExecuteScalar<int>($"SELECT object_id FROM {DatabaseName}.sys.tables WHERE name = '{TableName}'");
+            var statsId = sqlHelper.ExecuteScalar<int>($"SELECT stats_id FROM {DatabaseName}.sys.stats WHERE object_id = {objectId} AND name = '{StatsName}'");
+
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
-            SELECT SP.* 
-            FROM DOI.DOI.{SysTableName} SP
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = SP.database_id 
-                INNER JOIN DOI.DOI.SysTables T ON T.database_id = SP.database_id
-                    AND T.object_id = SP.object_id
-                INNER JOIN DOI.DOI.SysStats ST ON ST.database_id = SP.database_id
-                    AND ST.object_id = SP.object_id
-                    AND ST.stats_id = SP.stats_id
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'
-                AND ST.name = '{StatsName}'"));
+            SELECT * 
+            FROM DOI.DOI.{SysTableName} 
+            WHERE database_id = {databaseId}
+                AND object_id = {objectId}
+                AND stats_id = {statsId}"));
 
             List<SysDmDbStatsProperties> actualSysDmDbStatsProperties = new List<SysDmDbStatsProperties>();
 
@@ -91,11 +90,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

@@ -21,10 +21,8 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT SC.* 
-            FROM {DatabaseName}.{SqlServerDmvName} SC   
-                INNER JOIN {DatabaseName}.sys.stats ST ON ST.object_id = SC.object_id
-                    AND ST.stats_id = SC.stats_id
-            WHERE ST.name = '{StatsName}'"));
+            FROM {DatabaseName}.{SqlServerDmvName} SC
+            ORDER BY object_id, stats_id, stats_column_id"));
 
             List<SysStatsColumns> expectedSysStatsColumns = new List<SysStatsColumns>();
 
@@ -47,15 +45,8 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT SC.* 
-            FROM DOI.DOI.{SysTableName} SC 
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = SC.database_id 
-                INNER JOIN DOI.DOI.SysTables T ON T.database_id = SC.database_id
-                    AND T.object_id = SC.object_id
-                INNER JOIN DOI.DOI.SysStats ST ON ST.object_id = SC.object_id
-                    AND ST.stats_id = SC.stats_id
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'
-                AND ST.name = '{StatsName}'"));
+            FROM DOI.DOI.{SysTableName} SC
+            ORDER BY object_id, stats_id, stats_column_id"));
 
             List<SysStatsColumns> actualSysStatsColumns = new List<SysStatsColumns>();
 
@@ -78,19 +69,14 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {
-                var actualRow = actual.Find(x => x.database_id == expectedRow.database_id && x.object_id == expectedRow.object_id && x.stats_id == expectedRow.stats_id);
+                var actualRow = actual.Find(x => x.database_id == expectedRow.database_id && x.object_id == expectedRow.object_id && x.stats_id == expectedRow.stats_id && x.stats_column_id == expectedRow.stats_column_id);
 
-                Assert.AreEqual(expectedRow.object_id, actualRow.object_id);
-                Assert.AreEqual(expectedRow.stats_id, actualRow.stats_id);
-                Assert.AreEqual(expectedRow.stats_column_id, actualRow.stats_column_id);
                 Assert.AreEqual(expectedRow.column_id, actualRow.column_id);
             }
         }

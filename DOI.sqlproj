@@ -233,7 +233,7 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysStats_UpdateData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysTypes.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_PartitionFunctions.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_2_PartitionFunctions.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Setup_DOISettings.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Import_IndexColumns_InsertData.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData.sql" />
@@ -508,9 +508,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_2_Statistics.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_StatsProperties.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_Triggers.sql" />

@@ -54,12 +54,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT TR.* 
-            FROM DOI.DOI.{SysTableName} TR
-                INNER JOIN DOI.DOI.SysTables T ON TR.parent_id = T.object_id
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = T.database_id 
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'
-                AND TR.name = '{TriggerName}'"));
+            FROM DOI.DOI.{SysTableName} TR"));
 
             List<SysTriggers> actualSysTriggers = new List<SysTriggers>();
 
@@ -91,11 +86,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

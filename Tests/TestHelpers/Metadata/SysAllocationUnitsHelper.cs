@@ -22,14 +22,6 @@ namespace DOI.Tests.TestHelpers.Metadata
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT * 
             FROM {DatabaseName}.{SqlServerDmvName} au
-            WHERE EXISTS(   SELECT 'True'
-                            FROM {DatabaseName}.sys.partitions p
-                                INNER JOIN {DatabaseName}.sys.indexes i ON i.object_id = p.object_id
-                                    AND i.index_id = p.index_id
-                                INNER JOIN {DatabaseName}.sys.tables t ON t.object_id = i.object_id
-                            WHERE p.hobt_id = au.container_id
-                                AND t.name = '{TableName}'
-                                AND i.name = '{CIndexName}')
             ORDER BY container_id, type"));
 
             List<SysAllocationUnits> expectedSysAllocationUnits = new List<SysAllocationUnits>();
@@ -58,17 +50,6 @@ namespace DOI.Tests.TestHelpers.Metadata
             var actual =  sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT AU.* 
             FROM DOI.DOI.{SysTableName} AU 
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = AU.database_id 
-                INNER JOIN DOI.DOI.SysPartitions P ON P.database_id = AU.database_id
-                    AND P.hobt_id = AU.container_id
-                INNER JOIN DOI.DOI.SysIndexes I ON I.database_id = P.database_id
-                    AND I.object_id = P.object_id
-                    AND I.index_id = P.index_id
-                INNER JOIN DOI.DOI.SysTables T ON T.database_id = I.database_id
-                    AND T.object_id = I.object_id
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'
-                AND I.name = '{CIndexName}'
             ORDER BY container_id, type"));
 
             List<SysAllocationUnits> actualSysAllocationUnits = new List<SysAllocationUnits>();
@@ -96,11 +77,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(2, expected.Count); //2 allocation units are created, one for normal row data and one for row overflow.
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(2, actual.Count);//2 allocation units are created, one for normal row data and one for row overflow.
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

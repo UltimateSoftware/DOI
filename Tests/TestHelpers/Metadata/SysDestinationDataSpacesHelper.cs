@@ -21,12 +21,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT dds.* 
-            FROM {DatabaseName}.{SqlServerDmvName} dds
-                INNER JOIN {DatabaseName}.sys.filegroups fg ON dds.data_space_id = fg.data_space_id
-                INNER JOIN {DatabaseName}.sys.partition_schemes ps ON dds.partition_scheme_id = ps.data_space_id
-            WHERE ps.name = '{PartitionSchemeNameYearly}'
-                AND fg.name IN ('{FilegroupName}', '{Filegroup2Name}')
-            ORDER BY partition_scheme_id, destination_id, data_space_id"));
+            FROM {DatabaseName}.{SqlServerDmvName} dds"));
 
             List<SysDestinationDataSpaces> expectedSysDestinationDataSpaces = new List<SysDestinationDataSpaces>();
 
@@ -49,14 +44,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT T.* 
-            FROM DOI.{SysTableName} T 
-                INNER JOIN DOI.SysDatabases D ON T.database_id = d.database_id
-                INNER JOIN DOI.SysFilegroups fg ON T.data_space_id = fg.data_space_id
-                INNER JOIN DOI.SysPartitionSchemes ps ON T.partition_scheme_id = ps.data_space_id
-            WHERE D.name = '{DatabaseName}'
-                AND ps.name = '{PartitionSchemeNameYearly}'
-                AND fg.name IN ('{FilegroupName}', '{Filegroup2Name}')
-            ORDER BY partition_scheme_id, destination_id, data_space_id"));
+            FROM DOI.{SysTableName} T"));
 
             List<SysDestinationDataSpaces> actualSysDestinationDataSpaces = new List<SysDestinationDataSpaces>();
 
@@ -79,11 +67,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(2, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(2, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

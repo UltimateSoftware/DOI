@@ -21,12 +21,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT p.* 
-            FROM {DatabaseName}.{SqlServerDmvName} p
-                INNER JOIN {DatabaseName}.sys.indexes i ON i.object_id = p.object_id
-                    AND i.index_id = p.index_id
-                INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id
-            WHERE t.name = '{TableName}'
-                AND i.name = '{CIndexName}'"));
+            FROM {DatabaseName}.{SqlServerDmvName} p"));
 
             List<SysPartitions> expectedSysPartitions = new List<SysPartitions>();
 
@@ -54,16 +49,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT P.* 
-            FROM DOI.DOI.{SysTableName} P 
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = P.database_id 
-                INNER JOIN DOI.DOI.SysIndexes I ON P.database_id = I.database_id
-                    AND P.object_id = i.object_id
-                    AND P.index_id = i.index_id
-                INNER JOIN DOI.DOI.SysTables T ON I.database_id = T.database_id
-                    AND I.object_id = T.object_id
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'
-                AND I.name = '{CIndexName}'"));
+            FROM DOI.DOI.{SysTableName} P "));
 
             List<SysPartitions> actualSysPartitions = new List<SysPartitions>();
 
@@ -91,11 +77,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

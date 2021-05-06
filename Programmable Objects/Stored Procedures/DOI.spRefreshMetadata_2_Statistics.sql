@@ -19,6 +19,8 @@ AS
         @DatabaseName = @DatabaseName
     EXEC [DOI].[spRefreshMetadata_System_SysColumns]
         @DatabaseName = @DatabaseName
+	EXEC [DOI].[spRefreshMetadata_System_SysStats]
+        @DatabaseName = @DatabaseName
 	EXEC [DOI].[spRefreshMetadata_System_SysStatsColumns]
         @DatabaseName = @DatabaseName
     EXEC [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]    

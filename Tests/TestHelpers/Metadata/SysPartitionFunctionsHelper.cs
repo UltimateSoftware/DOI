@@ -238,10 +238,11 @@ namespace DOI.Tests.TestHelpers.Metadata
                     lastBoundaryDate = DateTime.Now.AddYears(actualRow.NumOfFutureIntervals);
                     lastBoundaryDateStartOfYear = new DateTime(lastBoundaryDate.Year, 1, 1);
                     partitionFunctionIntervals = (int)((lastBoundaryDateStartOfYear - actualRow.InitialDate).TotalDays) / 365;
+                    partitionFunctionIntervals += 1;  //the date diff excludes the last interval, so we add it back.  
 
                     if (actualRow.UsesSlidingWindow)
                     {
-                        partitionFunctionIntervals += 1; //the date diff clips off a year at the end, so we add it back.  Plus, we add another 1 for the active partition in the sliding window.
+                        partitionFunctionIntervals += 1; //add another 1 for the active partition in the sliding window.
                     }
 
                     Assert.AreEqual(DatabaseName, actualRow.DatabaseName, "DatabaseName");
@@ -264,15 +265,15 @@ namespace DOI.Tests.TestHelpers.Metadata
                 {
                     lastBoundaryDate = DateTime.Now.AddMonths(actualRow.NumOfFutureIntervals);
                     lastBoundaryDateStartOfMonth = new DateTime(lastBoundaryDate.Year, lastBoundaryDate.Month, 1);
-                    partitionFunctionIntervals = (int)(((lastBoundaryDateStartOfMonth - actualRow.InitialDate).TotalDays) / 365) * 12;
+                    partitionFunctionIntervals = Math.Abs(
+                        12 * (actualRow.InitialDate.Year - lastBoundaryDateStartOfMonth.Year) +
+                        actualRow.InitialDate.Month - lastBoundaryDateStartOfMonth.Month);
+
+                    partitionFunctionIntervals += 1;  //the date diff excludes the last interval, so we add it back.  
 
                     if (actualRow.UsesSlidingWindow)
                     {
-                        partitionFunctionIntervals += 2; //the date diff clips off a month at the end, so we add it back.  Plus, we add another 1 for the active partition in the sliding window.
-                    }
-                    else
-                    {
-                        partitionFunctionIntervals += 1; //the date diff clips off a month at the end, so we add it back.
+                        partitionFunctionIntervals += 1; //add another 1 for the active partition in the sliding window.
                     }
 
                     Assert.AreEqual(DatabaseName, actualRow.DatabaseName, "DatabaseName");

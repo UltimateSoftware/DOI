@@ -21,8 +21,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT * 
-            FROM {DatabaseName}.{SqlServerDmvName}
-            WHERE name = '{DefaultConstraintName}'"));
+            FROM {DatabaseName}.{SqlServerDmvName}"));
 
             List<SysDefaultConstraints> expectedSysDefaultConstraints = new List<SysDefaultConstraints>();
 
@@ -56,12 +55,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT DC.* 
-            FROM DOI.DOI.{SysTableName} DC
-                INNER JOIN DOI.DOI.SysTables T ON DC.parent_object_id = T.object_id
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = T.database_id 
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'
-                AND DC.name = '{DefaultConstraintName}'"));
+            FROM DOI.DOI.{SysTableName} DC"));
 
             List<SysDefaultConstraints> actualSysDefaultConstraints = new List<SysDefaultConstraints>();
 
@@ -95,11 +89,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

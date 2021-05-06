@@ -33,6 +33,9 @@ AS
     EXEC [DOI].[spRefreshMetadata_System_SysPartitionFunctions]
         @DatabaseName = @DatabaseName
 
+    EXEC [DOI].[spRefreshMetadata_System_SysPartitionRangeValues]
+        @DatabaseName = @DatabaseName
+
     EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData
         @DatabaseName = @DatabaseName
 		 
@@ -55,6 +58,9 @@ AS
         @DatabaseName = @DatabaseName
 
     EXEC [DOI].[spRefreshMetadata_System_SysIndexPhysicalStats]
+        @DatabaseName = @DatabaseName
+
+    EXEC [DOI].[spRefreshMetadata_System_SysStats]
         @DatabaseName = @DatabaseName
 
 	--Level 2

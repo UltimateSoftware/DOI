@@ -21,9 +21,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT prv.* 
-            FROM {DatabaseName}.{SqlServerDmvName} prv
-                INNER JOIN {DatabaseName}.sys.partition_functions pf ON pf.function_id = prv.function_id
-            WHERE pf.name = '{PartitionFunctionNameYearly}'"));
+            FROM {DatabaseName}.{SqlServerDmvName} prv"));
 
             List<SysPartitionRangeValues> expectedSysPartitionRangeValues = new List<SysPartitionRangeValues>();
 
@@ -49,9 +47,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SELECT T.* 
             FROM DOI.{SysTableName} T 
                 INNER JOIN DOI.SysDatabases D ON T.database_id = d.database_id
-                INNER JOIN DOI.SysPartitionFunctions PF ON T.function_id = pf.function_id
-            WHERE D.name = '{DatabaseName}'
-                AND pf.name = '{PartitionFunctionNameYearly}'"));
+            WHERE D.name = '{DatabaseName}'"));
 
             List<SysPartitionRangeValues> actualSysPartitionRangeValues = new List<SysPartitionRangeValues>();
 
@@ -75,11 +71,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

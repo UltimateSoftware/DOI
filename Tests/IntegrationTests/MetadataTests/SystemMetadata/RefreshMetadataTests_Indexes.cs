@@ -106,7 +106,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.UpdateTableMetadataForPartitioning(TestTableName1, partitionFunctionName, TestHelper.PartitionColumnName, indexName);
 
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //and now they should match
             TestHelper.AssertUserMetadata_Partitioning_RowStore(partitionFunctionName, indexName);
@@ -134,7 +134,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.UpdateTableMetadataForPartitioning(TestTableName1, partitionFunctionName, TestHelper.PartitionColumnName, indexName);
 
             //run refresh metadata
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //and now they should match
             TestHelper.AssertUserMetadata_Partitioning_ColumnStore(partitionFunctionName, indexName);
@@ -462,7 +462,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET OptionAllowPageLocks_Desired = 0 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsAllowPageLocksChanging");
@@ -478,7 +478,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET OptionAllowRowLocks_Desired = 0 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsAllowRowLocksChanging");
@@ -507,7 +507,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
                 sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET IsClustered_Desired = {isClusteredSetting} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
             }
 
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
@@ -542,7 +542,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
                 sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET OptionDataCompression_Desired = 'NONE' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
             }
 
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             if (indexName == TestHelper.CCIIndexName || indexName == TestHelper.NCCIIndexName)
@@ -566,7 +566,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Pre");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET OptionDataCompressionDelay_Desired = 10 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsDataCompressionDelayChanging");
@@ -583,7 +583,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET FillFactor_Desired = 50 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsFillfactorChanging");
@@ -628,14 +628,14 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             if (indexName == TestHelper.NCIndexName)
             {
                 sqlHelper.Execute(updateSql, 120);
-                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_All);
                 //only the correct change bit should be turned on.  All others should still be off.
                 TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsFilterChanging");
             }
             else if (indexName == TestHelper.NCCIIndexName)
             {
                 sqlHelper.Execute(updateSql, 120);
-                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_All);
                 //only the correct change bit should be turned on.  All others should still be off.
                 TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsFilterChanging");
             }
@@ -650,7 +650,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET OptionIgnoreDupKey_Desired = 1 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsIgnoreDupKeyChanging");
@@ -675,7 +675,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             else
             {
                 sqlHelper.Execute(updateSql, 120);
-                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
                 //only the correct change bit should be turned on.  All others should still be off.
                 TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsIncludedColumnListChanging");
@@ -701,7 +701,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             else
             {
                 sqlHelper.Execute(updateSql, 120);
-                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
                 //only the correct change bit should be turned on.  All others should still be off.
                 TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsColumnListChanging");
@@ -728,7 +728,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             else
             {
                 sqlHelper.Execute(updateSql, 120);
-                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
                 //only the correct change bit should be turned on.  All others should still be off.
                 TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsPrimaryKeyChanging");
@@ -748,7 +748,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             var updateSql = $"UPDATE DOI.IndexesRowStore SET IsPrimaryKey_Desired = {setting}, IsUnique_Desired = {setting} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'";
 
             sqlHelper.Execute(updateSql, 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             var indexRow = TestHelper.GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
 
@@ -781,7 +781,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET KeyColumnList_Desired = 'TempAId, TransactionUtcDt' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsKeyColumnListChanging");
@@ -797,7 +797,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET OptionPadIndex_Desired = 0 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsPadIndexChanging");
@@ -814,7 +814,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET OptionStatisticsNoRecompute_Desired = 1 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsStatisticsNoRecomputeChanging");
@@ -830,7 +830,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET OptionStatisticsIncremental_Desired = 1 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsStatisticsIncrementalChanging");
@@ -859,7 +859,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             else
             {
                 sqlHelper.Execute(updateSql, 120);
-                sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+                sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsUniquenessChanging");
@@ -878,8 +878,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
  
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysTablesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsStorageChanging");
@@ -897,9 +896,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
             sqlHelper.Execute($"UPDATE DOI.Tables SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'");
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysTablesSql);
-
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsStorageChanging");
         }
@@ -930,7 +927,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             //action
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.PartitionSchemeNameYearly}', PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
             sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsPartitioningChanging");
@@ -962,7 +959,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             //action
             sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
             sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionColumn = '{TestHelper.PartitionColumnName}', PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
             TestHelper.AssertIndexColumnStoreChangeBits(indexName, "Post", "IsPartitioningChanging");
@@ -998,7 +995,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             }
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             indexRow = TestHelper.GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
 
@@ -1019,7 +1016,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             Assert.AreEqual(false, indexRow.AreDropRecreateOptionsChanging, "AreDropRecreateOptionsChanging, Pre-Change");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             indexRow = TestHelper.GetActualUserValues_ColumnStore(indexName).Find(x => x.IndexName == indexName);
 
@@ -1047,7 +1044,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             Assert.AreEqual(false, indexRow.AreRebuildOptionsChanging, "AreRebuildOptionsChanging, Pre-Change");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             indexRow = TestHelper.GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
 
@@ -1064,7 +1061,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             Assert.AreEqual(false, indexRow.AreRebuildOptionsChanging, "AreRebuildOptionsChanging, Pre-Change");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             indexRow = TestHelper.GetActualUserValues_ColumnStore(indexName).Find(x => x.IndexName == indexName);
 
@@ -1085,7 +1082,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             Assert.AreEqual(false, indexRow.AreSetOptionsChanging, "AreSetOptionsChanging, Post-Change");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             indexRow = TestHelper.GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
 

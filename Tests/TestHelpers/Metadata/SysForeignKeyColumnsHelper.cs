@@ -21,11 +21,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT fkc.* 
-            FROM {DatabaseName}.{SqlServerDmvName} fkc
-                INNER JOIN {DatabaseName}.sys.foreign_keys fk ON fk.object_id = fkc.constraint_object_id
-                INNER JOIN {DatabaseName}.sys.tables t ON t.object_id = fk.parent_object_id
-            WHERE t.name = '{ChildTableName}'
-                AND fk.name = '{ForeignKeyName}'"));
+            FROM {DatabaseName}.{SqlServerDmvName} fkc"));
 
             List<SysForeignKeyColumns> expectedSysForeignKeyColumns = new List<SysForeignKeyColumns>();
 
@@ -50,15 +46,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT FKC.* 
-            FROM DOI.DOI.{SysTableName} FKC
-                INNER JOIN DOI.DOI.SysForeignKeys FK ON FK.database_id = FKC.database_id
-                    AND FK.object_id = FKC.constraint_object_id
-                INNER JOIN DOI.DOI.SysTables T ON T.database_id = FK.database_id
-                    AND FK.parent_object_id = T.object_id
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = T.database_id 
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{ChildTableName}'
-                AND FK.name = '{ForeignKeyName}'"));
+            FROM DOI.DOI.{SysTableName} FKC"));
 
             List<SysForeignKeyColumns> actualSysForeignKeyColumns = new List<SysForeignKeyColumns>();
 
@@ -83,11 +71,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

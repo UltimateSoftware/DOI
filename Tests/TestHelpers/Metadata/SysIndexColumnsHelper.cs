@@ -21,12 +21,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT ic.* 
-            FROM {DatabaseName}.{SqlServerDmvName} ic
-                INNER JOIN {DatabaseName}.sys.indexes i ON i.object_id = ic.object_id
-                    AND i.index_id = ic.index_id
-                INNER JOIN {DatabaseName}.sys.tables t ON t.object_id = i.object_id
-            WHERE t.name = '{TableName}'
-                AND i.name = '{CIndexName}'"));
+            FROM {DatabaseName}.{SqlServerDmvName} ic"));
 
             List<SysIndexColumns> expectedSysIndexColumns = new List<SysIndexColumns>();
 
@@ -53,16 +48,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT IC.* 
-            FROM DOI.DOI.{SysTableName} IC
-                INNER JOIN DOI.DOI.SysIndexes I ON I.database_id = IC.database_id
-                    AND I.object_id = IC.object_id
-                    AND I.index_id = IC.index_id
-                INNER JOIN DOI.DOI.SysTables T ON T.database_id = I.database_id
-                    AND I.object_id = T.object_id
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = T.database_id 
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'
-                AND I.name = '{CIndexName}'"));
+            FROM DOI.DOI.{SysTableName} IC"));
 
             List<SysIndexColumns> actualSysIndexColumns = new List<SysIndexColumns>();
 
@@ -89,11 +75,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

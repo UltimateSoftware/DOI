@@ -278,7 +278,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             }
 
 
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             actualAreIndexesMissing = sqlHelper.ExecuteScalar<bool>(
                 $@" SELECT AreIndexesMissing

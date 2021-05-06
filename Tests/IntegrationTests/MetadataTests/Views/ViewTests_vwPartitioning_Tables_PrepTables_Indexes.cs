@@ -135,9 +135,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                         WHERE SchemaName = 'dbo'
                             AND TableName = '{TestTableName1}'");
 
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysCheckConstraintsSql);
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysDefaultConstraintsSql);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //partition function metadata has already been created, so views should show the filegroups & files that need to be created, plus the fact that they are missing.
             TestHelper.AssertMetadata(boundaryInterval);

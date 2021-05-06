@@ -101,7 +101,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string DropPartitionFunctionMonthlySql = $"IF EXISTS(SELECT 'True' FROM sys.partition_functions WHERE name = '{PartitionFunctionNameMonthly}') DROP PARTITION FUNCTION {PartitionFunctionNameMonthly}";
 
-        public static string RefreshMetadata_PartitionFunctionsSql = $@"EXEC DOI.spRefreshMetadata_1_PartitionFunctions @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_PartitionFunctionsSql = $@"EXEC DOI.spRefreshMetadata_2_PartitionFunctions @DatabaseName = '{DatabaseName}'";
 
 
         public static string CreatePartitionFunctionYearlyMetadataSql = $@"
@@ -556,7 +556,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         public static string RefreshMetadata_SysStatsColumnsSql = $@"EXEC DOI.spRefreshMetadata_1_StatsColumns @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysDmDbStatsPropertiesSql = $@"EXEC DOI.spRefreshMetadata_1_StatsProperties @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysDmDbStatsPropertiesSql = $@"EXEC DOI.spRefreshMetadata_2_Statistics @DatabaseName = '{DatabaseName}'";
 
 
         #endregion

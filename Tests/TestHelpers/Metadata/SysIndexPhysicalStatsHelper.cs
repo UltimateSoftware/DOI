@@ -19,14 +19,11 @@ namespace DOI.Tests.TestHelpers.Metadata
         public static List<SysIndexPhysicalStats> GetExpectedValues()
         {
             SqlHelper sqlHelper = new SqlHelper();
+
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
 
-            DECLARE @TableId INT = (SELECT object_id FROM {DatabaseName}.sys.tables WHERE name = '{TableName}')
-
-            DECLARE @IndexId INT = (SELECT index_id FROM {DatabaseName}.sys.indexes WHERE object_id = @TableId AND name = '{CIndexName}')
-
             SELECT ips.* 
-            FROM {SqlServerDmvName}(DB_ID('{DatabaseName}'), @TableId, @IndexId, NULL, 'DETAILED') ips"));
+            FROM {SqlServerDmvName}(DB_ID('{DatabaseName}'), NULL, NULL, NULL, 'DETAILED') ips"));
 
             List<SysIndexPhysicalStats> expectedSysIndexPhysicalStats = new List<SysIndexPhysicalStats>();
 
@@ -68,16 +65,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT IPS.* 
-            FROM DOI.DOI.{SysTableName} IPS
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = IPS.database_id 
-                INNER JOIN DOI.DOI.SysTables T ON T.database_id = IPS.database_id
-                    AND T.object_id = IPS.object_id
-                INNER JOIN DOI.DOI.SysIndexes I ON I.database_id = IPS.database_id
-                    AND I.object_id = IPS.object_id
-                    AND I.index_id = IPS.index_id
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'
-                AND I.name = '{CIndexName}'"));
+            FROM DOI.DOI.{SysTableName} IPS"));
 
             List<SysIndexPhysicalStats> actualSysIndexPhysicalStats = new List<SysIndexPhysicalStats>();
 
@@ -119,11 +107,9 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(1, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(1, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count);
 
             foreach (var expectedRow in expected)
             {

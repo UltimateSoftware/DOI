@@ -22,10 +22,13 @@ AS
     EXEC DOI.spRefreshMetadata_1_Types
         @DatabaseName = @DatabaseName
 
-    EXEC DOI.spRefreshMetadata_1_PartitionFunctions
+    EXEC DOI.spRefreshMetadata_2_PartitionFunctions
         @DatabaseName = @DatabaseName
 
     EXEC DOI.spRefreshMetadata_1_DataSpaces
+        @DatabaseName = @DatabaseName
+
+    EXEC DOI.spRefreshMetadata_2_PartitionFunctions
         @DatabaseName = @DatabaseName
 
     EXEC [DOI].[spRefreshMetadata_System_SysTables]

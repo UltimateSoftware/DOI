@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[vwPartitionFunctionPartitions]') IS NOT NULL
 	DROP VIEW [DOI].[vwPartitionFunctionPartitions];
 

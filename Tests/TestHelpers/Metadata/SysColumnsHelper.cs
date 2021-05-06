@@ -21,9 +21,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var expected = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT C.* 
-            FROM {DatabaseName}.{SqlServerDmvName} C
-                INNER JOIN {DatabaseName}.sys.tables t ON t.object_id = c.object_id
-            WHERE t.name = '{TableName}'"));
+            FROM {DatabaseName}.{SqlServerDmvName} C"));
 
             List<SysColumns> expectedSysColumns = new List<SysColumns>();
 
@@ -76,12 +74,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT C.* 
-            FROM DOI.DOI.{SysTableName} C
-                INNER JOIN DOI.DOI.SysTables T ON T.database_id = C.database_id
-                    AND T.object_id = C.object_id
-                INNER JOIN DOI.DOI.SysDatabases D ON D.database_id = T.database_id 
-            WHERE D.name = '{DatabaseName}'
-                AND T.name = '{TableName}'"));
+            FROM DOI.DOI.{SysTableName} C"));
 
             List<SysColumns> actualSysColumns = new List<SysColumns>();
 
@@ -134,15 +127,13 @@ namespace DOI.Tests.TestHelpers.Metadata
         {
             var expected = GetExpectedValues();
 
-            Assert.AreEqual(4, expected.Count);
-
             var actual = GetActualValues();
 
-            Assert.AreEqual(4, actual.Count);
+            Assert.AreEqual(expected.Count, actual.Count, "RowCounts");
 
             foreach (var expectedRow in expected)
             {
-                var actualRow = actual.Find(x => x.database_id == expectedRow.database_id && x.name == expectedRow.name);
+                var actualRow = actual.Find(x => x.database_id == expectedRow.database_id && x.object_id == expectedRow.object_id && x.name == expectedRow.name);
 
                 Assert.AreEqual(expectedRow.object_id, actualRow.object_id);
                 Assert.AreEqual(expectedRow.name, actualRow.name);

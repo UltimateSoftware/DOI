@@ -1,12 +1,12 @@
-IF OBJECT_ID('[DOI].[spRefreshMetadata_1_PartitionFunctions]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spRefreshMetadata_1_PartitionFunctions];
+IF OBJECT_ID('[DOI].[spRefreshMetadata_2_PartitionFunctions]') IS NOT NULL
+	DROP PROCEDURE [DOI].[spRefreshMetadata_2_PartitionFunctions];
 
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-CREATE   PROCEDURE [DOI].[spRefreshMetadata_1_PartitionFunctions]
+CREATE   PROCEDURE [DOI].[spRefreshMetadata_2_PartitionFunctions]
     @DatabaseName NVARCHAR(128) = NULL
 
 AS
@@ -20,6 +20,9 @@ AS
 
 
     --DROP TRIGGER IF EXISTS DOI.trUpdPartitionFunctions --this trigger is disabled in V2.
+    EXEC [DOI].[spRefreshMetadata_System_SysPartitionRangeValues]
+        @DatabaseName = @DatabaseName
+
     EXEC [DOI].[spRefreshMetadata_System_SysPartitionFunctions]
         @DatabaseName = @DatabaseName
 
