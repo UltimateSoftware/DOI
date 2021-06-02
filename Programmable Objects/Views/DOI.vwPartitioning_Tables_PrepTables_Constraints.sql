@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[vwPartitioning_Tables_PrepTables_Constraints]') IS NOT NULL
 	DROP VIEW [DOI].[vwPartitioning_Tables_PrepTables_Constraints];
 
@@ -9,10 +7,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
-
-
-
 
 
 CREATE   VIEW [DOI].[vwPartitioning_Tables_PrepTables_Constraints]
@@ -113,8 +107,8 @@ AS RenameExistingTableConstraintSQL,
 CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
-EXEC sp_rename @objname = ''' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
-				@newname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.PrepTableName, FN.TableName) + ''',
+EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
+				@newname = ''' + REPLACE(cc.CheckConstraintName, FN.PrepTableName, FN.TableName) + ''',
 				@objtype = ''OBJECT''' END 
 AS RenameNewPartitionedPrepTableConstraintSQL,
 

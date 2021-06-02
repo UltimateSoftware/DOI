@@ -134,7 +134,7 @@ ALTER TABLE ' + I.SchemaName + '.' + PT.PrepTableName + CHAR(13) + CHAR(10) + CH
 IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + I.SchemaName + ''' AND t.name = ''' + PT.PrepTableName + ''' AND i.name = ''' + REPLACE(I.IndexName, I.TableName, PT.PrepTableName) + ''')
 BEGIN
 	CREATE' + CASE WHEN I.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED COLUMNSTORE INDEX ' + REPLACE(I.IndexName, I.TableName, PT.PrepTableName) + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
-										'	ON ' + I.SchemaName + '.' + PT.PrepTableName + CASE WHEN I.IsClustered_Desired = 1 THEN '' ELSE '(' + I.KeyColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										'	ON ' + I.SchemaName + '.' + PT.PrepTableName + CASE WHEN I.IsClustered_Desired = 1 THEN '' ELSE '(' + I.IncludedColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										CASE
 											WHEN I.IsFiltered_Desired = 0
 											THEN ''

@@ -232,7 +232,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             /*Sam explained that the number of partitions is equal to the number of month since January 2018
              and one year from now, plus 2 more partitions()*/
              //get this from the PartitionFunctions table.
-            int minimumNumberOfExpectedPartitions = sqlHelper.ExecuteScalar<int>(@"SELECT NumOfTotalPartitionFunctionIntervals 
+            short minimumNumberOfExpectedPartitions = sqlHelper.ExecuteScalar<short>(@"SELECT NumOfTotalPartitionFunctionIntervals 
                                                                                  FROM DOI.PartitionFunctions 
                                                                                  WHERE PartitionFunctionName = 'pfMonthlyTest'");
             List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.RowsInFileGroupsProcedureCall));

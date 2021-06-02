@@ -516,6 +516,7 @@
     <Compile Include="IntegrationTests\Models\vwTables.cs" />
     <Compile Include="IntegrationTests\Run Tests\OfflineRunTests.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
+    <Compile Include="IntegrationTests\Run Tests\StatisticsRenameTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\StatisticsTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\StorageContainersTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\SystemSettingsTableTest.cs" />

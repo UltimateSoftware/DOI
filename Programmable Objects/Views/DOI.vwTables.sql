@@ -1,5 +1,4 @@
 
-GO
 
 IF OBJECT_ID('[DOI].[vwTables]') IS NOT NULL
 	DROP VIEW [DOI].[vwTables];
@@ -9,12 +8,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
-
-
-
-
-
 
 
 CREATE   VIEW [DOI].[vwTables]
@@ -31,7 +24,7 @@ CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
 AS
-' + 		T.DSTriggerSQL AS CreateDataSynchTriggerSQL,
+' + 		DSTrigger.DSTriggerSQL AS CreateDataSynchTriggerSQL,
 
 'IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NOT NULL
 BEGIN
@@ -73,7 +66,8 @@ WHERE DatabaseName = ''' + T.DatabaseName + '''
 '		AS TurnOffDataSynchSQL,
 
 		'
-IF EXISTS(SELECT * FROM DOI.DOI.SysTriggers tr INNER JOIN DOI.SysDatabases d ON tr.database_id = d.database_id WHERE d.name = ' + T.DatabaseName + ' AND tr.name = ''tr' + T.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + T.TableName + '_OLD'')
+USE ' + T.DatabaseName + '
+IF EXISTS(SELECT * FROM sys.triggers tr WHERE tr.name = ''tr' + T.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + T.TableName + '_OLD'')
 BEGIN
 	DROP TRIGGER tr' + T.TableName + '_DataSynch
 END' 
@@ -86,14 +80,14 @@ BEGIN
 	IF (SELECT SUM(Counts)
 		FROM (
 				SELECT ''Inserts Left'' AS Type, COUNT(*) AS Counts
-				FROM ' + T.DatabaseName + T.SchemaName + '.' + T.TableName + '_DataSynch PT
+				FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch PT
 				WHERE PT.DMLType = ''I''
 					AND NOT EXISTS (SELECT ''True'' 
 									FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' T
 									WHERE ' + T.PKColumnListJoinClause + ')
 				UNION ALL
 				SELECT ''Updates Left'' AS Type, COUNT(*)
-				FROM ' + T.DatabaseName + T.SchemaName + '.' + T.TableName + '_DataSynch PT
+				FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch PT
 				WHERE PT.DMLType = ''U''
 					AND EXISTS (SELECT ''True'' 
 								FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' T
@@ -101,7 +95,7 @@ BEGIN
 									AND T.UpdatedUtcDt < PT.UpdatedUtcDt)
 				UNION ALL
 				SELECT ''Deletes Left'' AS Type, COUNT(*)
-				FROM ' + T.DatabaseName + T.SchemaName + '.' + T.TableName + '_DataSynch PT
+				FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch PT
 				WHERE PT.DMLType = ''D''
 					AND EXISTS (SELECT ''True'' 
 								FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' T

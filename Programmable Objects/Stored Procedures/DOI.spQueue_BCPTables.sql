@@ -38,6 +38,10 @@ SET NUMERIC_ROUNDABORT OFF
 SET QUOTED_IDENTIFIER ON
 
 BEGIN TRY
+
+    EXEC DOI.spRefreshMetadata_Run_All
+		@DatabaseName = @DatabaseName
+
 	DECLARE @CurrentDatabaseName						NVARCHAR(128),
 			@CurrentSchemaName							NVARCHAR(128),
 			@CurrentTableName							NVARCHAR(128),
@@ -626,22 +630,24 @@ BEGIN TRAN',
 				SET @TransactionId = NULL 
 
 				--validate if all has gone well:  do both tables exist, with the right structure, and are their rowcounts within a certain % of each other?
-				EXEC DOI.spQueue_Insert
-                    @CurrentDatabaseName            = @CurrentDatabaseName,
-					@CurrentSchemaName				= @CurrentSchemaName ,
-					@CurrentTableName				= @NewPartitionedPrepTableName, 
-					@CurrentIndexName				= 'N/A', 
-					@CurrentPartitionNumber			= 0, 
-					@IndexSizeInMB					= 0,
-					@CurrentParentSchemaName		= @CurrentSchemaName,
-					@CurrentParentTableName			= @CurrentTableName,
-					@CurrentParentIndexName			= 'N/A',
-					@IndexOperation					= 'FinalValidation',
-					@IsOnlineOperation				= 1,
-					@SQLStatement					= @FinalRepartitioningValidationSQL,
-					@TransactionId					= @TransactionId,
-					@BatchId						= @BatchId,
-					@ExitTableLoopOnError			= 1
+				--EXEC DOI.spQueue_Insert
+    --                @CurrentDatabaseName            = @CurrentDatabaseName,
+				--	@CurrentSchemaName				= @CurrentSchemaName ,
+				--	@CurrentTableName				= @NewPartitionedPrepTableName, 
+				--	@CurrentIndexName				= 'N/A', 
+				--	@CurrentPartitionNumber			= 0, 
+				--	@IndexSizeInMB					= 0,
+				--	@CurrentParentSchemaName		= @CurrentSchemaName,
+				--	@CurrentParentTableName			= @CurrentTableName,
+				--	@CurrentParentIndexName			= 'N/A',
+				--	@IndexOperation					= 'FinalValidation',
+				--	@IsOnlineOperation				= 1,
+				--	@SQLStatement					= @FinalRepartitioningValidationSQL,
+				--	@TransactionId					= @TransactionId,
+				--	@BatchId						= @BatchId,
+				--	@ExitTableLoopOnError			= 1
+				--THIS IS COMMENTED OUT FOR NOW...DETERMINE WHETHER OR NOT WE WILL PUT BACK..  WE CAN PROBABLY PUT BACK A RELAXED VERSION OF THIS WHICH ALLOWS NEW STRUCTURE ELEMENTS
+				--BUT DOES NOT ALLOW DELETED ELEMENTS...SOMETHING LIKE THAT?
 
 				--rename tables, in a transaction
 				SET @TransactionId = NEWID()

@@ -490,77 +490,77 @@ END' END AS PrepTableTriggerSQLFragment,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
-INSERT INTO ' + AllTables.SchemaName + '.' + AllTables.TableName + '
+INSERT INTO ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '
 SELECT ' + AllTables.ColumnListNoTypes + '
-FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
-WHERE O.DMLType = ''I''
+FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
+WHERE T.DMLType = ''I''
 	AND NOT EXISTS (SELECT ''True'' 
-					FROM ' + + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK)
+					FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK)
 					WHERE ' + AllTables.PKColumnListJoinClause + ')
 
 SET @RowCountOUT = @@ROWCOUNT
 
 IF EXISTS(	SELECT ''True''
-			FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
-			WHERE O.DMLType = ''I''
+			FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
+			WHERE T.DMLType = ''I''
 				AND NOT EXISTS (SELECT ''True'' 
-								FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) 
+								FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) 
 								WHERE ' + AllTables.PKColumnListJoinClause + '))
 BEGIN
-	RAISERROR(''Not all INSERTs were synched to the new table for ' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
+	RAISERROR(''Not all INSERTs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
 END' 
 END AS SynchInsertsPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
 UPDATE PT
 SET ' + AllTables.UpdateColumnList + '
-FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
-	INNER JOIN ' + + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) ON ' + AllTables.PKColumnListJoinClause + '
+FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
+	INNER JOIN ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) ON ' + AllTables.PKColumnListJoinClause + '
 	INNER JOIN (SELECT ' + AllTables.PKColumnList + ', MAX(UpdatedUtcDt) AS UpdatedUtcDt 
-				FROM ' + + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch
+				FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch
 				WHERE  DMLType = ''U''
 				GROUP BY ' + AllTables.PKColumnList + ') O2
 		ON ' + REPLACE(AllTables.PKColumnListJoinClause, 'PT.', 'O2.') + '
-			AND O2.UpdatedUtcDt = O.UpdatedUtcDt
-WHERE O.DMLType = ''U''
-	AND O.UpdatedUtcDt > PT.UpdatedUtcDt
+			AND O2.UpdatedUtcDt = T.UpdatedUtcDt
+WHERE T.DMLType = ''U''
+	AND T.UpdatedUtcDt > PT.UpdatedUtcDt
 
 SET @RowCountOUT = @@ROWCOUNT
 
 IF EXISTS(	SELECT ''True'' 
-			FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
-				INNER JOIN ' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) ON ' + AllTables.PKColumnListJoinClause + '
+			FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
+				INNER JOIN ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) ON ' + AllTables.PKColumnListJoinClause + '
 				INNER JOIN (SELECT ' + AllTables.PKColumnList + ', MAX(UpdatedUtcDt) AS UpdatedUtcDt 
-							FROM ' + + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch
+							FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch
 							WHERE  DMLType = ''U''
 							GROUP BY ' + AllTables.PKColumnList + ') O2
 					ON ' + REPLACE(AllTables.PKColumnListJoinClause, 'PT.', 'O2.') + '
-						AND O2.UpdatedUtcDt = O.UpdatedUtcDt
-			WHERE O.DMLType = ''U''
-				AND O.UpdatedUtcDt > PT.UpdatedUtcDt)
+						AND O2.UpdatedUtcDt = T.UpdatedUtcDt
+			WHERE T.DMLType = ''U''
+				AND T.UpdatedUtcDt > PT.UpdatedUtcDt)
 BEGIN
-	RAISERROR(''Not all UPDATEs were synched to the new table for ' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
+	RAISERROR(''Not all UPDATEs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
 END' 
 END AS SynchUpdatesPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
 DELETE PT
-FROM ' + + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK)
+FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK)
 WHERE EXISTS (	SELECT ''True'' 
-				FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
-				WHERE O.DMLType = ''D'' 
+				FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
+				WHERE T.DMLType = ''D'' 
 					AND ' + AllTables.PKColumnListJoinClause + ')
 
 SET @RowCountOUT = @@ROWCOUNT
 
 IF EXISTS(	SELECT ''True''
-			FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch O
-			WHERE O.DMLType = ''D''
+			FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
+			WHERE T.DMLType = ''D''
 				AND EXISTS (SELECT ''True'' 
-							FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) 
+							FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) 
 							WHERE ' + AllTables.PKColumnListJoinClause + '))
 BEGIN
-	RAISERROR(''Not all DELETEs were synched to the new table for ' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
+	RAISERROR(''Not all DELETEs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
 END' 
 END AS SynchDeletesPrepTableSQL,
 
