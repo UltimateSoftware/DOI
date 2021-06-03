@@ -60,7 +60,7 @@ BEGIN TRY
 	
 	SELECT @AddFKsSQL += CASE WHEN @UseExistenceCheck = 1 THEN CreateFKWithExistenceCheckSQL ELSE CreateFKSQL END + CHAR(13) + CHAR(10)
 	--select *
-	FROM DOI.vwForeignKeys
+	FROM DOI.vwForeignKeys WITH (SNAPSHOT)
 	WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END
         AND ParentSchemaName <> 'DOI'
         AND ReferencedSchemaName <> 'DOI'
