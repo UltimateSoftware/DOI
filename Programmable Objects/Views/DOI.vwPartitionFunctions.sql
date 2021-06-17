@@ -40,9 +40,9 @@ BEGIN
 	CREATE PARTITION FUNCTION ' + PFM.PartitionFunctionName + ' (' + PFM.PartitionFunctionDataType + ') 
 		AS RANGE RIGHT FOR VALUES (' + STUFF(PfBoundaryList.BoundaryList, LEN(PfBoundaryList.BoundaryList), 1, SPACE(0)) + ')
 END'  AS CreatePartitionFunctionSQL,
-'IF EXISTS(SELECT ''True'' FROM sys.partition_functions WHERE name = ''' + PFM.PartitionSchemeName + ''')
+'IF EXISTS(SELECT ''True'' FROM sys.partition_functions WHERE name = ''' + PFM.PartitionFunctionName + ''')
 BEGIN
-	DROP PARTITION FUNCTION ' + PFM.PartitionSchemeName + '
+	DROP PARTITION FUNCTION ' + PFM.PartitionFunctionName + '
 END' AS DropPartitionFunctionSQL
 --SELECT *
 FROM DOI.PartitionFunctions PFM

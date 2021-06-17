@@ -65,61 +65,39 @@ namespace DOI.Tests.IntegrationTests.RunTests
             FgTestHelper fgTestHelper = new FgTestHelper();
             DbfTestHelper dbfTestHelper = new DbfTestHelper();
 
-            this.sqlHelper.Execute($@"
-            IF OBJECT_ID('dbo.{TableTestFuturePartitionFailsDueToLocking}', 'U') IS NOT NULL
-            DROP TABLE {TableTestFuturePartitionFailsDueToLocking}", 30, true, DatabaseName);
+            var partitionFunctionName = sqlHelper.ExecuteScalar<string>($"SELECT PartitionFunctionName FROM DOI.vwPartitionFunctions WHERE DatabaseName = '{DatabaseName}'");
+            var partitionSchemeName = sqlHelper.ExecuteScalar<string>($"SELECT PartitionSchemeName FROM DOI.vwPartitionSchemes WHERE DatabaseName = '{DatabaseName}' AND PartitionFunctionName = '{partitionFunctionName}'");
+            var partitionFunctionDropSQL = sqlHelper.ExecuteScalar<string>($"SELECT DropPartitionFunctionSQL FROM DOI.vwPartitionFunctions WHERE DatabaseName = '{DatabaseName}'");
+            var partitionSchemeDropSQL = sqlHelper.ExecuteScalar<string>($"SELECT DropPartitionSchemeSQL FROM DOI.vwPartitionSchemes WHERE DatabaseName = '{DatabaseName}' AND PartitionFunctionName = '{partitionFunctionName}'");
 
-            this.sqlHelper.Execute($@"
-            IF EXISTS(SELECT * FROM sys.partition_schemes ps WHERE ps.name = '{PartitionSchemeName}')
-            DROP PARTITION SCHEME {PartitionSchemeName}", 30, true, DatabaseName);
 
-            this.sqlHelper.Execute($@"
-            IF EXISTS(SELECT * FROM sys.partition_functions WHERE name = '{PartitionFunctionName}')
-            DROP PARTITION FUNCTION {PartitionFunctionName}", 30, true, DatabaseName);
+            this.sqlHelper.Execute($@"DROP TABLE IF EXISTS {TableTestFuturePartitionFailsDueToLocking}", 30, true, DatabaseName);
 
-            this.sqlHelper.Execute($@"
-            DELETE DOI.DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionName}'");
-
-            this.sqlHelper.Execute($@"
-            IF EXISTS(SELECT * FROM sys.partition_schemes ps WHERE ps.name = '{PartitionSchemeNameNoSlidingWindow}')
-            DROP PARTITION SCHEME {PartitionSchemeNameNoSlidingWindow}", 30, true, DatabaseName);
-
-            this.sqlHelper.Execute($@"
-            IF EXISTS(SELECT * FROM sys.partition_functions WHERE name = '{PartitionFunctionNameNoSlidingWindow}')
-            DROP PARTITION FUNCTION {PartitionFunctionNameNoSlidingWindow}", 30, true, DatabaseName);
-
-            this.sqlHelper.Execute($@"
-            DELETE DOI.DOI.PartitionFunctions WHERE PartitionFunctionName = '{PartitionFunctionNameNoSlidingWindow}'");
-
-            var dropFilegroupSql = fgTestHelper.GetFilegroupSql(SystemMetadataHelper.PartitionSchemeNameYearly, "Drop");
-
-            if (dropFilegroupSql == null)
+            if (partitionSchemeName != null)
             {
-                dropFilegroupSql = fgTestHelper.GetFilegroupSql(SystemMetadataHelper.PartitionSchemeNameMonthly, "Drop");
+                this.sqlHelper.Execute(partitionSchemeDropSQL, 30, true, DatabaseName);
             }
 
-            var dropFilesSql = dbfTestHelper.GetDBFilesSql(SystemMetadataHelper.PartitionSchemeNameYearly, "Drop");
-
-            if (dropFilesSql == null)
+            if (partitionFunctionName != null)
             {
-                dropFilesSql = dbfTestHelper.GetDBFilesSql(SystemMetadataHelper.PartitionSchemeNameMonthly, "Drop");
+                this.sqlHelper.Execute(partitionFunctionDropSQL, 30, true, DatabaseName);
             }
 
-            this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionSchemeMonthlySql, 30, true, DatabaseName);
-            this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionSchemeYearlySql, 30, true, DatabaseName);
-            this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionFunctionMonthlySql, 30, true, DatabaseName);
-            this.sqlHelper.Execute(SystemMetadataHelper.DropPartitionFunctionYearlySql, 30, true, DatabaseName);
-            this.sqlHelper.Execute(SystemMetadataHelper.MetadataDeleteSql);
+            var dropFilegroupsSQL = fgTestHelper.GetFilegroupSql(partitionSchemeName, "Drop");
+            var dropFilesSQL = dbfTestHelper.GetDBFilesSql(partitionSchemeName, "Drop");
 
-            if (dropFilesSql != null)
+            if (dropFilesSQL != null)
             {
-                sqlHelper.Execute(dropFilesSql, 30, true, DatabaseName);
+                sqlHelper.Execute(dropFilesSQL, 30, true, DatabaseName);
             }
 
-            if (dropFilegroupSql != null)
+            if (dropFilegroupsSQL != null)
             {
-                sqlHelper.Execute(dropFilegroupSql, 30, true, DatabaseName);
+                sqlHelper.Execute(dropFilegroupsSQL, 30, true, DatabaseName);
             }
+
+            this.sqlHelper.Execute($@"DELETE DOI.DOI.PartitionFunctions WHERE PartitionFunctionName = '{partitionFunctionName}'");
+
 
             // re-enable job
             this.sqlHelper.Execute(@"EXEC msdb.dbo.sp_update_job @job_name='DOI - Refresh Metadata',@enabled = 1");
