@@ -67,7 +67,7 @@ FROM DOI.SysIndexes T
                                         AND ic.is_included_column = 1
 										AND ic.key_ordinal = 0
 										AND ic.partition_ordinal = 0
-                                    ORDER BY ic.key_ordinal
+                                    ORDER BY ic.index_column_id
                                     FOR XML PATH('')) x(IndexIncludedColumnList)) y
         ON T.database_id = y.database_id
             and T.object_id = y.object_id

@@ -66,6 +66,7 @@ BEGIN TRY
 			@CheckConstraintSQL							NVARCHAR(MAX) = '',
 			@PartitionDataValidationSQL					NVARCHAR(MAX) = '',
 			@FinalRepartitioningValidationSQL			NVARCHAR(MAX) = '',
+			@PostPartitioningDataValidationSQL			NVARCHAR(MAX) = '',
 			@RenameNewPartitionedPrepTableSQL			NVARCHAR(MAX) = '',
 			@RenameExistingTableIndexSQL				NVARCHAR(MAX) = '',
 			@RenameNewPartitionedPrepTableIndexSQL		NVARCHAR(MAX) = '',
@@ -184,7 +185,8 @@ RECONFIGURE
 				PT.SynchInsertsPrepTableSQL,
 				PT.SynchUpdatesPrepTableSQL,
 				PT.FinalRepartitioningValidationSQL,
-                TTP.DeletePartitionStateMetadataSQL
+                TTP.DeletePartitionStateMetadataSQL,
+				PT.PostDataValidationMissingEventsSQL + @CRLF + PT.PostDataValidationCompareByPartitionSQL
 		FROM DOI.vwTables TTP
 			INNER JOIN DOI.vwPartitioning_Tables_PrepTables PT ON PT.DatabaseName = TTP.DatabaseName
 				AND PT.SchemaName = TTP.SchemaName
@@ -199,7 +201,7 @@ RECONFIGURE
 	
 	OPEN PrepTable_Cur
 
-	FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @CreateBCPViewSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
+	FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @CreateBCPViewSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL, @PostPartitioningDataValidationSQL
 
 	IF @@FETCH_STATUS NOT IN (-1, -2)
 	BEGIN
@@ -527,6 +529,8 @@ RECONFIGURE
 							@BatchId						= @BatchId,
 							@ExitTableLoopOnError			= 1                    
 					END
+
+					--we are no longer doing the 2 validations PostDataValidationMissingEventsSQL and PostDataValidationCompareByPartitionSQL...why?
 
 					FETCH NEXT FROM Partitions_Cur INTO @NewPartitionedPrepTableName, @UnPartitionedPrepTableName, @PartitionDataValidationSQL, @SwitchPartitionsSQL, @DropTableSQL, @TableChildOperationId
 				END
@@ -1137,9 +1141,28 @@ EXEC DOI.DOI.spForeignKeysAdd
 		            @TransactionId					= @TransactionId,
 		            @BatchId						= @BatchId,
 		            @ExitTableLoopOnError			= 0
+
+				
+                EXEC DOI.spQueue_Insert
+                    @CurrentDatabaseName            = @CurrentDatabaseName,
+		            @CurrentSchemaName				= @SchemaName,
+		            @CurrentTableName				= @TableName, 
+		            @CurrentIndexName				= 'N/A',
+		            @CurrentPartitionNumber			= 0,  
+		            @IndexSizeInMB					= 0,
+		            @CurrentParentSchemaName		= @SchemaName,
+		            @CurrentParentTableName			= @TableName, 
+		            @CurrentParentIndexName			= 'N/A',
+		            @IndexOperation					= 'Post Partitioning Data Validation',
+		            @IsOnlineOperation				= 1,
+		            @TableChildOperationId			= 0,
+		            @SQLStatement					= @PostPartitioningDataValidationSQL, 
+		            @TransactionId					= @TransactionId,
+		            @BatchId						= @BatchId,
+		            @ExitTableLoopOnError			= 0
 			END --if @IsNewPartitionedTable = 1
 		END --IF @@FETCH_STATUS <> -2
-		FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @CreateBCPViewSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL
+		FETCH NEXT FROM PrepTable_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentPartitionColumn, @PrepTableName, @CreatePrepTableSQL, @CreateDataSynchTriggerSQL, @CreateFinalDataSynchTableSQL, @CreateFinalDataSynchTriggerSQL, @TurnOnDataSynchSQL, @TurnOffDataSynchSQL, @CreateBCPViewSQL, @BCPCmd, @NewStorage, @NewStorageType, @IsNewPartitionedPrepTable, @NewPartitionedPrepTableName, @CheckConstraintSQL, @RenameNewPartitionedPrepTableSQL, @RenameExistingTableSQL, @DropDataSynchTriggerSQL, @DropDataSynchTableSQL, @SynchDeletesSQL, @SynchInsertsSQL, @SynchUpdatesSQL, @FinalRepartitioningValidationSQL, @DeletePartitionStateMetadataSQL, @PostPartitioningDataValidationSQL
 	END  --IF @@FETCH_STATUS <> -1
 
 	CLOSE PrepTable_Cur

@@ -589,14 +589,14 @@ FROM (
 		FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch PT WITH (NOLOCK)
 		WHERE PT.DMLType = ''I''
 			AND NOT EXISTS (SELECT ''True'' 
-							FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' O WITH (NOLOCK)
+							FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' T WITH (NOLOCK)
 							WHERE ' + AllTables.PKColumnListJoinClause + ')
 		UNION ALL
 		SELECT ''Updates Left'' AS Type, COUNT(*)
 		FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch PT WITH (NOLOCK)
 		WHERE PT.DMLType = ''U''
 			AND EXISTS (SELECT ''True'' 
-						FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' O WITH (NOLOCK)
+						FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' T WITH (NOLOCK)
 						WHERE ' + AllTables.PKColumnListJoinClause + '
 							AND O.UpdatedUtcDt = PT.UpdatedUtcDt)
 		UNION ALL
@@ -604,26 +604,25 @@ FROM (
 		FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch PT WITH (NOLOCK)
 		WHERE PT.DMLType = ''D''
 			AND EXISTS (SELECT ''True'' 
-						FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' O WITH (NOLOCK)
+						FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' T WITH (NOLOCK)
 						WHERE ' + AllTables.PKColumnListJoinClause + '))c
 ' END AS DataSynchProgressSQL,
 '
 SELECT COUNT(*), ''MissingInserts''
-FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD O
+FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD T
 WHERE NOT EXISTS (	SELECT ''True''
 					FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT 
 					WHERE ' + AllTables.PKColumnListJoinClause + ')
 UNION ALL
 SELECT COUNT(*), ''MissingUpdates''
 FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT
-	INNER JOIN ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD O ON ' + AllTables.PKColumnListJoinClause + '
-WHERE O.UpdatedUtcDt > PT.UpdatedUtcDt
+	INNER JOIN ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD T ON ' + AllTables.PKColumnListJoinClause + '
+WHERE T.UpdatedUtcDt > PT.UpdatedUtcDt
 UNION ALL
---missing deletes
 SELECT COUNT(*), ''Missing Deletes'' 
 FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT
 WHERE NOT EXISTS(	SELECT ''True'' 
-					FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD O 
+					FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD T
 					WHERE ' + AllTables.PKColumnListJoinClause + ')
 	AND PT.UpdatedUtcDt < (SELECT MAX(UpdatedUtcDt) FROM ' + AllTables.SchemaName + '.' + AllTables.TableName + '_OLD)' AS PostDataValidationMissingEventsSQL,
 '

@@ -1,3 +1,6 @@
+-- <Migration ID="18ff79cb-7bbd-43b4-866b-f185b3f7e1db" />
+GO
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
 GO
 
@@ -15,6 +18,7 @@ CREATE   PROCEDURE [DOI].[spQueue]
     @DatabaseName SYSNAME = NULL,
     @SchemaName SYSNAME = NULL,
     @TableName SYSNAME = NULL,
+	@IncludeMaintenance BIT = 0,
 	@BatchIdOUT UNIQUEIDENTIFIER OUTPUT 
 
 AS
@@ -42,7 +46,8 @@ BEGIN TRY
 	SET @BatchIdOUT = NEWID()
 
     EXEC DOI.spRefreshMetadata_Run_All
-		@DatabaseName = @DatabaseName
+		@DatabaseName = @DatabaseName,
+		@IncludeMaintenance = @IncludeMaintenance
 
 	--TRACK INDEXES NOT IN METADATA...DO THIS LATER
 	EXEC DOI.spQueue_IndexesNotInMetadata
@@ -112,10 +117,10 @@ BEGIN TRY
 	WHERE T.ReadyToQueue = 1
 		AND T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END
  
-	WHILE @@FETCH_STATUS <> -1
-	BEGIN
-		IF @@FETCH_STATUS <> -2
-		BEGIN
+	--WHILE @@FETCH_STATUS <> -1
+	--BEGIN
+	--	IF @@FETCH_STATUS <> -2
+	--	BEGIN
 	        DECLARE Tables_Queued_Cur CURSOR LOCAL FAST_FORWARD FOR
 		        SELECT	FN.DatabaseName,
 				        FN.SchemaName, 
@@ -735,8 +740,8 @@ EXEC DOI.DOI.spRun_ReleaseApplicationLock
 
 		        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @IsClusteredIndexBeingDroppedForTable, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, /*@RunAutomaticallyOnDeployment, @RunAutomaticallyOnSQLJob,*/ @NeedsTransaction, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
 	        END --@@fetch_status <> -1
-        END
-    END 
+       -- END
+    --END 
 END TRY
 BEGIN CATCH
 	

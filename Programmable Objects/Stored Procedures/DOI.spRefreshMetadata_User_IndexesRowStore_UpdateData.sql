@@ -197,7 +197,6 @@ AS
         OptionAllowRowLocks_Actual = i.allow_row_locks,
         OptionAllowPageLocks_Actual = i.allow_page_locks,
         Storage_Actual = ActualDS.name,
-        Storage_Desired = DesiredDS.name,--THIS IS A PROBLEM.  WE ARE USING THIS COLUMN IN THE JOIN BELOW AND ARE UPDATING IT HERE AS WELL?
         StorageType_Actual = ActualDS.type_desc,
         StorageType_Desired = DesiredDS.type_desc, 
         IsStorageChanging = CASE WHEN ActualDS.name <> DesiredDS.name THEN 1 ELSE 0 END,
@@ -304,7 +303,7 @@ AS
 
 
     /*******************************        FOR ESTIMATING INDEX SIZE (START) *******************************************/
-    UPDATE IRS
+/*    UPDATE IRS
     SET AllColsInTableSize_Estimated = ISNULL(DOI.fnEstimateIndexSize_AllColSize(DatabaseName, schemaname, tablename), 0)
     FROM DOI.IndexesRowStore IRS
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
@@ -487,7 +486,7 @@ AS
                                     END AS DECIMAL(10,2))
     FROM DOI.IndexesRowStore IRS
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
-
+*/
     /*******************************        FOR ESTIMATING INDEX SIZE (END) *******************************************/
 --END
 

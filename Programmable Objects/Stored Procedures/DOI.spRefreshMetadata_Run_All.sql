@@ -9,6 +9,7 @@ GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_Run_All]
     @DatabaseName NVARCHAR(128) = NULL,
+    @IncludeMaintenance BIT = 0,
     @Debug BIT = 0
 
 AS
@@ -75,8 +76,11 @@ BEGIN TRY
     EXEC [DOI].[spRefreshMetadata_System_SysIndexColumns]
         @DatabaseName = @DatabaseName
 
-    EXEC [DOI].[spRefreshMetadata_System_SysIndexPhysicalStats]
-        @DatabaseName = @DatabaseName
+    IF @IncludeMaintenance = 1
+    BEGIN
+        EXEC [DOI].[spRefreshMetadata_System_SysIndexPhysicalStats]
+            @DatabaseName = @DatabaseName
+    END
 
     EXEC [DOI].[spRefreshMetadata_System_SysStatsColumns]
         @DatabaseName = @DatabaseName

@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[spRefreshMetadata_Setup_DOISettings]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_Setup_DOISettings];
 

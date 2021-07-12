@@ -1,3 +1,6 @@
+-- <Migration ID="13e26fae-cce3-4e03-9b0e-bc5e296f3582" />
+GO
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
 GO
 
@@ -26,8 +29,39 @@ FROM DOI.SysIndexPhysicalStats IPS
     INNER JOIN DOI.SysDatabases D ON IPS.database_id = D.database_id
 WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
-EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysIndexPhysicalStats',
-    @DatabaseName = @DatabaseName
+CREATE TABLE #SysIndexPhysicalStats (
+    database_id	                            SMALLINT,
+    object_id	                            INT,
+    index_id	                            INT,
+    partition_number	                    INT,
+    index_type_desc	                        NVARCHAR(120),
+    alloc_unit_type_desc	                NVARCHAR(120),
+    index_depth	                            TINYINT,
+    index_level	                            TINYINT,
+    avg_fragmentation_in_percent            FLOAT,
+    fragment_count	                        BIGINT,
+    avg_fragment_size_in_pages	            FLOAT,
+    page_count	                            BIGINT,
+    avg_page_space_used_in_percent          FLOAT,
+    record_count	                        BIGINT,
+    ghost_record_count	                    BIGINT,
+    version_ghost_record_count	            BIGINT,
+    min_record_size_in_bytes	            INT,
+    max_record_size_in_bytes	            INT,
+    avg_record_size_in_bytes	            FLOAT,
+    forwarded_record_count	                BIGINT,
+    compressed_page_count	                BIGINT,
+    hobt_id	                                BIGINT,
+    columnstore_delete_buffer_state         TINYINT,
+    columnstore_delete_buffer_state_desc	NVARCHAR(120))
 
+INSERT INTO #SysIndexPhysicalStats
+SELECT  *
+FROM sys.dm_db_index_physical_stats(DB_ID(@DatabaseName), NULL, NULL, NULL, 'LIMITED')    
+
+INSERT INTO DOI.SysIndexPhysicalStats
+SELECT *
+FROM #SysIndexPhysicalStats
+
+DROP TABLE IF EXISTS #SysIndexPhysicalStats
 GO

@@ -407,7 +407,6 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshStorageContainers_AddNewPartition.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\010_20200303-1721_SamuelBe.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnRefreshMetadataForViewSQL.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -439,9 +438,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwPartitionSchemes.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Programmable Objects\Views\vwPartitioning_PrepTables.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexPartitions_ColumnStore_UpdateData.sql" />
@@ -523,5 +519,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_4_IndexPartitions.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_PostPartitioning_DataValidationQueries.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spImportMetadata.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spDeleteMetadata.sql" />
   </ItemGroup>
 </Project>

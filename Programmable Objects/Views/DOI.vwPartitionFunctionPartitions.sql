@@ -88,50 +88,50 @@ END CATCH' AS PartitionFunctionSplitSQL,
 AS SetFilegroupToNextUsedSQL
         --SELECT count(*)
         FROM (  SELECT	TOP (1234567890987) *
-                FROM (SELECT DISTINCT
-		                PFM.*,
-		                CASE  
-			                WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
-			                THEN PFM.LastBoundaryDate
-			                WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
-			                THEN DATEADD(MONTH, RowNum-1, InitialDate)
-			                WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
-			                THEN PFM.LastBoundaryDate
-			                WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
-			                THEN DATEADD(YEAR, RowNum-1, InitialDate)
-		                END AS BoundaryValue,
-		                CASE 
-			                WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
-			                THEN 'Active'
-			                WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
-			                THEN LEFT(CONVERT(VARCHAR(20), DATEADD(MONTH, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
-			                WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
-			                THEN 'Active'
-			                WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
-			                THEN LEFT(CONVERT(VARCHAR(20), DATEADD(YEAR, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
-		                END AS Suffix,
-		                CASE 
-			                WHEN (PFM.BoundaryInterval = 'Yearly' AND PFM.UsesSlidingWindow = 1 AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate))
-					                OR (PFM.BoundaryInterval = 'Monthly' AND PFM.UsesSlidingWindow = 1 AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate))
-			                THEN 1
-			                ELSE 0
-		                END AS IsSlidingWindowActivePartition,
-		                1 AS IncludeInPartitionFunction,
-		                1 AS IncludeInPartitionScheme
-                --select count(*)
-                FROM DOI.PartitionFunctions PFM
-	                CROSS APPLY DOI.fnNumberTable(ISNULL(NumOfTotalPartitionFunctionIntervals, 0)) PSN
-                UNION ALL
-                SELECT	PFM.*,
-		                MinInterval.MinValueOfDataType AS BoundaryValue,
-		                'Historical' AS Suffix,
-		                0 AS IsSlidingWindowActivePartition,
-		                0 AS IncludeInPartitionFunction,
-		                1 AS IncludeInPartitionScheme
-                FROM DOI.PartitionFunctions PFM
-	                CROSS APPLY (   SELECT PFM2.MinValueOfDataType 
-                                    FROM DOI.PartitionFunctions PFM2 
-                                    WHERE PFM2.PartitionFunctionName = PFM.PartitionFunctionName) MinInterval)V
+                FROM (	SELECT DISTINCT
+			                PFM.*,
+							CASE  
+								WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
+								THEN PFM.LastBoundaryDate
+								WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
+								THEN DATEADD(MONTH, RowNum-1, InitialDate)
+								WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
+								THEN PFM.LastBoundaryDate
+								WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
+								THEN DATEADD(YEAR, RowNum-1, InitialDate)
+							END AS BoundaryValue,
+							CASE 
+								WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
+								THEN 'Active'
+								WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
+								THEN LEFT(CONVERT(VARCHAR(20), DATEADD(MONTH, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
+								WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
+								THEN 'Active'
+								WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
+								THEN LEFT(CONVERT(VARCHAR(20), DATEADD(YEAR, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
+							END AS Suffix,
+							CASE 
+								WHEN (PFM.BoundaryInterval = 'Yearly' AND PFM.UsesSlidingWindow = 1 AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate))
+										OR (PFM.BoundaryInterval = 'Monthly' AND PFM.UsesSlidingWindow = 1 AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate))
+								THEN 1
+								ELSE 0
+							END AS IsSlidingWindowActivePartition,
+							1 AS IncludeInPartitionFunction,
+							1 AS IncludeInPartitionScheme
+						--select count(*)
+						FROM DOI.PartitionFunctions PFM
+							CROSS APPLY DOI.fnNumberTable(ISNULL(NumOfTotalPartitionFunctionIntervals, 0)) PSN
+						UNION ALL
+						SELECT	PFM.*,
+								MinInterval.MinValueOfDataType AS BoundaryValue,
+								'Historical' AS Suffix,
+								0 AS IsSlidingWindowActivePartition,
+								0 AS IncludeInPartitionFunction,
+								1 AS IncludeInPartitionScheme
+						FROM DOI.PartitionFunctions PFM
+							CROSS APPLY (   SELECT PFM2.MinValueOfDataType 
+											FROM DOI.PartitionFunctions PFM2 
+											WHERE PFM2.PartitionFunctionName = PFM.PartitionFunctionName) MinInterval)V
                 ORDER BY PartitionFunctionName, BoundaryValue)PFI
 	        OUTER APPLY (	SELECT	d.database_id, 
                                     d.name AS DatabaseName, 
