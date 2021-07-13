@@ -97,15 +97,15 @@ FROM (	SELECT	 IRS.*
 				
 				,CASE 
 					WHEN ISNULL(IRS.IsPrimaryKey_Actual, IRS.IsPrimaryKey_Desired) = 1 OR ISNULL(IRS.IsUniqueConstraint_Actual, IRS.IsUniqueConstraint_Desired) = 1 
-					THEN 'ALTER TABLE ' + IRS.SchemaName + '.' + IRS.TableName + ' DROP CONSTRAINT IF EXISTS ' + IRS.IndexName
-					ELSE 'DROP INDEX IF EXISTS '+ IRS.SchemaName + '.' + IRS.TableName + '.' + IRS.IndexName
+					THEN 'ALTER TABLE ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + ' DROP CONSTRAINT IF EXISTS ' + IRS.IndexName
+					ELSE 'DROP INDEX IF EXISTS ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + '.' + IRS.IndexName
 				END AS DropStatement
 				,
 'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
 BEGIN' + 	CASE 
 				WHEN (IRS.IsPrimaryKey_Desired = 1 OR IRS.IsUniqueConstraint_Desired = 1)
 				THEN '
-ALTER TABLE ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+ALTER TABLE ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 '	ADD CONSTRAINT ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 '		' + CASE WHEN IRS.IsPrimaryKey_Desired = 1 THEN 'PRIMARY KEY ' WHEN IRS.IsUniqueConstraint_Desired = 1 THEN ' UNIQUE ' ELSE '' END + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED (' + IRS.KeyColumnList_Desired + ') ' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 '				WITH (	
@@ -128,7 +128,7 @@ ALTER TABLE ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + CHA
 							END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
 					ELSE '
 CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
-										'	ON ' + IRS.SchemaName + '.' + IRS.TableName + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										'	ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										CASE 
 											WHEN IRS.IncludedColumnList_Desired IS NULL 
 											THEN '' 
@@ -164,7 +164,7 @@ CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE W
 		END + 
 'END' AS CreateStatement
 				,'
-ALTER INDEX ' + IRS.IndexName + ' ON ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + 
+ALTER INDEX ' + IRS.IndexName + ' ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	SET (	IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 			STATISTICS_NORECOMPUTE = ' + CASE WHEN IRS.OptionStatisticsNoRecompute_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 			ALLOW_ROW_LOCKS = ' + CASE WHEN IRS.OptionAllowRowLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
@@ -173,14 +173,19 @@ AS AlterSetStatement
 				,	CASE 
 						WHEN ISNULL(IRS.NeedsPartitionLevelOperations, 0) = 0
 						THEN '
-ALTER INDEX ' + IRS.IndexName + ' ON ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + 
+ALTER INDEX ' + IRS.IndexName + ' ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	REBUILD PARTITION = ALL' + CHAR(13) + CHAR(10) + 
 '		WITH (	
 				PAD_INDEX = ' + CASE WHEN IRS.OptionPadIndex_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 				FILLFACTOR = ' + CAST(CASE WHEN IRS.Fillfactor_Desired = 0 THEN 100 ELSE IRS.Fillfactor_Desired END AS VARCHAR(3)) + ',
 				SORT_IN_TEMPDB = ON' + 
-				CASE WHEN IRS.IsPrimaryKey_Desired = 1 THEN '' ELSE ',
-				IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END END + ',
+				CASE 
+					WHEN IRS.IsPrimaryKey_Desired = 1 
+					THEN '' ELSE	CASE 
+										WHEN IRS.IsUnique_Desired = 1 --on unique indexes we can't use the IGNORE_DUP_KEY option, even if we're setting it to OFF.
+										THEN '' 
+										ELSE ',
+				IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END END END + ',
 				STATISTICS_NORECOMPUTE = ' + CASE WHEN IRS.OptionStatisticsNoRecompute_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 				STATISTICS_INCREMENTAL = ' + CASE WHEN IRS.OptionStatisticsIncremental_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 				ONLINE = ' + CASE WHEN IndexHasLOBColumns = 1 THEN 'OFF' ELSE ' ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE))' END + ',
@@ -193,7 +198,7 @@ END AS AlterRebuildStatement
 				,	CASE
 						WHEN ISNULL(IRS.NeedsPartitionLevelOperations, 0) = 0
 						THEN '
-ALTER INDEX ' + IRS.IndexName + ' ON ' + IRS.SchemaName + '.' + IRS.TableName + CHAR(13) + CHAR(10) + 
+ALTER INDEX ' + IRS.IndexName + ' ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	REORGANIZE PARTITION = ALL' + CHAR(13) + CHAR(10) + 
 '		WITH (	LOB_COMPACTION = ON)' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 						ELSE 'Needs Partition Level Statements'
@@ -214,7 +219,7 @@ CASE WHEN IsPrimaryKey_Desired = 0 THEN '' ELSE
 'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
 BEGIN
 	CREATE UNIQUE ' + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
-											'	ON ' + IRS.SchemaName + '.' + IRS.TableName + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+											'	ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 											CASE 
 												WHEN IRS.IncludedColumnList_Desired IS NULL 
 												THEN '' 
@@ -250,7 +255,7 @@ BEGIN
 'END'
 END AS CreatePKAsUniqueIndexSQL,
 CASE WHEN IsPrimaryKey_Desired = 0 THEN '' ELSE 
-'DROP INDEX IF EXISTS '+ IRS.SchemaName + '.' + IRS.TableName + '.' + IRS.IndexName 
+'DROP INDEX IF EXISTS ['+ IRS.SchemaName + '].[' + IRS.TableName + '].' + IRS.IndexName 
 END AS DropPKAsUniqueIndexSQL
 		--select count(*)
 		FROM DOI.fnIndexesRowStore() IRS
@@ -292,12 +297,12 @@ END AS DropPKAsUniqueIndexSQL
 					ELSE 'None'
 				END AS IndexUpdateType 
 				,'
-DROP INDEX IF EXISTS '+ ICS.SchemaName + '.' + ICS.TableName + '.' + ICS.IndexName AS DropStatement
+DROP INDEX IF EXISTS [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + '.' + ICS.IndexName AS DropStatement
 				,
 'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + ICS.SchemaName + ''' AND t.name = ''' + ICS.TableName + ''' AND i.name = ''' + ICS.IndexName + ''')
 BEGIN
 	CREATE' + CASE WHEN ICS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED COLUMNSTORE INDEX ' + ICS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
-										'	ON ' + ICS.SchemaName + '.' + ICS.TableName + CASE WHEN ICS.IsClustered_Desired = 1 THEN '' ELSE '(' + ICS.IncludedColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										'	ON [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + CASE WHEN ICS.IsClustered_Desired = 1 THEN '' ELSE '(' + ICS.IncludedColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										CASE
 											WHEN ICS.IsFiltered_Desired = 0
 											THEN ''
@@ -319,16 +324,16 @@ BEGIN
 																END + CHAR(13) + CHAR(10) + '
 END' AS CreateStatement
 				,'
-ALTER INDEX ' + ICS.IndexName + ' ON ' + ICS.SchemaName + '.' + ICS.TableName + CHAR(13) + CHAR(10) + 
+ALTER INDEX ' + ICS.IndexName + ' ON [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	SET (COMPRESSION_DELAY = ' + ICS.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 AS AlterSetStatement
 				,'
-ALTER INDEX ' + ICS.IndexName + ' ON ' + ICS.SchemaName + '.' + ICS.TableName + CHAR(13) + CHAR(10) + 
+ALTER INDEX ' + ICS.IndexName + ' ON [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	REBUILD PARTITION = ALL' + CHAR(13) + CHAR(10) + 
 '		WITH (	DATA_COMPRESSION = ' + ICS.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(10) --COMPRESSION_DELAY errors out...not available yet?
 AS AlterRebuildStatement
 				,'
-ALTER INDEX ' + ICS.IndexName + ' ON ' + ICS.SchemaName + '.' + ICS.TableName + CHAR(13) + CHAR(10) + 
+ALTER INDEX ' + ICS.IndexName + ' ON [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	REORGANIZE PARTITION = ALL' + CHAR(13) + CHAR(10) + 
 '		WITH (COMPRESS_ALL_ROW_GROUPS = OFF)' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 AS AlterReorganizeStatement,

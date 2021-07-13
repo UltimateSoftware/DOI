@@ -217,7 +217,7 @@ BEGIN
 SET @SQL += '
 
     INSERT INTO @IndexesColumnStore([DatabaseName], [SchemaName], [TableName], [IndexName], [IsClustered_Desired], [ColumnList_Desired], [IsFiltered_Desired], [FilterPredicate_Desired], [OptionDataCompression_Desired], [OptionDataCompressionDelay_Desired], [PartitionFunction_Desired], [PartitionColumn_Desired])
-    SELECT ''' + @DatabaseName + ''', s.name, t.name, i.name, CASE WHEN i.type_desc LIKE ''%NONCLUSTERED%'' THEN 0 ELSE 1 END, x.IndexIncludedColumnList, i.has_filter, i.filter_definition, dc.data_compression_desc, i.compression_delay, p.PartitionFunctionName, p.PartitionColumnName
+    SELECT ''' + @DatabaseName + ''', s.name, t.name, i.name, CASE WHEN i.type_desc LIKE ''%NONCLUSTERED%'' THEN 0 ELSE 1 END, STUFF(x.IndexIncludedColumnList, LEN(x.IndexIncludedColumnList), 1, SPACE(0)), i.has_filter, i.filter_definition, dc.data_compression_desc, i.compression_delay, p.PartitionFunctionName, p.PartitionColumnName
     FROM ' + @DatabaseName + '.sys.indexes i
         INNER JOIN ' + @DatabaseName + '.sys.tables t ON i.object_id = t.object_id
         INNER JOIN ' + @DatabaseName + '.sys.schemas s ON t.schema_id = s.schema_id
