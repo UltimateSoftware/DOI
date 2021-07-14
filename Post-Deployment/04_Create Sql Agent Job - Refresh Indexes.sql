@@ -45,30 +45,8 @@ BEGIN
 			/****** Object:  Step [Refresh Indexes]    Script Date: 7/25/2014 4:08:45 PM ******/
 			EXEC @ReturnCode = msdb.dbo.sp_add_jobstep 
 				@job_id=@jobId, 
-				@step_name=N'Populate Queue - Online', 
+				@step_name=N'Refresh Indexes - Online', 
 				@step_id=1, 
-				@cmdexec_success_code=0, 
-				@on_success_action=3, 
-				@on_success_step_id=0, 
-				@on_fail_action=2, 
-				@on_fail_step_id=0, 
-				@retry_attempts=0, 
-				@retry_interval=0, 
-				@os_run_priority=0, 
-				@subsystem=N'TSQL', 
-				@command=N'
-EXEC DOI.spQueue
-	@OnlineOperations = 1,
-	@IsBeingRunDuringADeployment = 0
-	', 
-				@database_name=N'DOI', 
-				@flags=0
-
-
-			EXEC @ReturnCode = msdb.dbo.sp_add_jobstep 
-				@job_id=@jobId, 
-				@step_name=N'DOI-Refresh Indexes - Online', 
-				@step_id=2, 
 				@cmdexec_success_code=0, 
 				@on_success_action=1, 
 				@on_success_step_id=0, 
@@ -79,13 +57,22 @@ EXEC DOI.spQueue
 				@os_run_priority=0, 
 				@subsystem=N'TSQL', 
 				@command=N'
-EXEC DOI.spRun @OnlineOperations = 1
+    DECLARE @BatchId UNIQUEIDENTIFIER
+
+	EXEC DOI.spQueue 
+		@OnlineOperations = 1,
+		@IsBeingRunDuringADeployment = 0,
+        @BatchIdOUT = @BatchId
+
+	EXEC DOI.spRun 
+		@OnlineOperations = 1,
+		@BatchId = @BatchId
     
-EXEC DOI.spForeignKeysAdd
-    @CallingProcess = ''Job''', 
+	EXEC DOI.spForeignKeysAdd
+		@CallingProcess = ''Job''
+	', 
 				@database_name=N'DOI', 
 				@flags=0
-
 
 			EXEC @ReturnCode = msdb.dbo.sp_update_job 
 				@job_id = @jobId, 
