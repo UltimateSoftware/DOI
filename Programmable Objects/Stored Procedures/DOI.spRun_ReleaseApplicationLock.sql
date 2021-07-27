@@ -12,7 +12,6 @@ GO
 CREATE   PROCEDURE [DOI].[spRun_ReleaseApplicationLock]
     @DatabaseName NVARCHAR(128),
     @BatchId UNIQUEIDENTIFIER,
-    @IsOnlineOperation BIT,
     @Debug BIT = 0
 AS
 
@@ -20,13 +19,11 @@ AS
 	EXEC DOI.spRun_GetApplicationLock
         @DatabaseName = 'PaymentReporting',
         @LockTimeout = 1000,
-        @BatchId = '0483BDE0-118F-4865-9811-B0406C951161',
-        @IsOnlineOperation = 1
+        @BatchId = '0483BDE0-118F-4865-9811-B0406C951161'
         
     EXEC DOI.spRun_ReleaseApplicationLock
         @DatabaseName = 'PaymentReporting',
-        @BatchId = '0483BDE0-118F-4865-9811-B0406C951161',
-        @IsOnlineOperation = 1
+        @BatchId = '0483BDE0-118F-4865-9811-B0406C951161'
 */
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 
@@ -43,8 +40,7 @@ BEGIN TRY
                 @RC INT,
                 @SQLStatement VARCHAR(500) = '
 EXEC DOI.spRun_ReleaseApplicationLock
-    @BatchId = ''' + CAST(@BatchId AS NVARCHAR(40)) + ''',
-    @IsOnlineOperation = ' + CAST(@IsOnlineOperation AS NVARCHAR(1))
+    @BatchId = ''' + CAST(@BatchId AS NVARCHAR(40)) + ''''
 
         SET @SPID = @@SPID
 
@@ -123,7 +119,6 @@ EXEC DOI.spRun_ReleaseApplicationLock
                 @IndexSizeInMB          = 0 ,          
                 @SQLStatement           = @SQLStatement,          
                 @IndexOperation         = 'Release Application Lock' ,        
-                @IsOnlineOperation      = @IsOnlineOperation ,   
                 @RowCount               = 0 ,               
                 @TableChildOperationId  = 0 ,  
                 @RunStatus              = 'Info' ,
@@ -150,7 +145,6 @@ BEGIN CATCH
         @IndexSizeInMB          = 0 ,          
         @SQLStatement           = @SQLStatement,          
         @IndexOperation         = 'Release Application Lock' ,        
-        @IsOnlineOperation      = @IsOnlineOperation ,   
         @RowCount               = 0 ,               
         @TableChildOperationId  = 0 ,  
         @RunStatus              = 'Error' ,             

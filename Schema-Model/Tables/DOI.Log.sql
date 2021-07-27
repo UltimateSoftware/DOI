@@ -15,7 +15,6 @@ CREATE TABLE [DOI].[Log]
 [LogDateTime] [datetime2] NOT NULL CONSTRAINT [Def_Log_LogDateTime] DEFAULT (sysdatetime()),
 [SQLStatement] [varchar] (max) NULL,
 [IndexOperation] [varchar] (50) NOT NULL,
-[IsOnlineOperation] [bit] NOT NULL,
 [RowCount] [int] NOT NULL,
 [TableChildOperationId] [smallint] NOT NULL,
 [RunStatus] [varchar] (20) NOT NULL,

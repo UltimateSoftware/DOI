@@ -16,7 +16,6 @@ CREATE TYPE [DOI].[LogTT] AS TABLE
 [LogDateTime] [datetime2] NOT NULL,
 [SQLStatement] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [IndexOperation] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-[IsOnlineOperation] [bit] NOT NULL,
 [RowCount] [int] NOT NULL,
 [TableChildOperationId] [smallint] NOT NULL,
 [RunStatus] [varchar] (6) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,

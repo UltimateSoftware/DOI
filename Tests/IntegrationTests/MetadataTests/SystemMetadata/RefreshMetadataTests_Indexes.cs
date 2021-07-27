@@ -51,6 +51,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [TestCase(true, TestName = "RefreshMetadata_SysIndexes_RowStore_MetadataIsAccurate_EmptyTable")]
         [TestCase(false, TestName = "RefreshMetadata_SysIndexes_RowStore_MetadataIsAccurate_NonEmptyTable")]
         [Test]
+        [Ignore("Need Index Estimator functionality")]
         public void RefreshMetadata_SysIndexes_RowStore_MetadataIsAccurate(bool emptyTable)
         {
             if (!emptyTable)

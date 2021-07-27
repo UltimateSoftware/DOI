@@ -13,7 +13,6 @@ CREATE   PROCEDURE [DOI].[spRun_GetApplicationLock]
     @DatabaseName NVARCHAR(128),
     @LockTimeout INT = 15000,
     @BatchId UNIQUEIDENTIFIER,
-    @IsOnlineOperation BIT,
     @Debug BIT = 0
 
 AS
@@ -23,7 +22,6 @@ AS
         @DatabaseName = 'PaymentReporting',
         @LockTimeout = 1000,
         @BatchId = '0483BDE0-118F-4865-9811-B0406C951161',
-        @IsOnlineOperation = 1,
         @Debug = 1
 
         EXEC PaymentReporting.sys.sp_releaseapplock 
@@ -32,8 +30,7 @@ AS
 	        @LockOwner		= 'Session' 
 
     EXEC Utility.spRefreshIndexStructures_ReleaseApplicationLock 
-        @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73', 
-        @IsOnlineOperation = 1
+        @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'
 
 SELECT APPLOCK_TEST('dbo', 'RefreshIndexStructures', 'Exclusive', 'Session')
 
@@ -53,8 +50,7 @@ BEGIN TRY
                 @RC INT,
                 @SQLStatement VARCHAR(500) = '
 EXEC DOI.spRun_GetApplicationLock 
-    @BatchId = ''' + CAST(@BatchId AS NVARCHAR(40)) + ''',
-    @IsOnlineOperation = ' + CAST(@IsOnlineOperation AS NVARCHAR(1))
+    @BatchId = ''' + CAST(@BatchId AS NVARCHAR(40)) + ''''
 
         SET @SPID = @@SPID
 
@@ -145,7 +141,6 @@ EXEC DOI.spRun_GetApplicationLock
                 @IndexSizeInMB          = 0 ,          
                 @SQLStatement           = @SQLStatement,          
                 @IndexOperation         = 'Get Application Lock' ,        
-                @IsOnlineOperation      = @IsOnlineOperation ,   
                 @RowCount               = 0 ,               
                 @TableChildOperationId  = 0 ,  
                 @RunStatus              = 'Info' ,             
@@ -172,7 +167,6 @@ BEGIN CATCH
         @IndexSizeInMB          = 0 ,          
         @SQLStatement           = @SQLStatement,          
         @IndexOperation         = 'Get Application Lock' ,        
-        @IsOnlineOperation      = @IsOnlineOperation ,   
         @RowCount               = 0 ,               
         @TableChildOperationId  = 0 ,  
         @RunStatus              = 'Error' ,             

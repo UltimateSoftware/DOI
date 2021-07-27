@@ -30,6 +30,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
         [TearDown]
         public virtual void TearDown()
         {
+            sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}'");
             sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120, true, DatabaseName);
             sqlHelper.Execute("TRUNCATE TABLE DOI.Queue");
             sqlHelper.Execute("TRUNCATE TABLE DOI.Log");
@@ -49,27 +50,27 @@ namespace DOI.Tests.IntegrationTests.RunTests
          * 4. NoRecompute setting changes
          * 
          */
-        [TestCase("ST_TempA", "SampleSizePct_Desired = 90", "Update Statistics", "SampleSize", TestName = "Changing sample Size", Ignore ="Test fails on CI")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 90", "Update Statistics", "SampleSize", TestName = "Changing sample Size")]
         [TestCase("ST_TempA", "IsIncremental_Desired = 1", "Update Statistics", "Incremental", TestName = "Changing isIncremental")]
         [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0'", "DropRecreate Statistics", "Filter", TestName = "Changing filter")]
         [TestCase("ST_TempA", "NoRecompute_Desired = 1", "Update Statistics", "NoRecompute", TestName ="Changing isNoRecompute")]
 
         //2 settings:
-        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, IsIncremental_Desired = 1", "Update Statistics", "Incremental, SampleSize", TestName = "Changing sample size and isIncremental", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0'", "DropRecreate Statistics", "Filter, SampleSize", TestName = "Changing sample size and filter", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, NoRecompute_Desired = 1", "Update Statistics", "NoRecompute, SampleSize", TestName = "Changing sample size and isNoRecompute", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, IsIncremental_Desired = 1", "Update Statistics", "Incremental, SampleSize", TestName = "Changing sample size and isIncremental")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0'", "DropRecreate Statistics", "Filter, SampleSize", TestName = "Changing sample size and filter")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 90, NoRecompute_Desired = 1", "Update Statistics", "NoRecompute, SampleSize", TestName = "Changing sample size and isNoRecompute")]
         [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1", "DropRecreate Statistics", "Filter, Incremental", TestName = "Changing isIncremental and filter")]
         [TestCase("ST_TempA", "IsIncremental_Desired = 1, NoRecompute_Desired = 1", "Update Statistics", "Incremental, NoRecompute", TestName = "Changing isIncremental and isNoRecompute")]
         [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', NoRecompute_Desired = 1", "DropRecreate Statistics", "Filter, NoRecompute", TestName = "Changing filter and isNoRecompute")]
 
         //3 settings
-        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, Incremental, SampleSize", TestName ="Changing sample size, isIncremental, and filter", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "IsIncremental_Desired = 1, NoRecompute_Desired = 1, SampleSizePct_Desired = 90", "Update Statistics", "Incremental, NoRecompute, SampleSize", TestName ="Changing sample size, isIncremental, and isNoRecompute", Ignore = "Test fails on CI")]
-        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', NoRecompute_Desired = 1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, NoRecompute, SampleSize", TestName ="Changing sample size, filter, and isNoRecompute", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, Incremental, SampleSize", TestName ="Changing sample size, isIncremental, and filter")]
+        [TestCase("ST_TempA", "IsIncremental_Desired = 1, NoRecompute_Desired = 1, SampleSizePct_Desired = 90", "Update Statistics", "Incremental, NoRecompute, SampleSize", TestName ="Changing sample size, isIncremental, and isNoRecompute")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', NoRecompute_Desired = 1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, NoRecompute, SampleSize", TestName ="Changing sample size, filter, and isNoRecompute")]
         [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1, NoRecompute_Desired = 1", "DropRecreate Statistics", "Filter, Incremental, NoRecompute", TestName ="Changing isIncremental, filter, and isNoRecompute")]
 
         //4 settings:
-        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1, NoRecompute_Desired=1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, Incremental, NoRecompute, SampleSize", TestName ="Changing all 4 settings", Ignore = "Test fails on CI")]
+        [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0', IsIncremental_Desired = 1, NoRecompute_Desired=1, SampleSizePct_Desired = 90", "DropRecreate Statistics", "Filter, Incremental, NoRecompute, SampleSize", TestName ="Changing all 4 settings")]
 
         public void StatisticsUpdateStrategyTests(string statisticsName, string optionUpdateList, string expectedUpdateType, string expectedListOfChanges)
         {
@@ -135,18 +136,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
              */
             List<Statistics> statisticsDetails;
             string updateSetClause = string.Empty;
-            short isOnlineOperation = 1;
-
-            switch (statisticsUpdateType)
-            {
-                case
-                    "DropRecreate Statistics":
-                    isOnlineOperation = 0;
-                    break;
-            }
-
-
-
+            
             string actualUpdateType =
                 sqlHelper.ExecuteScalar<string>(
                     $@" SELECT StatisticsUpdateType 
@@ -216,12 +206,9 @@ namespace DOI.Tests.IntegrationTests.RunTests
                             @DatabaseName = N'{DatabaseName}',                            
                             @SchemaName = N'{SchemaName}',
                             @TableName = N'{TempTableName}',
-                            @OnlineOperations = {isOnlineOperation},
-                            @IsBeingRunDuringADeployment = 0,
                             @BatchIdOUT = @BatchIdOUT OUTPUT
 
                         EXEC DOI.spRun
-                            @OnlineOperations = {isOnlineOperation},
                             @DatabaseName = N'{DatabaseName}',
                             @SchemaName = N'{SchemaName}',
                             @TableName = N'{TempTableName}',

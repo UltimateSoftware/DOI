@@ -1,20 +1,11 @@
 -- <Migration ID="18ff79cb-7bbd-43b4-866b-f185b3f7e1db" />
-GO
--- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
-
-GO
 
 IF OBJECT_ID('[DOI].[spQueue]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spQueue];
 
 GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
+
 CREATE   PROCEDURE [DOI].[spQueue]
-	@OnlineOperations BIT,
-	@IsBeingRunDuringADeployment BIT,
     @DatabaseName SYSNAME = NULL,
     @SchemaName SYSNAME = NULL,
     @TableName SYSNAME = NULL,
@@ -27,20 +18,9 @@ AS
     declare @BatchId uniqueidentifier
 
 	EXEC DOI.spQueue 
-		@OnlineOperations = 0,
-		@IsBeingRunDuringADeployment = 0,
+		@DatabaseName = 'DOIUnitTests',
         @BatchIdOUT = @BatchId
-
 */
-SET NOCOUNT ON
-SET ANSI_NULLS ON
-SET ANSI_PADDING ON
-SET ANSI_WARNINGS ON
-SET ARITHABORT ON
-SET CONCAT_NULL_YIELDS_NULL ON
-SET NUMERIC_ROUNDABORT OFF
-SET QUOTED_IDENTIFIER ON
-
 
 BEGIN TRY
 	SET @BatchIdOUT = NEWID()
@@ -69,26 +49,19 @@ BEGIN TRY
             @FreeTempDBSpaceValidationSQL           VARCHAR(MAX) = '',
             @GetApplicationLockSQL					NVARCHAR(300),
             @ReleaseApplicationLockSQL				NVARCHAR(300),
-			@DropSingleIndexSQL						VARCHAR(MAX) = '',
-			@CreateSingleIndexSQL					VARCHAR(MAX) = '',
+			@CurrentSQLToExecute					VARCHAR(MAX) = '',
             @StatisticsUpdateType					VARCHAR(MAX) = '',
             @OriginalStatisticsUpdateType           VARCHAR(MAX) = '',
-            @IsStatisticsOnlineOperation            BIT,
             @StatisticsSQL                          VARCHAR(MAX) = '',
             @DropStatisticsSQL                      VARCHAR(MAX) = '',
-			@IsClusteredIndexBeingDroppedForTable	BIT = 0,
-			@IsOnlineOperation						BIT,
 			@IsBCPTable								BIT,
 			@IsStorageChanging						BIT,
 			@WhichUniqueConstraintIsBeingDropped	VARCHAR(5),
 			@HasMissingIndexes						BIT,
-			@DropRefFKs								VARCHAR(MAX) ,
-			@RecreateRefFKSQL						VARCHAR(MAX),
 			@IndexUpdateType						VARCHAR(20),
 			@OriginalIndexUpdateType				VARCHAR(20),
 			@TransactionId							UNIQUEIDENTIFIER = NULL,
-			@IndexSizeInMB							INT,
-			@NeedsTransaction						BIT
+			@IndexSizeInMB							INT
 
     DROP TABLE IF EXISTS #TablesWithPendingConstraintsTable
 
@@ -117,20 +90,27 @@ BEGIN TRY
 	WHERE T.ReadyToQueue = 1
 		AND T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END
  
-	--WHILE @@FETCH_STATUS <> -1
-	--BEGIN
-	--	IF @@FETCH_STATUS <> -2
-	--	BEGIN
+	DECLARE Databases_Queued_Cur CURSOR LOCAL FAST_FORWARD FOR
+	SELECT DatabaseName
+	FROM DOI.Databases
+	WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END
+
+	OPEN Databases_Queued_Cur
+
+	FETCH NEXT FROM Databases_Queued_Cur INTO @CurrentDatabaseName
+
+	WHILE @@FETCH_STATUS <> -1
+	BEGIN
+		IF @@FETCH_STATUS <> -2
+		BEGIN
 	        DECLARE Tables_Queued_Cur CURSOR LOCAL FAST_FORWARD FOR
 		        SELECT	FN.DatabaseName,
 				        FN.SchemaName, 
 				        FN.TableName, 
-				        FN.IsClusteredIndexBeingDropped,
 				        FN.WhichUniqueConstraintIsBeingDropped,
 				        FN.AreIndexesMissing,
 				        FN.IntendToPartition,
 				        FN.IsStorageChanging,
-				        FN.NeedsTransaction,
                         FN.FreeDataSpaceCheckSQL,
                         FN.FreeLogSpaceCheckSQL,
                         FN.FreeTempDBSpaceCheckSQL
@@ -151,7 +131,7 @@ BEGIN TRY
     
 	        OPEN Tables_Queued_Cur
 
-	        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @IsClusteredIndexBeingDroppedForTable, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, /*@RunAutomaticallyOnDeployment, @RunAutomaticallyOnSQLJob,*/ @NeedsTransaction, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
+	        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
 
 	        WHILE @@FETCH_STATUS <> -1
 	        BEGIN
@@ -161,13 +141,11 @@ BEGIN TRY
 			            SELECT  @GetApplicationLockSQL	    = '
 EXEC DOI.spRun_GetApplicationLock
     @DatabaseName = ''' + @CurrentDatabaseName + ''',
-    @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''',
-    @IsOnlineOperation = ' + CAST(@OnlineOperations AS VARCHAR(1)),
+    @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + '''',
 			                    @ReleaseApplicationLockSQL	= '
 EXEC DOI.spRun_ReleaseApplicationLock
     @DatabaseName = ''' + @CurrentDatabaseName + ''',
-    @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''',
-    @IsOnlineOperation = ' + CAST(@OnlineOperations AS VARCHAR(1))
+    @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''''
 
 		                --APPLICATION LOCK, SO OTHER PROCESSES CAN SEE IF THIS IS RUNNING...
 		                EXEC DOI.spQueue_Insert
@@ -181,7 +159,6 @@ EXEC DOI.spRun_ReleaseApplicationLock
 			                @CurrentParentTableName			= '1', 
 			                @CurrentParentIndexName			= '1',
 			                @IndexOperation					= 'Get Application Lock',
-			                @IsOnlineOperation				= @OnlineOperations, --RUNS FOR BOTH ONLINE AND OFFLINE OPERATIONS
 			                @TableChildOperationId			= 0,
 			                @SQLStatement					= @GetApplicationLockSQL,
 			                @TransactionId					= NULL,
@@ -206,7 +183,6 @@ EXEC DOI.spRun_ReleaseApplicationLock
 						        @IndexSizeInMB			= 0,   
 						        @SQLStatement			= @ErrorMessage ,
 						        @IndexOperation			= 'PendingConstraintValidation' ,  
-						        @IsOnlineOperation		= @OnlineOperations, --RUNS FOR BOTH ONLINE AND OFFLINE OPERATIONS
 						        @RowCount				= 0 ,     
 						        @TableChildOperationId	= 0 , 
 						        @RunStatus				= 'Error' , 
@@ -229,7 +205,6 @@ EXEC DOI.spRun_ReleaseApplicationLock
 					        @CurrentParentTableName			= @CurrentTableName, 
 					        @CurrentParentIndexName			= 'N/A',
 					        @IndexOperation					= 'Free Data Space Validation',
-					        @IsOnlineOperation				= @OnlineOperations, --RUNS FOR BOTH ONLINE AND OFFLINE OPERATIONS
 					        @TableChildOperationId			= 0,
 					        @SQLStatement					= @FreeDataSpaceValidationSQL,
 					        @TransactionId					= NULL,
@@ -247,7 +222,6 @@ EXEC DOI.spRun_ReleaseApplicationLock
 					        @CurrentParentTableName			= @CurrentTableName, 
 					        @CurrentParentIndexName			= 'N/A',
 					        @IndexOperation					= 'Free Log Space Validation',
-					        @IsOnlineOperation				= @OnlineOperations, --RUNS FOR BOTH ONLINE AND OFFLINE OPERATIONS
 					        @TableChildOperationId			= 0,
 					        @SQLStatement					= @FreeLogSpaceValidationSQL,
 					        @TransactionId					= NULL,
@@ -265,15 +239,13 @@ EXEC DOI.spRun_ReleaseApplicationLock
 					        @CurrentParentTableName			= @CurrentTableName, 
 					        @CurrentParentIndexName			= 'N/A',
 					        @IndexOperation					= 'Free TempDB Space Validation',
-					        @IsOnlineOperation				= @OnlineOperations, --RUNS FOR BOTH ONLINE AND OFFLINE OPERATIONS
 					        @TableChildOperationId			= 0,
 					        @SQLStatement					= @FreeTempDBSpaceValidationSQL,
 					        @TransactionId					= NULL,
 					        @BatchId						= @BatchIdOUT,
 					        @ExitTableLoopOnError			= 0
 
-				        IF (@OnlineOperations = 1)
-					        AND (@IsBCPTable = 1 AND @IsStorageChanging = 1 )
+				        IF (@IsBCPTable = 1 AND @IsStorageChanging = 1 ) --make 'PartitionTableSwap' its own IndexUpdateType, and maybe put all the logic of the BCP SP into a view like vwIndexesSQLToRun?
 				        BEGIN
 					        EXEC DOI.spRun_RefreshPartitionState
 
@@ -296,7 +268,6 @@ EXEC DOI.spRun_ReleaseApplicationLock
 							        @IndexSizeInMB			= 0,   
 							        @SQLStatement			= @ErrorMessage ,
 							        @IndexOperation			= 'Partition State Metadata Validation' , 
-							        @IsOnlineOperation		= @OnlineOperations, 
 							        @RowCount				= 0 ,     
 							        @TableChildOperationId	= 0 , 
 							        @RunStatus				= 'Error' ,            
@@ -313,185 +284,30 @@ EXEC DOI.spRun_ReleaseApplicationLock
 						        @TableName				= @CurrentTableName,
 						        @BatchId				= @BatchIdOUT
 				        END
-                
-				        IF (@OnlineOperations = 0)
-					        AND NOT (@IsBCPTable = 1 AND @IsStorageChanging = 1) --IF WE'RE DOING BCP ON A TABLE THEN DO NOTHING ELSE.
-				        BEGIN
-							IF (@WhichUniqueConstraintIsBeingDropped <> 'None' OR @IsClusteredIndexBeingDroppedForTable = 1) --DROP REF FKs IF PK OR UQ CONSTRAINTS ARE BEING UPDATED.
-					        BEGIN
-						        SET @DropRefFKs = '
+						ELSE --if we are doing BCP strategy, then do nothing else on the table.  ONCE 'PartitionSwap' becomes its own IndexUpdateType, this check will no longer be necessary.
         EXEC DOI.spForeignKeysDrop	
-	        @DatabaseName = ''' + @CurrentDatabaseName + ''',
-	        @ReferencedSchemaName = ''' + @CurrentSchemaName + ''' , 
-	        @ReferencedTableName = ''' + @CurrentTableName + ''''
-
-						        EXEC DOI.spQueue_Insert
-							        @CurrentDatabaseName			= @CurrentDatabaseName ,
-							        @CurrentSchemaName				= @CurrentSchemaName ,
-							        @CurrentTableName				= @CurrentTableName, 
-							        @CurrentIndexName				= 'N/A',
-							        @CurrentPartitionNumber			= 0, 
-							        @IndexSizeInMB					= 0,
-							        @CurrentParentSchemaName		= @CurrentSchemaName ,
-							        @CurrentParentTableName			= @CurrentTableName, 
-							        @CurrentParentIndexName			= 'N/A',
-							        @IndexOperation					= 'Drop Ref FKs', 
-							        @IsOnlineOperation				= @OnlineOperations, 
-							        @SQLStatement					= @DropRefFKs,
-							        @TransactionId					= @TransactionId,
-							        @BatchId						= @BatchIdOUT,
-							        @ExitTableLoopOnError			= 1
-					        END
-
-					        IF @NeedsTransaction = 1
-					        BEGIN
-						        SET @TransactionId = NEWID()
-
-						        EXEC DOI.spQueue_Insert
-							        @CurrentDatabaseName			= @CurrentDatabaseName ,
-							        @CurrentSchemaName				= @CurrentSchemaName ,
-							        @CurrentTableName				= @CurrentTableName, 
-							        @CurrentIndexName				= 'N/A', 
-							        @CurrentPartitionNumber			= 0, 
-							        @IndexSizeInMB					= 0,
-							        @CurrentParentSchemaName		= @CurrentSchemaName ,
-							        @CurrentParentTableName			= @CurrentTableName, 
-							        @CurrentParentIndexName			= 'N/A',
-							        @IndexOperation					= 'Begin Tran',
-							        @IsOnlineOperation				= @OnlineOperations, 
-							        @SQLStatement					= 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-        BEGIN TRAN', 
-							        @TransactionId					= @TransactionId,
-							        @BatchId						= @BatchIdOUT,
-							        @ExitTableLoopOnError			= 1
-					        END
-
-					        IF @IsClusteredIndexBeingDroppedForTable = 1 --DROP ALL NC INDEXES IF CLUSTERED INDEX IS UPDATED
-					        BEGIN
-						        DECLARE DropIndexes_Cur CURSOR LOCAL FAST_FORWARD FOR 
-
-							        SELECT IndexName, DropStatement, IndexSizeMB_Actual
-							        FROM DOI.vwIndexes
-							        WHERE DatabaseName = @CurrentDatabaseName
-								        AND SchemaName = @CurrentSchemaName
-								        AND TableName = @CurrentTableName
-								        AND IsClustered_Desired = 0
-							        ORDER BY IndexSizeMB_Actual ASC
-
-						        OPEN DropIndexes_Cur
-
-						        FETCH NEXT FROM DropIndexes_Cur INTO @CurrentIndexName, @DropSingleIndexSQL, @IndexSizeInMB
-						        WHILE @@FETCH_STATUS <> -1
-						        BEGIN
-							        IF @@FETCH_STATUS <> -2
-							        BEGIN
-								        --DROP INDEX
-								        EXEC DOI.spQueue_Insert
-									        @CurrentDatabaseName			= @CurrentDatabaseName ,
-									        @CurrentSchemaName				= @CurrentSchemaName ,
-									        @CurrentTableName				= @CurrentTableName, 
-									        @CurrentIndexName				= @CurrentIndexName, 
-									        @CurrentPartitionNumber			= 0, 
-									        @IndexSizeInMB					= 0,
-									        @CurrentParentSchemaName		= @CurrentSchemaName ,
-									        @CurrentParentTableName			= @CurrentTableName, 
-									        @CurrentParentIndexName			= @CurrentIndexName,
-									        @IndexOperation					= 'Drop Index',
-									        @IsOnlineOperation				= 0 ,
-									        @SQLStatement					= @DropSingleIndexSQL,
-									        @TransactionId					= @TransactionId,
-									        @BatchId						= @BatchIdOUT,
-									        @ExitTableLoopOnError			= 0
-							        END
-							        FETCH NEXT FROM DropIndexes_Cur INTO @CurrentIndexName, @DropSingleIndexSQL, @IndexSizeInMB
-						        END
-						        CLOSE DropIndexes_Cur
-							        DEALLOCATE DropIndexes_Cur
-					        END --@IsClusteredIndexUpdated = 1
-				        END --@OnlineOperations = 0
-
-				        IF NOT (@IsBCPTable = 1 AND @IsStorageChanging = 1) --if we are doing BCP strategy, then do nothing else on the table.
 				        BEGIN 
 					        DECLARE UpdateAllIndexes_Cur CURSOR LOCAL FAST_FORWARD FOR
 						        SELECT	I.IndexName, 
-								        ISNULL(IP.PartitionNumber, 0),
-								        I.DropStatement AS DropSingleIndexSQL, 
-								        CASE 
-									        WHEN (I.IndexUpdateType IN ('DropRecreate', 'CreateMissing')
-											        OR @IsClusteredIndexBeingDroppedForTable = 1) 
-									        THEN 'Create Index'
-									        WHEN I.IndexUpdateType LIKE 'Alter%' 
-									        THEN 'Alter Index'
-									        WHEN I.IndexUpdateType = 'None' 
-									        THEN 'None'
-									        ELSE ''
-								        END AS IndexUpdateType,
-								        I.IndexUpdateType AS OriginalIndexUpdateType,
-								        CASE 
-									        WHEN (I.IndexUpdateType IN ('DropRecreate', 'CreateMissing')
-											        OR @IsClusteredIndexBeingDroppedForTable = 1)
-									        THEN I.CreateStatement
-									        WHEN I.IndexUpdateType = 'AlterRebuild'
-									        THEN I.AlterRebuildStatement
-									        WHEN I.IndexUpdateType = 'AlterRebuild-PartitionLevel'
-									        THEN IP.AlterRebuildStatement
-									        WHEN I.IndexUpdateType = 'AlterSet'
-									        THEN I.AlterSetStatement
-									        WHEN I.IndexUpdateType = 'AlterReorganize'
-									        THEN I.AlterReorganizeStatement
-									        WHEN I.IndexUpdateType = 'AlterReorganize-PartitionLevel'
-									        THEN IP.AlterReorganizeStatement
-									        ELSE 'Error'
-								        END AS CreateSingleIndexSQL,
-								        I.IndexSizeMB_Actual,
-								        I.IsOnlineOperation
-						        FROM DOI.vwIndexes I
-							        LEFT OUTER JOIN DOI.vwIndexPartitions IP ON IP.SchemaName = I.SchemaName
-								        AND IP.TableName = I.TableName
-								        AND IP.IndexName = I.IndexName
-								        AND IP.PartitionUpdateType <> 'None'
-						        WHERE (IndexUpdateType <> 'None' OR @IsClusteredIndexBeingDroppedForTable = 1)
-							        AND I.DatabaseName = @CurrentDatabaseName
+								        I.PartitionNumber,
+								        I.IndexUpdateType,
+								        I.OriginalIndexUpdateType,
+								        I.CurrentSQLToExecute,
+								        I.IndexSizeMB_Actual
+						        FROM DOI.vwIndexesSQLToRun I
+						        WHERE I.DatabaseName = @CurrentDatabaseName
 							        AND I.SchemaName = @CurrentSchemaName
 							        AND I.TableName = @CurrentTableName
-							        AND (I.IsOnlineOperation = @OnlineOperations OR @IsClusteredIndexBeingDroppedForTable = 1)
-						        ORDER BY I.IsClustered_Desired DESC, I.IndexName, ISNULL(IP.PartitionNumber, 0) --do the clustered indexes first, now that all the NC indexes have been dropped.
+						        ORDER BY I.IndexName, I.PartitionNumber
 						
 					        OPEN UpdateAllIndexes_Cur
 					
-					        FETCH NEXT FROM UpdateAllIndexes_Cur INTO @CurrentIndexName, @CurrentPartitionNumber, @DropSingleIndexSQL, @IndexUpdateType, @OriginalIndexUpdateType, @CreateSingleIndexSQL, @IndexSizeInMB, @IsOnlineOperation
+					        FETCH NEXT FROM UpdateAllIndexes_Cur INTO @CurrentIndexName, @CurrentPartitionNumber, @IndexUpdateType, @OriginalIndexUpdateType, @CurrentSQLToExecute, @IndexSizeInMB
 					
 					        WHILE @@FETCH_STATUS <> -1
 					        BEGIN
 						        IF @@FETCH_STATUS <> -2
 						        BEGIN
-							        IF @OnlineOperations = 0
-							        BEGIN 
-								        --DROP THE INDEX IF IT EXISTS....IT MAY HAVE ALREADY BEEN DROPPED ABOVE IF ITS CLUSTERED INDEX WAS UPDATED.
-								        IF ((@OriginalIndexUpdateType = 'DropRecreate' 
-										        OR @IsClusteredIndexBeingDroppedForTable = 1  
-										        OR @WhichUniqueConstraintIsBeingDropped <> 'None'))
-								        BEGIN
-									        EXEC DOI.spQueue_Insert
-										        @CurrentDatabaseName			= @CurrentDatabaseName ,
-										        @CurrentSchemaName				= @CurrentSchemaName ,
-										        @CurrentTableName				= @CurrentTableName, 
-										        @CurrentIndexName				= @CurrentIndexName, 
-										        @CurrentPartitionNumber			= @CurrentPartitionNumber, 
-										        @IndexSizeInMB					= 0,
-										        @CurrentParentSchemaName		= @CurrentSchemaName ,
-										        @CurrentParentTableName			= @CurrentTableName, 
-										        @CurrentParentIndexName			= @CurrentIndexName,
-										        @IndexOperation					= 'Drop Index',
-										        @IsOnlineOperation				= @OnlineOperations ,
-										        @SQLStatement					= @DropSingleIndexSQL, 
-										        @TransactionId					= @TransactionId,
-										        @BatchId						= @BatchIdOUT,
-										        @ExitTableLoopOnError			= 0
-								        END
-							        END
-                        
-							        --RECREATE OR OTHERWISE UPDATE THE INDEX  
 							        EXEC DOI.spQueue_Insert
 								        @CurrentDatabaseName			= @CurrentDatabaseName ,
 								        @CurrentSchemaName				= @CurrentSchemaName ,
@@ -503,15 +319,14 @@ EXEC DOI.spRun_ReleaseApplicationLock
 								        @CurrentParentTableName			= @CurrentTableName, 
 								        @CurrentParentIndexName			= @CurrentIndexName,
 								        @IndexOperation					= @IndexUpdateType,
-								        @IsOnlineOperation				= @OnlineOperations ,
-								        @SQLStatement					= @CreateSingleIndexSQL, 
+								        @SQLStatement					= @CurrentSQLToExecute, 
 								        @TransactionId					= @TransactionId,
 								        @BatchId						= @BatchIdOUT,
 								        @ExitTableLoopOnError			= 0
-						        END --@@fetch_status <> -2
+						        END --@@fetch_status <> -2, UpdateAllIndexes_Cur
 
-						        FETCH NEXT FROM UpdateAllIndexes_Cur INTO @CurrentIndexName, @CurrentPartitionNumber, @DropSingleIndexSQL, @IndexUpdateType, @OriginalIndexUpdateType, @CreateSingleIndexSQL, @IndexSizeInMB, @IsOnlineOperation
-					        END --fetch_status <> -1
+						        FETCH NEXT FROM UpdateAllIndexes_Cur INTO @CurrentIndexName, @CurrentPartitionNumber, @IndexUpdateType, @OriginalIndexUpdateType, @CurrentSQLToExecute, @IndexSizeInMB
+					        END --fetch_status <> -1, UpdateAllIndexes_Cur
             
 					        CLOSE UpdateAllIndexes_Cur
 					        DEALLOCATE UpdateAllIndexes_Cur
@@ -534,45 +349,39 @@ EXEC DOI.spRun_ReleaseApplicationLock
                                             THEN 'Create Statistics'
                                             ELSE StatisticsUpdateType
                                         END AS StatisticsUpdateType,
-                                        IsOnlineOperation,
                                         DropStatisticsSQL
                                 FROM DOI.vwStatistics
                                 WHERE DatabaseName = @CurrentDatabaseName
 							        AND SchemaName = @CurrentSchemaName
                                     AND TableName = @CurrentTableName
                                     AND StatisticsUpdateType <> 'None'
-                                    AND IsOnlineOperation = @OnlineOperations
                                     AND ReadyToQueue = 1
                 
 				            OPEN CreateOrUpdateStatistics_Cur
 
-				            FETCH NEXT FROM CreateOrUpdateStatistics_Cur INTO @CurrentStatisticsName, @StatisticsSQL, @OriginalStatisticsUpdateType, @StatisticsUpdateType, @IsStatisticsOnlineOperation, @DropStatisticsSQL
+				            FETCH NEXT FROM CreateOrUpdateStatistics_Cur INTO @CurrentStatisticsName, @StatisticsSQL, @OriginalStatisticsUpdateType, @StatisticsUpdateType, @DropStatisticsSQL
 				            WHILE @@FETCH_STATUS <> -1
 				            BEGIN
 					            IF @@FETCH_STATUS <> -2
 					            BEGIN
-                                    IF @OnlineOperations = 0
-                                    BEGIN
-                        	            IF @OriginalStatisticsUpdateType = 'DropRecreate Statistics'
-							            BEGIN
-								            EXEC DOI.spQueue_Insert
-										        @CurrentDatabaseName			= @CurrentDatabaseName ,
-									            @CurrentSchemaName				= @CurrentSchemaName ,
-									            @CurrentTableName				= @CurrentTableName, 
-									            @CurrentIndexName				= @CurrentStatisticsName, 
-									            @CurrentPartitionNumber			= 0, 
-									            @IndexSizeInMB					= 0,
-									            @CurrentParentSchemaName		= @CurrentSchemaName ,
-									            @CurrentParentTableName			= @CurrentTableName, 
-									            @CurrentParentIndexName			= @CurrentStatisticsName,
-									            @IndexOperation					= 'Drop Statistics',
-									            @IsOnlineOperation				= @IsStatisticsOnlineOperation ,
-									            @SQLStatement					= @DropStatisticsSQL, 
-									            @TransactionId					= @TransactionId,
-									            @BatchId						= @BatchIdOUT,
-									            @ExitTableLoopOnError			= 0
-							            END
-                                    END
+                        	        IF @OriginalStatisticsUpdateType = 'DropRecreate Statistics' --CHANGE THIS TO CREATE DUPLICATE STATS AND THEN DROP OLD ONE.
+							        BEGIN
+								        EXEC DOI.spQueue_Insert
+										    @CurrentDatabaseName			= @CurrentDatabaseName ,
+									        @CurrentSchemaName				= @CurrentSchemaName ,
+									        @CurrentTableName				= @CurrentTableName, 
+									        @CurrentIndexName				= @CurrentStatisticsName, 
+									        @CurrentPartitionNumber			= 0, 
+									        @IndexSizeInMB					= 0,
+									        @CurrentParentSchemaName		= @CurrentSchemaName ,
+									        @CurrentParentTableName			= @CurrentTableName, 
+									        @CurrentParentIndexName			= @CurrentStatisticsName,
+									        @IndexOperation					= 'Drop Statistics',
+									        @SQLStatement					= @DropStatisticsSQL, 
+									        @TransactionId					= @TransactionId,
+									        @BatchId						= @BatchIdOUT,
+									        @ExitTableLoopOnError			= 0
+							        END
                         
 						            EXEC DOI.spQueue_Insert
 								        @CurrentDatabaseName			= @CurrentDatabaseName ,
@@ -585,73 +394,18 @@ EXEC DOI.spRun_ReleaseApplicationLock
 							            @CurrentParentTableName			= @CurrentTableName, 
 							            @CurrentParentIndexName			= @CurrentStatisticsName,
 							            @IndexOperation					= @StatisticsUpdateType,
-							            @IsOnlineOperation				= @IsStatisticsOnlineOperation ,
 							            @SQLStatement					= @StatisticsSQL, 
 							            @TransactionId					= @TransactionId,
 							            @BatchId						= @BatchIdOUT,
 							            @ExitTableLoopOnError			= 0                        
-                                END
+                                END --@@fetch_status <> -2, CreateOrUpdateStatistics_Cur
                     
-                                FETCH NEXT FROM CreateOrUpdateStatistics_Cur INTO @CurrentStatisticsName, @StatisticsSQL, @OriginalStatisticsUpdateType, @StatisticsUpdateType, @IsStatisticsOnlineOperation, @DropStatisticsSQL
-                            END
+                                FETCH NEXT FROM CreateOrUpdateStatistics_Cur INTO @CurrentStatisticsName, @StatisticsSQL, @OriginalStatisticsUpdateType, @StatisticsUpdateType, @DropStatisticsSQL
+                            END--@@fetch_status <> -1, CreateOrUpdateStatistics_Cur
 
                             CLOSE CreateOrUpdateStatistics_Cur
                             DEALLOCATE CreateOrUpdateStatistics_Cur
 				        END  --if we are doing BCP strategy, then do nothing else on the table.       
-                                
-			        IF (@OnlineOperations = 0)
-				        AND NOT (@IsBCPTable = 1 AND @IsStorageChanging = 1)
-			        BEGIN
-				        IF @NeedsTransaction = 1
-				        BEGIN 
-					        EXEC DOI.spQueue_Insert
-						        @CurrentDatabaseName			= @CurrentDatabaseName ,
-						        @CurrentSchemaName				= @CurrentSchemaName ,
-						        @CurrentTableName				= @CurrentTableName, 
-						        @CurrentIndexName				= 'N/A',  
-						        @CurrentPartitionNumber			= 0, 
-						        @IndexSizeInMB					= 0,
-						        @CurrentParentSchemaName		= @CurrentSchemaName ,
-						        @CurrentParentTableName			= @CurrentTableName, 
-						        @CurrentParentIndexName			= 'N/A',
-						        @IndexOperation					= 'Commit Tran',
-						        @IsOnlineOperation				= @OnlineOperations ,
-						        @TableChildOperationId			= 2,
-						        @SQLStatement					= 'COMMIT TRAN', 
-						        @TransactionId					= @TransactionId,
-						        @BatchId						= @BatchIdOUT,
-						        @ExitTableLoopOnError			= 0
-				        END 
-			        END
-
-						IF (@OnlineOperations = 0)
-					        AND NOT (@IsBCPTable = 1 AND @IsStorageChanging = 1)
-					        AND @IsBeingRunDuringADeployment = 0 --IF THIS IS RUNNING DURING A DEPLOYMENT, LET THE ALWAYSRUN SCRIPT ADD THE FKs BACK.
-					        AND (@WhichUniqueConstraintIsBeingDropped <> 'None' OR @IsClusteredIndexBeingDroppedForTable = 1) --RECREATE REF FKs
-				        BEGIN
-					        SET @RecreateRefFKSQL = '
-        EXEC DOI.spForeignKeysAdd	
-	        @DatabaseName = ''' + @CurrentDatabaseName + ''',
-	        @ReferencedSchemaName = ''' + @CurrentSchemaName + ''' , 
-	        @ReferencedTableName = ''' + @CurrentTableName + ''''
-			                    
-					        EXEC DOI.spQueue_Insert
-						        @CurrentDatabaseName			= @CurrentDatabaseName ,
-						        @CurrentSchemaName				= @CurrentSchemaName ,
-						        @CurrentTableName				= @CurrentTableName, 
-						        @CurrentIndexName				= 'N/A', 
-						        @CurrentPartitionNumber			= 0, 
-						        @IndexSizeInMB					= 0,
-						        @CurrentParentSchemaName		= @CurrentSchemaName ,
-						        @CurrentParentTableName			= @CurrentTableName, 
-						        @CurrentParentIndexName			= 'N/A',
-						        @IndexOperation					= 'Recreate All FKs',
-						        @IsOnlineOperation				= @OnlineOperations ,
-						        @SQLStatement					= @RecreateRefFKSQL,  
-						        @TransactionId					= @TransactionId,
-						        @BatchId						= @BatchIdOUT,
-						        @ExitTableLoopOnError			= 0
-				        END
 
 			        EXEC DOI.spQueue_Insert
 				        @CurrentDatabaseName			= @CurrentDatabaseName ,
@@ -664,7 +418,6 @@ EXEC DOI.spRun_ReleaseApplicationLock
 				        @CurrentParentTableName			= @CurrentTableName, 
 				        @CurrentParentIndexName			= 'N/A',
 				        @IndexOperation					= 'Release Application Lock',
-				        @IsOnlineOperation				= @OnlineOperations ,
 				        @TableChildOperationId			= 0,
 				        @SQLStatement					= @ReleaseApplicationLockSQL, 
 				        @TransactionId					= @TransactionId,
@@ -736,15 +489,16 @@ EXEC DOI.spRun_ReleaseApplicationLock
 				        THROW;
 			        END CATCH
 
-		        END --@@fetch_status <> -2
+		        END --@@fetch_status <> -2, Tables cursor
 
-		        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @IsClusteredIndexBeingDroppedForTable, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, /*@RunAutomaticallyOnDeployment, @RunAutomaticallyOnSQLJob,*/ @NeedsTransaction, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
-	        END --@@fetch_status <> -1
-       -- END
-    --END 
+		        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
+	        END --@@fetch_status <> -1, Tables cursor
+		END --@@fetch_status <> -2, Databases cursor
+		
+		FETCH NEXT FROM Databases_Queued_Cur INTO @CurrentDatabaseName
+    END --@@fetch_status <> -1, Databases cursor
 END TRY
 BEGIN CATCH
-	
 	IF @@TRANCOUNT > 0 ROLLBACK TRAN 
 	--CLOSE CURSORS IF OPEN
 	IF (SELECT CURSOR_STATUS('local','Tables_Queued_Cur')) >= -1

@@ -78,12 +78,7 @@ SET StatisticsUpdateType =
 	ListOfChanges = STUFF(CASE WHEN HasFilterChanged			= 1 THEN ', Filter'			ELSE '' END
 				+ CASE WHEN HasIncrementalChanged	= 1 THEN ', Incremental'	ELSE '' END
 				+ CASE WHEN HasNoRecomputeChanged	= 1 THEN ', NoRecompute'	ELSE '' END
-				+ CASE WHEN DoesSampleSizeNeedUpdate	= 1 THEN ', SampleSize'		ELSE '' END, 1, 2, SPACE(0)),
-    IsOnlineOperation = CASE 
-                            WHEN (IsStatisticsMissingFromSQLServer = 0 AND HasFilterChanged = 1)
-                            THEN 0
-                            ELSE 1
-                        END
+				+ CASE WHEN DoesSampleSizeNeedUpdate	= 1 THEN ', SampleSize'		ELSE '' END, 1, 2, SPACE(0))
 FROM DOI.[Statistics] St
 WHERE St.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN St.DatabaseName ELSE @DatabaseName END 
 

@@ -10,7 +10,6 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DOI].[spRun]
-	@OnlineOperations BIT,
     @DatabaseName NVARCHAR(128) = NULL,
 	@SchemaName NVARCHAR(128) = NULL,
 	@TableName NVARCHAR(128)  = NULL,
@@ -46,6 +45,9 @@ THROW 50000, 'Please specify Schema Name when specifying a Table Name.', 1
 
 IF ISNULL(@SchemaName, @TableName) IS NOT NULL AND @DatabaseName IS NULL
 THROW 50000, 'Please specify Database Name when specifying a Table/Schema Name.', 1
+
+SET @SchemaName = NULLIF(LTRIM(RTRIM(@SchemaName)), '')
+SET @TableName = NULLIF(LTRIM(RTRIM(@TableName)), '')
 
 
 DECLARE @ApplicationRunningThisProcess NVARCHAR(128) = (SELECT program_name
@@ -145,8 +147,7 @@ BEGIN TRY
 				FN.ExitTableLoopOnError,
 				FN.IndexSizeInMB
 		FROM DOI.Queue FN
-		WHERE FN.IsOnlineOperation = @OnlineOperations
-			AND FN.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN FN.DatabaseName ELSE @DatabaseName END 
+		WHERE FN.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN FN.DatabaseName ELSE @DatabaseName END 
 			AND FN.ParentSchemaName = CASE WHEN @SchemaName IS NULL THEN FN.ParentSchemaName ELSE @SchemaName END 
 			AND FN.ParentTableName = CASE WHEN @TableName IS NULL THEN FN.ParentTableName ELSE @TableName END 
 			AND FN.BatchId = CASE WHEN @BatchId IS NULL THEN FN.BatchId ELSE @BatchId END 
@@ -169,7 +170,6 @@ BEGIN TRY
 			,@IndexSizeInMB				= 0
 			,@SQLStatement				= @RGSettings
 			,@IndexOperation			= 'Resource Governor Settings'
-			,@IsOnlineOperation			= @OnlineOperations
 			,@RowCount					= 0
 			,@TransactionId				= NULL 
 			,@TableChildOperationId		= 0
@@ -229,7 +229,6 @@ BEGIN TRY
 							,@IndexSizeInMB			= @IndexSizeInMB
 							,@SQLStatement			= @CurrentSQLStatement
 							,@IndexOperation		= @CurrentIndexOperation
-							,@IsOnlineOperation		= @OnlineOperations
 							,@RowCount				= @RowCount
 							,@TransactionId			= @TransactionId 
 							,@TableChildOperationId	= @CurrentTableChildOperationId
@@ -287,7 +286,6 @@ BEGIN TRY
 							,@IndexSizeInMB			= @IndexSizeInMB
 							,@SQLStatement			= @CurrentSQLStatement
 							,@IndexOperation		= @CurrentIndexOperation
-							,@IsOnlineOperation		= @OnlineOperations 
 							,@RowCount				= @RowCount
 							,@TransactionId			= @TransactionId 
 							,@TableChildOperationId	= @CurrentTableChildOperationId
@@ -330,7 +328,6 @@ BEGIN TRY
 							@CurrentPartitionNumber = @CurrentPartitionNumber, 
 							@IndexSizeInMB			= @IndexSizeInMB ,
 							@IndexOperation			= @CurrentIndexOperation,
-							@IsOnlineOperation		= @OnlineOperations ,
 							@RowCount				= @RowCount,
 							@SQLStatement			= @CurrentSQLStatement ,
 							@ErrorText				= @ErrorMessage,
@@ -357,7 +354,6 @@ BEGIN TRY
 							@CurrentPartitionNumber = @CurrentPartitionNumber, 
 							@IndexSizeInMB			= @IndexSizeInMB ,
 							@IndexOperation			= @CurrentIndexOperation,
-							@IsOnlineOperation		= @OnlineOperations ,
 							@RowCount				= @RowCount,
 							@SQLStatement			= @CurrentSQLStatement ,
 							@ErrorText				= @ErrorMessage,
@@ -425,7 +421,6 @@ BEGIN CATCH
 							LogDateTime ,
 							SQLStatement ,
 							IndexOperation ,
-							IsOnlineOperation ,
 							[RowCount] ,
 							TableChildOperationId ,
 							RunStatus ,
@@ -473,7 +468,6 @@ BEGIN CATCH
 		@CurrentPartitionNumber = @CurrentPartitionNumber ,
 		@IndexSizeInMB			= @IndexSizeInMB ,
 		@IndexOperation			= @CurrentIndexOperation,
-		@IsOnlineOperation		= @OnlineOperations ,
 		@RowCount				= @RowCount,
 		@SQLStatement			= @CurrentSQLStatement ,
 		@ErrorText				= @ErrorMessage,
@@ -486,8 +480,7 @@ BEGIN CATCH
 
 	EXEC DOI.spRun_ReleaseApplicationLock
         @DatabaseName = @CurrentDatabaseName,
-        @BatchId = @BatchId,
-        @IsOnlineOperation = @OnlineOperations
+        @BatchId = @BatchId
 
 	EXEC DOI.spRun_DropObjects
         @CurrentDatabaseName    = @CurrentDatabaseName,

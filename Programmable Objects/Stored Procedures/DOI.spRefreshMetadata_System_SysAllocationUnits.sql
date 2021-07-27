@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[spRefreshMetadata_System_SysAllocationUnits]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_System_SysAllocationUnits];
 
@@ -26,6 +24,10 @@ DELETE AU
 FROM DOI.SysAllocationUnits AU
     INNER JOIN DOI.SysDatabases D ON AU.database_id = D.database_id
 WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
+
+DELETE AU 
+FROM DOI.SysAllocationUnits AU
+WHERE NOT EXISTS (SELECT 'True' FROM DOI.SysDatabases D WHERE AU.database_id = D.database_id)
 
 EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
     @DatabaseName = @DatabaseName,

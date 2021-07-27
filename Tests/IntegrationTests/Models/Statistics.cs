@@ -41,6 +41,5 @@ namespace DOI.Tests.IntegrationTests.Models
         public double PersistedSamplePct { get; set; }
         public string StatisticsUpdateType { get; set; }
         public string ListOfChanges { get; set; }
-        public bool IsOnlineOperation { get; set; }
     }
 }

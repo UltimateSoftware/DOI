@@ -198,8 +198,8 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
             }
 
             // Act - Execute the index engine
-            this.dataDrivenIndexTestHelper.ExecuteSPQueue(true, false, DatabaseName, null, null);
-            this.dataDrivenIndexTestHelper.ExecuteSPRun(true, DatabaseName, null, null);
+            this.dataDrivenIndexTestHelper.ExecuteSPQueue(DatabaseName, null, null);
+            this.dataDrivenIndexTestHelper.ExecuteSPRun(DatabaseName, null, null);
 
             // Assert - Check that index for {SpaceErrorTableName} failed due to insufficient space error
             var errorLogReader = this.sqlHelper.ExecuteReader($@"
@@ -271,10 +271,10 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
             this.sqlHelper.Execute(TestHelper.SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
 
             // 3. Run queue and Run SPs.
-            this.dataDrivenIndexTestHelper.ExecuteSPQueue(true, false, DatabaseName, null, null);
+            this.dataDrivenIndexTestHelper.ExecuteSPQueue(DatabaseName, null, null);
             try
             {
-                dataDrivenIndexTestHelper.ExecuteSPRun(true, DatabaseName, null, null);
+                dataDrivenIndexTestHelper.ExecuteSPRun(DatabaseName, null, null);
             }
             catch (Exception e)
             {
@@ -301,7 +301,7 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
             this.sqlHelper.Execute(TestHelper.SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
             this.sqlHelper.Execute($"TRUNCATE TABLE DOI.Queue");
             this.sqlHelper.Execute($"TRUNCATE TABLE DOI.Log");
-            this.dataDrivenIndexTestHelper.ExecuteSPQueue(false, false, DatabaseName, SchemaName, TestTableName1);
+            this.dataDrivenIndexTestHelper.ExecuteSPQueue(DatabaseName, SchemaName, TestTableName1);
             var transactionId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 TransactionId FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestTableName1}' AND TransactionId IS NOT NULL");
             var batchId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 BatchId FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestTableName1}'");
             var seqNo = this.sqlHelper.ExecuteScalar<int>($"SELECT TOP 1 SeqNo FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestTableName1}' AND IndexName = 'CDX_{TestTableName1}' AND IndexOperation = 'Drop Index'");
@@ -309,11 +309,11 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
             // 3. Introduce an error into the Queue while the transaction is open.
             this.sqlHelper.ExecuteScalar<int>($"UPDATE Q SET SeqNo = SeqNo + 1 FROM DOI.Queue Q WHERE DatabaseName = '{DatabaseName}' AND SeqNo > {seqNo}");
             this.sqlHelper.Execute($@"
-                INSERT INTO DOI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName ,PartitionNumber ,IndexSizeInMB ,ParentSchemaName ,ParentTableName ,ParentIndexName ,IndexOperation ,IsOnlineOperation ,TableChildOperationId ,SQLStatement ,SeqNo ,DateTimeInserted ,InProgress ,RunStatus ,ErrorMessage ,TransactionId ,BatchId ,ExitTableLoopOnError )
-                VALUES('{DatabaseName}', N'dbo', N'{TestTableName1}', N'CDX_{TestTableName1}', 0, 0, N'dbo', N'{TestTableName1}', N'CDX_{TestTableName1}', 'Stop Processing', 0, 0, 'SELECT 1/0', {seqNo + 1}, SYSDATETIME(), 0, 'Start', '', '{transactionId}', '{batchId}', 0)");
+                INSERT INTO DOI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName ,PartitionNumber ,IndexSizeInMB ,ParentSchemaName ,ParentTableName ,ParentIndexName ,IndexOperation ,TableChildOperationId ,SQLStatement ,SeqNo ,DateTimeInserted ,InProgress ,RunStatus ,ErrorMessage ,TransactionId ,BatchId ,ExitTableLoopOnError )
+                VALUES('{DatabaseName}', N'dbo', N'{TestTableName1}', N'CDX_{TestTableName1}', 0, 0, N'dbo', N'{TestTableName1}', N'CDX_{TestTableName1}', 'Stop Processing', 0, 'SELECT 1/0', {seqNo + 1}, SYSDATETIME(), 0, 'Start', '', '{transactionId}', '{batchId}', 0)");
 
             // 4. Run the Run SP.
-            dataDrivenIndexTestHelper.ExecuteSPRun(false, DatabaseName, SchemaName, TestTableName1);
+            dataDrivenIndexTestHelper.ExecuteSPRun(DatabaseName, SchemaName, TestTableName1);
 
             // 5. Check that the Logged rows are still in the Log table.
             var countOfLogRows = this.sqlHelper.ExecuteScalar<int>($"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Divide by zero error encountered.'");

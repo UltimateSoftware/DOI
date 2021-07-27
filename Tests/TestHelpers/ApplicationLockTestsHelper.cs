@@ -10,7 +10,6 @@ namespace DOI.Tests.TestHelpers
                 EXEC DOI.spRun_GetApplicationLock
                     @DatabaseName = '{databaseName}',
                     @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
-                    @IsOnlineOperation = 1,
                     @LockTimeout = 1000";
         }
 
@@ -19,8 +18,7 @@ namespace DOI.Tests.TestHelpers
             return $@"
                 EXEC DOI.spRun_ReleaseApplicationLock
                     @DatabaseName = '{databaseName}',
-                    @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73',
-                    @IsOnlineOperation = 1";
+                    @BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'";
         }
 
         public static string IsAppLockGrantedInSysDmTranLocks(string databaseName)
@@ -76,21 +74,19 @@ namespace DOI.Tests.TestHelpers
                                         AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'), 0)";
         }
 
-        public static string RunAppLockStatementsThroughQueue(int isOnlineOperation, string databaseName)
+        public static string RunAppLockStatementsThroughQueue(string databaseName)
         {
             return $@"
             DECLARE @GetApplicationLockSQL      NVARCHAR(500) = '
                             EXEC DOI.DOI.spRun_GetApplicationLock
                                 @DatabaseName = ''{databaseName}'',
                                 @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
-                                @IsOnlineOperation = {isOnlineOperation},
                                 @LockTimeout = 1000',
 
         			@ReleaseApplicationLockSQL	NVARCHAR(500) = '
                             EXEC DOI.DOI.spRun_ReleaseApplicationLock
                                 @DatabaseName = ''{databaseName}'',
-                                @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
-                                @IsOnlineOperation = {isOnlineOperation}'
+                                @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'''
 
             EXEC DOI.DOI.spQueue_Insert
                 @CurrentDatabaseName = '{databaseName}',
@@ -103,7 +99,6 @@ namespace DOI.Tests.TestHelpers
                 @CurrentParentTableName = 'N/A', 
                 @CurrentParentIndexName = 'N/A',
                 @IndexOperation = 'Get Application Lock',
-                @IsOnlineOperation = {isOnlineOperation}, 
                 @TableChildOperationId = 0,
                 @SQLStatement = @GetApplicationLockSQL,
                 @TransactionId = NULL,
@@ -121,7 +116,6 @@ namespace DOI.Tests.TestHelpers
                 @CurrentParentTableName = 'N/A', 
                 @CurrentParentIndexName = 'N/A',
                 @IndexOperation = 'Release Application Lock',
-                @IsOnlineOperation = {isOnlineOperation}, 
                 @TableChildOperationId = 0,
                 @SQLStatement = @ReleaseApplicationLockSQL,
                 @TransactionId = NULL,
@@ -129,14 +123,13 @@ namespace DOI.Tests.TestHelpers
                 @ExitTableLoopOnError = 1";
         }
 
-        public static string RunAppLockStatementsThroughQueueWithError(int isOnlineOperation, string databaseName)
+        public static string RunAppLockStatementsThroughQueueWithError(string databaseName)
         {
             return $@"
             DECLARE @GetApplicationLockSQL      NVARCHAR(500) = '
                             EXEC DOI.spRun_ReleaseApplicationLock
                                 @DatabaseName = ''{databaseName}'',
-                                @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'',
-                                @IsOnlineOperation = {isOnlineOperation}'
+                                @BatchId = ''4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'''
 
             EXEC DOI.spQueue_Insert
                 @CurrentDatabaseName = '{databaseName}',
@@ -149,7 +142,6 @@ namespace DOI.Tests.TestHelpers
                 @CurrentParentTableName = 'N/A', 
                 @CurrentParentIndexName = 'N/A',
                 @IndexOperation = 'Release Application Lock',
-                @IsOnlineOperation = {isOnlineOperation}, 
                 @TableChildOperationId = 0,
                 @SQLStatement = @GetApplicationLockSQL,
                 @TransactionId = NULL,

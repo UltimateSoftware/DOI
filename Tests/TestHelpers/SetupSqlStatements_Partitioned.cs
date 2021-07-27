@@ -201,9 +201,9 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                     , Storage_Desired               = 'psMonthlyTest'
                     ";
 
-        public static string StartJob = @"  exec msdb.dbo.sp_start_job @job_name =  'DOI-Refresh Indexes - Online' ";
+        public static string StartJob = @"  exec msdb.dbo.sp_start_job @job_name =  'DOI-Refresh Indexes' ";
 
-        public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'DOI-Refresh Indexes - Online'";
+        public static string JobActivity = @"exec msdb.dbo.sp_help_jobactivity @job_name =  'DOI-Refresh Indexes'";
 
         public static string DropTableAndDeleteMetadata = $@"
                         DELETE FROM  [DOI].[Statistics]         WHERE DatabaseName = '{DatabaseName}' AND TableName = 'PartitioningTestAutomationTable' AND SchemaName = 'dbo';
@@ -369,7 +369,7 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
 
         public static string UpdateJobStepForTest = @"
                                                     EXEC msdb.dbo.sp_update_jobstep  
-                                                     @job_name =  'DOI-Refresh Indexes - Online' 
+                                                     @job_name =  'DOI-Refresh Indexes' 
                                                     ,@step_id = 2
                                                     ,@step_name = 'Populate Queue - Online'
                                                     ,@command = N' 
@@ -377,14 +377,13 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                            
 	                                                       TRUNCATE TABLE DOI.Queue
 	                                                       EXEC DOI.spQueue 
-			                                                    @OnlineOperations = 1,
 			                                                    @IsBeingRunDuringADeployment = 0,
                                                                 @BatchIdOUT = @BatchId OUTPUT'
                                                     ";
 
         public static string RestoreJobStep = @"
                                                     EXEC msdb.dbo.sp_update_jobstep  
-                                                     @job_name =  'DOI-Refresh Indexes - Online' 
+                                                     @job_name =  'DOI-Refresh Indexes' 
                                                     ,@step_id = 2
                                                     ,@step_name = 'Populate Queue - Online'
                                                     ,@command = N' 
@@ -392,7 +391,6 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                            
 	                                                       TRUNCATE TABLE DOI.Queue
 	                                                       EXEC DOI.spQueue 
-			                                                    @OnlineOperations = 1,
 			                                                    @IsBeingRunDuringADeployment = 0,
                                                                 @BatchIdOUT = @BatchId OUTPUT '
                                                     ";
@@ -474,7 +472,7 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                             WHERE t.name = 'PartitioningTestAutomationTable_OLD'
                                                                 AND s.name = 'dbo'";
 
-        public static string RecordsInTheQueue = @"Select * FROM  DOI.Queue WHERE IsOnlineOperation = 1";
+        public static string RecordsInTheQueue = @"Select * FROM  DOI.Queue";
 
         public static string LogHasNoErrors = @"SELECT * FROM DOI.Log WHERE SchemaName = 'dbo' and TableName = 'PartitioningTestAutomationTable' and ErrorText IS NOT NULL";
 
@@ -507,13 +505,13 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                         , @LatestRunTime =  max(jh.run_time ) 
                                                     from msdb.dbo.sysjobs j
                                                     JOIN msdb.dbo.sysjobhistory jh on jh.job_id = j.job_id
-                                                    where  j.name = N'DOI-Refresh Indexes - Online'
+                                                    where  j.name = N'DOI-Refresh Indexes'
                                                         AND jh.step_id = 1
 
                                                     select jh. step_id,  step_name , message , sql_severity, run_date , run_time, run_status
                                                     from msdb.dbo.sysjobs j
                                                     JOIN msdb.dbo.sysjobhistory jh on jh.job_id = j.job_id
-                                                    where  j.name = N'Refresh Index Structures - Online'
+                                                    where  j.name = N'Refresh Index Structures'
                                                     and jh.run_date >= @LatestRunDate 
                                                     AND jh.run_time >= @LatestRunTime";
 

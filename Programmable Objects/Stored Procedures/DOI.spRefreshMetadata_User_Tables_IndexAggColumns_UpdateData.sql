@@ -37,7 +37,6 @@ SET AreIndexesFragmented =  CASE
 		                                        ELSE 'None'
 	                                        END,
 	IsStorageChanging = IndexAgg.IsStorageChanging,
-	NeedsTransaction = HasIndexDropAndRecreate,
     PKColumnList = DOI.fnGetPKColumnListForTable (T.DatabaseName, T.SchemaName, T.TableName),
     PKColumnListJoinClause = DOI.fnGetJoinClauseForTable(T.DatabaseName, T.SchemaName, T.TableName, 0, 'T', 'PT')
 FROM DOI.Tables T
@@ -55,11 +54,6 @@ FROM DOI.Tables T
                                 THEN 1
                                 ELSE 0
                             END) AS IsClusteredIndexBeingDropped,
-                        MAX(CASE 
-				                WHEN AreDropRecreateOptionsChanging = 1
-				                THEN 1 
-				                ELSE 0 
-			                END) AS HasIndexDropAndRecreate,
                         MAX(CASE
                                 WHEN IsPrimaryKey_Actual = 1 
 									AND IsUnique_Actual = 1

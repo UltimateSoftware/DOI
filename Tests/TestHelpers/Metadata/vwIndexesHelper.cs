@@ -165,7 +165,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 case "CreateMissing":
                     columnsToUpdateSql = "IsIndexMissingFromSQLServer = 1";
                     break;
-                case "DropRecreate":
+                case "CreateDropExisting":
                     columnsToUpdateSql = "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 1";
                     break;
                 case "AlterRebuild":

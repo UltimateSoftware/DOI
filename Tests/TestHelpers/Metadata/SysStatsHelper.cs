@@ -134,7 +134,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                     columnValue.PersistedSamplePct = (double)row.First(x => x.First == "PersistedSamplePct").Second.ObjectToInteger();
                     columnValue.StatisticsUpdateType = row.First(x => x.First == "StatisticsUpdateType").Second.ToString();
                     columnValue.ListOfChanges = row.First(x => x.First == "ListOfChanges").Second.ToString();
-                    columnValue.IsOnlineOperation = (bool)row.First(x => x.First == "IsOnlineOperation").Second;
 
                 actualUserStats.Add(columnValue);
                 }
@@ -210,7 +209,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                     Assert.AreEqual(0, row.PersistedSamplePct);
                     Assert.AreEqual("None", row.StatisticsUpdateType);
                     Assert.AreEqual(string.Empty, row.ListOfChanges);
-                    Assert.AreEqual(true, row.IsOnlineOperation);
                 }
             }
         #endregion

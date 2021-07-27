@@ -68,8 +68,6 @@ namespace DOI.Tests.Integration.Models
 
         public string IndexUpdateType { get; set; }
 
-        public bool IsOnlineOperation { get; set; }
-
         public string ListOfChanges { get; set; }
 
         public string DropStatement { get; set; }

@@ -101,7 +101,6 @@ namespace DOI.Tests.IntegrationTests.Models
         public string CreatePKAsUniqueIndexSQL    { get; set; }
         public string DropPKAsUniqueIndexSQL  { get; set; }
         public int NeedsSpaceOnTempDBDrive { get; set; }
-        public int IsOnlineOperation { get; set; }
         public string ListOfChanges   { get; set; }
     }
 }

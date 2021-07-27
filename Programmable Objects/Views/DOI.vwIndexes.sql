@@ -1,6 +1,4 @@
-
-GO
-
+-- <Migration ID="6ba66a14-542a-4e21-99e8-fd4635a6a261" />
 IF OBJECT_ID('[DOI].[vwIndexes]') IS NOT NULL
 	DROP VIEW [DOI].[vwIndexes];
 
@@ -9,9 +7,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
-
-
 
 CREATE   VIEW [DOI].[vwIndexes]
 AS
@@ -23,22 +18,10 @@ AS
 SELECT	AllIdx.* 
         ,CASE
             WHEN AllIdx.IndexUpdateType IN ('CreateMissing', 'AlterRebuild', 'AlterRebuild-PartitionLevel')
-                    OR (AllIdx.IndexUpdateType = 'DropRecreate' AND AllIdx.IsClustered_Desired = 1)
+                    OR (AllIdx.IndexUpdateType = 'CreateDropExisting' AND AllIdx.IsClustered_Desired = 1)
             THEN 1
 			ELSE 0
          END AS NeedsSpaceOnTempDBDrive
-		,CASE 
-			WHEN AllIdx.IndexUpdateType IN ('CreateMissing', 'AlterSet', 'AlterReorganize', 'AlterReorganize-PartitionLevel')
-				OR (AllIdx.IndexUpdateType IN ('AlterRebuild', 'AlterRebuild-PartitionLevel') 
-					AND (AllIdx.IndexType = 'RowStore' AND AllIdx.IndexHasLOBColumns = 0))
-			THEN 1
-			WHEN AllIdx.IndexUpdateType IN ('DropRecreate')
-				OR (AllIdx.IndexUpdateType IN ('AlterRebuild', 'AlterRebuild-PartitionLevel') 
-					AND ((AllIdx.IndexType = 'RowStore' AND AllIdx.IndexHasLOBColumns = 1)
-							OR (AllIdx.IndexType = 'ColumnStore')))
-			THEN 0
-			ELSE 0
-        END AS IsOnlineOperation
 		--KEEP THE ORDER OF THE CASE STATEMENTS BELOW IN ALPHABETICAL ORDER!!!
 		,STUFF(CASE WHEN AllIdx.IsAllowPageLocksChanging			= 1						THEN	', AllowPageLocks'								ELSE '' END
 				+ CASE WHEN AllIdx.IsAllowRowLocksChanging			= 1						THEN	', AllowRowLocks'									ELSE '' END
@@ -64,7 +47,7 @@ FROM (	SELECT	 IRS.*
 					THEN 'CreateMissing'
 					WHEN IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.AreDropRecreateOptionsChanging = 1
-					THEN 'DropRecreate'
+					THEN 'CreateDropExisting'
 					WHEN (IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.NeedsPartitionLevelOperations = 0 
 						AND IRS.AreDropRecreateOptionsChanging = 0 )
@@ -147,7 +130,7 @@ CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE W
 							STATISTICS_NORECOMPUTE = ' + CASE WHEN IRS.OptionStatisticsNoRecompute_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 							STATISTICS_INCREMENTAL = ' + CASE WHEN IRS.OptionStatisticsIncremental_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 							DROP_EXISTING = OFF,
-							ONLINE = OFF,
+							ONLINE = ON,
 							ALLOW_ROW_LOCKS = ' + CASE WHEN IRS.OptionAllowRowLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 							ALLOW_PAGE_LOCKS = ' + CASE WHEN IRS.OptionAllowPageLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 							MAXDOP = 0,
@@ -162,8 +145,43 @@ CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE W
 																	ELSE '' 
 																END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
 		END + 
-'END' AS CreateStatement
-				,'
+'END' AS CreateStatement,
+'CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										'	ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										CASE 
+											WHEN IRS.IncludedColumnList_Desired IS NULL 
+											THEN '' 
+											ELSE '		INCLUDE(' + IRS.IncludedColumnList_Desired + ')'
+										END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										CASE
+											WHEN IRS.IsFiltered_Desired = 0
+											THEN ''
+											ELSE '		WHERE ' + IRS.FilterPredicate_Desired
+										END + CHAR(13) + CHAR(10) +
+										'					WITH (	
+							PAD_INDEX = ' + CASE WHEN IRS.OptionPadIndex_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
+							FILLFACTOR = ' + CAST(CASE WHEN IRS.Fillfactor_Desired = 0 THEN 100 ELSE IRS.Fillfactor_Desired END AS VARCHAR(3)) + ',
+							SORT_IN_TEMPDB = ON,
+							IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
+							STATISTICS_NORECOMPUTE = ' + CASE WHEN IRS.OptionStatisticsNoRecompute_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
+							STATISTICS_INCREMENTAL = ' + CASE WHEN IRS.OptionStatisticsIncremental_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
+							DROP_EXISTING = ON,
+							ONLINE = ON,
+							ALLOW_ROW_LOCKS = ' + CASE WHEN IRS.OptionAllowRowLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
+							ALLOW_PAGE_LOCKS = ' + CASE WHEN IRS.OptionAllowPageLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
+							MAXDOP = 0,
+							DATA_COMPRESSION = ' + IRS.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										'		ON ' +	CASE 
+															WHEN IRS.IntendToPartition = 1
+															THEN ISNULL(IRS.Storage_Desired, '[' + IRS.Storage_Actual + ']')
+															ELSE '[' + ISNULL(IRS.Storage_Desired, IRS.Storage_Actual) + ']'
+														END +	CASE 
+																	WHEN IRS.StorageType_Desired = 'PARTITION_SCHEME'
+																	THEN '(' + IRS.PartitionColumn_Desired + ')' 
+																	ELSE '' 
+																END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + 
+'END' AS CreateDropExistingStatement,
+'
 ALTER INDEX ' + IRS.IndexName + ' ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	SET (	IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 			STATISTICS_NORECOMPUTE = ' + CASE WHEN IRS.OptionStatisticsNoRecompute_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
@@ -188,7 +206,7 @@ ALTER INDEX ' + IRS.IndexName + ' ON ['+ IRS.SchemaName + '].[' + IRS.TableName 
 				IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END END END + ',
 				STATISTICS_NORECOMPUTE = ' + CASE WHEN IRS.OptionStatisticsNoRecompute_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 				STATISTICS_INCREMENTAL = ' + CASE WHEN IRS.OptionStatisticsIncremental_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
-				ONLINE = ' + CASE WHEN IndexHasLOBColumns = 1 THEN 'OFF' ELSE ' ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE))' END + ',
+				ONLINE = ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),
 				ALLOW_ROW_LOCKS = ' + CASE WHEN IRS.OptionAllowRowLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 				ALLOW_PAGE_LOCKS = ' + CASE WHEN IRS.OptionAllowPageLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 				MAXDOP = 0,
@@ -216,9 +234,9 @@ EXEC sp_rename
 	@newname = ''' + IRS.IndexName + ''',
 	@objtype = ''INDEX''' AS RevertRenameIndexSQL,
 CASE WHEN IsPrimaryKey_Desired = 0 THEN '' ELSE 
-'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
+'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + '_Pending'')
 BEGIN
-	CREATE UNIQUE ' + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+	CREATE UNIQUE ' + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + '_Pending' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 											'	ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 											CASE 
 												WHEN IRS.IncludedColumnList_Desired IS NULL 
@@ -237,8 +255,8 @@ BEGIN
 								IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 								STATISTICS_NORECOMPUTE = ' + CASE WHEN IRS.OptionStatisticsNoRecompute_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 								STATISTICS_INCREMENTAL = ' + CASE WHEN IRS.OptionStatisticsIncremental_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
-								DROP_EXISTING = OFF,
-								ONLINE = OFF,
+								DROP_EXISTING = ON,
+								ONLINE = ON,
 								ALLOW_ROW_LOCKS = ' + CASE WHEN IRS.OptionAllowRowLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 								ALLOW_PAGE_LOCKS = ' + CASE WHEN IRS.OptionAllowPageLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 								MAXDOP = 0,
@@ -255,8 +273,26 @@ BEGIN
 'END'
 END AS CreatePKAsUniqueIndexSQL,
 CASE WHEN IsPrimaryKey_Desired = 0 THEN '' ELSE 
-'DROP INDEX IF EXISTS ['+ IRS.SchemaName + '].[' + IRS.TableName + '].' + IRS.IndexName 
-END AS DropPKAsUniqueIndexSQL
+'DROP INDEX IF EXISTS ['+ IRS.SchemaName + '].[' + IRS.TableName + '].' + IRS.IndexName + '_Pending'
+END AS DropPKAsUniqueIndexSQL,
+CASE 
+	WHEN IsPrimaryKey_Desired = 0 
+	THEN '' 
+	ELSE '
+	EXEC DOI.DOI.spForeignKeysDrop	
+	    @DatabaseName = ''' + IRS.DatabaseName + ''',
+	    @ReferencedSchemaName = ''' + IRS.SchemaName + ''' , 
+	    @ReferencedTableName = ''' + IRS.TableName + ''''
+END AS DropReferencingFKs,
+CASE 
+	WHEN IsPrimaryKey_Desired = 0 
+	THEN '' 
+	ELSE '	
+	EXEC DOI.DOI.spForeignKeysAdd
+	    @DatabaseName = ''' + IRS.DatabaseName + ''',
+	    @ReferencedSchemaName = ''' + IRS.SchemaName + ''' , 
+	    @ReferencedTableName = ''' + IRS.TableName + ''''
+END AS CreateReferencingFKs
 		--select count(*)
 		FROM DOI.fnIndexesRowStore() IRS
 		UNION ALL
@@ -266,7 +302,7 @@ END AS DropPKAsUniqueIndexSQL
 					THEN 'CreateMissing'
 					WHEN ICS.IsIndexMissingFromSQLServer = 0
 						AND ICS.AreDropRecreateOptionsChanging = 1
-					THEN 'DropRecreate'
+					THEN 'CreateDropExisting'
 					WHEN (ICS.IsIndexMissingFromSQLServer = 0
 						AND ICS.NeedsPartitionLevelOperations = 0 
 						AND ICS.AreDropRecreateOptionsChanging = 0 )
@@ -322,8 +358,29 @@ BEGIN
 																	THEN '(' + ICS.PartitionColumn_Desired + ')' 
 																	ELSE '' 
 																END + CHAR(13) + CHAR(10) + '
-END' AS CreateStatement
-				,'
+END' AS CreateStatement, '
+	CREATE' + CASE WHEN ICS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED COLUMNSTORE INDEX ' + ICS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										'	ON [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + CASE WHEN ICS.IsClustered_Desired = 1 THEN '' ELSE '(' + ICS.IncludedColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										CASE
+											WHEN ICS.IsFiltered_Desired = 0
+											THEN ''
+											ELSE '			WHERE ' + ICS.FilterPredicate_Desired
+										END + CHAR(13) + CHAR(10) +
+										'				WITH (	
+						DROP_EXISTING = ON,
+						COMPRESSION_DELAY = ' + CAST(ICS.OptionDataCompressionDelay_Desired AS VARCHAR(20)) + ',
+						MAXDOP = 0,
+						DATA_COMPRESSION = ' + ICS.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+										'		ON ' +	CASE 
+															WHEN ICS.IntendToPartition = 1 
+															THEN ISNULL(ICS.Storage_Desired, '[' + ICS.Storage_Actual + ']')
+															ELSE '[' + ISNULL(ICS.Storage_Desired, ICS.Storage_Actual) + ']'
+														END +	CASE 
+																	WHEN ICS.StorageType_Desired = 'PARTITION_SCHEME'
+																	THEN '(' + ICS.PartitionColumn_Desired + ')' 
+																	ELSE '' 
+																END + CHAR(13) + CHAR(10) + '
+END' AS CreateDropExistingStatement,'
 ALTER INDEX ' + ICS.IndexName + ' ON [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	SET (COMPRESSION_DELAY = ' + ICS.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 AS AlterSetStatement
@@ -350,7 +407,9 @@ EXEC sp_rename
 	@newname = ''' + ICS.IndexName + ''',
 	@objtype = ''INDEX''' AS RevertRenameIndexSQL,
 '' AS CreatePKAsUniqueIndexSQL,
-'' AS DropPKAsUniqueIndexSQL
+'' AS DropPKAsUniqueIndexSQL,
+'' AS DropReferencingFKs,
+'' AS CreateReferencingFKs
 		--select count(*)
 		FROM DOI.fnIndexesColumnStore() AS ICS ) AS AllIdx
 

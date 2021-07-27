@@ -415,7 +415,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IntegrationTests\BusinessHoursScheduleTableTest.cs" />
     <Compile Include="IntegrationTests\ErrorHandlingTests\ErrorHandlingTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwForeignKeys.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\HighFragmentationTests.cs" />
@@ -514,7 +513,6 @@
     <Compile Include="IntegrationTests\Models\vwPartitionSchemes.cs" />
     <Compile Include="IntegrationTests\Models\vwStatistics.cs" />
     <Compile Include="IntegrationTests\Models\vwTables.cs" />
-    <Compile Include="IntegrationTests\Run Tests\OfflineRunTests.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
     <Compile Include="IntegrationTests\Run Tests\StatisticsRenameTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\StatisticsTests.cs" />
@@ -573,7 +571,6 @@
     <Compile Include="TestHelpers\Metadata\vwTablesHelper.cs" />
     <Compile Include="TestHelpers\SetupSqlStatements_NonPartitioned.cs" />
     <Compile Include="TestHelpers\ObjectExtensions.cs" />
-    <Compile Include="TestHelpers\OfflineRunTestsHelper.cs" />
     <Compile Include="TestHelpers\ResourceLoader.cs" />
     <Compile Include="TestHelpers\SqlHelper.cs" />
     <Compile Include="TestHelpers\SetupSqlStatements_Partitioned.cs" />

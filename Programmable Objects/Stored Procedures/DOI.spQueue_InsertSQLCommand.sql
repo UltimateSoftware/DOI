@@ -1,3 +1,6 @@
+-- <Migration ID="93e7be6c-baa1-43c0-b1bb-87d048cfd2d9" />
+GO
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 IF OBJECT_ID('[DOI].[spQueue_InsertSQLCommand]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spQueue_InsertSQLCommand];
 
@@ -24,7 +27,6 @@ truncate table Utility.RefreshIndexStructuresQueue
 DECLARE @BatchId UNIQUEIDENTIFIER
 
 EXEC Utility.spRefreshIndexStructures_Queue
-    @OnlineOperations = 1,
     @IsBeingRunDuringADeployment = 0,
     @BatchIdOUT = @BatchId
 
@@ -43,8 +45,7 @@ select * from Utility.RefreshIndexStructuresQueue
 DECLARE @BatchId UNIQUEIDENTIFIER,
         @TransactionId UNIQUEIDENTIFIER,
         @TableName SYSNAME,
-        @SchemaName SYSNAME,
-        @IsOnlineOperation BIT
+        @SchemaName SYSNAME
 
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 
@@ -54,8 +55,7 @@ BEGIN TRY
         SELECT  @SchemaName = SchemaName,
                 @TableName = TableName,
                 @BatchId = BatchId,
-                @TransactionId = TransactionId,
-                @IsOnlineOperation = IsOnlineOperation
+                @TransactionId = TransactionId
         FROM DOI.Queue WITH (TABLOCKX)
         WHERE SeqNo = @SeqNoJustAfterSQLCommand
 
@@ -71,8 +71,8 @@ BEGIN TRY
 			THROW 50000, 'Table was not found.', 1;
 		END
 
-        INSERT INTO DOI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName , PartitionNumber, IndexSizeInMB, ParentSchemaName, ParentTableName, ParentIndexName, IndexOperation, IsOnlineOperation, TableChildOperationId, SQLStatement , SeqNo, RunStatus, TransactionId, BatchId, ExitTableLoopOnError)
-        VALUES ( @DatabaseName, @SchemaName, @TableName, 'N/A' , 0, 0, @ParentSchemaName, @ParentTableName, 'N/A', 'Manual SQL Command', @IsOnlineOperation, 0, @SQLCommand, @SeqNoJustAfterSQLCommand, 'Running', @TransactionId, @BatchId, 0)
+        INSERT INTO DOI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName , PartitionNumber, IndexSizeInMB, ParentSchemaName, ParentTableName, ParentIndexName, IndexOperation, TableChildOperationId, SQLStatement , SeqNo, RunStatus, TransactionId, BatchId, ExitTableLoopOnError)
+        VALUES ( @DatabaseName, @SchemaName, @TableName, 'N/A' , 0, 0, @ParentSchemaName, @ParentTableName, 'N/A', 'Manual SQL Command', 0, @SQLCommand, @SeqNoJustAfterSQLCommand, 'Running', @TransactionId, @BatchId, 0)
 
     COMMIT TRANSACTION
 END TRY

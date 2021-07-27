@@ -64,7 +64,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PersistedSamplePct = (double)row.First(x => x.First == "PersistedSamplePct").Second.ObjectToInteger();
                 columnValue.StatisticsUpdateType = row.First(x => x.First == "StatisticsUpdateType").Second.ToString();
                 columnValue.ListOfChanges = row.First(x => x.First == "ListOfChanges").Second.ToString();
-                columnValue.IsOnlineOperation = (bool)row.First(x => x.First == "IsOnlineOperation").Second;
 
                 expectedvwStatistics.Add(columnValue);
             }
@@ -120,7 +119,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PersistedSamplePct = (double)row.First(x => x.First == "PersistedSamplePct").Second.ObjectToInteger();
                 columnValue.StatisticsUpdateType = row.First(x => x.First == "StatisticsUpdateType").Second.ToString();
                 columnValue.ListOfChanges = row.First(x => x.First == "ListOfChanges").Second.ToString();
-                columnValue.IsOnlineOperation = (bool)row.First(x => x.First == "IsOnlineOperation").Second;
 
                 actualvwStatistics.Add(columnValue);
             }
@@ -173,7 +171,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.PersistedSamplePct, actualRow.PersistedSamplePct, "PersistedSamplePct");
                 Assert.AreEqual(expectedRow.StatisticsUpdateType, actualRow.StatisticsUpdateType, "StatisticsUpdateType");
                 Assert.AreEqual(expectedRow.ListOfChanges, actualRow.ListOfChanges, "ListOfChanges");
-                Assert.AreEqual(expectedRow.IsOnlineOperation, actualRow.IsOnlineOperation, "IsOnlineOperation");
             }
         }
     }

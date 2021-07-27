@@ -50,11 +50,11 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
         }
 
         #region NeedsSpaceOnTempDBDrive Tests
-        //test case for each IndexUpdateType and assert that NeedsSpaceOnTempDBDrive = 1 on CreateMissing, AlterRebuild, or Clustered index DropRecreate.
+        //test case for each IndexUpdateType and assert that NeedsSpaceOnTempDBDrive = 1 on CreateMissing, AlterRebuild, or Clustered index CreateDropExisting.
         [TestCase("CreateMissing", 0, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_CreateMissing_NC")]
         [TestCase("CreateMissing", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_CreateMissing_C")]
-        [TestCase("DropRecreate", 0, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_DropRecreate_NC")]
-        [TestCase("DropRecreate", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_DropRecreate_C")]
+        [TestCase("CreateDropExisting", 0, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_CreateDropExisting_NC")]
+        [TestCase("CreateDropExisting", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_CreateDropExisting_C")]
         [TestCase("AlterRebuild", 0, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_AlterRebuild_NC")]
         [TestCase("AlterRebuild", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_AlterRebuild_C")]
         [TestCase("AlterSet", 0, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_RowStore_AlterSet_NC")]
@@ -96,8 +96,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
 
         [TestCase("CreateMissing", 0, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_CreateMissing_NC")]
         [TestCase("CreateMissing", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_CreateMissing_C")]
-        [TestCase("DropRecreate", 0, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_DropRecreate_NC")]
-        [TestCase("DropRecreate", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_DropRecreate_C")]
+        [TestCase("CreateDropExisting", 0, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_CreateDropExisting_NC")]
+        [TestCase("CreateDropExisting", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_CreateDropExisting_C")]
         [TestCase("AlterRebuild", 0, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuild_NC")]
         [TestCase("AlterRebuild", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuild_C")]
         [TestCase("AlterRebuild-PartitionLevel", 0, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuildPartitionLevel_NC")]
@@ -136,77 +136,6 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             Assert.AreEqual(expectedNeedsSpaceOnTempDBDrive, actualNeedsSpaceOnTempDBDrive);
         }
 
-
-        #endregion
-
-        #region IsOnlineOperation Tests
-        //test case for each IndexUpdateType and assert that IsOnlineOperation follows this logic:
-        [TestCase("CreateMissing", "RowStore", 1, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_CreateMissing")]
-        [TestCase("CreateMissing", "ColumnStore", 0, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_ColumnStore_CreateMissing")]
-        [TestCase("DropRecreate", "RowStore", 1, 0, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_DropRecreate")]
-        [TestCase("DropRecreate", "ColumnStore", 0, 0, TestName = "ViewTests_vwIndexes_IsOnlineOperation_ColumnStore_DropRecreate")]
-        [TestCase("AlterRebuild", "RowStore", 1, 0, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_AlterRebuild_HasLOBColumns")]
-        [TestCase("AlterRebuild", "RowStore", 0, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_AlterRebuild_NoLOBColumns")]
-
-        [TestCase("AlterRebuild", "ColumnStore", 0, 0, TestName = "ViewTests_vwIndexes_IsOnlineOperation_ColumnStore_AlterRebuild")]
-        [TestCase("AlterRebuild-PartitionLevel", "RowStore", 1, 0, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_AlterRebuild-PartitionLevel_HasLOBColumns")]
-        [TestCase("AlterRebuild-PartitionLevel", "RowStore", 0, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_AlterRebuild-PartitionLevel_NoLOBColumns")]
-
-        [TestCase("AlterRebuild-PartitionLevel", "ColumnStore", 0, 0, TestName = "ViewTests_vwIndexes_IsOnlineOperation_ColumnStore_AlterRebuild-PartitionLevel")]
-        [TestCase("AlterReorganize", "RowStore", 1, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_AlterReorganize")]
-        [TestCase("AlterReorganize", "ColumnStore", 0, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_ColumnStore_AlterReorganize")]
-        [TestCase("AlterReorganize-PartitionLevel", "RowStore", 1, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_AlterReorganize-PartitionLevel")]
-        [TestCase("AlterReorganize-PartitionLevel", "ColumnStore", 0, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_ColumnStore_AlterReorganize-PartitionLevel")]
-        [TestCase("AlterSet", "RowStore", 1, 1, TestName = "ViewTests_vwIndexes_IsOnlineOperation_RowStore_AlterSet")]
-        public void ViewTests_vwIndexes_IsOnlineOperation(string indexUpdateType, string indexType, int indexHasLobColumns, int expectedIsOnlineOperation)
-        {
-            //set up table and index.
-            sqlHelper.Execute(TestHelper.CreateTableSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.CreateTableMetadataSql);
-
-            var columnsToUpdateSql = TestHelper.GetColumnsToUpdateFromIndexTypeSql(indexUpdateType);
-            var updateSql = string.Empty;
-            var getActualIsOnlineOperationSql = string.Empty;
-
-            if (indexType == "RowStore")
-            {
-                sqlHelper.Execute(TestHelper.CreateNCIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateNCIndexMetadataSql);
-                updateSql = $@" UPDATE DOI.IndexesRowStore
-                                SET {columnsToUpdateSql},
-                                    IndexHasLOBColumns = {indexHasLobColumns}
-                                WHERE DatabaseName = '{DatabaseName}' 
-                                    AND TableName = '{TestTableName1}'
-                                    AND IndexName = '{TestHelper.NCIndexName}'";
-                getActualIsOnlineOperationSql = $@" SELECT IsOnlineOperation 
-                                                    FROM DOI.vwIndexes 
-                                                    WHERE DatabaseName = '{DatabaseName}' 
-                                                        AND TableName = '{TestTableName1}'
-                                                        AND IndexName = '{TestHelper.NCIndexName}'";
-            }
-
-            if (indexType == "ColumnStore")
-            {
-                sqlHelper.Execute(TestHelper.CreateNCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateNCCIIndexMetadataSql);
-                updateSql = $@" UPDATE DOI.IndexesColumnStore
-                                SET {columnsToUpdateSql}
-                                WHERE DatabaseName = '{DatabaseName}' 
-                                    AND TableName = '{TestTableName1}'
-                                    AND IndexName = '{TestHelper.NCCIIndexName}'";
-                getActualIsOnlineOperationSql = $@" SELECT IsOnlineOperation 
-                                                    FROM DOI.vwIndexes 
-                                                    WHERE DatabaseName = '{DatabaseName}' 
-                                                        AND TableName = '{TestTableName1}'
-                                                        AND IndexName = '{TestHelper.NCCIIndexName}'";
-            }
-
-            sqlHelper.Execute(updateSql);
-
-            var actualIsOnlineOperation = sqlHelper.ExecuteScalar<int>(getActualIsOnlineOperationSql);
-
-            Assert.AreEqual(expectedIsOnlineOperation, actualIsOnlineOperation);
-        }
 
         #endregion
 
@@ -325,14 +254,14 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
         #region IndexUpdateType Tests
         //test case for each combination of ChangeBitGroups and assert that the right IndexUpdateType is shown.
         [TestCase(1, 0, 0, 0, 0, "None", "CreateMissing", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateMissing")]
-        [TestCase(0, 1, 0, 0, 0, "None", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_DropRecreate")]
-        [TestCase(0, 1, 1, 0, 0, "None", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_DropRecreate_NeedsPartitionLevelOperationsAlso")]
-        [TestCase(0, 1, 1, 1, 0, "None", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_DropRecreate_NeedsPartitionLevelOperationsAndRebuildOnlyOptionsChangingAlso")]
-        [TestCase(0, 1, 1, 1, 1, "None", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso")]
-        [TestCase(0, 1, 1, 1, 1, "Heavy", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_HeavyFrag")]
-        [TestCase(0, 1, 1, 1, 1, "Light", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_LightFrag")]
-        [TestCase(0, 1, 1, 1, 1, "Heavy", "DropRecreate", 1, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_HeavyFrag_CompressionChanging")]
-        [TestCase(0, 1, 1, 1, 1, "Light", "DropRecreate", 1, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_LightFrag_CompressionChanging")]
+        [TestCase(0, 1, 0, 0, 0, "None", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateDropExisting")]
+        [TestCase(0, 1, 1, 0, 0, "None", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateDropExisting_NeedsPartitionLevelOperationsAlso")]
+        [TestCase(0, 1, 1, 1, 0, "None", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateDropExisting_NeedsPartitionLevelOperationsAndRebuildOnlyOptionsChangingAlso")]
+        [TestCase(0, 1, 1, 1, 1, "None", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso")]
+        [TestCase(0, 1, 1, 1, 1, "Heavy", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_HeavyFrag")]
+        [TestCase(0, 1, 1, 1, 1, "Light", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_LightFrag")]
+        [TestCase(0, 1, 1, 1, 1, "Heavy", "CreateDropExisting", 1, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_HeavyFrag_CompressionChanging")]
+        [TestCase(0, 1, 1, 1, 1, "Light", "CreateDropExisting", 1, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_LightFrag_CompressionChanging")]
         [TestCase(0, 0, 0, 0, 0, "Heavy", "AlterRebuild", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_AlterRebuild_HeavyFragOnly")]
         [TestCase(0, 0, 0, 0, 1, "Light", "AlterRebuild", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_AlterRebuild_LightFragAndSetOptions")]
         [TestCase(0, 0, 0, 1, 0, "None", "AlterRebuild", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_RowStore_AlterRebuild_RebuildOnlyOptions")]
@@ -391,14 +320,14 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
 
         //test case for each combination of ChangeBitGroups and assert that the right IndexUpdateType is shown.
         [TestCase(1, 0, 0, 0, "None", "CreateMissing", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateMissing")]
-        [TestCase(0, 1, 0, 0, "None", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_DropRecreate")]
-        [TestCase(0, 1, 1, 0, "None", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_DropRecreate_NeedsPartitionLevelOperationsAlso")]
-        [TestCase(0, 1, 1, 1, "None", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_DropRecreate_NeedsPartitionLevelOperationsAndRebuildOnlyOptionsChangingAlso")]
-        [TestCase(0, 1, 1, 1, "None", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso")]
-        [TestCase(0, 1, 1, 1, "Heavy", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_HeavyFrag")]
-        [TestCase(0, 1, 1, 1, "Light", "DropRecreate", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_LightFrag")]
-        [TestCase(0, 1, 1, 1, "Heavy", "DropRecreate", 1, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_HeavyFrag_CompressionChanging")]
-        [TestCase(0, 1, 1, 1, "Light", "DropRecreate", 1, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_DropRecreate_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_LightFrag_CompressionChanging")]
+        [TestCase(0, 1, 0, 0, "None", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateDropExisting")]
+        [TestCase(0, 1, 1, 0, "None", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateDropExisting_NeedsPartitionLevelOperationsAlso")]
+        [TestCase(0, 1, 1, 1, "None", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateDropExisting_NeedsPartitionLevelOperationsAndRebuildOnlyOptionsChangingAlso")]
+        [TestCase(0, 1, 1, 1, "None", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso")]
+        [TestCase(0, 1, 1, 1, "Heavy", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_HeavyFrag")]
+        [TestCase(0, 1, 1, 1, "Light", "CreateDropExisting", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_LightFrag")]
+        [TestCase(0, 1, 1, 1, "Heavy", "CreateDropExisting", 1, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_HeavyFrag_CompressionChanging")]
+        [TestCase(0, 1, 1, 1, "Light", "CreateDropExisting", 1, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_CreateDropExisting_NeedsPartitionLevelOperationsAndAllOtherBitGroupsOnAlso_LightFrag_CompressionChanging")]
         [TestCase(0, 0, 0, 0, "Heavy", "AlterRebuild", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_AlterRebuild_HeavyFragOnly")]
         [TestCase(0, 0, 0, 1, "None", "AlterRebuild", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_AlterRebuild_RebuildOnlyOptions")]
         [TestCase(0, 0, 0, 1, "Heavy", "AlterRebuild", 0, TestName = "ViewTests_vwIndexes_IndexUpdateType_ColumnStore_AlterRebuild_RebuildOnlyOptionsAndHeavyFrag")]

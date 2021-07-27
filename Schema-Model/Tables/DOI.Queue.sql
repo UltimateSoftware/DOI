@@ -11,7 +11,6 @@ CREATE TABLE [DOI].[Queue]
 [ParentTableName] [nvarchar] (128) NULL,
 [ParentIndexName] [nvarchar] (128) NULL,
 [IndexOperation] [varchar] (50) NOT NULL,
-[IsOnlineOperation] [bit] NOT NULL,
 [TableChildOperationId] [smallint] NOT NULL CONSTRAINT [Def_Queue_TableChildOperationId] DEFAULT ((0)),
 [SQLStatement] [varchar] (max) NOT NULL,
 [SeqNo] [int] NOT NULL,

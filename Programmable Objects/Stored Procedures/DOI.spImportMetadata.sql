@@ -60,8 +60,8 @@ BEGIN
 
     INSERT INTO @PartitionFunctions(DatabaseName, PartitionFunctionName, PartitionFunctionDataType, BoundaryInterval, InitialDate)
     SELECT ''' + @DatabaseName + ''', 
-            name, 
-            ''DATETIME2'', 
+            pf.name, 
+            t.name, 
             CASE 
                 WHEN x.DateDifference IN (365, 366)
                 THEN ''Yearly''
@@ -71,6 +71,8 @@ BEGIN
             END AS BoundaryInterval,
             prv.InitialDate
     FROM ' + @DatabaseName + '.sys.partition_functions pf
+        INNER JOIN ' + @DatabaseName + '.sys.partition_parameters pp ON pf.function_id = pp.function_id
+        INNER JOIN ' + @DatabaseName + '.sys.types t ON pp.user_type_id = t.user_type_id
         CROSS APPLY (   SELECT CAST(MIN(value) AS DATE) AS InitialDate 
                         FROM ' + @DatabaseName + '.sys.partition_range_values prv 
                         WHERE pf.function_id = prv.function_id) prv

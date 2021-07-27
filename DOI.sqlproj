@@ -9,6 +9,7 @@
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{83a05767-285b-46e4-889f-5745c174ebed}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -395,9 +396,6 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RenameDefaultConstraints.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Migrations\009_BusinessHoursSchedule_Table.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Setup_BusinessHoursSchedule.sql" />
-    <None Include="Programmable Objects\Views\DOI.vwBusinessHoursSchedule.sql" />
     <None Include="Schema-Model\Tables\DOI.BusinessHoursSchedule.sql" />
   </ItemGroup>
   <ItemGroup>

@@ -31,8 +31,7 @@ namespace DOI.Tests.TestHelpers
             FROM DOI.DOI.Queue 
             WHERE DatabaseName = '{DatabaseName}'
                 AND SchemaName = '{schemaName}' 
-                AND TableName = '{tableName}' 
-                AND IsOnlineOperation = 0";
+                AND TableName = '{tableName}";
         }
 
         public List<vwIndexes> GetIndexViews(string tableName)
@@ -40,13 +39,12 @@ namespace DOI.Tests.TestHelpers
             return this.sqlHelper.GetList<vwIndexes>($"select * FROM DOI.DOI.vwIndexes WHERE DatabaseName = '{DatabaseName}' AND TableName = '{tableName}'");
         }
 
-        public void ExecuteSPQueue(bool onlineOperations, bool isBeingRunDuringADeployment = false, string databaseName = DatabaseName, string schemaName = null, string tableName = null)
+        public void ExecuteSPQueue(string databaseName = DatabaseName, string schemaName = null, string tableName = null)
         {
-            var sql = $"DECLARE @BatchId UNIQUEIDENTIFIER " +
-                      $"EXEC DOI.DOI.[spQueue]  " +
-                        $"@OnlineOperations = {(onlineOperations ? "1" : "0")}" +
-                        $",@IsBeingRunDuringADeployment = {(isBeingRunDuringADeployment ? "1" : "0")}" +
-                        $",@BatchIdOUT = @BatchId";
+            var sql = $@"
+                DECLARE @BatchId UNIQUEIDENTIFIER 
+                EXEC DOI.DOI.[spQueue]
+                    @BatchIdOUT = @BatchId";
             sql += databaseName != null ? $",@DatabaseName = '{databaseName}' " : string.Empty;
             sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
             sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
@@ -54,43 +52,15 @@ namespace DOI.Tests.TestHelpers
             this.sqlHelper.Execute(sql, 120);
         }
 
-        public void ExecuteSPRun(bool onlineOperations, string databaseName = null, string schemaName = null, string tableName = null)
+        public void ExecuteSPRun(string databaseName = null, string schemaName = null, string tableName = null)
         {
-            var sql = $"EXEC DOI.DOI.[spRun]  " +
-                      $"@OnlineOperations = {(onlineOperations ? "1" : "0")}";
-            sql += databaseName != null ? $",@DatabaseName = '{databaseName}' " : string.Empty;
-            sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
-            sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
+            var sql = $@"
+                EXEC DOI.DOI.[spRun]
+                    @DatabaseName = '{databaseName}'
+                    ,@SchemaName = '{schemaName}' 
+                    ,@TableName = '{tableName}'";
 
             this.sqlHelper.Execute(sql, 0);
-        }
-
-        public async Task ExecuteSPRunAsync(bool onlineOperations, string schemaName = null, string tableName = null)
-        {
-            var sql = $"EXEC DOI.DOI.[spRun]  " +
-                      $"@OnlineOperations = {(onlineOperations ? "1" : "0")}";
-            sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
-            sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
-
-            await this.sqlHelper.ExecuteAsync(sql, 0, false);
-        }
-
-        public void ExecuteSPCreateNewPartitionFunction(string partitionFunctionName)
-        {
-            this.sqlHelper.Execute($@"EXEC DOI.DOI.[spRefreshStorageContainers_PartitionFunctions] 
-                                        @DatabaseName = '{DatabaseName}',
-                                        @PartitionFunctionName = '{partitionFunctionName}'");
-
-            this.sqlHelper.Execute(FKTestHelper.RefreshMetadata_PartitionFunctionsSql);
-        }
-
-        public void ExecuteSPCreateNewPartitionScheme(string partitionFunctionName)
-        {
-            this.sqlHelper.Execute($@"EXEC DOI.DOI.[spRefreshStorageContainers_PartitionSchemes] 
-                                        @DatabaseName = '{DatabaseName}',
-                                        @PartitionFunctionName = '{partitionFunctionName}'");
-
-            this.sqlHelper.Execute(@"EXEC DOI.DOI.[spRefreshMetadata_System_PartitionFunctionsAndSchemes]");
         }
 
         public List<PartitionFunctionBoundary> GetExistingPartitionFunctionBoundaries(string partitionFunctionName)

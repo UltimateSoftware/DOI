@@ -282,7 +282,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.IsClusteredIndexBeingDropped = (bool)row.First(x => x.First == "IsClusteredIndexBeingDropped").Second;
                 columnValue.WhichUniqueConstraintIsBeingDropped = row.First(x => x.First == "WhichUniqueConstraintIsBeingDropped").Second.ToString();
                 columnValue.IsStorageChanging = (bool)row.First(x => x.First == "IsStorageChanging").Second;
-                columnValue.NeedsTransaction = (bool)row.First(x => x.First == "NeedsTransaction").Second;
                 columnValue.AreStatisticsChanging = (bool)row.First(x => x.First == "AreStatisticsChanging").Second;
                 columnValue.PKColumnList = row.First(x => x.First == "PKColumnList").Second.ToString();
                 columnValue.PartitionFunctionName = row.First(x => x.First == "PartitionFunctionName").Second.ToString();
@@ -484,7 +483,6 @@ namespace DOI.Tests.TestHelpers.Metadata
             Assert.AreEqual(preOrPostChange == "Post" && (bool)isClustered && areDropRecreateOptionsChanging ? true : false, indexAggFromTableRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
             Assert.AreEqual(preOrPostChange == "Post" ? whichUniqueConstraintIsBeingDropped : "None", indexAggFromTableRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStorageChanging" || bitToAssert == "IsPartitioningChanging") ? true : false, indexAggFromTableRow.IsStorageChanging, "IsStorageChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && areDropRecreateOptionsChanging) ? true : false, indexAggFromTableRow.NeedsTransaction, "NeedsTransaction");
             Assert.AreEqual(preOrPostChange == "Post" ? areStatisticsChanging : false, indexAggFromTableRow.AreStatisticsChanging, "AreStatisticsChanging");
         }
 

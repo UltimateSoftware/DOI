@@ -1,15 +1,15 @@
 ﻿
 
 --rename job to 'online' now that we also have an 'offline' job
-IF EXISTS(SELECT 'True' FROM msdb.dbo.sysjobs WHERE name IN ('DOI-Refresh Indexes - Online'))
+IF EXISTS(SELECT 'True' FROM msdb.dbo.sysjobs WHERE name IN ('DOI-Refresh Indexes'))
 BEGIN
 	EXEC msdb.dbo.sp_delete_job 
-		@job_name = 'DOI-Refresh Indexes - Online'
+		@job_name = 'DOI-Refresh Indexes'
 
-	PRINT 'Deleted DOI-Refresh Indexes - Online Job.'
+	PRINT 'Deleted DOI-Refresh Indexes Job.'
 END
 
-IF NOT EXISTS(SELECT 'True' FROM msdb.dbo.sysjobs WHERE name IN ('DOI-Refresh Indexes - Online'))
+IF NOT EXISTS(SELECT 'True' FROM msdb.dbo.sysjobs WHERE name IN ('DOI-Refresh Indexes'))
 BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION
@@ -28,7 +28,7 @@ BEGIN
 			DECLARE @jobId BINARY(16)
 
 			EXEC @ReturnCode =  msdb.dbo.sp_add_job 
-				@job_name=N'DOI-Refresh Indexes - Online', 
+				@job_name=N'DOI-Refresh Indexes', 
 				@enabled=1, 
 				@notify_level_eventlog=0, 
 				@notify_level_email=0, 
@@ -39,13 +39,13 @@ BEGIN
 				@category_name=N'DB Maintenance', 
 				@owner_login_name=N'sa', 
 				@job_id = @jobId OUTPUT
-			PRINT 'Created job DOI-Refresh Indexes - Online'
+			PRINT 'Created job DOI-Refresh Indexes'
 
 
 			/****** Object:  Step [Refresh Indexes]    Script Date: 7/25/2014 4:08:45 PM ******/
 			EXEC @ReturnCode = msdb.dbo.sp_add_jobstep 
 				@job_id=@jobId, 
-				@step_name=N'Refresh Indexes - Online', 
+				@step_name=N'Refresh Indexes', 
 				@step_id=1, 
 				@cmdexec_success_code=0, 
 				@on_success_action=1, 
@@ -60,12 +60,10 @@ BEGIN
     DECLARE @BatchId UNIQUEIDENTIFIER
 
 	EXEC DOI.spQueue 
-		@OnlineOperations = 1,
 		@IsBeingRunDuringADeployment = 0,
         @BatchIdOUT = @BatchId
 
 	EXEC DOI.spRun 
-		@OnlineOperations = 1,
 		@BatchId = @BatchId
     
 	EXEC DOI.spForeignKeysAdd
@@ -97,16 +95,16 @@ declare @jobid UNIQUEIDENTIFIER
 
 select @jobid = job_id 
 from msdb.dbo.sysjobs j 
-where j.name = 'DOI-Refresh Indexes - Online'
+where j.name = 'DOI-Refresh Indexes'
 
-IF EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DOI-Refresh Indexes - Online')
+IF EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DOI-Refresh Indexes')
 BEGIN
-	DELETE master.dbo.JobsToGovern WHERE JobName = 'DOI-Refresh Indexes - Online'
+	DELETE master.dbo.JobsToGovern WHERE JobName = 'DOI-Refresh Indexes'
 END
 
-IF NOT EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DOI-Refresh Indexes - Online')
+IF NOT EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DOI-Refresh Indexes')
 BEGIN
 	INSERT INTO master.dbo.JobsToGovern ( JobID ,JobName ,MatchString )
-	VALUES ( @jobid , N'DOI-Refresh Indexes - Online' , N'SQLAgent - TSQL JobStep (Job ' + CONVERT(VARCHAR(36), CONVERT(BINARY(16), @jobid), 1) + '%')
+	VALUES ( @jobid , N'DOI-Refresh Indexes' , N'SQLAgent - TSQL JobStep (Job ' + CONVERT(VARCHAR(36), CONVERT(BINARY(16), @jobid), 1) + '%')
 END
 GO

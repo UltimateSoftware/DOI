@@ -1,6 +1,9 @@
 USE DOI
 
-INSERT INTO DOI.Databases VALUES('DOIUnitTests')
+IF NOT EXISTS (SELECT 'True' FROM DOI.Databases WHERE DatabaseName = 'DOIUnitTests')
+BEGIN
+	INSERT INTO DOI.Databases VALUES('DOIUnitTests')
+END
 
 INSERT INTO [DOI].[Tables]
            (DatabaseName		, [SchemaName]	,[TableName]	,[PartitionColumn]	,[Storage_Desired]	,[IntendToPartition]	,[ReadyToQueue])
@@ -23,7 +26,7 @@ SET QUOTED_IDENTIFIER ON
 CREATE TABLE dbo.TempA(
 	TempAId uniqueidentifier NOT NULL,
 	TransactionUtcDt datetime2(7) NOT NULL,
-	IncludedColumn VARCHAR(50) NULL,
+	IncludedColumn VARCHAR(100) NULL,
 	TextCol VARCHAR(8000) NULL 
 )
 

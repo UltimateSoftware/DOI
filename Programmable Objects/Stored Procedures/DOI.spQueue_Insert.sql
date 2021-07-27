@@ -22,7 +22,6 @@ create   PROCEDURE [DOI].[spQueue_Insert]
 			@CurrentParentTableName 		NVARCHAR(128),
 			@CurrentParentIndexName			NVARCHAR(128),
 			@IndexOperation					VARCHAR(50),
-			@IsOnlineOperation				BIT,
 			@TableChildOperationId			SMALLINT = 0,
 			@SQLStatement					VARCHAR(MAX),
 			@TransactionId					UNIQUEIDENTIFIER,
@@ -50,8 +49,8 @@ AS
 			AND IndexOperation = @IndexOperation
 			AND TableChildOperationId = @TableChildOperationId
 
-	    INSERT INTO DOI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName , PartitionNumber, IndexSizeInMB, ParentSchemaName, ParentTableName, ParentIndexName, IndexOperation, IsOnlineOperation, TableChildOperationId, SQLStatement , SeqNo, /*RunAutomaticallyOnDeployment, RunAutomaticallyOnSQLJob,*/ RunStatus, TransactionId, BatchId, ExitTableLoopOnError)
-	    VALUES ( @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentIndexName , @CurrentPartitionNumber, @IndexSizeInMB, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentParentIndexName, @IndexOperation, @IsOnlineOperation, @TableChildOperationId, @SQLStatement, @SeqNo, /*@RunAutomaticallyOnDeployment, @RunAutomaticallyOnSQLJob,*/ 'Running', @TransactionId, @BatchId, @ExitTableLoopOnError)
+	    INSERT INTO DOI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName , PartitionNumber, IndexSizeInMB, ParentSchemaName, ParentTableName, ParentIndexName, IndexOperation, TableChildOperationId, SQLStatement , SeqNo, /*RunAutomaticallyOnDeployment, RunAutomaticallyOnSQLJob,*/ RunStatus, TransactionId, BatchId, ExitTableLoopOnError)
+	    VALUES ( @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentIndexName , @CurrentPartitionNumber, @IndexSizeInMB, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentParentIndexName, @IndexOperation, @TableChildOperationId, @SQLStatement, @SeqNo, /*@RunAutomaticallyOnDeployment, @RunAutomaticallyOnSQLJob,*/ 'Running', @TransactionId, @BatchId, @ExitTableLoopOnError)
     END TRY
 
     BEGIN CATCH
@@ -67,7 +66,6 @@ AS
 			    @CurrentParentTableName, 
 			    @CurrentParentIndexName,
 			    @IndexOperation, 
-			    @IsOnlineOperation,
 			    @TableChildOperationId,
 			    @TransactionId,
 			    ERROR_MESSAGE()

@@ -22,7 +22,6 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
          * 4. 2 threads doing happy path, at the same time...and staggered.
          * 5. 1 thread on disconnect?
          * 6. try the APPLOCK_TEST() function?  this is what the DDL trigger uses.
-         * 7. try running job so that it's killed by business hours check.
          */
         private SqlConnection connection;
 
@@ -118,12 +117,10 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
         public void RunApplicationLocksThroughQueue()
         {
             //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(1, DatabaseName));
+            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(DatabaseName));
             
             //Run Queue
-            sqlHelper.Execute($@"   EXEC DOI.DOI.spRun 
-                                        @DatabaseName = '{DatabaseName}',
-                                        @OnlineOperations = 1");
+            sqlHelper.Execute($@"EXEC DOI.DOI.spRun @DatabaseName = '{DatabaseName}'");
 
             //Assertions
             //Start, info, and finish messages for Get
@@ -142,69 +139,16 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
         public void RunApplicationLocksThroughQueueWithError()
         {
             //Populate Queue
-            sqlHelper.Execute(connection, ApplicationLockTestsHelper.RunAppLockStatementsThroughQueueWithError(1, DatabaseName));
+            sqlHelper.Execute(connection, ApplicationLockTestsHelper.RunAppLockStatementsThroughQueueWithError(DatabaseName));
 
             //Run Queue
-            sqlHelper.Execute($@"   EXEC DOI.DOI.spRun 
-                                        @DatabaseName = '{DatabaseName}',
-                                        @OnlineOperations = 1");
+            sqlHelper.Execute($@"EXEC DOI.DOI.spRun @DatabaseName = '{DatabaseName}'");
 
             //Assertions
             //Start, info, and finish messages for Release
             Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.DOI.Log WHERE DatabaseName = '{DatabaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Start' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
             Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.DOI.Log WHERE DatabaseName = '{DatabaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Error' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73' AND ErrorText LIKE '%Unable to release Application Lock.  There is no lock to release for this SPID (%).  The lock is currently being held by no one.%'"));
             Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.DOI.Log WHERE DatabaseName = '{DatabaseName}' AND IndexOperation = 'Release Application Lock' AND RunStatus = 'Finish' AND BatchId = '4B14EAD7-7C02-4F0D-9ADB-B7F49EAEFD73'"));
-        }
-
-        [Test]
-        [Ignore("We are going to remove the need for this.")]
-        public void KilledByBusinessHoursCheckBeforeRun()
-        {
-            //Make sure Business Hours are set so that it will fail and kill the job.
-            sqlHelper.Execute($@"   UPDATE DOI.DOI.BusinessHoursSchedule 
-                                    SET IsBusinessHours = 1 
-                                    WHERE DatabaseName = '{DatabaseName}'");
-
-            //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, DatabaseName));
-
-            //Run Queue
-            sqlHelper.Execute($@"   EXEC DOI.DOI.spRun 
-                                        @DatabaseName = '{DatabaseName}',
-                                        @OnlineOperations = 0");
-
-            //Assert
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.DOI.Log WHERE DatabaseName = '{DatabaseName}' AND RunStatus = 'Error' AND ErrorText = 'Stopping Offline DOI, before run started.  Business hours are here.'"));
-        }
-
-        [Test]
-        [Ignore("We are going to remove the need for this.")]
-        public void KilledByBusinessHoursCheckDuringRun()
-        {
-            //Make sure Business Hours are set so that it will start the run.
-            sqlHelper.Execute($@"   UPDATE DOI.DOI.BusinessHoursSchedule 
-                                    SET IsBusinessHours = 0
-                                    WHERE DatabaseName = '{DatabaseName}'");
-
-
-            //Populate Queue
-            sqlHelper.Execute(ApplicationLockTestsHelper.RunAppLockStatementsThroughQueue(0, DatabaseName));
-
-            //insert command in queue to update business hours
-            sqlHelper.Execute($@"EXEC DOI.DOI.spQueue_InsertSQLCommand
-                                    @DatabaseName = '{DatabaseName}',
-                                    @ParentTableName = 'N/A',
-                                    @ParentSchemaName = 'N/A',
-                                    @SeqNoJustAfterSQLCommand = 2,
-                                    @SQLCommand = 'UPDATE DOI.DOI.BusinessHoursSchedule SET IsBusinessHours = 1 WHERE DatabaseName = ''{DatabaseName}'''");
-
-            //Run Queue
-            sqlHelper.Execute($@"   EXEC DOI.DOI.spRun 
-                                        @DatabaseName = '{DatabaseName}',
-                                        @OnlineOperations = 0");
-
-            //Assert
-            Assert.AreEqual(1, sqlHelper.ExecuteScalar<int>($@"SELECT COUNT(*) FROM DOI.DOI.Log WHERE DatabaseName = '{DatabaseName}' AND RunStatus = 'Error' AND ErrorText = 'Stopping Offline DOI, after run started.  Business hours are here.'"));
         }
 
         private void ReleaseLock(int spId, bool shouldSucceed, byte isAppLockGrantedInSysDmTranLocksExpected, byte isAppLockGrantableInAppLockTestExpected, string messageExpected)

@@ -453,57 +453,6 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
 
             Assert.AreEqual(true, actualIsStorageChanging);
         }
-
-
-        //NeedsTransaction
-        [TestCase("RowStore", TestName = "ViewTests_vwTables_NeedsTransaction_RowStore")]
-        [TestCase("ColumnStore", TestName = "ViewTests_vwTables_NeedsTransaction_ColumnStore")]
-        public void ViewTests_vwTables_NeedsTransaction(string indexType)
-        {
-            //set up table and index.
-            sqlHelper.Execute(TestHelper.CreateTableSql, 30, true, DatabaseName);
-            sqlHelper.Execute(TestHelper.CreateTableMetadataSql);
-
-            if (indexType == "RowStore")
-            {
-                sqlHelper.Execute(TestHelper.CreateNCIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateNCIndexMetadataSql);
-            }
-            else if (indexType == "ColumnStore")
-            {
-                sqlHelper.Execute(TestHelper.CreateNCCIIndexSql, 30, true, DatabaseName);
-                sqlHelper.Execute(TestHelper.CreateNCCIIndexMetadataSql);
-            }
-
-            sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
-
-            var actualNeedsTransaction = sqlHelper.ExecuteScalar<bool>(
-                $@" SELECT NeedsTransaction
-                        FROM DOI.vwTables 
-                        WHERE DatabaseName = '{DatabaseName}' 
-                            AND TableName = '{TestTableName1}'");
-
-            Assert.AreEqual(false, actualNeedsTransaction);
-
-            sqlHelper.Execute($@"
-                UPDATE DOI.Indexes{indexType}
-                SET AreDropRecreateOptionsChanging = 1
-                WHERE DatabaseName = '{DatabaseName}' 
-                    AND TableName = '{TestTableName1}'
-                    AND IndexName = '{(indexType == "RowStore" ? TestHelper.NCIndexName : TestHelper.NCCIIndexName)}'");
-
-            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'");
-
-            actualNeedsTransaction = sqlHelper.ExecuteScalar<bool>(
-                $@" SELECT NeedsTransaction
-                        FROM DOI.vwTables 
-                        WHERE DatabaseName = '{DatabaseName}' 
-                            AND TableName = '{TestTableName1}'");
-
-            Assert.AreEqual(true, actualNeedsTransaction);
-        }
-
-
         //AreStatisticsChanging
     }
 }

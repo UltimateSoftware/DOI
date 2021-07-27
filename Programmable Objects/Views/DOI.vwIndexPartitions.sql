@@ -16,7 +16,8 @@ AS
     FROM DOI.vwIndexPartitions 
     ORDER BY SchemaName, TableName, IndexName, PartitionNumber
 */
-SELECT	SchemaName,
+SELECT	DatabaseName,
+		SchemaName,
 		TableName,
 		IndexName, 
 		PartitionNumber, 
@@ -55,7 +56,8 @@ ALTER INDEX ' + IndexName + ' ON ' + SchemaName + '.' + TableName + CHAR(13) + C
 --select count(*)
 FROM DOI.IndexPartitionsRowStore 
 UNION ALL
-SELECT	SchemaName,
+SELECT	DatabaseName,
+		SchemaName,
 		TableName,
 		IndexName, 
 		PartitionNumber, 
