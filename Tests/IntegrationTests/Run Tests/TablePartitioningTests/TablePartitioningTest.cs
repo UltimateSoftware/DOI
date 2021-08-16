@@ -64,6 +64,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
         }
 
         [Test]
+        //need to add revert rename tests and also test if the log rows are preserved on rollback on a rename.
         public void HappyPath_PartitionTable()
         {
             //Setup
@@ -105,6 +106,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             //log has no errors.
             ValidateThatLogTableHasNoErrors();
         }
+        
 
         private void StartSqlServerAgentIfIsNotRunning()
         {

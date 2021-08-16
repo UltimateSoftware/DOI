@@ -60,7 +60,6 @@ BEGIN
     DECLARE @BatchId UNIQUEIDENTIFIER
 
 	EXEC DOI.spQueue 
-		@IsBeingRunDuringADeployment = 0,
         @BatchIdOUT = @BatchId
 
 	EXEC DOI.spRun 

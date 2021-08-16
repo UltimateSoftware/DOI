@@ -39,14 +39,17 @@ namespace DOI.Tests.IntegrationTests
         {
             this.sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}', @OneTimeTearDown = 1");
             // restore schedule table to original settings
-            this.sqlHelper.Execute($@"USE master;
+            this.sqlHelper.Execute($@"
+            USE master;
 
             DECLARE @kill varchar(8000); SET @kill = '';
             SELECT @kill = @kill + 'kill ' + CONVERT(varchar(5), spid) + ';'
             FROM master..sysprocesses
             WHERE dbid = db_id('{DatabaseName}')
 
-            EXEC(@kill); DROP DATABASE IF EXISTS {DatabaseName}");
+            EXEC(@kill); 
+            
+            DROP DATABASE IF EXISTS {DatabaseName}");
         }
     }
 }

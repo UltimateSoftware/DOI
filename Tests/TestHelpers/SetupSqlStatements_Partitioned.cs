@@ -370,29 +370,35 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
         public static string UpdateJobStepForTest = @"
                                                     EXEC msdb.dbo.sp_update_jobstep  
                                                      @job_name =  'DOI-Refresh Indexes' 
-                                                    ,@step_id = 2
+                                                    ,@step_id = 1
                                                     ,@step_name = 'Populate Queue - Online'
-                                                    ,@command = N' 
-                                                           DECLARE @BatchId UNIQUEIDENTIFIER
-                                                           
-	                                                       TRUNCATE TABLE DOI.Queue
-	                                                       EXEC DOI.spQueue 
-			                                                    @IsBeingRunDuringADeployment = 0,
-                                                                @BatchIdOUT = @BatchId OUTPUT'
+                                                    ,@command = N'    DECLARE @BatchId UNIQUEIDENTIFIER
+
+	EXEC DOI.spQueue 
+        @BatchIdOUT = @BatchId
+
+	EXEC DOI.spRun 
+		@BatchId = @BatchId
+    
+	EXEC DOI.spForeignKeysAdd
+		@CallingProcess = ''Job'''
                                                     ";
 
         public static string RestoreJobStep = @"
                                                     EXEC msdb.dbo.sp_update_jobstep  
                                                      @job_name =  'DOI-Refresh Indexes' 
-                                                    ,@step_id = 2
+                                                    ,@step_id = 1
                                                     ,@step_name = 'Populate Queue - Online'
-                                                    ,@command = N' 
-	                                                       DECLARE @BatchId UNIQUEIDENTIFIER
-                                                           
-	                                                       TRUNCATE TABLE DOI.Queue
-	                                                       EXEC DOI.spQueue 
-			                                                    @IsBeingRunDuringADeployment = 0,
-                                                                @BatchIdOUT = @BatchId OUTPUT '
+                                                    ,@command = N'    DECLARE @BatchId UNIQUEIDENTIFIER
+
+	EXEC DOI.spQueue 
+        @BatchIdOUT = @BatchId
+
+	EXEC DOI.spRun 
+		@BatchId = @BatchId
+    
+	EXEC DOI.spForeignKeysAdd
+		@CallingProcess = ''Job'''
                                                     ";
 
         public static string DataInPartitionedTable = $@" USE {DatabaseName} Select * from dbo.PartitioningTestAutomationTable";

@@ -20,7 +20,7 @@ namespace DOI.Tests.IntegrationTests.Models
         public int fragment_count { get; set; }
         public double avg_fragment_size_in_pages { get; set; }
         public int page_count { get; set; }
-        public double avg_page_space_used_in_percent { get; set; }
+        public double? avg_page_space_used_in_percent { get; set; }
         public int record_count { get; set; }
         public int ghost_record_count { get; set; }
         public int version_ghost_record_count { get; set; }

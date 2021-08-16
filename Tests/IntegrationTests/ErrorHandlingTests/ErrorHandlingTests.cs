@@ -53,6 +53,7 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
         [TearDown]
         public virtual void TearDown()
         {
+            this.sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}', @OneTimeTearDown = 0");
             this.sqlHelper.Execute("DELETE DOI.DefaultConstraintsNotInMetadata");
             this.sqlHelper.Execute("DELETE DOI.CheckConstraintsNotInMetadata");
             this.sqlHelper.Execute("DELETE DOI.IndexesNotInMetadata");
@@ -283,41 +284,6 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
 
             // 4.Check for Resource Gov error and NO OTHER ACTIVITY in the log table.
             var logErrorCount = this.sqlHelper.ExecuteScalar<int>("SELECT ErrorText FROM DOI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Resource Governor is not turned on.  Aborting';");
-        }
-
-        [Test]
-        public void LogRowsPreservedOnRollbackTest()
-        {
-            // 1. Make a DropRecreate change to an index.
-            this.sqlHelper.Execute($@"  UPDATE IRS 
-                                        SET IsClustered_Desired = 0 
-                                        FROM DOI.IndexesRowStore IRS 
-                                        WHERE DatabaseName = '{DatabaseName}' 
-                                            AND SchemaName = '{SchemaName}' 
-                                            AND TableName = '{TestTableName1}' 
-                                            AND IndexName = 'CDX_{TestTableName1}'");
-
-            // 2. Run Queue SP.
-            this.sqlHelper.Execute(TestHelper.SystemMetadataHelper.RefreshMetadata_SysIndexesSql);
-            this.sqlHelper.Execute($"TRUNCATE TABLE DOI.Queue");
-            this.sqlHelper.Execute($"TRUNCATE TABLE DOI.Log");
-            this.dataDrivenIndexTestHelper.ExecuteSPQueue(DatabaseName, SchemaName, TestTableName1);
-            var transactionId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 TransactionId FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestTableName1}' AND TransactionId IS NOT NULL");
-            var batchId = this.sqlHelper.ExecuteScalar<Guid>($"SELECT TOP 1 BatchId FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestTableName1}'");
-            var seqNo = this.sqlHelper.ExecuteScalar<int>($"SELECT TOP 1 SeqNo FROM DOI.Queue WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestTableName1}' AND IndexName = 'CDX_{TestTableName1}' AND IndexOperation = 'Drop Index'");
-
-            // 3. Introduce an error into the Queue while the transaction is open.
-            this.sqlHelper.ExecuteScalar<int>($"UPDATE Q SET SeqNo = SeqNo + 1 FROM DOI.Queue Q WHERE DatabaseName = '{DatabaseName}' AND SeqNo > {seqNo}");
-            this.sqlHelper.Execute($@"
-                INSERT INTO DOI.Queue ( DatabaseName, SchemaName ,TableName ,IndexName ,PartitionNumber ,IndexSizeInMB ,ParentSchemaName ,ParentTableName ,ParentIndexName ,IndexOperation ,TableChildOperationId ,SQLStatement ,SeqNo ,DateTimeInserted ,InProgress ,RunStatus ,ErrorMessage ,TransactionId ,BatchId ,ExitTableLoopOnError )
-                VALUES('{DatabaseName}', N'dbo', N'{TestTableName1}', N'CDX_{TestTableName1}', 0, 0, N'dbo', N'{TestTableName1}', N'CDX_{TestTableName1}', 'Stop Processing', 0, 'SELECT 1/0', {seqNo + 1}, SYSDATETIME(), 0, 'Start', '', '{transactionId}', '{batchId}', 0)");
-
-            // 4. Run the Run SP.
-            dataDrivenIndexTestHelper.ExecuteSPRun(DatabaseName, SchemaName, TestTableName1);
-
-            // 5. Check that the Logged rows are still in the Log table.
-            var countOfLogRows = this.sqlHelper.ExecuteScalar<int>($"SELECT COUNT(*) FROM DOI.Log WHERE DatabaseName = '{DatabaseName}' AND ErrorText = 'Divide by zero error encountered.'");
-            Assert.AreEqual(2, countOfLogRows); //should have 1 row marked as 'Start' and 1 marked as 'Error'.
         }
     }
 }

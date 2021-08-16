@@ -1,5 +1,6 @@
-
+-- <Migration ID="04647471-4f48-4ac4-a7f4-bfa3b54772f6" />
 GO
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
 IF OBJECT_ID('[DOI].[spRun]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRun];
@@ -128,265 +129,285 @@ BEGIN TRY
 		INNER JOIN sys.availability_databases_cluster ADC ON AR.group_id = ADC.group_id
 	WHERE @@SERVERNAME <> replica_server_name
 
-    /************************************** TABLE LOOP (BEGIN) ********************************************/
-	DECLARE Tables_Run_Cur CURSOR GLOBAL DYNAMIC FOR
-		SELECT	DatabaseName,
-                SchemaName, 
-				TableName,
-				ParentSchemaName,
-				ParentTableName,
-				SeqNo,
-				FN.TransactionId,
-				IndexName,
-				FN.PartitionNumber,
-				SQLStatement,
-				FN.RunStatus,
-				FN.IndexOperation,
-				FN.TableChildOperationId,
-				FN.BatchId,
-				FN.ExitTableLoopOnError,
-				FN.IndexSizeInMB
-		FROM DOI.Queue FN
-		WHERE FN.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN FN.DatabaseName ELSE @DatabaseName END 
-			AND FN.ParentSchemaName = CASE WHEN @SchemaName IS NULL THEN FN.ParentSchemaName ELSE @SchemaName END 
-			AND FN.ParentTableName = CASE WHEN @TableName IS NULL THEN FN.ParentTableName ELSE @TableName END 
-			AND FN.BatchId = CASE WHEN @BatchId IS NULL THEN FN.BatchId ELSE @BatchId END 
-		ORDER BY FN.DatabaseName ASC, FN.ParentSchemaName ASC, FN.ParentTableName ASC, FN.SeqNo ASC
-					
-	OPEN Tables_Run_Cur
+	/************************************** DATABASE LOOP (BEGIN) ********************************************/
+	DECLARE Databases_Run_Cur CURSOR LOCAL FAST_FORWARD FOR
+	SELECT DatabaseName
+	FROM DOI.Databases
+	WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END
 
-	FETCH NEXT FROM Tables_Run_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentSeqNo, @TransactionId, @CurrentIndexName, @CurrentPartitionNumber, @CurrentSQLStatement, @RunStatus, @CurrentIndexOperation, @CurrentTableChildOperationId, @BatchId, @ExitTableLoopOnError, @IndexSizeInMB
+	OPEN Databases_Run_Cur
 
-    SET @DBContext = @CurrentDatabaseName + N'.sys.sp_executesql'
+	FETCH NEXT FROM Databases_Run_Cur INTO @CurrentDatabaseName
 
-	IF (@CurrentSchemaName + '.' + @CurrentTableName) IS NOT NULL
-	BEGIN 
-		EXEC DOI.spRun_LogInsert
-            @CurrentDatabaseName        = 'N/A' 
-			,@CurrentSchemaName			= 'N/A'  
-			,@CurrentTableName			= 'N/A'
-			,@CurrentIndexName			= 'N/A'
-			,@CurrentPartitionNumber	= 0
-			,@IndexSizeInMB				= 0
-			,@SQLStatement				= @RGSettings
-			,@IndexOperation			= 'Resource Governor Settings'
-			,@RowCount					= 0
-			,@TransactionId				= NULL 
-			,@TableChildOperationId		= 0
-			,@BatchId					= @BatchId
-			,@SeqNo						= 0
-			,@ExitTableLoopOnError		= 0
-			,@RunStatus					= 'Start'
-	END
-    
-	IF (@ProgramName LIKE N'SQLAgent - TSQL JobStep%' AND @RGWorkloadGroupName <> 'IndexMaintenanceGroup')
-        OR ((SELECT is_enabled FROM sys.resource_governor_configuration) = 0)
+	WHILE @@FETCH_STATUS <> -1
 	BEGIN
-		SET @ExitTableLoopOnError = 1
-		RAISERROR('Online job is trying to run with Resource Governor off.  Aborting.  Need to turn on Resource Governor.', 16, 1)	
-	END
-
-	WHILE @@FETCH_STATUS IN (0, -2)
-	BEGIN
-		IF @@FETCH_STATUS = 0 --IF THE STATUS = -2 THEN SKIP EVERYTHING AND JUST FETCH NEXT ROW
+		IF @@FETCH_STATUS <> -2
 		BEGIN
-			SET @ExitRetryLoopOnError = 0
-			SET @ErrorMessage = NULL 
+			/************************************** TABLE LOOP (BEGIN) ********************************************/
+			DECLARE Tables_Run_Cur CURSOR GLOBAL DYNAMIC FOR
+				SELECT	DatabaseName,
+						SchemaName, 
+						TableName,
+						ParentSchemaName,
+						ParentTableName,
+						SeqNo,
+						FN.TransactionId,
+						IndexName,
+						FN.PartitionNumber,
+						SQLStatement,
+						FN.RunStatus,
+						FN.IndexOperation,
+						FN.TableChildOperationId,
+						FN.BatchId,
+						FN.ExitTableLoopOnError,
+						FN.IndexSizeInMB
+				FROM DOI.Queue FN
+				WHERE FN.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN FN.DatabaseName ELSE @DatabaseName END 
+					AND FN.ParentSchemaName = CASE WHEN @SchemaName IS NULL THEN FN.ParentSchemaName ELSE @SchemaName END 
+					AND FN.ParentTableName = CASE WHEN @TableName IS NULL THEN FN.ParentTableName ELSE @TableName END 
+					AND FN.BatchId = CASE WHEN @BatchId IS NULL THEN FN.BatchId ELSE @BatchId END 
+				ORDER BY FN.DatabaseName ASC, FN.ParentSchemaName ASC, FN.ParentTableName ASC, FN.SeqNo ASC
+					
+			OPEN Tables_Run_Cur
 
-			/************************** RETRY LOOP (BEGIN) ****************************************************/
-			WHILE @RetryCount <= 3 AND @ExitRetryLoopOnError = 0
-			BEGIN
-				BEGIN TRY
-					IF @Debug = 1
-					BEGIN
-						SELECT	@CurrentDatabaseName,
-								@CurrentSchemaName, 
-								@CurrentTableName, 
-								@CurrentParentSchemaName, 
-								@CurrentParentTableName, 
-								@CurrentSeqNo, 
-								@TransactionId, 
-								@CurrentIndexName, 
-								@CurrentSQLStatement, 
-								@RunStatus, 
-								@CurrentIndexOperation, 
-								@CurrentTableChildOperationId, 
-								@BatchId, 
-								@ExitTableLoopOnError,
-								@IndexSizeInMB
-					END
-					ELSE
-					BEGIN 
-						SET @CurrentDateTime = SYSDATETIME()
+			FETCH NEXT FROM Tables_Run_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentSeqNo, @TransactionId, @CurrentIndexName, @CurrentPartitionNumber, @CurrentSQLStatement, @RunStatus, @CurrentIndexOperation, @CurrentTableChildOperationId, @BatchId, @ExitTableLoopOnError, @IndexSizeInMB
 
-						--LOG START
-						EXEC DOI.spRun_LogInsert 
-							@CurrentDatabaseName    = @CurrentDatabaseName
-							,@CurrentSchemaName		= @CurrentSchemaName  
-							,@CurrentTableName		= @CurrentTableName   
-							,@CurrentIndexName		= @CurrentIndexName 
-							,@CurrentPartitionNumber= @CurrentPartitionNumber
-							,@IndexSizeInMB			= @IndexSizeInMB
-							,@SQLStatement			= @CurrentSQLStatement
-							,@IndexOperation		= @CurrentIndexOperation
-							,@RowCount				= @RowCount
-							,@TransactionId			= @TransactionId 
-							,@TableChildOperationId	= @CurrentTableChildOperationId
-							,@BatchId				= @BatchId
-							,@SeqNo					= @CurrentSeqNo
-							,@ExitTableLoopOnError	= @ExitTableLoopOnError
-							,@RunStatus				= 'Start'
+			SET @DBContext = @CurrentDatabaseName + N'.sys.sp_executesql'
 
-						--UPDATE TO IN-PROGRESS
-						UPDATE DOI.Queue
-						SET InProgress = 1
-						WHERE DatabaseName = @CurrentDatabaseName
-							AND SchemaName = @CurrentSchemaName
-							AND TableName = @CurrentTableName
-							AND IndexName = @CurrentIndexName
-							AND IndexOperation = @CurrentIndexOperation
-							AND TableChildOperationId = @CurrentTableChildOperationId
-
-						--RUN SQL, UNLESS IT'S A BEGIN OR COMMIT TRAN.  RUN THOSE OUTSIDE THE DYNAMIC SQL OR THEY CAUSE ERRORS.
-						IF @CurrentSQLStatement LIKE '%SERIALIZABLE%BEGIN TRAN%' 
-						BEGIN
-							SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-
-							BEGIN TRAN
-						END
-						ELSE
-						IF @CurrentSQLStatement = 'COMMIT TRAN' 
-						BEGIN
-							COMMIT TRAN
-						END
-						ELSE
-						IF @CurrentIndexOperation IN ('Get Application Lock', 'Release Application Lock', 'Synch Deletes', 'Synch Inserts', 'Synch Updates',  'Loading Data', 
-														'Free Data Space Validation', 'Free Log Space Validation', 
-														'Free TempDB Space Validation')
-						BEGIN
-							EXEC sys.sp_executesql 
-								@CurrentSQLStatement, 
-								@ParamList, 
-								@RowCountOUT = @RowCount OUTPUT 
-								
-							--extract rowcount parameter and store it in variable, for use in logging.
-						END
-						ELSE 
-						BEGIN						
-							EXEC @DBContext @CurrentSQLStatement
-						END
-
-						--LOG FINISH
-						EXEC DOI.spRun_LogInsert 
-							@CurrentDatabaseName    = @CurrentDatabaseName
-							,@CurrentSchemaName		= @CurrentSchemaName  
-							,@CurrentTableName		= @CurrentTableName   
-							,@CurrentIndexName		= @CurrentIndexName  
-							,@CurrentPartitionNumber= @CurrentPartitionNumber
-							,@IndexSizeInMB			= @IndexSizeInMB
-							,@SQLStatement			= @CurrentSQLStatement
-							,@IndexOperation		= @CurrentIndexOperation
-							,@RowCount				= @RowCount
-							,@TransactionId			= @TransactionId 
-							,@TableChildOperationId	= @CurrentTableChildOperationId
-							,@BatchId				= @BatchId
-							,@SeqNo					= @CurrentSeqNo
-							,@ExitTableLoopOnError	= @ExitTableLoopOnError
-							,@RunStatus				= 'Finish'
-
-						SET @RowCount = 0
-
-						--DELETE FROM QUEUE
-						DELETE DOI.Queue
-						WHERE DatabaseName = @CurrentDatabaseName
-							AND SchemaName = @CurrentSchemaName   
-							AND TableName = @CurrentTableName   
-							AND IndexName = @CurrentIndexName 
-							AND IndexOperation = @CurrentIndexOperation
-							AND TableChildOperationId = @CurrentTableChildOperationId
-
-					END 
-
-					SET @ExitRetryLoopOnError = 1 --EXIT THE RETRY LOOP IF SUCCESSFUL.
-				END TRY
-				BEGIN CATCH
-					SET @ErrorMessage = ERROR_MESSAGE()
-
-					IF ERROR_NUMBER() IN (  1204, -- SqlOutOfLocks
-											1205, -- SqlDeadlockVictim
-											1222 -- SqlLockRequestTimeout
-											)
-						AND @RetryCount < 3
-					BEGIN
-						SET @CurrentIndexName = ISNULL(@CurrentIndexName, '')
-
-						EXEC DOI.spRun_LogInsert 
-							@CurrentDatabaseName    = @CurrentDatabaseName,
-							@CurrentSchemaName		= @CurrentSchemaName , 
-							@CurrentTableName		= @CurrentTableName ,  
-							@CurrentIndexName		= @CurrentIndexName , 
-							@CurrentPartitionNumber = @CurrentPartitionNumber, 
-							@IndexSizeInMB			= @IndexSizeInMB ,
-							@IndexOperation			= @CurrentIndexOperation,
-							@RowCount				= @RowCount,
-							@SQLStatement			= @CurrentSQLStatement ,
-							@ErrorText				= @ErrorMessage,
-							@TransactionId			= @TransactionId,
-							@TableChildOperationId	= 0,
-							@BatchId				= @BatchId,
-							@SeqNo					= @CurrentSeqNo,
-							@RunStatus				= 'Error - Retrying...',
-							@ExitTableLoopOnError	= @ExitTableLoopOnError
-
-						SET @RetryCount = @RetryCount + 1  
-
-						WAITFOR DELAY '00:00:02'  
-					END 
-					ELSE IF @ErrorMessage LIKE 'NOT ENOUGH FREE SPACE%'
-					BEGIN
-						SET @CurrentIndexName = ISNULL(@CurrentIndexName, '')
-
-						EXEC DOI.spRun_LogInsert 
-							@CurrentDatabaseName    = @CurrentDatabaseName,
-							@CurrentSchemaName		= @CurrentSchemaName , 
-							@CurrentTableName		= @CurrentTableName ,  
-							@CurrentIndexName		= @CurrentIndexName , 
-							@CurrentPartitionNumber = @CurrentPartitionNumber, 
-							@IndexSizeInMB			= @IndexSizeInMB ,
-							@IndexOperation			= @CurrentIndexOperation,
-							@RowCount				= @RowCount,
-							@SQLStatement			= @CurrentSQLStatement ,
-							@ErrorText				= @ErrorMessage,
-							@TransactionId			= @TransactionId,
-							@TableChildOperationId	= 0,
-							@BatchId				= @BatchId,
-							@SeqNo					= @CurrentSeqNo,
-							@RunStatus				= 'Error - Skipping...',
-							@ExitTableLoopOnError	= @ExitTableLoopOnError
-
-						DELETE Q
-						FROM DOI.Queue Q
-						WHERE Q.DatabaseName = @CurrentDatabaseName
-							AND Q.ParentSchemaName = @CurrentParentSchemaName
-							AND Q.ParentTableName = @CurrentParentTableName
-
-						SET @ExitRetryLoopOnError = 1
-					END
-					ELSE
-					BEGIN
-						RAISERROR(@ErrorMessage, 16, 1)
-					END
-				END CATCH
+			IF (@CurrentSchemaName + '.' + @CurrentTableName) IS NOT NULL
+			BEGIN 
+				EXEC DOI.spRun_LogInsert
+					@CurrentDatabaseName        = 'N/A' 
+					,@CurrentSchemaName			= 'N/A'  
+					,@CurrentTableName			= 'N/A'
+					,@CurrentIndexName			= 'N/A'
+					,@CurrentPartitionNumber	= 0
+					,@IndexSizeInMB				= 0
+					,@SQLStatement				= @RGSettings
+					,@IndexOperation			= 'Resource Governor Settings'
+					,@RowCount					= 0
+					,@TransactionId				= NULL 
+					,@TableChildOperationId		= 0
+					,@BatchId					= @BatchId
+					,@SeqNo						= 0
+					,@ExitTableLoopOnError		= 0
+					,@RunStatus					= 'Start'
 			END
-			/************************** RETRY LOOP (END) ****************************************************/
-		END
-		FETCH NEXT FROM Tables_Run_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentSeqNo, @TransactionId, @CurrentIndexName, @CurrentPartitionNumber, @CurrentSQLStatement, @RunStatus, @CurrentIndexOperation, @CurrentTableChildOperationId, @BatchId, @ExitTableLoopOnError, @IndexSizeInMB
+    
+			IF (@ProgramName LIKE N'SQLAgent - TSQL JobStep%' AND @RGWorkloadGroupName <> 'IndexMaintenanceGroup')
+				OR ((SELECT is_enabled FROM sys.resource_governor_configuration) = 0)
+			BEGIN
+				SET @ExitTableLoopOnError = 1
+				RAISERROR('Online job is trying to run with Resource Governor off.  Aborting.  Need to turn on Resource Governor.', 16, 1)	
+			END
 
-	END --@@fetch_status = 0
-		
-	CLOSE Tables_Run_Cur
-	DEALLOCATE Tables_Run_Cur
-    /************************************** TABLE LOOP (END) ********************************************/
+			WHILE @@FETCH_STATUS IN (0, -2)
+			BEGIN
+				IF @@FETCH_STATUS = 0 --IF THE STATUS = -2 THEN SKIP EVERYTHING AND JUST FETCH NEXT ROW
+				BEGIN
+					SET @ExitRetryLoopOnError = 0
+					SET @ErrorMessage = NULL 
+
+					/************************** RETRY LOOP (BEGIN) ****************************************************/
+					WHILE @RetryCount <= 3 AND @ExitRetryLoopOnError = 0
+					BEGIN
+						BEGIN TRY
+							IF @Debug = 1
+							BEGIN
+								SELECT	@CurrentDatabaseName,
+										@CurrentSchemaName, 
+										@CurrentTableName, 
+										@CurrentParentSchemaName, 
+										@CurrentParentTableName, 
+										@CurrentSeqNo, 
+										@TransactionId, 
+										@CurrentIndexName, 
+										@CurrentSQLStatement, 
+										@RunStatus, 
+										@CurrentIndexOperation, 
+										@CurrentTableChildOperationId, 
+										@BatchId, 
+										@ExitTableLoopOnError,
+										@IndexSizeInMB
+							END
+							ELSE
+							BEGIN 
+								SET @CurrentDateTime = SYSDATETIME()
+
+								--LOG START
+								EXEC DOI.spRun_LogInsert 
+									@CurrentDatabaseName    = @CurrentDatabaseName
+									,@CurrentSchemaName		= @CurrentSchemaName  
+									,@CurrentTableName		= @CurrentTableName   
+									,@CurrentIndexName		= @CurrentIndexName 
+									,@CurrentPartitionNumber= @CurrentPartitionNumber
+									,@IndexSizeInMB			= @IndexSizeInMB
+									,@SQLStatement			= @CurrentSQLStatement
+									,@IndexOperation		= @CurrentIndexOperation
+									,@RowCount				= @RowCount
+									,@TransactionId			= @TransactionId 
+									,@TableChildOperationId	= @CurrentTableChildOperationId
+									,@BatchId				= @BatchId
+									,@SeqNo					= @CurrentSeqNo
+									,@ExitTableLoopOnError	= @ExitTableLoopOnError
+									,@RunStatus				= 'Start'
+
+								--UPDATE TO IN-PROGRESS
+								UPDATE DOI.Queue
+								SET InProgress = 1
+								WHERE DatabaseName = @CurrentDatabaseName
+									AND SchemaName = @CurrentSchemaName
+									AND TableName = @CurrentTableName
+									AND IndexName = @CurrentIndexName
+									AND IndexOperation = @CurrentIndexOperation
+									AND TableChildOperationId = @CurrentTableChildOperationId
+
+								--RUN SQL, UNLESS IT'S A BEGIN OR COMMIT TRAN.  RUN THOSE OUTSIDE THE DYNAMIC SQL OR THEY CAUSE ERRORS.
+								IF @CurrentSQLStatement LIKE '%SERIALIZABLE%BEGIN TRAN%' 
+								BEGIN
+									SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+
+									BEGIN TRAN
+								END
+								ELSE
+								IF @CurrentSQLStatement = 'COMMIT TRAN' 
+								BEGIN
+									COMMIT TRAN
+								END
+								ELSE
+								IF @CurrentIndexOperation IN ('Get Application Lock', 'Release Application Lock', 'Synch Deletes', 'Synch Inserts', 'Synch Updates',  'Loading Data', 
+																'Free Data Space Validation', 'Free Log Space Validation', 
+																'Free TempDB Space Validation')
+								BEGIN
+									EXEC sys.sp_executesql 
+										@CurrentSQLStatement, 
+										@ParamList, 
+										@RowCountOUT = @RowCount OUTPUT 
+								
+									--extract rowcount parameter and store it in variable, for use in logging.
+								END
+								ELSE 
+								BEGIN						
+									EXEC @DBContext @CurrentSQLStatement
+								END
+
+								--LOG FINISH
+								EXEC DOI.spRun_LogInsert 
+									@CurrentDatabaseName    = @CurrentDatabaseName
+									,@CurrentSchemaName		= @CurrentSchemaName  
+									,@CurrentTableName		= @CurrentTableName   
+									,@CurrentIndexName		= @CurrentIndexName  
+									,@CurrentPartitionNumber= @CurrentPartitionNumber
+									,@IndexSizeInMB			= @IndexSizeInMB
+									,@SQLStatement			= @CurrentSQLStatement
+									,@IndexOperation		= @CurrentIndexOperation
+									,@RowCount				= @RowCount
+									,@TransactionId			= @TransactionId 
+									,@TableChildOperationId	= @CurrentTableChildOperationId
+									,@BatchId				= @BatchId
+									,@SeqNo					= @CurrentSeqNo
+									,@ExitTableLoopOnError	= @ExitTableLoopOnError
+									,@RunStatus				= 'Finish'
+
+								SET @RowCount = 0
+
+								--DELETE FROM QUEUE
+								DELETE DOI.Queue
+								WHERE DatabaseName = @CurrentDatabaseName
+									AND SchemaName = @CurrentSchemaName   
+									AND TableName = @CurrentTableName   
+									AND IndexName = @CurrentIndexName 
+									AND IndexOperation = @CurrentIndexOperation
+									AND TableChildOperationId = @CurrentTableChildOperationId
+
+							END 
+
+							SET @ExitRetryLoopOnError = 1 --EXIT THE RETRY LOOP IF SUCCESSFUL.
+						END TRY
+						BEGIN CATCH
+							SET @ErrorMessage = ERROR_MESSAGE()
+
+							IF ERROR_NUMBER() IN (  1204, -- SqlOutOfLocks
+													1205, -- SqlDeadlockVictim
+													1222 -- SqlLockRequestTimeout
+													)
+								AND @RetryCount < 3
+							BEGIN
+								SET @CurrentIndexName = ISNULL(@CurrentIndexName, '')
+
+								EXEC DOI.spRun_LogInsert 
+									@CurrentDatabaseName    = @CurrentDatabaseName,
+									@CurrentSchemaName		= @CurrentSchemaName , 
+									@CurrentTableName		= @CurrentTableName ,  
+									@CurrentIndexName		= @CurrentIndexName , 
+									@CurrentPartitionNumber = @CurrentPartitionNumber, 
+									@IndexSizeInMB			= @IndexSizeInMB ,
+									@IndexOperation			= @CurrentIndexOperation,
+									@RowCount				= @RowCount,
+									@SQLStatement			= @CurrentSQLStatement ,
+									@ErrorText				= @ErrorMessage,
+									@TransactionId			= @TransactionId,
+									@TableChildOperationId	= 0,
+									@BatchId				= @BatchId,
+									@SeqNo					= @CurrentSeqNo,
+									@RunStatus				= 'Error - Retrying...',
+									@ExitTableLoopOnError	= @ExitTableLoopOnError
+
+								SET @RetryCount = @RetryCount + 1  
+
+								WAITFOR DELAY '00:00:02'  
+							END 
+							ELSE IF @ErrorMessage LIKE 'NOT ENOUGH FREE SPACE%'
+							BEGIN
+								SET @CurrentIndexName = ISNULL(@CurrentIndexName, '')
+
+								EXEC DOI.spRun_LogInsert 
+									@CurrentDatabaseName    = @CurrentDatabaseName,
+									@CurrentSchemaName		= @CurrentSchemaName , 
+									@CurrentTableName		= @CurrentTableName ,  
+									@CurrentIndexName		= @CurrentIndexName , 
+									@CurrentPartitionNumber = @CurrentPartitionNumber, 
+									@IndexSizeInMB			= @IndexSizeInMB ,
+									@IndexOperation			= @CurrentIndexOperation,
+									@RowCount				= @RowCount,
+									@SQLStatement			= @CurrentSQLStatement ,
+									@ErrorText				= @ErrorMessage,
+									@TransactionId			= @TransactionId,
+									@TableChildOperationId	= 0,
+									@BatchId				= @BatchId,
+									@SeqNo					= @CurrentSeqNo,
+									@RunStatus				= 'Error - Skipping...',
+									@ExitTableLoopOnError	= @ExitTableLoopOnError
+
+								DELETE Q
+								FROM DOI.Queue Q
+								WHERE Q.DatabaseName = @CurrentDatabaseName
+									AND Q.ParentSchemaName = @CurrentParentSchemaName
+									AND Q.ParentTableName = @CurrentParentTableName
+
+								SET @ExitRetryLoopOnError = 1
+							END
+							ELSE
+							BEGIN
+								RAISERROR(@ErrorMessage, 16, 1)
+							END
+						END CATCH
+					END
+					/************************** RETRY LOOP (END) ****************************************************/
+				END
+				FETCH NEXT FROM Tables_Run_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @CurrentParentSchemaName, @CurrentParentTableName, @CurrentSeqNo, @TransactionId, @CurrentIndexName, @CurrentPartitionNumber, @CurrentSQLStatement, @RunStatus, @CurrentIndexOperation, @CurrentTableChildOperationId, @BatchId, @ExitTableLoopOnError, @IndexSizeInMB
+
+			END --@@fetch_status = 0
+			CLOSE Tables_Run_Cur
+			DEALLOCATE Tables_Run_Cur
+
+			/************************************** TABLE LOOP (END) ********************************************/
+		END --@@fetch_status <> -2, Databases cursor
+		FETCH NEXT FROM Databases_Run_Cur INTO @CurrentDatabaseName
+	END --@@fetch_status <> -1, Databases cursor
+	CLOSE Databases_Run_Cur
+	DEALLOCATE Databases_Run_Cur
+	/************************************** DATABASE LOOP (END) ********************************************/
 END TRY
 
 BEGIN CATCH
@@ -397,47 +418,7 @@ BEGIN CATCH
 
 	IF @@TRANCOUNT > 0 
 	BEGIN
-		--BACKUP THE LOG ROWS SO WE DON'T LOSE THEM IN THE ROLLBACK.
-		DECLARE @Log AS LogTT;
-
-		WITH LastLoggedRow
-		AS (SELECT   TOP 1 *
-			FROM     DOI.Log
-			ORDER BY LogDateTime DESC )
-
-		UPDATE LastLoggedRow
-		SET    LastLoggedRow.ErrorText = @ErrorMessage
-		WHERE LastLoggedRow.TransactionId = @TransactionId;
-
-		INSERT INTO @Log (  LogID,
-							DatabaseName,
-                            SchemaName ,
-							TableName ,
-							IndexName ,
-							PartitionNumber ,
-							IndexSizeInMB ,
-							LoginName ,
-							UserName ,
-							LogDateTime ,
-							SQLStatement ,
-							IndexOperation ,
-							[RowCount] ,
-							TableChildOperationId ,
-							RunStatus ,
-							ErrorText ,
-							TransactionId ,
-							BatchId ,
-							SeqNo ,
-							ExitTableLoopOnError) 
-		EXEC DOI.spRun_GetLogRowsFromRollback
-			@TransactionId = @TransactionId
-
-
-		--AFTER SAVING THE LOG TRANSACTIONS, GO AHEAD AND ROLLBACK:
 		ROLLBACK TRAN;
-
-		EXEC DOI.spRun_RecoverLogRowsFromRollback
-			@Log = @Log
 	END
 
 	--CLEAR THE QUEUE FOR THIS TABLE SO THAT WE ARE FORCED TO REBUILD IT FROM SCRATCH FOR THE NEXT RUN.
@@ -502,6 +483,16 @@ BEGIN CATCH
 
 		DEALLOCATE Tables_Run_Cur
 	END
+	
+	IF (SELECT CURSOR_STATUS('local','Databases_Run_Cur')) >= -1
+	BEGIN
+		IF (SELECT CURSOR_STATUS('local','Databases_Run_Cur')) > -1
+		BEGIN
+			CLOSE Databases_Run_Cur
+		END
+
+		DEALLOCATE Databases_Run_Cur
+	END;
 
 	IF @ExitTableLoopOnError = 1
 	BEGIN;
@@ -519,5 +510,15 @@ BEGIN
 
 	DEALLOCATE Tables_Run_Cur
 END
+
+IF (SELECT CURSOR_STATUS('local','Databases_Run_Cur')) >= -1
+BEGIN
+	IF (SELECT CURSOR_STATUS('local','Databases_Run_Cur')) > -1
+	BEGIN
+		CLOSE Databases_Run_Cur
+	END
+
+	DEALLOCATE Databases_Run_Cur
+END;
 
 GO

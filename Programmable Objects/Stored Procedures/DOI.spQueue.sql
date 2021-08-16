@@ -493,10 +493,14 @@ EXEC DOI.spRun_ReleaseApplicationLock
 
 		        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
 	        END --@@fetch_status <> -1, Tables cursor
+			CLOSE Tables_Queued_Cur
+			DEALLOCATE Tables_Queued_Cur
 		END --@@fetch_status <> -2, Databases cursor
 		
 		FETCH NEXT FROM Databases_Queued_Cur INTO @CurrentDatabaseName
-    END --@@fetch_status <> -1, Databases cursor
+	END --@@fetch_status <> -1, Databases cursor
+	CLOSE Databases_Queued_Cur
+	DEALLOCATE Databases_Queued_Cur
 END TRY
 BEGIN CATCH
 	IF @@TRANCOUNT > 0 ROLLBACK TRAN 
@@ -509,6 +513,16 @@ BEGIN CATCH
 		END
 
 		DEALLOCATE Tables_Queued_Cur
+	END;
+
+	IF (SELECT CURSOR_STATUS('local','Databases_Queued_Cur')) >= -1
+	BEGIN
+		IF (SELECT CURSOR_STATUS('local','Databases_Queued_Cur')) > -1
+		BEGIN
+			CLOSE Databases_Queued_Cur
+		END
+
+		DEALLOCATE Databases_Queued_Cur
 	END;
 
 	THROW;

@@ -348,7 +348,6 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_DropObjects.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_GetApplicationLock.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RecoverLogRowsFromRollback.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_ReleaseApplicationLock.sql" />
     <None Include="Programmable Objects\Views\DOI.vwFreeSpaceOnDisk.sql" />
     <None Include="Schema-Model\Tables\DOI.SysDefaultConstraints.sql" />
@@ -419,9 +418,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\Utility.spDeleteAllMetadataFromDatabase.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_GetLogRowsFromRollback.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_Filegroups.sql" />

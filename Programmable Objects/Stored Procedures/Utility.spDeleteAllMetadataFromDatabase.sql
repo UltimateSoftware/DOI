@@ -33,6 +33,14 @@ WHERE s.name = 'DOI'
     AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'DOISettings' ELSE '' END
     AND EXISTS (SELECT 'True' FROM sys.columns c WHERE c.object_id = t.object_id AND c.name = 'DATABASE_ID')
 
+SELECT @SQL += 'DELETE T FROM DOI.[' + t.name + '] T WHERE NOT EXISTS (SELECT ''True'' FROM sys.databases D WHERE D.database_id = T.database_id)' + CHAR(13) + CHAR(10)
+FROM sys.tables t
+    INNER JOIN sys.schemas s ON s.schema_id = T.schema_id
+WHERE s.name = 'DOI'
+    AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'SysDatabases' ELSE '' END
+    AND t.name <> CASE WHEN @OneTimeTearDown = 0 THEN 'DOISettings' ELSE '' END
+    AND EXISTS (SELECT 'True' FROM sys.columns c WHERE c.object_id = t.object_id AND c.name = 'DATABASE_ID')
+
 IF @Debug = 1
 BEGIN
     EXEC DOI.spPrintOutLongSQL 

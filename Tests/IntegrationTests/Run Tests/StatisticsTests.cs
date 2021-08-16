@@ -30,7 +30,8 @@ namespace DOI.Tests.IntegrationTests.RunTests
         [TearDown]
         public virtual void TearDown()
         {
-            sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}'");
+            this.sqlHelper.Execute("WAITFOR DELAY '00:00:05'"); //IF WE REMOVE THIS, THE TESTS FAIL WITH A UNIQUE KEY VIOLATION TO SysAllocationUnits table.
+            this.sqlHelper.Execute($"EXEC [Utility].[spDeleteAllMetadataFromDatabase] @DatabaseName = '{DatabaseName}', @OneTimeTearDown = 0");
             sqlHelper.Execute(string.Format(ResourceLoader.Load("IndexesViewTests_TearDown.sql")), 120, true, DatabaseName);
             sqlHelper.Execute("TRUNCATE TABLE DOI.Queue");
             sqlHelper.Execute("TRUNCATE TABLE DOI.Log");

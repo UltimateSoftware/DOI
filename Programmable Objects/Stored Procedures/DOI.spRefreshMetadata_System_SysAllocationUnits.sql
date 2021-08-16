@@ -19,19 +19,17 @@ AS
         @DatabaseName = 'DOIUnitTests',
         @Debug = 1
 */
+    DELETE AU 
+    FROM DOI.SysAllocationUnits AU
+        INNER JOIN sys.databases D ON AU.database_id = D.database_id
+    WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
-DELETE AU 
-FROM DOI.SysAllocationUnits AU
-    INNER JOIN DOI.SysDatabases D ON AU.database_id = D.database_id
-WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
+    DELETE AU 
+    FROM DOI.SysAllocationUnits AU
+    WHERE NOT EXISTS (SELECT 'True' FROM sys.databases D WHERE AU.database_id = D.database_id)
 
-DELETE AU 
-FROM DOI.SysAllocationUnits AU
-WHERE NOT EXISTS (SELECT 'True' FROM DOI.SysDatabases D WHERE AU.database_id = D.database_id)
-
-EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @DatabaseName = @DatabaseName,
-    @TableName = 'SysAllocationUnits',
-    @Debug = @Debug
-
+    EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
+        @DatabaseName = @DatabaseName,
+        @TableName = 'SysAllocationUnits',
+        @Debug = @Debug
 GO
