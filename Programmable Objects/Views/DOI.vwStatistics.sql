@@ -30,7 +30,7 @@ WITH SAMPLE ' + CAST(S.SampleSizePct_Desired AS VARCHAR(3)) + ' PERCENT
 ', INCREMENTAL = ' + CASE WHEN S.IsIncremental_Desired = 1 THEN 'ON' ELSE 'OFF' END 
 AS UpdateStatisticsSQL,
                 '
-IF NOT EXISTS(SELECT ''True'' FROM sys.stats WHERE NAME = ''' + S.StatisticsName + ''')
+IF NOT EXISTS(SELECT ''True'' FROM ' + S.DatabaseName + '.sys.stats WHERE NAME = ''' + S.StatisticsName + ''')
 BEGIN
     CREATE STATISTICS ' + S.StatisticsName + '
     ON ' + S.DatabaseName + '.' + S.SchemaName + '.' + S.TableName + '(' + S.StatisticsColumnList_Desired + ')' + 
@@ -65,16 +65,16 @@ BEGIN
 END' AS RenameStatisticsSQL,
         '
 IF EXISTS ( SELECT ''True''
-            FROM SYS.stats st 
-                INNER JOIN SYS.TABLES t ON t.object_id = st.object_id 
-                INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+            FROM ' + S.DatabaseName + '.SYS.stats st 
+                INNER JOIN ' + S.DatabaseName + '.SYS.TABLES t ON t.object_id = st.object_id 
+                INNER JOIN ' + S.DatabaseName + '.sys.schemas s ON s.schema_id = t.schema_id
             WHERE s.name = ''' + S.SchemaName + '''
                 AND t.name = ''' + S.TableName + '''
-                AND st.name = ''' + REPLACE(S.StatisticsName, S.TableName, S.TableName + '_OLD') + ''')
+                AND st.name = ''ST_' + S.TableName + '_' + S.StatisticsColumnList_Actual + ''')
 BEGIN
     SET DEADLOCK_PRIORITY 10
-    EXEC sys.sp_rename 
-        @objname = ''' + S.SchemaName + '.' + S.TableName + '.' + REPLACE(S.StatisticsName, S.TableName, S.TableName + '_OLD') + '''
+    EXEC ' + S.DatabaseName + '.sys.sp_rename 
+        @objname = ''' + S.SchemaName + '.' + S.TableName + '_OLD.ST_' + S.TableName + '_OLD_' + S.StatisticsColumnList_Actual + '''
         ,@newname = ''' + S.StatisticsName + '''
         ,@objtype = ''STATISTICS''
 END' AS RevertRenameStatisticsSQL

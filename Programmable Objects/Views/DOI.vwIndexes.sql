@@ -47,7 +47,13 @@ FROM (	SELECT	 IRS.*
 					THEN 'CreateMissing'
 					WHEN IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.AreDropRecreateOptionsChanging = 1
+						AND IRS.IsClusteredChanging = 0 --DROP_EXISTING CAN'T HANDLE THIS.
+						AND IRS.IsPrimaryKey_Desired = 0 --DROP_EXISTING CAN'T HANDLE THIS, IF THE PK IS CLUSTERED, WHICH IT OFTEN IS.
 					THEN 'CreateDropExisting'
+					WHEN IRS.IsIndexMissingFromSQLServer = 0
+						AND IRS.AreDropRecreateOptionsChanging = 1
+						AND (IRS.IsClusteredChanging = 1 OR IRS.IsPrimaryKeyChanging = 1) --handles the above 2 cases
+					THEN 'ExchangeTableNonPartitioned'
 					WHEN (IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.NeedsPartitionLevelOperations = 0 
 						AND IRS.AreDropRecreateOptionsChanging = 0 )
@@ -56,7 +62,7 @@ FROM (	SELECT	 IRS.*
 					THEN 'AlterRebuild'	
 					WHEN (IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.NeedsPartitionLevelOperations = 1 
-						AND IRS.AreDropRecreateOptionsChanging = 0 )
+						AND IRS.AreDropRecreateOptionsChanging = 0)
 							AND (IRS.FragmentationType = 'Heavy' OR IRS.IsDataCompressionChanging = 1)
 					THEN 'AlterRebuild-PartitionLevel'
 					WHEN IRS.IsIndexMissingFromSQLServer = 0
@@ -84,7 +90,7 @@ FROM (	SELECT	 IRS.*
 					ELSE 'DROP INDEX IF EXISTS ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + '.' + IRS.IndexName
 				END AS DropStatement
 				,
-'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
+'IF NOT EXISTS (SELECT ''True'' FROM ' + IRS.DatabaseName + '.sys.indexes i INNER JOIN ' + IRS.DatabaseName + '.sys.tables t ON i.object_id = t.object_id INNER JOIN ' + IRS.DatabaseName + '.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + ''')
 BEGIN' + 	CASE 
 				WHEN (IRS.IsPrimaryKey_Desired = 1 OR IRS.IsUniqueConstraint_Desired = 1)
 				THEN '
@@ -179,8 +185,8 @@ CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE W
 																	WHEN IRS.StorageType_Desired = 'PARTITION_SCHEME'
 																	THEN '(' + IRS.PartitionColumn_Desired + ')' 
 																	ELSE '' 
-																END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + 
-'END' AS CreateDropExistingStatement,
+																END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
+AS CreateDropExistingStatement,
 '
 ALTER INDEX ' + IRS.IndexName + ' ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	SET (	IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
@@ -223,18 +229,18 @@ ALTER INDEX ' + IRS.IndexName + ' ON ['+ IRS.SchemaName + '].[' + IRS.TableName 
 END AS AlterReorganizeStatement,
 '
 SET DEADLOCK_PRIORITY 10
-EXEC sp_rename
+EXEC ' + IRS.DatabaseName + '.sys.sp_rename
 	@objname = ''' + IRS.SchemaName + '.' + IRS.TableName + '.' + IRS.IndexName + ''',
 	@newname = ''' + REPLACE(IRS.IndexName, IRS.TableName, IRS.TableName + '_OLD') + ''',
 	@objtype = ''INDEX''' AS RenameIndexSQL,
 '
 SET DEADLOCK_PRIORITY 10
-EXEC sp_rename
+EXEC ' + IRS.DatabaseName + '.sys.sp_rename
 	@objname = ''' + IRS.SchemaName + '.' + IRS.TableName + '.' + REPLACE(IRS.IndexName, IRS.TableName, IRS.TableName + '_OLD') + ''',
 	@newname = ''' + IRS.IndexName + ''',
 	@objtype = ''INDEX''' AS RevertRenameIndexSQL,
 CASE WHEN IsPrimaryKey_Desired = 0 THEN '' ELSE 
-'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + '_Pending'')
+'IF NOT EXISTS (SELECT ''True'' FROM ' + IRS.DatabaseName + '.sys.indexes i INNER JOIN ' + IRS.DatabaseName + '.sys.tables t ON i.object_id = t.object_id INNER JOIN ' + IRS.DatabaseName + '.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + IRS.SchemaName + ''' AND t.name = ''' + IRS.TableName + ''' AND i.name = ''' + IRS.IndexName + '_Pending'')
 BEGIN
 	CREATE UNIQUE ' + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + '_Pending' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 											'	ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
@@ -302,7 +308,12 @@ END AS CreateReferencingFKs
 					THEN 'CreateMissing'
 					WHEN ICS.IsIndexMissingFromSQLServer = 0
 						AND ICS.AreDropRecreateOptionsChanging = 1
+						AND ICS.IsClusteredChanging = 0
 					THEN 'CreateDropExisting'
+					WHEN ICS.IsIndexMissingFromSQLServer = 0
+						AND ICS.AreDropRecreateOptionsChanging = 1
+						AND ICS.IsClusteredChanging = 1
+					THEN 'ExchangeTableNonPartitioned'
 					WHEN (ICS.IsIndexMissingFromSQLServer = 0
 						AND ICS.NeedsPartitionLevelOperations = 0 
 						AND ICS.AreDropRecreateOptionsChanging = 0 )
@@ -335,7 +346,7 @@ END AS CreateReferencingFKs
 				,'
 DROP INDEX IF EXISTS [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + '.' + ICS.IndexName AS DropStatement
 				,
-'IF NOT EXISTS (SELECT ''True'' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + ICS.SchemaName + ''' AND t.name = ''' + ICS.TableName + ''' AND i.name = ''' + ICS.IndexName + ''')
+'IF NOT EXISTS (SELECT ''True'' FROM ' + ICS.DatabaseName + '.sys.indexes i INNER JOIN ' + ICS.DatabaseName + '.sys.tables t ON i.object_id = t.object_id INNER JOIN ' + ICS.DatabaseName + '.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + ICS.SchemaName + ''' AND t.name = ''' + ICS.TableName + ''' AND i.name = ''' + ICS.IndexName + ''')
 BEGIN
 	CREATE' + CASE WHEN ICS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED COLUMNSTORE INDEX ' + ICS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										'	ON [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + CASE WHEN ICS.IsClustered_Desired = 1 THEN '' ELSE '(' + ICS.IncludedColumnList_Desired + ')' END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
@@ -379,8 +390,8 @@ END' AS CreateStatement, '
 																	WHEN ICS.StorageType_Desired = 'PARTITION_SCHEME'
 																	THEN '(' + ICS.PartitionColumn_Desired + ')' 
 																	ELSE '' 
-																END + CHAR(13) + CHAR(10) + '
-END' AS CreateDropExistingStatement,'
+																END + CHAR(13) + CHAR(10)
+AS CreateDropExistingStatement,'
 ALTER INDEX ' + ICS.IndexName + ' ON [' + ICS.SchemaName + '].[' + ICS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	SET (COMPRESSION_DELAY = ' + ICS.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) 
 AS AlterSetStatement
@@ -396,13 +407,13 @@ ALTER INDEX ' + ICS.IndexName + ' ON [' + ICS.SchemaName + '].[' + ICS.TableName
 AS AlterReorganizeStatement,
 '
 SET DEADLOCK_PRIORITY 10
-EXEC sp_rename
+EXEC ' + ICS.DatabaseName + '.sys.sp_rename
 	@objname = ''' + ICS.SchemaName + '.' + ICS.TableName + '.' + ICS.IndexName + ''',
 	@newname = ''' + REPLACE(ICS.IndexName, ICS.TableName, ICS.TableName + '_OLD') + ''',
 	@objtype = ''INDEX''' AS RenameIndexSQL,
 '
 SET DEADLOCK_PRIORITY 10
-EXEC sp_rename
+EXEC ' + ICS.DatabaseName + '.sys.sp_rename
 	@objname = ''' + ICS.SchemaName + '.' + ICS.TableName + '.' + REPLACE(ICS.IndexName, ICS.TableName, ICS.TableName + '_OLD') + ''',
 	@newname = ''' + ICS.IndexName + ''',
 	@objtype = ''INDEX''' AS RevertRenameIndexSQL,

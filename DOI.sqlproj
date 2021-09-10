@@ -486,7 +486,7 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_ForeignKeyColumns.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_IndexColumns.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_4_IndexColumns.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_IndexPhysicalStats.sql" />
@@ -564,5 +564,29 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Functions\DOI.fnActualIndexSizing.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_PrepTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_PrepTable_Constraints.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_PrepTable_Indexes.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_PrepTable_Statistics.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnGetPKColumnListForTable_Desired.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnGetJoinClauseForTable_Desired.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_IndexColumns_InsertData.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_NewPartitionedTable.sql" />
   </ItemGroup>
 </Project>

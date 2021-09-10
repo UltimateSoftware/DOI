@@ -1,8 +1,12 @@
--- <Migration ID="272186f4-7737-473e-930c-b622a49bca27" />
+-- <Migration ID="892a75cc-c8b0-4a13-a254-60a7ef8b30ab" />
 GO
 IF OBJECT_ID('[DOI].[vwPartitioning_Tables_NewPartitionedTable]') IS NOT NULL
 	DROP VIEW [DOI].[vwPartitioning_Tables_NewPartitionedTable];
 
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
 GO
 
 
@@ -23,21 +27,21 @@ CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
 AS
-' + 		DSTrigger.DSTriggerSQL AS CreateDataSynchTriggerSQL, --WE MAY WANT TO MOVE THIS TO ANOTHER OBJECT....THIS HAS NOTHING TO DO WITH THE NEW PARTITIONED TABLE.
+' + 		DSTrigger.DSTriggerSQL AS CreateDataSynchTriggerSQL,
 
 '
 DROP TABLE IF EXISTS ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch
 
 IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NULL
 BEGIN
-	CREATE TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + T.ColumnListWithTypesNoIdentityProperty + CHAR(13) + CHAR(10) + ' ,DMLType CHAR(1) NOT NULL) ON [' + T.Storage_Desired + '] (' + T.PartitionColumn + ')
+	CREATE TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + T.ColumnListWithTypes + CHAR(13) + CHAR(10) + ' ,DMLType CHAR(1) NOT NULL) ON [' + T.Storage_Desired + '] (' + T.PartitionColumn + ')
 END
 '		AS CreateFinalDataSynchTableSQL,
 		'
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
-AS 
+AS
 
 INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', DMLType)
 SELECT ' + REPLACE(T.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + ', ''I''

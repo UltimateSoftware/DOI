@@ -42,7 +42,6 @@ SELECT  AllTables.DatabaseName,
         AllTables.BoundaryValue, 
         AllTables.NextBoundaryValue,
         AllTables.PartitionColumn,
-        AllTables.IsNewPartitionedPrepTable,
         AllTables.PKColumnList,
         AllTables.PKColumnListJoinClause,
         AllTables.UpdateColumnList,
@@ -58,16 +57,14 @@ END
 
 IF OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NULL
 BEGIN
-	CREATE TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' (' + CHAR(13) + CHAR(10) + AllTables.ColumnListWithTypes + ') ON ' + CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '[' + AllTables.Storage_Desired + '](' + AllTables.PartitionColumn + ')' ELSE '[' + AllTables.PrepTableFilegroup + ']' END + '
+	CREATE TABLE ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' (' + CHAR(13) + CHAR(10) + AllTables.ColumnListWithTypes + ') ON [' + AllTables.PrepTableFilegroup + ']
 END' AS CreatePrepTableSQL,
 --CREATE VIEW FOR BCP QUERY BECAUSE SQL STRING IS TOO LONG FOR XP_CMDSHELL.
-CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 'CREATE OR ALTER VIEW dbo.vwCurrentBCPQuery AS 
 SELECT * 
 FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' T 
 WHERE ' + CASE WHEN AllTables.BoundaryValue = '0001-01-01' THEN '' ELSE AllTables.PartitionColumn + ' >= ''' + CONVERT(VARCHAR(30), AllTables.BoundaryValue, 120) + '''' + ' AND ' END + AllTables.PartitionColumn + ' < ''' + CONVERT(VARCHAR(50), ISNULL(AllTables.NextBoundaryValue, '9999-12-31'), 120) + ''' AND NOT EXISTS (SELECT 1 FROM ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' PT WHERE ' + AllTables.PKColumnListJoinClause + ')'
-END AS CreateViewForBCPSQL,
-CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
+AS CreateViewForBCPSQL,
 '
 IF NOT EXISTS(  SELECT ''True''
                 FROM ' + AllTables.DatabaseName + '.sys.triggers tr
@@ -100,8 +97,7 @@ BEGIN
 	   FROM @T
      END
 END'
-END AS BCPSQL,
-CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
+AS BCPSQL,
 '
 IF OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.Chk_' + AllTables.PrepTableName + ''') IS NULL
 BEGIN
@@ -110,9 +106,7 @@ BEGIN
 			CHECK (' + AllTables.PartitionColumn + ' IS NOT NULL 
 					AND ' + AllTables.PartitionColumn + ' >= ''' + CONVERT(VARCHAR(30), AllTables.BoundaryValue , 120) + '''  
 					AND ' + AllTables.PartitionColumn + ' < ''' + CONVERT(VARCHAR(50), ISNULL(AllTables.NextBoundaryValue, '9999-12-31'), 120) + ''')
-END' END AS CheckConstraintSQL,
-
-CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
+END' AS CheckConstraintSQL,
 '
 UPDATE DOI.DOI.Run_PartitionState
 SET DataSynchState = 1
@@ -120,9 +114,8 @@ WHERE SchemaName = ''' + AllTables.SchemaName + '''
 	AND PrepTableName = ''' + AllTables.PrepTableName + '''
 	AND PartitionFromValue = ''' + CAST(AllTables.BoundaryValue AS VARCHAR(20)) + '''
 '
-END AS TurnOnDataSynchSQL,
+AS TurnOnDataSynchSQL,
 
-CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
 UPDATE DOI.DOI.Run_PartitionState
 SET DataSynchState = 0
@@ -171,7 +164,7 @@ BEGIN
 		AND NOT EXISTS (SELECT ''True''
 						FROM inserted i 
 						WHERE ' + REPLACE(AllTables.PKColumnListJoinClause, 'PT.', 'i.') + ')
-END' END AS PrepTableTriggerSQLFragment,
+END' AS PrepTableTriggerSQLFragment,
 
 '
 SELECT COUNT(*), ''MissingInserts''
@@ -230,7 +223,7 @@ FROM (  SELECT T.DatabaseName
 				,0 AS IsNewPartitionedPrepTable
         --SELECT COUNT(*)
         FROM DOI.Tables T
-            CROSS APPLY (   SELECT *, T.TableName + P.PrepTableNameSuffix AS PrepTableName, 0 AS IsNewPartitionedPrepTable
+            CROSS APPLY (   SELECT *, T.TableName + P.PrepTableNameSuffix AS PrepTableName
                             FROM (  SELECT  *,         
                                             CASE 
 			                                    WHEN DateDiffs IN (365, 366) 
@@ -312,35 +305,12 @@ FROM (  SELECT T.DatabaseName
                     AND P.PartitionNumber = DDS_Desired.destination_id
                 INNER JOIN DOI.SysDataSpaces UFG_Desired ON DDS_Desired.database_id = UFG_Desired.database_id
                     AND DDS_Desired.data_space_id = UFG_Desired.data_space_id
-        WHERE IntendToPartition = 1
-        UNION ALL
-        SELECT	T.DatabaseName
-                ,T.SchemaName
-				,T.TableName
-				,0 AS DateDiffs
-				,T.TableName + '_NewPartitionedTableFromPrep' AS PrepTableName
-				,'_NewPartitionedTableFromPrep' AS PrepTableNameSuffix
-				,T.TableName + '_NewPartitionedTableFromPrep' AS NewPartitionedPrepTableName
-				,T.PartitionFunctionName
-				,'9999-12-31' AS NextBoundaryValue
-				,'0001-01-01' AS BoundaryValue
-				,T.ColumnListWithTypes
-				,T.ColumnListNoTypes
-				,T.UpdateColumnList
 				,T.ColumnListForDataSynchTriggerSelect
 				,T.ColumnListForDataSynchTriggerUpdate
 				,T.ColumnListForDataSynchTriggerInsert
 				,T.TableHasOldBlobColumns
 				,T.TableHasIdentityColumn
-    			,T.PartitionColumn
-    			,T.PKColumnList
-				,T.PKColumnListJoinClause
-				,T.Storage_Desired
-				,T.StorageType_Desired
-				,0 AS PartitionNumber
                 ,'PRIMARY' AS PrepTableFilegroup
-				,1 AS IsNewPartitionedPrepTable
-        FROM DOI.Tables T
         WHERE IntendToPartition = 1) AllTables
     CROSS JOIN (SELECT * FROM DOI.DOISettings WHERE SettingName = 'UTEBCP Filepath') SS
 

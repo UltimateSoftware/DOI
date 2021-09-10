@@ -1,6 +1,4 @@
 
-GO
-
 IF OBJECT_ID('[DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties];
 
@@ -24,8 +22,8 @@ AS
 */
 
 DELETE SP
-FROM DOI.SysDmDbStatsProperties SP
-    INNER JOIN DOI.SysDatabases D ON SP.database_id = D.database_id
+FROM DOI.DOI.SysDmDbStatsProperties SP
+    INNER JOIN DOI.DOI.SysDatabases D ON SP.database_id = D.database_id
 WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 DECLARE @SQL NVARCHAR(MAX) = ''

@@ -21,7 +21,7 @@ create   PROCEDURE [DOI].[spQueue_Insert]
 			@CurrentParentSchemaName		NVARCHAR(128),
 			@CurrentParentTableName 		NVARCHAR(128),
 			@CurrentParentIndexName			NVARCHAR(128),
-			@IndexOperation					VARCHAR(50),
+			@IndexOperation					VARCHAR(70),
 			@TableChildOperationId			SMALLINT = 0,
 			@SQLStatement					VARCHAR(MAX),
 			@TransactionId					UNIQUEIDENTIFIER,

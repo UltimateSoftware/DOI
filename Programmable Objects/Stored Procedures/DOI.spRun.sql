@@ -106,7 +106,7 @@ BEGIN TRY
 			@ErrorMessage					NVARCHAR(4000),
 			@CurrentSQLStatement			NVARCHAR(MAX) = '',
 			@CurrentSeqNo					SMALLINT = 0,
-			@CurrentIndexOperation			VARCHAR(50),
+			@CurrentIndexOperation			VARCHAR(70),
 			@CurrentTableChildOperationId	SMALLINT,
 			@RunStatus						VARCHAR(20),
 			@TransactionId					UNIQUEIDENTIFIER = NULL,
@@ -263,7 +263,7 @@ BEGIN TRY
 									AND TableChildOperationId = @CurrentTableChildOperationId
 
 								--RUN SQL, UNLESS IT'S A BEGIN OR COMMIT TRAN.  RUN THOSE OUTSIDE THE DYNAMIC SQL OR THEY CAUSE ERRORS.
-								IF @CurrentSQLStatement LIKE '%SERIALIZABLE%BEGIN TRAN%' 
+								IF @CurrentSQLStatement LIKE '%BEGIN TRAN%' 
 								BEGIN
 									SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 

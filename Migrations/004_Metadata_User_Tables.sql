@@ -71,7 +71,9 @@ CREATE TABLE [DOI].[Tables]
 [AreStatisticsChanging] [bit] NOT NULL CONSTRAINT [Def_Tables_AreStatisticsChanging] DEFAULT ((0)),
 [DSTriggerSQL] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [PKColumnList] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[PKColumnList_Desired] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [PKColumnListJoinClause] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[PKColumnListJoinClause_Desired] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListNoTypes] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListWithTypes] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [UpdateColumnList] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -83,6 +85,7 @@ CREATE TABLE [DOI].[Tables]
 [ColumnListForDataSynchTriggerInsert] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListForFinalDataSynchTriggerSelectForDelete] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListWithTypesNoIdentityProperty] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[UpdateTimeStampColumn] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 CONSTRAINT [PK_Tables] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName])
 )
 WITH

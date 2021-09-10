@@ -61,7 +61,8 @@ BEGIN TRY
 			@IndexUpdateType						VARCHAR(20),
 			@OriginalIndexUpdateType				VARCHAR(20),
 			@TransactionId							UNIQUEIDENTIFIER = NULL,
-			@IndexSizeInMB							INT
+			@IndexSizeInMB							INT,
+			@IndexOperation							VARCHAR(70)
 
     DROP TABLE IF EXISTS #TablesWithPendingConstraintsTable
 
@@ -293,16 +294,17 @@ EXEC DOI.spRun_ReleaseApplicationLock
 								        I.IndexUpdateType,
 								        I.OriginalIndexUpdateType,
 								        I.CurrentSQLToExecute,
-								        I.IndexSizeMB_Actual
+								        I.IndexSizeMB_Actual,
+										I.IndexOperation
 						        FROM DOI.vwIndexesSQLToRun I
 						        WHERE I.DatabaseName = @CurrentDatabaseName
 							        AND I.SchemaName = @CurrentSchemaName
 							        AND I.TableName = @CurrentTableName
-						        ORDER BY I.IndexName, I.PartitionNumber
+						        ORDER BY I.RowNum
 						
 					        OPEN UpdateAllIndexes_Cur
 					
-					        FETCH NEXT FROM UpdateAllIndexes_Cur INTO @CurrentIndexName, @CurrentPartitionNumber, @IndexUpdateType, @OriginalIndexUpdateType, @CurrentSQLToExecute, @IndexSizeInMB
+					        FETCH NEXT FROM UpdateAllIndexes_Cur INTO @CurrentIndexName, @CurrentPartitionNumber, @IndexUpdateType, @OriginalIndexUpdateType, @CurrentSQLToExecute, @IndexSizeInMB, @IndexOperation
 					
 					        WHILE @@FETCH_STATUS <> -1
 					        BEGIN
@@ -318,14 +320,14 @@ EXEC DOI.spRun_ReleaseApplicationLock
 								        @CurrentParentSchemaName		= @CurrentSchemaName ,
 								        @CurrentParentTableName			= @CurrentTableName, 
 								        @CurrentParentIndexName			= @CurrentIndexName,
-								        @IndexOperation					= @IndexUpdateType,
+								        @IndexOperation					= @IndexOperation,
 								        @SQLStatement					= @CurrentSQLToExecute, 
 								        @TransactionId					= @TransactionId,
 								        @BatchId						= @BatchIdOUT,
 								        @ExitTableLoopOnError			= 0
 						        END --@@fetch_status <> -2, UpdateAllIndexes_Cur
 
-						        FETCH NEXT FROM UpdateAllIndexes_Cur INTO @CurrentIndexName, @CurrentPartitionNumber, @IndexUpdateType, @OriginalIndexUpdateType, @CurrentSQLToExecute, @IndexSizeInMB
+						        FETCH NEXT FROM UpdateAllIndexes_Cur INTO @CurrentIndexName, @CurrentPartitionNumber, @IndexUpdateType, @OriginalIndexUpdateType, @CurrentSQLToExecute, @IndexSizeInMB, @IndexOperation
 					        END --fetch_status <> -1, UpdateAllIndexes_Cur
             
 					        CLOSE UpdateAllIndexes_Cur

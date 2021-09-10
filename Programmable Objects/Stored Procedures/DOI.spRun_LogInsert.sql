@@ -18,7 +18,7 @@ CREATE   PROCEDURE [DOI].[spRun_LogInsert]
 			@CurrentPartitionNumber	SMALLINT,
 			@IndexSizeInMB			INT,
 			@SQLStatement			VARCHAR(MAX),
-			@IndexOperation			VARCHAR(50),
+			@IndexOperation			VARCHAR(70),
 			@RowCount				INT,
 			@TableChildOperationId	SMALLINT,
 			@RunStatus				VARCHAR(20),

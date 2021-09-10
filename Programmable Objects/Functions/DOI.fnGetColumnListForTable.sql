@@ -83,12 +83,13 @@ BEGIN
 			ELSE N''
 		END + NCHAR(13) + NCHAR(10)
 	FROM DOI.SysTables t
-        INNER JOIN DOI.SysDatabases d ON T.database_id = d.database_id
+   		INNER JOIN DOI.SysDatabases d ON T.database_id = d.database_id
 		INNER JOIN DOI.SysColumns c ON c.database_id = t.database_id
-            AND c.object_id = t.object_id
+	            AND c.object_id = t.object_id
 		INNER JOIN DOI.SysSchemas s ON s.database_id = t.database_id
-            AND s.schema_id = t.schema_id
-		INNER JOIN DOI.SysTypes ty ON c.user_type_id = ty.user_type_id
+        	    AND s.schema_id = t.schema_id
+		INNER JOIN DOI.SysTypes ty ON ty.database_id = t.database_id
+	            AND c.user_type_id = ty.user_type_id
 		LEFT JOIN DOI.SysIdentityColumns ic ON c.database_id = ic.database_id
 			AND c.object_id = ic.object_id
 			AND c.column_id = ic.column_id

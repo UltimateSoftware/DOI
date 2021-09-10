@@ -56,6 +56,8 @@ UPDATE T
 SET NewPartitionedPrepTableName = CASE WHEN T.IntendToPartition = 1 THEN TableName + '_NewPartitionedTableFromPrep' ELSE NULL END,
     Storage_Actual = DS_Actual.name,
     StorageType_Actual = DS_Actual.type_desc
+    PKColumnList_Desired = DOI.fnGetPKColumnListForTable_Desired(T.DatabaseName, T.SchemaName, T.TableName),
+    PKColumnListJoinClause_Desired = DOI.fnGetJoinClauseForTable_Desired(T.DatabaseName, T.SchemaName, T.TableName, 1, 'T', 'PT')
 FROM DOI.Tables T
     INNER JOIN DOI.SysDatabases d ON T.DatabaseName = d.name
     INNER JOIN DOI.SysTables T2 ON T2.database_id = d.database_id
@@ -64,7 +66,7 @@ FROM DOI.Tables T
         AND s.name = T.SchemaName
     INNER JOIN DOI.SysIndexes I ON d.database_id = i.database_id
         AND T2.object_id = I.object_id
-        AND I.type_desc IN ('CLUSTERED', 'HEAP')
+        AND I.type_desc IN ('CLUSTERED', 'HEAP', 'CLUSTERED COLUMNSTORE')
     INNER JOIN DOI.SysDataSpaces DS_Actual ON i.database_id = DS_Actual.database_id
         AND i.data_space_id = DS_Actual.data_space_id
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 

@@ -51,7 +51,7 @@ namespace DOI.Tests.IntegrationTests.RunTests
          * 4. NoRecompute setting changes
          * 
          */
-        [TestCase("ST_TempA", "SampleSizePct_Desired = 90", "Update Statistics", "SampleSize", TestName = "Changing sample Size")]
+        [TestCase("ST_TempA", "SampleSizePct_Desired = 99", "Update Statistics", "SampleSize", TestName = "Changing sample Size")]
         [TestCase("ST_TempA", "IsIncremental_Desired = 1", "Update Statistics", "Incremental", TestName = "Changing isIncremental")]
         [TestCase("ST_TempA", "IsFiltered_Desired = 1, FilterPredicate_Desired = 'TempAId <> 0'", "DropRecreate Statistics", "Filter", TestName = "Changing filter")]
         [TestCase("ST_TempA", "NoRecompute_Desired = 1", "Update Statistics", "NoRecompute", TestName ="Changing isNoRecompute")]

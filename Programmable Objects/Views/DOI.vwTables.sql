@@ -116,12 +116,7 @@ END
 ' AS FreeTempDBSpaceCheckSQL
 --select count(*)
 FROM DOI.Tables T
-	CROSS APPLY(SELECT STUFF((  SELECT PT.PrepTableTriggerSQLFragment
-								FROM DOI.vwPartitioning_Tables_PrepTables PT
-								WHERE PT.DatabaseName = T.DatabaseName
-									AND PT.SchemaName = T.SchemaName
-									AND PT.TableName = T.TableName
-                                    AND PT.IsNewPartitionedPrepTable = 0
-								FOR XML PATH(''), TYPE).value(N'.[1]', N'nvarchar(max)'), 1, 1, '')) DSTrigger(DSTriggerSQL)
+
+
 
 GO

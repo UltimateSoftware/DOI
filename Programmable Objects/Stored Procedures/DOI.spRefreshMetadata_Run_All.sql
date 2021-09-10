@@ -129,6 +129,9 @@ BEGIN TRY
 	EXEC DOI.spRefreshMetadata_User_Statistics_UpdateData
 		@DatabaseName = @DatabaseName
 
+	EXEC DOI.spRefreshMetadata_User_IndexColumns_InsertData
+		@DatabaseName = @DatabaseName
+        
     EXEC DOI.spRefreshMetadata_User_Tables_UpdateData
 		@DatabaseName = @DatabaseName
 

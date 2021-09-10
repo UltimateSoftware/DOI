@@ -167,10 +167,11 @@ BEGIN
         [PartitionFunctionName_Desired] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
         [PartitionColumn] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
         [IntendToPartition] [bit] NOT NULL DEFAULT ((0)),
-        [ReadyToQueue] [bit] NOT NULL DEFAULT ((0)))
+        [ReadyToQueue] [bit] NOT NULL DEFAULT ((0))),
+        [UpdateTimeStampColumn] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 
-    INSERT INTO @Tables ([DatabaseName], [SchemaName], [TableName], [PartitionColumn], [IntendToPartition], [ReadyToQueue], [PartitionFunctionName_Desired])
-    SELECT ''' + @DatabaseName + ''', s.name, t.name, PartitionColumnName, CASE WHEN p.PartitionFunctionName IS NOT NULL THEN 1 ELSE 0 END, 1, p.PartitionFunctionName
+    INSERT INTO @Tables ([DatabaseName], [SchemaName], [TableName], [PartitionColumn], [IntendToPartition], [ReadyToQueue], [PartitionFunctionName_Desired], [UpdateTimeStampColumn])
+    SELECT ''' + @DatabaseName + ''', s.name, t.name, PartitionColumnName, CASE WHEN p.PartitionFunctionName IS NOT NULL THEN 1 ELSE 0 END, 1, p.PartitionFunctionName, ''UpdatedUtcDt''
     FROM ' + @DatabaseName + '.sys.tables t
         INNER JOIN ' + @DatabaseName + '.sys.schemas s ON t.schema_id = s.schema_id
         OUTER APPLY (   SELECT pf.name AS PartitionFunctionName, c.name AS PartitionColumnName
@@ -185,7 +186,7 @@ BEGIN
                             AND i.type IN (0,1)
                             AND ic.partition_ordinal >= 1) p
 
-    INSERT INTO DOI.[Tables]([DatabaseName], [SchemaName], [TableName], [PartitionFunctionName], [PartitionColumn], [IntendToPartition], [ReadyToQueue])
+    INSERT INTO DOI.[Tables]([DatabaseName], [SchemaName], [TableName], [PartitionFunctionName], [PartitionColumn], [IntendToPartition], [ReadyToQueue], [UpdateTimeStampColumn])
     SELECT * FROM @Tables
 END
 ELSE
@@ -363,10 +364,12 @@ BEGIN
         [IsKeyColumn] [bit] NOT NULL,
         [KeyColumnPosition] [smallint] NULL,
         [IsIncludedColumn] [bit] NOT NULL,
-        [IncludedColumnPosition] [smallint] NULL)
+        [IncludedColumnPosition] [smallint] NULL,
+        [Desired] BIT NOT NULL,
+        [Actual] BIT NOT NULL)
 
-    INSERT INTO @IndexColumns([DatabaseName], [SchemaName], [TableName], [IndexName], [ColumnName], [IsKeyColumn], [KeyColumnPosition], [IsIncludedColumn], [IncludedColumnPosition])
-    SELECT ''' + @DatabaseName + ''', s.name, t.name, i.name, c.name, CASE WHEN ic.key_ordinal > 0 THEN 1 ELSE 0 END, ic.key_ordinal, ic.is_included_column, NULL
+    INSERT INTO @IndexColumns([DatabaseName], [SchemaName], [TableName], [IndexName], [ColumnName], [IsKeyColumn], [KeyColumnPosition], [IsIncludedColumn], [IncludedColumnPosition], [Desired], [Actual])
+    SELECT ''' + @DatabaseName + ''', s.name, t.name, i.name, c.name, CASE WHEN ic.key_ordinal > 0 THEN 1 ELSE 0 END, ic.key_ordinal, ic.is_included_column, NULL, 0, 1
     FROM ' + @DatabaseName + '.sys.index_columns ic
         INNER JOIN ' + @DatabaseName + '.sys.indexes i ON i.object_id = ic.object_id
             AND i.index_id = ic.index_id
@@ -375,7 +378,7 @@ BEGIN
         INNER JOIN ' + @DatabaseName + '.sys.tables t ON i.object_id = t.object_id
         INNER JOIN ' + @DatabaseName + '.sys.schemas s ON t.schema_id = s.schema_id
 
-    INSERT INTO DOI.IndexColumns([DatabaseName], [SchemaName], [TableName], [IndexName], [ColumnName], [IsKeyColumn], [KeyColumnPosition], [IsIncludedColumn], [IncludedColumnPosition])
+    INSERT INTO DOI.IndexColumns([DatabaseName], [SchemaName], [TableName], [IndexName], [ColumnName], [IsKeyColumn], [KeyColumnPosition], [IsIncludedColumn], [IncludedColumnPosition], [Desired], [Actual])
     SELECT * FROM @IndexColumns
 END
 ELSE

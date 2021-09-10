@@ -170,6 +170,23 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
 	    ;THROW 50000 , @ErrorMessage, 1;
     END
 
+
+        --tables with no PK defined (we depend on the PK for code generation of join clauses)
+    SET @ObjectList = ''
+    SET @ErrorMessage = 'The Following Table(s) have no Primary Key defined.  Define one or more columns as Primary Key.'
+
+    SELECT @TablesWithMoreThan1PKList += SchemaName + '.' + TableName + ','
+    FROM DOI.IndexesRowStore 
+    WHERE IsPrimaryKey_Desired = 1 
+    GROUP BY SchemaName, TableName 
+    HAVING COUNT(*) = 0
+
+    IF @ObjectList <> ''
+    BEGIN
+        SET @ErrorMessage += @ObjectList
+	    ;THROW 50000 , @ErrorMessage, 1;
+    END
+
     --tables with more than 1 Clustered Index
     SET @ObjectList = ''
     SET @ErrorMessage = 'The Following Table(s) have more than 1 Clustered Index defined.  Delete or convert one of the Clustered Indexes to IsClustered = 0:' 
