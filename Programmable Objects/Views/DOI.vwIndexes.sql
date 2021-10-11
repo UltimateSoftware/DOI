@@ -49,10 +49,11 @@ FROM (	SELECT	 IRS.*
 						AND IRS.AreDropRecreateOptionsChanging = 1
 						AND IRS.IsClusteredChanging = 0 --DROP_EXISTING CAN'T HANDLE THIS.
 						AND IRS.IsPrimaryKey_Desired = 0 --DROP_EXISTING CAN'T HANDLE THIS, IF THE PK IS CLUSTERED, WHICH IT OFTEN IS.
+						AND IRS.IsPrimaryKey_Actual = 0 --DROP_EXISTING OPTION DOES NOT EXIST ON CONSTRAINTS
 					THEN 'CreateDropExisting'
 					WHEN IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.AreDropRecreateOptionsChanging = 1
-						AND (IRS.IsClusteredChanging = 1 OR IRS.IsPrimaryKeyChanging = 1) --handles the above 2 cases
+						AND (IRS.IsClusteredChanging = 1 OR IRS.IsPrimaryKeyChanging = 1 OR IRS.IsPrimaryKey_Actual = 1) --handles the above 2 cases
 					THEN 'ExchangeTableNonPartitioned'
 					WHEN (IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.NeedsPartitionLevelOperations = 0 
@@ -152,6 +153,7 @@ CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE W
 																END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
 		END + 
 'END' AS CreateStatement,
+CASE WHEN IRS.IsPrimaryKey_Desired = 1 THEN '' ELSE 
 'CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE WHEN IRS.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + IRS.IndexName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										'	ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + '(' + IRS.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										CASE 
@@ -186,7 +188,7 @@ CREATE' +	CASE IRS.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE W
 																	THEN '(' + IRS.PartitionColumn_Desired + ')' 
 																	ELSE '' 
 																END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
-AS CreateDropExistingStatement,
+END AS CreateDropExistingStatement,
 '
 ALTER INDEX ' + IRS.IndexName + ' ON ['+ IRS.SchemaName + '].[' + IRS.TableName + ']' + CHAR(13) + CHAR(10) + 
 '	SET (	IGNORE_DUP_KEY = ' + CASE WHEN IRS.OptionIgnoreDupKey_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',

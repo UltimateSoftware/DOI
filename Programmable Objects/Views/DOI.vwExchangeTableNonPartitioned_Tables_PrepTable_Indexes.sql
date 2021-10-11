@@ -37,12 +37,12 @@ SELECT  PT.DatabaseName,
         CASE 
             WHEN IndexType = 'RowStore'
             THEN '
-IF NOT EXISTS (SELECT ''True'' FROM ' + PT.DatabaseName + '.sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + I.SchemaName + ''' AND t.name = ''' + PT.PrepTableName + ''' AND i.name = ''' + REPLACE(I.IndexName, I.TableName, PT.PrepTableName) + ''')
+IF NOT EXISTS (SELECT ''True'' FROM ' + PT.DatabaseName + '.sys.indexes i INNER JOIN ' + PT.DatabaseName + '.sys.tables t ON i.object_id = t.object_id INNER JOIN ' + PT.DatabaseName + '.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = ''' + I.SchemaName + ''' AND t.name = ''' + PT.PrepTableName + ''' AND i.name = ''' + REPLACE(I.IndexName, I.TableName, PT.PrepTableName) + ''')
 BEGIN' + 	CASE 
 				WHEN (I.IsPrimaryKey_Desired = 1 OR I.IsUniqueConstraint_Desired = 1)
 				THEN '
-ALTER TABLE ' + I.SchemaName + '.' + PT.PrepTableName + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
-'	ADD CONSTRAINT ' + REPLACE(I.IndexName, I.TableName, PT.PrepTableName) + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
+	ALTER TABLE ' + I.SchemaName + '.' + PT.PrepTableName + '
+		ADD CONSTRAINT ' + REPLACE(I.IndexName, I.TableName, PT.PrepTableName) + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 '		' + CASE WHEN I.IsPrimaryKey_Desired = 1 THEN 'PRIMARY KEY ' WHEN I.IsUniqueConstraint_Desired = 1 THEN ' UNIQUE ' ELSE '' END + CASE WHEN I.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED (' + I.KeyColumnList_Desired + ') ' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 '				WITH (	
 						PAD_INDEX = ' + CASE WHEN I.OptionPadIndex_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',

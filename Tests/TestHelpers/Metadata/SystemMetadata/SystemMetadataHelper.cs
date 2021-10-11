@@ -118,6 +118,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         public string GetPartitionsFrom_vwPartitionFunctionPartitionsMonthly = $@"
             SELECT * FROM DOI.vwPartitionFunctionPartitions WHERE DatabaseName = '{DatabaseName}' AND PartitionFunctionName = '{PartitionFunctionNameMonthly}'";
 
+        public static string DropPartitionFunctionYearlyMetadataSql = $@"DELETE DOI.PartitionFunctions WHERE DatabaseName = '{DatabaseName}' AND PartitionFunctionName = '{PartitionFunctionNameYearly}'";
+
         #endregion
         #region PartitionSchemes
 
@@ -160,7 +162,10 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             TempAId uniqueidentifier NOT NULL,
             TransactionUtcDt datetime2(7) NOT NULL,
             IncludedColumn VARCHAR(50) NULL,
-            TextCol VARCHAR(8000) NULL 
+            TextCol VARCHAR(8000) NULL,
+            UpdatedUtcDt DATETIME2 NOT NULL
+                CONSTRAINT Def_{TableName}_UpdatedUtcDt
+                    DEFAULT SYSDATETIME()
  
             CONSTRAINT {PKIndexName}
                 PRIMARY KEY NONCLUSTERED (TempAId)
@@ -173,12 +178,15 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 	        TempBId uniqueidentifier NOT NULL,
 	        TempAId uniqueidentifier NOT NULL,
 	        TransactionUtcDt datetime2(7) NOT NULL,
+            UpdatedUtcDt DATETIME2 NOT NULL
+                CONSTRAINT Def_{ChildTableName}_UpdatedUtcDt
+                    DEFAULT SYSDATETIME()
         )";
 
         public static string CreateTableMetadataSql = $@"
         DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName}'
-        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue) 
-        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName}'				,NULL						, 'PRIMARY'							, 0					,  1)
+        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue, UpdateTimeStampColumn) 
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName}'				,NULL						, 'PRIMARY'							, 0					,  1            , 'UpdatedUtcDt')
 
         INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
                                         IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
@@ -191,8 +199,8 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string CreateChildTableMetadataSql = $@"
         DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{ChildTableName}'
-        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue) 
-        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{ChildTableName}'			,NULL						, 'PRIMARY'							, 0					,  1)";
+        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,Storage_Desired					, IntendToPartition	,  ReadyToQueue , UpdateTimeStampColumn) 
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{ChildTableName}'			,NULL						, 'PRIMARY'							, 0					,  1            , 'UpdatedUtcDt')";
 
 
         public static string CreatePartitionedTableYearlySql = $@"
@@ -204,7 +212,10 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             IncludedColumn VARCHAR(50) NULL
                 CONSTRAINT Chk_{TableName_Partitioned}_IncludedColumn
                     CHECK (IncludedColumn <> '!@#$%'),
-            TextCol VARCHAR(8000) NULL 
+            TextCol VARCHAR(8000) NULL,
+            UpdatedUtcDt DATETIME2 NOT NULL
+                CONSTRAINT Def_{TableName_Partitioned}_UpdatedUtcDt
+                    DEFAULT SYSDATETIME()
             CONSTRAINT {PKIndexName_Partitioned}
                 PRIMARY KEY NONCLUSTERED (TempAId, TransactionUtcDt)
         )
@@ -219,7 +230,10 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
             IncludedColumn VARCHAR(50) NULL
                 CONSTRAINT Chk_{TableName_Partitioned}_IncludedColumn
                     CHECK (IncludedColumn <> '!@#$%'),
-            TextCol VARCHAR(8000) NULL 
+            TextCol VARCHAR(8000) NULL,
+            UpdatedUtcDt DATETIME2 NOT NULL
+                CONSTRAINT Def_{TableName_Partitioned}_UpdatedUtcDt
+                    DEFAULT SYSDATETIME()
             CONSTRAINT {PKIndexName_Partitioned}
                 PRIMARY KEY NONCLUSTERED (TempAId, TransactionUtcDt)
         )
@@ -227,11 +241,12 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
 
         public static string CreatePartitionedTableYearlyMetadataSql = $@"
         DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName_Partitioned}'
-        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,PartitionFunctionName					, IntendToPartition	,  ReadyToQueue) 
-        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			, '{PartitionFunctionNameYearly}'			, 1					,  1);
+        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,PartitionFunctionName					, IntendToPartition	,  ReadyToQueue , UpdateTimeStampColumn) 
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			, '{PartitionFunctionNameYearly}'			, 1					,  1           , 'UpdatedUtcDt')
 
         INSERT INTO DOI.DefaultConstraints( DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,DefaultDefinition, DefaultConstraintName)
-        VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt');
+        VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt')
+            , (                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'UpdatedUtcDt'    ,N'SYSDATETIME()', 'Def_{TableName_Partitioned}_UpdatedUtcDt');
 
         INSERT INTO DOI.CheckConstraints(   DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,CheckDefinition                    ,IsDisabled , CheckConstraintName)
         VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'IncludedColumn'  ,N'IncludedColumn <> ''!@#$%'''     ,0          , 'Chk_{TableName_Partitioned}_IncludedColumn');
@@ -241,18 +256,19 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
                                         IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
                                         OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
                                         PartitionFunction_Desired, PartitionColumn_Desired)
-        VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{PKIndexName_Partitioned}', 1, 1, 0, 0, 'TempAId ASC', NULL,  
-                0, NULL, 100, 1, 0, 0, 0, 
-                0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameMonthly}', N'PARTITION_SCHEME', 
-                NULL, NULL)";
+        VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{PKIndexName_Partitioned}', 1, 1, 0, 0, 'TempAId ASC, {PartitionColumnName} ASC', NULL,  
+                0, NULL, 100, 1, 0, 1, 0, 
+                0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', 
+                '{PartitionFunctionNameYearly}', '{PartitionColumnName}')";
  
         public static string CreatePartitionedTableMonthlyMetadataSql = $@"
         DELETE DOI.Tables WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TableName_Partitioned}'
-        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,PartitionFunctionName					, IntendToPartition	,  ReadyToQueue) 
-        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			,'{PartitionFunctionNameMonthly}'			, 1					,  1)
+        INSERT INTO DOI.Tables  (DatabaseName       , SchemaName    ,TableName					,PartitionColumn			,PartitionFunctionName					, IntendToPartition	,  ReadyToQueue, UpdateTimeStampColumn) 
+        VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			,'{PartitionFunctionNameMonthly}'			, 1					,  1        , 'UpdatedUtcDt')
 
         INSERT INTO DOI.DefaultConstraints( DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,DefaultDefinition, DefaultConstraintName)
         VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt');
+            , (                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'UpdatedUtcDt'    ,N'SYSDATETIME()', 'Def_{TableName_Partitioned}_UpdatedUtcDt');
 
         INSERT INTO DOI.CheckConstraints(   DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,CheckDefinition                    ,IsDisabled , CheckConstraintName)
         VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'IncludedColumn'  ,N'IncludedColumn <> ''!@#$%'''     ,0          , 'Chk_{TableName_Partitioned}_IncludedColumn');
@@ -363,6 +379,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
 
         public const string CIndexName_Partitioned = "CDX_TempA_Partitioned";
+        public const string NCIndexName_Partitioned = "IDX_TempA_Partitioned";
         public const string NCCIIndexName_ColumnStore_Partitioned = "NCCI_TempA_Partitioned";
         public const string PKIndexName_Partitioned = "PK_TempA_Partitioned";
 
@@ -397,6 +414,29 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                     0, NULL, 100, 1, 0, 0, 0, 
                     0, 0, 1, 1, N'PAGE', 'PRIMARY', N'ROWS_FILEGROUP', 
                     NULL, NULL)";
+
+        //NC Index, with Included Column
+        public static string CreateNCIndexWithIncludedColumnSql = $"CREATE NONCLUSTERED INDEX {NCIndexName} ON dbo.{TableName}(TransactionUtcDt) INCLUDE (IncludedColumn) WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) ON [PRIMARY] ";
+
+        public static string CreateNCIndexWithIncludedColumnMetadataSql = $@"
+            INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
+                                            IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
+                                            OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
+                                            PartitionFunction_Desired, PartitionColumn_Desired)
+            VALUES (N'{DatabaseName}', N'dbo', N'{TableName}', N'{NCIndexName}', 0, 0, 0, 0, 'TransactionUtcDt ASC', 'IncludedColumn',  
+                    0, NULL, 100, 1, 0, 0, 0, 
+                    0, 0, 1, 1, N'PAGE', 'PRIMARY', N'ROWS_FILEGROUP', 
+                    NULL, NULL)";
+
+        public static string CreatePartitionedNCIndexWithIncludedColumnMetadataSql = $@"
+            INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
+                                            IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
+                                            OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
+                                            PartitionFunction_Desired, PartitionColumn_Desired)
+            VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{NCIndexName_Partitioned}', 0, 0, 0, 0, 'TransactionUtcDt ASC', 'IncludedColumn',  
+                    0, NULL, 100, 1, 0, 1, 0, 
+                    0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', 
+                    '{PartitionFunctionNameYearly}', '{PartitionColumnName}')";
 
         public static string DropNCIndexSql = $"DROP INDEX IF EXISTS {NCIndexName} ON dbo.{TableName}";
 
@@ -470,18 +510,34 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         public static string DropPartitionedPKIndexSql = $"IF EXISTS(SELECT 'True' FROM sys.indexes WHERE NAME = '{PKIndexName_Partitioned}') ALTER TABLE dbo.{TableName_Partitioned} DROP CONSTRAINT {PKIndexName_Partitioned}";
 
 
-        public static string CreatePartitionedIndexYearlySql = $@"
+        public static string CreatePartitionedCIndexYearlySql = $@"
             CREATE UNIQUE CLUSTERED INDEX {CIndexName_Partitioned} 
                 ON dbo.{TableName_Partitioned}(TempAId, TransactionUtcDt) 
                     WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) 
                         ON {PartitionSchemeNameYearly}(TransactionUtcDt)";
 
-        public static string CreatePartitionedIndexYearlyMetadataSql = $@"
+        public static string CreatePartitionedCIndexYearlyMetadataSql = $@"
             INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
                                             IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
                                             OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
                                             PartitionFunction_Desired, PartitionColumn_Desired)
             VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{CIndexName_Partitioned}', 1, 0, 0, 1, 'TempAId ASC', NULL,  
+                    0, NULL, 100, 1, 0, 0, 0, 
+                    0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', 
+                    '{PartitionFunctionNameYearly}', 'TransactionUtcDt')";
+
+        public static string CreatePartitionedNCIndexYearlySql = $@"
+            CREATE UNIQUE CLUSTERED INDEX {NCIndexName_Partitioned} 
+                ON dbo.{TableName_Partitioned}(TempAId, TransactionUtcDt) 
+                    WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) 
+                        ON {PartitionSchemeNameYearly}(TransactionUtcDt)";
+
+        public static string CreatePartitionedNCIndexYearlyMetadataSql = $@"
+            INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, 
+                                            IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
+                                            OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
+                                            PartitionFunction_Desired, PartitionColumn_Desired)
+            VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{NCIndexName_Partitioned}', 1, 0, 0, 1, 'TempAId ASC', NULL,  
                     0, NULL, 100, 1, 0, 0, 0, 
                     0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', 
                     '{PartitionFunctionNameYearly}', 'TransactionUtcDt')";

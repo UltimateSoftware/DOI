@@ -160,8 +160,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.AreIndexesFragmented = (bool)row.First(x => x.First == "AreIndexesFragmented").Second;
                 columnValue.AreIndexesBeingUpdated = (bool)row.First(x => x.First == "AreIndexesBeingUpdated").Second;
                 columnValue.AreIndexesMissing = (bool)row.First(x => x.First == "AreIndexesMissing").Second;
-                columnValue.IsClusteredIndexBeingDropped = (bool)row.First(x => x.First == "IsClusteredIndexBeingDropped").Second;
-                columnValue.WhichUniqueConstraintIsBeingDropped = row.First(x => x.First == "WhichUniqueConstraintIsBeingDropped").Second.ToString();
                 columnValue.IsStorageChanging = (bool)row.First(x => x.First == "IsStorageChanging").Second;
                 columnValue.NeedsTransaction = (bool)row.First(x => x.First == "NeedsTransaction").Second;
                 columnValue.AreStatisticsChanging = (bool)row.First(x => x.First == "AreStatisticsChanging").Second;
@@ -252,8 +250,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                     Assert.AreEqual(false, actualRow.AreIndexesFragmented, "AreIndexesFragmented");
                     Assert.AreEqual(false, actualRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
                     Assert.AreEqual(false, actualRow.AreIndexesMissing, "AreIndexesMissing");
-                    Assert.AreEqual(false, actualRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
-                    Assert.AreEqual("None", actualRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
                     Assert.AreEqual(false, actualRow.NeedsTransaction, "NeedsTransaction");
                     Assert.AreEqual(false, actualRow.AreStatisticsChanging, "AreStatisticsChanging");
                     Assert.AreEqual(string.Empty, actualRow.NewPartitionedPrepTableName, "NewPartitionedPrepTableName");
@@ -274,8 +270,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                     Assert.AreEqual(false, actualRow.AreIndexesFragmented, "AreIndexesFragmented");
                     Assert.AreEqual(false, actualRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
                     Assert.AreEqual(false, actualRow.AreIndexesMissing, "AreIndexesMissing");
-                    Assert.AreEqual(false, actualRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
-                    Assert.AreEqual("None", actualRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
                     Assert.AreEqual(false, actualRow.NeedsTransaction, "NeedsTransaction");
                     Assert.AreEqual(false, actualRow.AreStatisticsChanging, "AreStatisticsChanging");
                     Assert.AreEqual(string.Concat(TableName_Partitioned, "_NewPartitionedTableFromPrep"), actualRow.NewPartitionedPrepTableName, "NewPartitionedPrepTableName");
@@ -296,8 +290,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                     Assert.AreEqual(false, actualRow.AreIndexesFragmented, "AreIndexesFragmented");
                     Assert.AreEqual(false, actualRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
                     Assert.AreEqual(false, actualRow.AreIndexesMissing, "AreIndexesMissing");
-                    Assert.AreEqual(false, actualRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
-                    Assert.AreEqual("None", actualRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
                     Assert.AreEqual(false, actualRow.NeedsTransaction, "NeedsTransaction");
                     Assert.AreEqual(false, actualRow.AreStatisticsChanging, "AreStatisticsChanging");
                     Assert.AreEqual(string.Concat(TableName_Partitioned, "_NewPartitionedTableFromPrep"), actualRow.NewPartitionedPrepTableName, "NewPartitionedPrepTableName");

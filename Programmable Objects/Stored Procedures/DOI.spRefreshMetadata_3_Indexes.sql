@@ -89,4 +89,12 @@ AS
 	EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData
 		@DatabaseName = @DatabaseName
 
+    EXEC [DOI].[spRefreshMetadata_System_SysIndexColumns]
+        @DatabaseName = @DatabaseName
+
+    EXEC [DOI].[spRefreshMetadata_User_IndexColumns_InsertData]
+        @DatabaseName = @DatabaseName
+
+    EXEC DOI.spIndexValidations 
+        @DatabaseName = @DatabaseName
 GO

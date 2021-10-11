@@ -21,8 +21,6 @@ namespace DOI.Tests.IntegrationTests.Models
         public bool AreIndexesFragmented { get; set; }
         public bool AreIndexesBeingUpdated { get; set; }
         public bool AreIndexesMissing { get; set; }
-        public bool IsClusteredIndexBeingDropped { get; set; }
-        public string WhichUniqueConstraintIsBeingDropped { get; set; }
         public bool IsStorageChanging { get; set; }
         public bool NeedsTransaction { get; set; }
         public bool AreStatisticsChanging { get; set; }

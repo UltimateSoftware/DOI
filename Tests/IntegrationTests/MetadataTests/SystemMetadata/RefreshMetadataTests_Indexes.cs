@@ -115,16 +115,17 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
 
 
-        [TestCase("pfTestsYearly", "CCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_Clustered_Yearly")]
-        [TestCase("pfTestsYearly", "NCCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_NonClustered_Yearly")]
-        [TestCase("pfTestsMonthly", "CCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_Clustered_Monthly")]
-        [TestCase("pfTestsMonthly", "NCCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_NonClustered_Monthly")]
+        [TestCase(TestHelper.PartitionFunctionNameYearly, "CCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_Clustered_Yearly")]
+        [TestCase(TestHelper.PartitionFunctionNameYearly, "NCCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_NonClustered_Yearly")]
+        [TestCase(TestHelper.PartitionFunctionNameMonthly, "CCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_Clustered_Monthly")]
+        [TestCase(TestHelper.PartitionFunctionNameMonthly, "NCCI_TempA", TestName = "PartitioningUserMetadata_ColumnStore_NonClustered_Monthly")]
         [Test]
         public void PartitioningUserMetadata_ColumnStore(string partitionFunctionName, string indexName)
         {
             if (indexName == TestHelper.CCIIndexName)
             {
                 TestHelper.ReclusterTableWithColumnStore(indexName);
+                ResetOtherIndexPropertiesToAvoidValidationFailures(DatabaseName, TestTableName1, indexName, "IsClustered");
             }
 
             TestHelper.CreatePartitioningContainerObjects(partitionFunctionName);
@@ -133,6 +134,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             
             //update metadata to partition the table and indexes
             TestHelper.UpdateTableMetadataForPartitioning(TestTableName1, partitionFunctionName, TestHelper.PartitionColumnName, indexName);
+            ResetOtherIndexPropertiesToAvoidValidationFailures(DatabaseName, TestTableName1, indexName, "Partitioning");
 
             //run refresh metadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
@@ -215,6 +217,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
                 case TestHelper.CCIIndexName:
                     
                     dropIndexSql = string.Concat(TestHelper.DropCIndexSql, ";", TestHelper.DropCCIIndexSql);
+                    ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, "IsClustered"); //REMOVE ANY OTHER CLUSTERED INDEXES FROM METADATA
                     sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
                     createIndexSql = TestHelper.CreateCCIIndexSql;
                     sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
@@ -272,7 +275,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             //add data
             var tempaId = Guid.NewGuid();
-            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{tempaId}', SYSDATETIME(), 'TEST', 'TEST')", 30, true, DatabaseName);
+            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{tempaId}', SYSDATETIME(), 'TEST', 'TEST', SYSDATETIME())", 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             // Assert NumRows is updated correctly.
@@ -292,6 +295,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
                 sqlHelper.Execute(TestHelper.DropNCCIIndexSql, 30, true, DatabaseName);
                 sqlHelper.Execute(TestHelper.CreateCCIIndexMetadataSql);
                 sqlHelper.Execute(TestHelper.CreateCCIIndexSql, 30, true, DatabaseName);
+                ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, "IsClustered");
             }
 
             // Assert that index has 0 rows
@@ -304,7 +308,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             //add data
             var tempaId = Guid.NewGuid();
-            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{tempaId}', SYSDATETIME(), 'TEST', 'TEST')", 30, true, DatabaseName);
+            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{tempaId}', SYSDATETIME(), 'TEST', 'TEST', SYSDATETIME())", 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
             // Assert NumRows is updated correctly.
@@ -342,8 +346,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             //add data, 1 row that passes the filter and one that doesn't
             var tempaId = Guid.NewGuid();
-            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{tempaId}', SYSDATETIME(), 'TEST', 'TEST')", 30, true, DatabaseName);
-            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{Guid.Empty}', SYSDATETIME(), 'TEST', 'TEST')", 30, true, DatabaseName);
+            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{tempaId}', SYSDATETIME(), 'TEST', 'TEST', SYSDATETIME())", 30, true, DatabaseName);
+            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{Guid.Empty}', SYSDATETIME(), 'TEST', 'TEST', SYSDATETIME())", 30, true, DatabaseName);
 
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
@@ -381,8 +385,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             //add data, 1 row that passes the filter and one that doesn't
             var tempaId = Guid.NewGuid();
-            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{tempaId}', SYSDATETIME(), 'TEST', 'TEST')", 30, true, DatabaseName);
-            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{Guid.Empty}', SYSDATETIME(), 'TEST', 'TEST')", 30, true, DatabaseName);
+            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{tempaId}', SYSDATETIME(), 'TEST', 'TEST', SYSDATETIME())", 30, true, DatabaseName);
+            sqlHelper.Execute($@"INSERT INTO dbo.{tableName} VALUES ('{Guid.Empty}', SYSDATETIME(), 'TEST', 'TEST', SYSDATETIME())", 30, true, DatabaseName);
 
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 
@@ -506,6 +510,11 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             {
                 TestHelper.AssertIndexRowStoreChangeBits(indexName, "Pre");
                 sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET IsClustered_Desired = {isClusteredSetting} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            }
+
+            if (isClusteredSetting == "1")
+            {
+                ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, "IsClustered");
             }
 
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
@@ -749,7 +758,10 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             var updateSql = $"UPDATE DOI.IndexesRowStore SET IsPrimaryKey_Desired = {setting}, IsUnique_Desired = {setting} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'";
 
             sqlHelper.Execute(updateSql, 120);
+            ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, "PrimaryKey");
+
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
+
 
             var indexRow = TestHelper.GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
 
@@ -926,8 +938,9 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionSchemesSql);
 
             //action
-            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.PartitionSchemeNameYearly}', PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
-            sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
+            //ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, "IsPartitioningChanging");
+            TestHelper.UpdateTableMetadataForPartitioning(tableName, TestHelper.PartitionFunctionNameYearly, TestHelper.PartitionColumnName, indexName);
+
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
@@ -958,8 +971,36 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionSchemesSql);
 
             //action
-            sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn_Desired = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+            sqlHelper.Execute($@"
+UPDATE DOI.IndexesColumnStore 
+SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', 
+    PartitionColumn_Desired = '{TestHelper.PartitionColumnName}', 
+    ColumnList_Desired =    CASE
+                                WHEN IsClustered_Desired = 0 AND ColumnList_Desired NOT LIKE '%{TestHelper.PartitionColumnName}%'
+                                THEN ColumnList_Desired + ',{TestHelper.PartitionColumnName}' 
+                                ELSE ColumnList_Desired
+                            END 
+WHERE DatabaseName = '{databaseName}' 
+    AND SchemaName = 'dbo' 
+    AND TableName = '{tableName}' 
+    AND IndexName = '{indexName}'", 120);
+
+            //all other indexes must also be set up correctly or we will get a validation error.
+            sqlHelper.Execute($@"
+UPDATE DOI.IndexesRowStore 
+SET PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', 
+    PartitionColumn_Desired = '{TestHelper.PartitionColumnName}', 
+    KeyColumnList_Desired = CASE
+                                WHEN KeyColumnList_Desired NOT LIKE '%{TestHelper.PartitionColumnName}%'
+                                THEN KeyColumnList_Desired + ',{TestHelper.PartitionColumnName} ASC' 
+                                ELSE KeyColumnList_Desired
+                            END 
+WHERE DatabaseName = '{databaseName}' 
+    AND SchemaName = 'dbo'
+    AND TableName = '{tableName}'", 120);
+
             sqlHelper.Execute($"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionColumn = '{TestHelper.PartitionColumnName}', PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}' WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'", 120);
+
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
@@ -996,12 +1037,37 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             }
 
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+
+            ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, optionUpdateList);
+
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             indexRow = TestHelper.GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
 
             //BitGroup should now = true
             Assert.AreEqual(true,  indexRow.AreDropRecreateOptionsChanging, "AreDropRecreateOptionsChanging, Post-Change");
+        }
+
+        private void ResetOtherIndexPropertiesToAvoidValidationFailures(string databaseName, string tableName, string indexName, string optionUpdateList)
+        {
+            //if we are updating the Clustered or PrimaryKey properties, set all the other indexes in the table to 0, since you can't have >1 clustered index or PK on a table.
+            if (optionUpdateList.Contains("Clustered"))
+            {
+                sqlHelper.Execute(
+                    $"UPDATE DOI.IndexesRowStore SET IsClustered_Desired = 0 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName <> '{indexName}'",
+                    120);
+                sqlHelper.Execute(
+                    $"UPDATE DOI.IndexesColumnStore SET IsClustered_Desired = 0 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName <> '{indexName}'",
+                    120);
+            }
+
+            //if we are updating the PK property, make sure that no other indexes have IsPK = 1.
+            if (optionUpdateList.Contains("Primary"))
+            {
+                sqlHelper.Execute(
+                    $"UPDATE DOI.IndexesRowStore SET IsPrimaryKey_Desired = 0 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName <> '{indexName}'",
+                    120);
+            }
         }
 
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "ColumnList_Desired = 'TempAId'", TestName = "IndexUpdateTests_ChangeBitGroups_DropRecreate_ColumnStore_ColumnList")]
@@ -1017,6 +1083,10 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
             Assert.AreEqual(false, indexRow.AreDropRecreateOptionsChanging, "AreDropRecreateOptionsChanging, Pre-Change");
 
             sqlHelper.Execute($"UPDATE DOI.IndexesColumnStore SET {optionUpdateList} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'", 120);
+
+            //if we are updating the Clustered or PrimaryKey properties, set all the other indexes in the table to 0, since you can't have >1 clustered index or PK on a table.
+            ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, optionUpdateList);
+
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             indexRow = TestHelper.GetActualUserValues_ColumnStore(indexName).Find(x => x.IndexName == indexName);

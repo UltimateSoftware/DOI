@@ -26,16 +26,6 @@ SET AreIndexesFragmented =  CASE
 			                        ELSE 1
 		                        END,
 	AreIndexesMissing = IndexAgg.AreIndexesMissing,
-    IsClusteredIndexBeingDropped = ISNULL(IndexAgg.IsClusteredIndexBeingDropped, 0),
-	WhichUniqueConstraintIsBeingDropped =   CASE
-		                                        WHEN ISNULL(IndexAgg.IsPKDropped, 0) = 1 AND ISNULL(IndexAgg.IsUQDropped, 0) = 0
-		                                        THEN 'PK' 
-		                                        WHEN ISNULL(IndexAgg.IsPKDropped, 0) = 0 AND ISNULL(IndexAgg.IsUQDropped, 0) = 1
-		                                        THEN 'UQ'
-		                                        WHEN ISNULL(IndexAgg.IsPKDropped, 0) = 1 AND ISNULL(IndexAgg.IsUQDropped, 0) = 1
-		                                        THEN 'Both'
-		                                        ELSE 'None'
-	                                        END,
 	IsStorageChanging = IndexAgg.IsStorageChanging,
     PKColumnList = DOI.fnGetPKColumnListForTable (T.DatabaseName, T.SchemaName, T.TableName),
     PKColumnListJoinClause = DOI.fnGetJoinClauseForTable(T.DatabaseName, T.SchemaName, T.TableName, 0, 'T', 'PT')
@@ -47,27 +37,7 @@ FROM DOI.Tables T
                         MIN(I.IndexUpdateType) AS AreIndexesBeingUpdated,
                         MIN(I.FragmentationType) AS FragmentationType,
                         MAX(CAST(I.IsStorageChanging AS TINYINT)) AS IsStorageChanging,
-                        MAX(CAST(I.IsIndexMissingFromSQLServer AS TINYINT)) AS AreIndexesMissing,
-                        MAX(CASE 
-                                WHEN I.IsClustered_Actual = 1
-                                    AND AreDropRecreateOptionsChanging = 1
-                                THEN 1
-                                ELSE 0
-                            END) AS IsClusteredIndexBeingDropped,
-                        MAX(CASE
-                                WHEN IsPrimaryKey_Actual = 1 
-									AND IsUnique_Actual = 1
-                                    AND AreDropRecreateOptionsChanging = 1
-                                THEN 1
-                                ELSE 0
-                            END) AS IsPKDropped, 
-                        MAX(CASE
-                                WHEN IsPrimaryKey_Actual = 0 
-									AND IsUnique_Actual = 1
-                                    AND AreDropRecreateOptionsChanging = 1
-                                THEN 1
-                                ELSE 0
-                            END) AS IsUQDropped
+                        MAX(CAST(I.IsIndexMissingFromSQLServer AS TINYINT)) AS AreIndexesMissing
                 FROM DOI.vwIndexes I --we should not be using the view here...circular reference?  But we need IndexUpdateType, which is calculated in the view.
                     INNER JOIN DOI.Tables TTP ON TTP.DatabaseName = I.DatabaseName
                         AND TTP.SchemaName = I.SchemaName

@@ -56,7 +56,6 @@ BEGIN TRY
             @DropStatisticsSQL                      VARCHAR(MAX) = '',
 			@IsBCPTable								BIT,
 			@IsStorageChanging						BIT,
-			@WhichUniqueConstraintIsBeingDropped	VARCHAR(5),
 			@HasMissingIndexes						BIT,
 			@IndexUpdateType						VARCHAR(20),
 			@OriginalIndexUpdateType				VARCHAR(20),
@@ -108,7 +107,6 @@ BEGIN TRY
 		        SELECT	FN.DatabaseName,
 				        FN.SchemaName, 
 				        FN.TableName, 
-				        FN.WhichUniqueConstraintIsBeingDropped,
 				        FN.AreIndexesMissing,
 				        FN.IntendToPartition,
 				        FN.IsStorageChanging,
@@ -132,7 +130,7 @@ BEGIN TRY
     
 	        OPEN Tables_Queued_Cur
 
-	        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
+	        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
 
 	        WHILE @@FETCH_STATUS <> -1
 	        BEGIN
@@ -493,7 +491,7 @@ EXEC DOI.spRun_ReleaseApplicationLock
 
 		        END --@@fetch_status <> -2, Tables cursor
 
-		        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @WhichUniqueConstraintIsBeingDropped, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
+		        FETCH NEXT FROM Tables_Queued_Cur INTO @CurrentDatabaseName, @CurrentSchemaName, @CurrentTableName, @HasMissingIndexes, @IsBCPTable, @IsStorageChanging, @FreeDataSpaceValidationSQL, @FreeLogSpaceValidationSQL, @FreeTempDBSpaceValidationSQL
 	        END --@@fetch_status <> -1, Tables cursor
 			CLOSE Tables_Queued_Cur
 			DEALLOCATE Tables_Queued_Cur

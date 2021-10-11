@@ -10,6 +10,7 @@ GO
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_Run_All]
     @DatabaseName NVARCHAR(128) = NULL,
     @IncludeMaintenance BIT = 0,
+    @RunValidations BIT = 1,
     @Debug BIT = 0
 
 AS
@@ -128,10 +129,7 @@ BEGIN TRY
 
 	EXEC DOI.spRefreshMetadata_User_Statistics_UpdateData
 		@DatabaseName = @DatabaseName
-
-	EXEC DOI.spRefreshMetadata_User_IndexColumns_InsertData
-		@DatabaseName = @DatabaseName
-        
+     
     EXEC DOI.spRefreshMetadata_User_Tables_UpdateData
 		@DatabaseName = @DatabaseName
 
@@ -166,6 +164,16 @@ BEGIN TRY
 
     EXEC [DOI].[spRefreshMetadata_User_IndexPartitions_ColumnStore_UpdateData]
         @DatabaseName = @DatabaseName
+
+    EXEC DOI.spRefreshMetadata_User_IndexColumns_InsertData
+		@DatabaseName = @DatabaseName
+       
+    IF @RunValidations = 1
+    BEGIN
+        EXEC DOI.spIndexValidations 
+            @DatabaseName = @DatabaseName
+    END
+
 END TRY
 BEGIN CATCH
     IF @@TRANCOUNT > 0 ROLLBACK TRAN;

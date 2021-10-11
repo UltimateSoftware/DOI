@@ -66,7 +66,7 @@ namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
             this.dataDrivenIndexTestHelper.GetPrepTableFunctionDuplicates(partitionFunctionName).Count.Should().Be(0);
         }
 
-        protected Tuple<int, int> SetupInitialStateForYearlyPartitionsWith1FuturePartition()
+        public Tuple<int, int> SetupInitialStateForYearlyPartitionsWith1FuturePartition()
         {
             // Arrange (Initial state - Only 1 future interval)
             //this.sqlHelper.Execute($@"
@@ -123,6 +123,5 @@ namespace DOI.Tests.TestHelpers.Metadata.StorageContainers
 
             return new Tuple<int, int>(boundaryId, boundaryYear);
         }
-
     }
 }

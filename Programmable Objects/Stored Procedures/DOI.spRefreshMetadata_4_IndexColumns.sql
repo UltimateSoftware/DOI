@@ -18,5 +18,7 @@ AS
 
     EXEC [DOI].[spRefreshMetadata_User_IndexColumns_InsertData]
         @DatabaseName = @DatabaseName
-
+        
+    EXEC DOI.spIndexValidations 
+        @DatabaseName = @DatabaseName
 GO

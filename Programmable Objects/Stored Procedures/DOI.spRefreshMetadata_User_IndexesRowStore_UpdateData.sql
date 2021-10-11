@@ -209,7 +209,6 @@ AS
         Storage_Actual = ActualDS.name,
         StorageType_Actual = ActualDS.type_desc,
         StorageType_Desired = DesiredDS.type_desc, 
-        IsStorageChanging = CASE WHEN ActualDS.name <> DesiredDS.name THEN 1 ELSE 0 END,
         IndexHasLOBColumns = i.has_LOB_columns,
         OptionStatisticsIncremental_Actual = s2.is_incremental,
         OptionStatisticsNoRecompute_Actual = s2.no_recompute
@@ -236,6 +235,13 @@ AS
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END
 
     --CHANGE BITS
+    UPDATE IRS
+    SET IsStorageChanging = CASE WHEN IRS.Storage_Desired <> IRS.Storage_Actual THEN 1 ELSE 0 END
+    FROM DOI.IndexesRowStore IRS
+        INNER JOIN DOI.Tables T ON IRS.DatabaseName = T.DatabaseName
+            AND IRS.SchemaName = T.SchemaName
+            AND IRS.TableName = T.TableName
+    WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE IRS
     SET IsUniquenessChanging = CASE WHEN IRS.IsUnique_Desired <> IRS.IsUnique_Actual THEN 1 ELSE 0 END, 
@@ -310,6 +316,22 @@ AS
                                             END              
     FROM DOI.IndexesRowStore IRS
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
+
+    --get rid of spaces after commas in the column lists
+    UPDATE IRS
+    SET KeyColumnList_Desired = REPLACE(KeyColumnList_Desired, ', ', ',')
+    FROM DOI.IndexesRowStore IRS
+    WHERE KeyColumnList_Desired LIKE '%, %'
+
+    UPDATE IRS
+    SET IncludedColumnList_Desired = REPLACE(IncludedColumnList_Desired, ', ', ',')
+    FROM DOI.IndexesRowStore IRS
+    WHERE IncludedColumnList_Desired LIKE '%, %'
+
+    UPDATE ICS
+    SET ColumnList_Desired = REPLACE(ColumnList_Desired, ', ', ',')
+    FROM DOI.IndexesColumnStore ICS
+    WHERE ColumnList_Desired LIKE '%, %'
 
 
     /*******************************        FOR ESTIMATING INDEX SIZE (START) *******************************************/

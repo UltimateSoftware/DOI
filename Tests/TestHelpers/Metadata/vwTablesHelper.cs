@@ -44,8 +44,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.AreIndexesFragmented = (bool)row.First(x => x.First == "AreIndexesFragmented").Second;
                 columnValue.AreIndexesBeingUpdated = (bool)row.First(x => x.First == "AreIndexesBeingUpdated").Second;
                 columnValue.AreIndexesMissing = (bool)row.First(x => x.First == "AreIndexesMissing").Second;
-                columnValue.IsClusteredIndexBeingDropped = (bool)row.First(x => x.First == "IsClusteredIndexBeingDropped").Second;
-                columnValue.WhichUniqueConstraintIsBeingDropped = row.First(x => x.First == "WhichUniqueConstraintIsBeingDropped").Second.ToString();
                 columnValue.IsStorageChanging = (bool)row.First(x => x.First == "IsStorageChanging").Second;
                 columnValue.NeedsTransaction = (bool)row.First(x => x.First == "NeedsTransaction").Second;
                 columnValue.AreStatisticsChanging = (bool)row.First(x => x.First == "AreStatisticsChanging").Second;
@@ -90,8 +88,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.AreIndexesFragmented = (bool)row.First(x => x.First == "AreIndexesFragmented").Second;
                 columnValue.AreIndexesBeingUpdated = (bool)row.First(x => x.First == "AreIndexesBeingUpdated").Second;
                 columnValue.AreIndexesMissing = (bool)row.First(x => x.First == "AreIndexesMissing").Second;
-                columnValue.IsClusteredIndexBeingDropped = (bool)row.First(x => x.First == "IsClusteredIndexBeingDropped").Second;
-                columnValue.WhichUniqueConstraintIsBeingDropped = row.First(x => x.First == "WhichUniqueConstraintIsBeingDropped").Second.ToString();
                 columnValue.IsStorageChanging = (bool)row.First(x => x.First == "IsStorageChanging").Second;
                 columnValue.NeedsTransaction = (bool)row.First(x => x.First == "NeedsTransaction").Second;
                 columnValue.AreStatisticsChanging = (bool)row.First(x => x.First == "AreStatisticsChanging").Second;
@@ -133,8 +129,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.AreIndexesFragmented, actualRow.AreIndexesFragmented, "AreIndexesFragmented");
                 Assert.AreEqual(expectedRow.AreIndexesBeingUpdated, actualRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
                 Assert.AreEqual(expectedRow.AreIndexesMissing, actualRow.AreIndexesMissing, "AreIndexesMissing");
-                Assert.AreEqual(expectedRow.IsClusteredIndexBeingDropped, actualRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
-                Assert.AreEqual(expectedRow.WhichUniqueConstraintIsBeingDropped, actualRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
                 Assert.AreEqual(expectedRow.IsStorageChanging, actualRow.IsStorageChanging, "IsStorageChanging");
                 Assert.AreEqual(expectedRow.NeedsTransaction, actualRow.NeedsTransaction, "NeedsTransaction");
                 Assert.AreEqual(expectedRow.ReadyToQueue, actualRow.ReadyToQueue, "ReadyToQueue");

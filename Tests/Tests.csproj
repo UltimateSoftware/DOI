@@ -416,6 +416,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IntegrationTests\ErrorHandlingTests\ErrorHandlingTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\IndexValidations\IndexValidationTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwForeignKeys.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\HighFragmentationTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexesViewTests.cs" />

@@ -279,8 +279,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.AreIndexesFragmented = (bool)row.First(x => x.First == "AreIndexesFragmented").Second;
                 columnValue.AreIndexesBeingUpdated = (bool)row.First(x => x.First == "AreIndexesBeingUpdated").Second;
                 columnValue.AreIndexesMissing = (bool)row.First(x => x.First == "AreIndexesMissing").Second;
-                columnValue.IsClusteredIndexBeingDropped = (bool)row.First(x => x.First == "IsClusteredIndexBeingDropped").Second;
-                columnValue.WhichUniqueConstraintIsBeingDropped = row.First(x => x.First == "WhichUniqueConstraintIsBeingDropped").Second.ToString();
                 columnValue.IsStorageChanging = (bool)row.First(x => x.First == "IsStorageChanging").Second;
                 columnValue.AreStatisticsChanging = (bool)row.First(x => x.First == "AreStatisticsChanging").Second;
                 columnValue.PKColumnList = row.First(x => x.First == "PKColumnList").Second.ToString();
@@ -396,7 +394,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsStorageChanging" || bitToAssert == "IsPartitioningChanging")) ? true : false, indexRow.IsStorageChanging, "IsStorageChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPartitioningChanging") ? true : false, indexRow.IsPartitioningChanging, "IsPartitioningChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStatisticsNoRecomputeChanging") ? true : false, indexRow.IsStatisticsNoRecomputeChanging, "IsStatisticsNoRecomputeChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStatisticsIncrementalChanging") ? true : false, indexRow.IsStatisticsIncrementalChanging, "IsStatisticsIncrementalChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsStatisticsIncrementalChanging" || bitToAssert == "IsPartitioningChanging")) ? true : false, indexRow.IsStatisticsIncrementalChanging, "IsStatisticsIncrementalChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsUniquenessChanging") ? true : false, indexRow.IsUniquenessChanging, "IsUniquenessChanging");
 
             //Assert vwTables flags...on pre change assert that = 0, on post change that it = 1.
@@ -431,7 +429,6 @@ namespace DOI.Tests.TestHelpers.Metadata
             bool? isClustered = false;
             bool areDropRecreateOptionsChanging = false;
             bool areStatisticsChanging = false;
-            string whichUniqueConstraintIsBeingDropped = "None";
             string indexType = string.Empty;
             bool? isPrimaryKey_Actual = false;
             bool? isUniqueKey_Actual = false;
@@ -444,29 +441,6 @@ namespace DOI.Tests.TestHelpers.Metadata
                 isUniqueKey_Actual = indexRowStoreRow.IsUnique_Actual;
                 areDropRecreateOptionsChanging = indexRowStoreRow.AreDropRecreateOptionsChanging;
                 areStatisticsChanging = sqlHelper.ExecuteScalar<bool>($@"SELECT * FROM DOI.[Statistics] WHERE DatabaseName = '{indexRowStoreRow.DatabaseName}' AND TableName = '{indexRowStoreRow.TableName}' AND StatisticsUpdateType <> 'None'");
-                switch (areDropRecreateOptionsChanging)
-                {
-                    case false:
-                        whichUniqueConstraintIsBeingDropped = "None";
-                        break;
-                    case true:
-                        if ((isPrimaryKey_Actual ?? false) && (isUniqueKey_Actual ?? false))
-                        {
-                            whichUniqueConstraintIsBeingDropped = "PK";
-                        }
-                        else if ((isUniqueKey_Actual ?? false) && (!isPrimaryKey_Actual ?? false))
-                        {
-                            whichUniqueConstraintIsBeingDropped = "UQ";
-                        }
-                        else
-                        {
-                            whichUniqueConstraintIsBeingDropped = "None";
-                        }
-                        break;
-                    default:
-                        whichUniqueConstraintIsBeingDropped = "None";
-                        break;
-                }
             }
             else if (indexRowStoreRow is null)
             {
@@ -480,8 +454,6 @@ namespace DOI.Tests.TestHelpers.Metadata
             Assert.AreEqual(preOrPostChange == "Post" && bitToAssert == "FragmentationType" ? true : false, indexAggFromTableRow.AreIndexesFragmented, "AreIndexesFragmented");
             Assert.AreEqual(preOrPostChange == "Post" ? true : false, indexAggFromTableRow.AreIndexesBeingUpdated, "AreIndexesBeingUpdated");
             Assert.AreEqual(false, indexAggFromTableRow.AreIndexesMissing, "AreIndexesMissing"); //these tests are all about changes to existing indexes, not creation of new ones.
-            Assert.AreEqual(preOrPostChange == "Post" && (bool)isClustered && areDropRecreateOptionsChanging ? true : false, indexAggFromTableRow.IsClusteredIndexBeingDropped, "IsClusteredIndexBeingDropped");
-            Assert.AreEqual(preOrPostChange == "Post" ? whichUniqueConstraintIsBeingDropped : "None", indexAggFromTableRow.WhichUniqueConstraintIsBeingDropped, "WhichUniqueConstraintIsBeingDropped");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsStorageChanging" || bitToAssert == "IsPartitioningChanging") ? true : false, indexAggFromTableRow.IsStorageChanging, "IsStorageChanging");
             Assert.AreEqual(preOrPostChange == "Post" ? areStatisticsChanging : false, indexAggFromTableRow.AreStatisticsChanging, "AreStatisticsChanging");
         }
@@ -781,6 +753,17 @@ namespace DOI.Tests.TestHelpers.Metadata
                         WHERE SchemaName = 'dbo'
                             AND TableName = '{tableName}'
                             AND IndexName = '{indexName}'");
+
+            //now, update the other indexes so they don't throw any validation errors as well.
+            sqlHelper.Execute(
+                $"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{partitionFunctionName.Replace("pf", "ps")}', PartitionFunction_Desired = '{partitionFunctionName}', PartitionColumn_Desired = '{partitionColumnName}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'",
+                120);
+            sqlHelper.Execute(
+                $"UPDATE DOI.IndexesColumnStore SET Storage_Desired = '{partitionFunctionName.Replace("pf", "ps")}', PartitionFunction_Desired = '{partitionFunctionName}', PartitionColumn_Desired = '{partitionColumnName}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'",
+                120);
+            sqlHelper.Execute(
+                $"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'",
+                120);
         }
 
         public static void CreatePartitioningContainerObjects(string partitionFunctionName)
