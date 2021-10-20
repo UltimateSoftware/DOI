@@ -1,4 +1,4 @@
-﻿IF (SELECT is_query_store_on FROM SYS.databases WHERE NAME = 'DOI') <> 1
+﻿IF (SELECT is_query_store_on FROM SYS.databases WHERE NAME = '$(DatabaseName)') <> 1
 BEGIN
 	ALTER DATABASE [$(DatabaseName)] SET QUERY_STORE = ON;
 
@@ -8,7 +8,7 @@ GO
 
 
 IF EXISTS(	SELECT 'True'
-			FROM sys.database_query_store_options 
+			FROM [$(DatabaseName)].sys.database_query_store_options 
 			WHERE actual_state_desc <> 'READ_WRITE'
 				OR max_storage_size_mb <> 10000
 				OR query_capture_mode_desc <> 'ALL'

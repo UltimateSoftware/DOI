@@ -8,7 +8,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{83a05767-285b-46e4-889f-5745c174ebed}</ProjectGuid>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -30,7 +30,7 @@
     <DeployChangesImportSchemaFolders>False</DeployChangesImportSchemaFolders>
     <PreDeploymentSubFolder>Pre-Deployment</PreDeploymentSubFolder>
     <PostDeploymentSubFolder>Post-Deployment</PostDeploymentSubFolder>
-    <GenerateSqlPackage>False</GenerateSqlPackage>
+    <GenerateSqlPackage>True</GenerateSqlPackage>
     <MigrationOrdering>FilePath</MigrationOrdering>
     <TargetDatabaseSet>True</TargetDatabaseSet>
     <SyncToOfflineSchemaModelBySchema>False</SyncToOfflineSchemaModelBySchema>
@@ -182,7 +182,7 @@
     <Folder Include="Schema-Model\Types\User-defined Data Types\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Post-Deployment\01_Finalize_Deployment.sql" />
+    <None Include="Post-Deployment\04_Finalize_Deployment.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\003_Metadata_System_Tables.sql" />
@@ -302,10 +302,10 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_Insert.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Post-Deployment\02_Insert Data Into MappingSqlServerDMVToDOITables.sql" />
-    <None Include="Post-Deployment\03_Create Sql Agent Job - Refresh Metadata.sql" />
-    <None Include="Post-Deployment\04_Create Sql Agent Job - Refresh Indexes.sql" />
-    <None Include="Post-Deployment\05_Create Sql Agent Job - Refresh Storage Containers.sql" />
+    <None Include="Post-Deployment\03_Insert Data Into MappingSqlServerDMVToDOITables.sql" />
+    <None Include="Post-Deployment\05_Create Sql Agent Job - Refresh Metadata.sql" />
+    <None Include="Post-Deployment\06_Create Sql Agent Job - Refresh Indexes.sql" />
+    <None Include="Post-Deployment\07_Create Sql Agent Job - Refresh Storage Containers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\005_NotInMetadata_Tables.sql" />
@@ -390,9 +390,6 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RevertRename.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Pre-Deployment\01_Query_Store.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RenameDefaultConstraints.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RenameStatistics.sql" />
   </ItemGroup>
@@ -444,9 +441,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshStorageContainers_AddNewPartitionToMetadata.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Pre-Deployment\02_Resource Governor Setup.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_InsertSQLCommand.sql" />
@@ -528,5 +522,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spDeleteMetadata.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Post-Deployment\01_Query_Store.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Post-Deployment\02_Resource Governor Setup.sql" />
   </ItemGroup>
 </Project>

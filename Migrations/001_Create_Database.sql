@@ -17,9 +17,9 @@ BEGIN
 	CREATE DATABASE [$(DatabaseName)]
 	 CONTAINMENT = PARTIAL
 	 ON  PRIMARY 
-	( NAME = N'$(DatabaseName)', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\$(DatabaseName).mdf' , SIZE = 8192KB , FILEGROWTH = 65536KB )
+	( NAME = N'$(DatabaseName)', FILENAME = '[$(DefaultDataPath)]$(DatabaseName).mdf' , SIZE = 8192KB , FILEGROWTH = 65536KB )
 	 LOG ON 
-	( NAME = N'$(DatabaseName)_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\$(DatabaseName)_log.ldf' , SIZE = 8192KB , FILEGROWTH = 65536KB )
+	( NAME = N'$(DatabaseName)_log', FILENAME = '[$(DefaultLogPath)]$(DatabaseName)_log.ldf' , SIZE = 8192KB , FILEGROWTH = 65536KB )
 END
 GO
 
@@ -86,6 +86,6 @@ GO
 IF NOT EXISTS (SELECT 'True' FROM [$(DatabaseName)].sys.database_files WHERE name = N'$(DatabaseName)_InMem')
 ALTER DATABASE [$(DatabaseName)] 
     ADD FILE ( NAME = N'$(DatabaseName)_InMem', 
-               FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\$(DatabaseName)_InMem.ndf'  ) 
+               FILENAME = '$(DefaultDataPath)$(DatabaseName)_InMem.ndf'  ) 
         TO FILEGROUP [InMem]
 GO

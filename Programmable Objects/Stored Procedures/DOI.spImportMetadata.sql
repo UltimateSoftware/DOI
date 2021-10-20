@@ -1,5 +1,3 @@
-USE DOI
-GO
 
 IF OBJECT_ID('[DOI].[spImportMetadata]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spImportMetadata];

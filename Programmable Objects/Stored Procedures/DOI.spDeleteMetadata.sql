@@ -1,5 +1,4 @@
-USE DOI
-GO
+
 
 IF OBJECT_ID('[DOI].[spDeleteMetadata]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spDeleteMetadata];

@@ -1,4 +1,3 @@
--- <Migration ID="a09baee5-ee77-5b4e-bce6-1ccf8c660917" TransactionHandling="Custom" />
 
 SET QUOTED_IDENTIFIER ON
 GO

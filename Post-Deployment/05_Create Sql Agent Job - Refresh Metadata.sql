@@ -1,9 +1,7 @@
-USE msdb
-GO
 
-IF EXISTS(SELECT 'True' FROM dbo.sysjobs WHERE name = 'DOI - Refresh Metadata')
+IF EXISTS(SELECT 'True' FROM msdb.dbo.sysjobs WHERE name = 'DOI - Refresh Metadata')
 BEGIN
-	EXEC sp_delete_job @job_name = N'DOI - Refresh Metadata' ;  
+	EXEC msdb.dbo.sp_delete_job @job_name = N'DOI - Refresh Metadata' ;  
 
 	PRINT 'Deleted Job DOI - Refresh Metadata.'
 END
@@ -16,9 +14,9 @@ BEGIN TRY
 		SELECT @ReturnCode = 0
 
 		/****** Object:  JobCategory [DB Maintenance]    Script Date: 7/25/2014 4:08:45 PM ******/
-		IF NOT EXISTS (SELECT name FROM dbo.syscategories WHERE name=N'DB Maintenance' AND category_class=1)
+		IF NOT EXISTS (SELECT name FROM msdb.dbo.syscategories WHERE name=N'DB Maintenance' AND category_class=1)
 		BEGIN
-			EXEC @ReturnCode = dbo.sp_add_category 
+			EXEC @ReturnCode = msdb.dbo.sp_add_category 
 				@class=N'JOB', 
 				@type=N'LOCAL', 
 				@name=N'DB Maintenance'
@@ -26,7 +24,7 @@ BEGIN TRY
 
 		DECLARE @jobId BINARY(16)
 
-		EXEC @ReturnCode =  dbo.sp_add_job 
+		EXEC @ReturnCode =  msdb.dbo.sp_add_job 
 			@job_name=N'DOI - Refresh Metadata', 
 			@enabled=1, 
 			@notify_level_eventlog=0, 
@@ -42,7 +40,7 @@ BEGIN TRY
 
 
 		/****** Object:  Step [DOI - Refresh Metadata]    Script Date: 7/25/2014 4:08:45 PM ******/
-		EXEC @ReturnCode = dbo.sp_add_jobstep 
+		EXEC @ReturnCode = msdb.dbo.sp_add_jobstep 
 			@job_id=@jobId, 
 			@step_name=N'Refresh Metadata', 
 			@step_id=1, 
@@ -76,11 +74,11 @@ BEGIN TRY
 			@schedule_uid=N'39536401-ebf7-4876-8ad7-86ea459ded1c'
 
 
-		EXEC @ReturnCode = dbo.sp_update_job 
+		EXEC @ReturnCode = msdb.dbo.sp_update_job 
 			@job_id = @jobId, 
 			@start_step_id = 1
 
-		EXEC @ReturnCode = dbo.sp_add_jobserver 
+		EXEC @ReturnCode = msdb.dbo.sp_add_jobserver 
 			@job_id = @jobId, 
 			@server_name = N'(local)'
 
@@ -94,7 +92,7 @@ END CATCH
 
 
 SELECT @jobid = job_id 
-FROM dbo.sysjobs j 
+FROM msdb.dbo.sysjobs j 
 WHERE j.name = 'DOI - Refresh Metadata'
 
 IF EXISTS(SELECT 'True' FROM master.dbo.JobsToGovern WHERE JobName = 'DOI - Refresh Metadata')
