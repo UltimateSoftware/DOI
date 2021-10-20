@@ -9,7 +9,7 @@
     <ProjectVersion>4.1</ProjectVersion>
     <ProjectGuid>{83a05767-285b-46e4-889f-5745c174ebed}</ProjectGuid>
     <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
-    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql120DatabaseSchemaProvider</DSP>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
     <OutputType>Database</OutputType>
     <RootPath>
     </RootPath>
@@ -588,5 +588,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_NewPartitionedTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_1_SqlModules.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysIdentityColumns.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysSqlModules.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spUser_PartitionTableSetup.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwIndexesSQLToRun.sql" />
   </ItemGroup>
 </Project>

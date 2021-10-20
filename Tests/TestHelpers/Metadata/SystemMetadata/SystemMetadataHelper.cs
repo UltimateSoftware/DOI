@@ -267,7 +267,7 @@ namespace DOI.Tests.TestHelpers.Metadata.SystemMetadata
         VALUES                  ('{DatabaseName}'   , 'dbo'	        ,'{TableName_Partitioned}'	,'TransactionUtcDt'			,'{PartitionFunctionNameMonthly}'			, 1					,  1        , 'UpdatedUtcDt')
 
         INSERT INTO DOI.DefaultConstraints( DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,DefaultDefinition, DefaultConstraintName)
-        VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt');
+        VALUES(                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'TransactionUtcDt',N'SYSDATETIME()', 'Def_{TableName_Partitioned}_TransactionUtcDt')
             , (                             '{DatabaseName}', N'dbo'    ,N'{TableName_Partitioned}' ,N'UpdatedUtcDt'    ,N'SYSDATETIME()', 'Def_{TableName_Partitioned}_UpdatedUtcDt');
 
         INSERT INTO DOI.CheckConstraints(   DatabaseName    ,SchemaName ,TableName                  ,ColumnName         ,CheckDefinition                    ,IsDisabled , CheckConstraintName)
@@ -521,7 +521,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                                             IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
                                             OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
                                             PartitionFunction_Desired, PartitionColumn_Desired)
-            VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{CIndexName_Partitioned}', 1, 0, 0, 1, 'TempAId ASC', NULL,  
+            VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{CIndexName_Partitioned}', 1, 0, 0, 1, 'TempAId ASC,{PartitionColumnName} ASC', NULL,  
                     0, NULL, 100, 1, 0, 0, 0, 
                     0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', 
                     '{PartitionFunctionNameYearly}', 'TransactionUtcDt')";
@@ -529,7 +529,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
         public static string CreatePartitionedNCIndexYearlySql = $@"
             CREATE UNIQUE CLUSTERED INDEX {NCIndexName_Partitioned} 
                 ON dbo.{TableName_Partitioned}(TempAId, TransactionUtcDt) 
-                    WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE) 
+                    WITH (FILLFACTOR = 100, PAD_INDEX = ON, DATA_COMPRESSION = PAGE, STATISTICS_INCREMENTAL = ON) 
                         ON {PartitionSchemeNameYearly}(TransactionUtcDt)";
 
         public static string CreatePartitionedNCIndexYearlyMetadataSql = $@"
@@ -537,23 +537,23 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                                             IsFiltered_Desired, FilterPredicate_Desired, Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, 
                                             OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, StorageType_Desired, 
                                             PartitionFunction_Desired, PartitionColumn_Desired)
-            VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{NCIndexName_Partitioned}', 1, 0, 0, 1, 'TempAId ASC', NULL,  
-                    0, NULL, 100, 1, 0, 0, 0, 
+            VALUES (N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{NCIndexName_Partitioned}', 1, 0, 0, 1, 'TempAId ASC,TransactionUtcDt ASC', NULL,  
+                    0, NULL, 100, 1, 0, 1, 0, 
                     0, 0, 1, 1, N'PAGE', '{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', 
                     '{PartitionFunctionNameYearly}', 'TransactionUtcDt')";
 
-        public static string CreatePartitionedColumnStoreIndexYearlySql = $@"
+        public static string CreatePartitionedNCCIIndexYearlySql = $@"
             CREATE NONCLUSTERED COLUMNSTORE INDEX {NCCIIndexName_ColumnStore_Partitioned} 
-                ON dbo.{TableName_Partitioned}(IncludedColumn) 
+                ON dbo.{TableName_Partitioned}(IncludedColumn,TransactionUtcDt) 
                     WITH (DATA_COMPRESSION = COLUMNSTORE) 
                         ON {PartitionSchemeNameYearly}(TransactionUtcDt)";
 
-        public static string CreatePartitionedColumnStoreIndexYearlyMetadataSql = $@"
+        public static string CreatePartitionedNCCIIndexYearlyMetadataSql = $@"
             INSERT INTO DOI.IndexesColumnStore
                 (DatabaseName, SchemaName, TableName, IndexName, IsClustered_Desired, ColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,
                  OptionDataCompression_Desired, OptionDataCompressionDelay_Desired, Storage_Desired, StorageType_Desired, PartitionFunction_Desired,
                  PartitionColumn_Desired)
-            VALUES(N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{NCCIIndexName_ColumnStore_Partitioned}', 0, N'IncludedColumn ASC', 0, NULL, 
+            VALUES(N'{DatabaseName}', N'dbo', N'{TableName_Partitioned}', N'{NCCIIndexName_ColumnStore_Partitioned}', 0, N'IncludedColumn,TransactionUtcDt', 0, NULL, 
                 'COLUMNSTORE', 0, N'{PartitionSchemeNameYearly}', N'PARTITION_SCHEME', '{PartitionFunctionNameYearly}', 
                 'TransactionUtcDt')";
 
@@ -590,7 +590,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         public static string RefreshMetadata_SysIndexesSql = $@"EXEC DOI.spRefreshMetadata_3_Indexes @DatabaseName = '{DatabaseName}'";
 
-        public static string RefreshMetadata_SysIndexColumnsSql = $@"EXEC DOI.spRefreshMetadata_1_IndexColumns @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysIndexColumnsSql = $@"EXEC DOI.spRefreshMetadata_4_IndexColumns @DatabaseName = '{DatabaseName}'";
 
         public static string RefreshMetadata_SysIndexPhysicalStatsSql = $@"EXEC DOI.spRefreshMetadata_1_IndexPhysicalStats @DatabaseName = '{DatabaseName}'";
 

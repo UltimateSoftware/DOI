@@ -247,7 +247,8 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                 StorageType_Desired,
                 IntendToPartition,
                 ReadyToQueue,
-                PartitionFunctionName
+                PartitionFunctionName,
+                UpdateTimeStampColumn
             )
             VALUES
             (   '{DatabaseName}',
@@ -258,7 +259,8 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                 'PARTITION_SCHEME',
                 1,
                 1,
-                N'pfMonthlyTest'  
+                N'pfMonthlyTest',
+                'UpdatedUtcDt'
                 )";
 
         public static string StatisticsToMetadata = $@"
@@ -371,7 +373,6 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                     EXEC msdb.dbo.sp_update_jobstep  
                                                      @job_name =  'DOI-Refresh Indexes' 
                                                     ,@step_id = 1
-                                                    ,@step_name = 'Populate Queue - Online'
                                                     ,@command = N'    DECLARE @BatchId UNIQUEIDENTIFIER
 
 	EXEC DOI.spQueue 
@@ -388,7 +389,6 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                     EXEC msdb.dbo.sp_update_jobstep  
                                                      @job_name =  'DOI-Refresh Indexes' 
                                                     ,@step_id = 1
-                                                    ,@step_name = 'Populate Queue - Online'
                                                     ,@command = N'    DECLARE @BatchId UNIQUEIDENTIFIER
 
 	EXEC DOI.spQueue 

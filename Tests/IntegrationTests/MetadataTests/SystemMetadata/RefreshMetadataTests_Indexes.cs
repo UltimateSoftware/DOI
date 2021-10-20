@@ -26,6 +26,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [SetUp]
         public void Setup()
         {
+            TearDown();
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysDatabasesSql);
             sqlHelper.Execute(TestHelper.CreateSchemaSql, 30, true, DatabaseName);
             sqlHelper.Execute(TestHelper.CreateTableSql, 30, true, DatabaseName);
@@ -730,6 +731,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             var updateSql = $"UPDATE DOI.IndexesRowStore SET IsPrimaryKey_Desired = {pkSetting} WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{indexName}'";
 
+            ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, "Primary");
+
             if (indexName != "PK_TempA") //PKs must be set to unique
             {
                 Exception ex = Assert.Throws<SqlException>(() => sqlHelper.Execute(updateSql, 120));
@@ -1062,10 +1065,16 @@ WHERE DatabaseName = '{databaseName}'
             }
 
             //if we are updating the PK property, make sure that no other indexes have IsPK = 1.
-            if (optionUpdateList.Contains("Primary"))
+            if (optionUpdateList.Contains("Primary") && indexName != TestHelper.PKIndexName)
             {
                 sqlHelper.Execute(
                     $"UPDATE DOI.IndexesRowStore SET IsPrimaryKey_Desired = 0 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName <> '{indexName}'",
+                    120);
+            }
+            else if (optionUpdateList.Contains("Primary") && indexName == TestHelper.PKIndexName) //however, on the PK index, we are turning IsPK off, so we have to turn it on for some other index
+            {
+                sqlHelper.Execute(
+                    $"UPDATE DOI.IndexesRowStore SET IsPrimaryKey_Desired = 1, IsUnique_Desired = 1 WHERE DatabaseName = '{databaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}' AND IndexName = '{TestHelper.CIndexName}'",
                     120);
             }
         }

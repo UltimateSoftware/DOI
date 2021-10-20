@@ -153,15 +153,18 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.IndexValidations
             sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{TestHelper.Filegroup2Name}' WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestTableName1}' AND IndexName = '{TestHelper.CIndexName}'");
             sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Run_All @DatabaseName = N'{DatabaseName}', @RunValidations = 0");
 
-            try
+            var dbMetadataReader = this.sqlHelper.ExecuteReader($"EXEC DOI.spIndexValidations @DatabaseName = '{DatabaseName}'");
+            string finalInfoMessage = string.Empty;
+
+            while (dbMetadataReader.Read()) //just in case several messages are returned, we just select the one we're interested in.
             {
-                sqlHelper.Execute($"EXEC DOI.spIndexValidations @DatabaseName = '{DatabaseName}'");
-                Assert.Fail(); //if we don't find an exception, something went wrong.
+                if (Convert.ToString(dbMetadataReader["ErrorMessage"]).Contains(TestTableName1))
+                {
+                    finalInfoMessage = Convert.ToString(dbMetadataReader["ErrorMessage"]);
+                }
             }
-            catch (Exception e)
-            {
-                Assert.AreEqual($"The Following Indexe(s) do not match the storage of their parent table:  dbo.{TestTableName1}.{TestHelper.CIndexName},", e.Message);
-            }
+
+            Assert.AreEqual($"The Following Indexe(s) do not match the storage of their parent table:  dbo.{TestTableName1}.{TestHelper.CIndexName},", finalInfoMessage);
         }
 
 
@@ -312,7 +315,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.IndexValidations
         [Test]
         public void IndexValidationTests_PartitionedIndexesWithNoPartitionColumnInKeyColumnList()
         {
-            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET KeyColumnList_Desired = REPLACE(KeyColumnList_Desired, '{TestHelper.PartitionColumnName}', SPACE(0)) WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestHelper.TableName_Partitioned}' AND IndexName = '{TestHelper.PKIndexName_Partitioned}'");
+            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET KeyColumnList_Desired = REPLACE(KeyColumnList_Desired, ', {TestHelper.PartitionColumnName} ASC', SPACE(0)) WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestHelper.TableName_Partitioned}' AND IndexName = '{TestHelper.PKIndexName_Partitioned}'");
             sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Run_All @DatabaseName = N'{DatabaseName}', @RunValidations = 0");
 
             try

@@ -593,6 +593,8 @@ CREATE TABLE [DOI].[IndexColumns]
 [IncludedColumnPosition] [smallint] NULL,
 [IsFixedSize] [bit] NOT NULL CONSTRAINT [Def_IndexColumns_IsFixedSize] DEFAULT ((0)),
 [ColumnSize] [decimal] (10, 2) NOT NULL CONSTRAINT [Def_IndexColumns_ColumnSize] DEFAULT ((0)),
+[Desired] [bit] NOT NULL CONSTRAINT [Def_IndexColumns_Desired] DEFAULT ((1)),
+[Actual] [bit] NOT NULL CONSTRAINT [Def_IndexColumns_Actual] DEFAULT ((0)),
 CONSTRAINT [PK_IndexColumns] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [ColumnName])
 )
 WITH

@@ -44,11 +44,9 @@ AS DropTableSQL,
 
 		PTNonPartitioned.PartitionNumber
 FROM DOI.vwPartitioning_Tables_PrepTables PTNonPartitioned
-	INNER JOIN DOI.vwPartitioning_Tables_PrepTables PTPartitioned ON PTNonPartitioned.DatabaseName = PTPartitioned.DatabaseName
+	INNER JOIN DOI.vwPartitioning_Tables_NewPartitionedTable PTPartitioned ON PTNonPartitioned.DatabaseName = PTPartitioned.DatabaseName
 		AND PTNonPartitioned.SchemaName = PTPartitioned.SchemaName
 		AND PTPartitioned.TableName = PTNonPartitioned.TableName
-WHERE PTNonPartitioned.IsNewPartitionedPrepTable = 0
-	AND PTPartitioned.IsNewPartitionedPrepTable = 1
 
 
 GO

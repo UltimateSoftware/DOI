@@ -40,8 +40,8 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
             this.dataDrivenIndexTestHelper = new DataDrivenIndexTestHelper(this.sqlHelper);
             this.tempARepository = new TempARepository(this.sqlHelper);
 
-            this.dataDrivenIndexTestHelper.CreateIndex($"PK_{TestTableName1}");
-            this.dataDrivenIndexTestHelper.CreateIndex($"PK_{TestTableName2}");
+            //this.dataDrivenIndexTestHelper.CreateIndex($"PK_{TestTableName1}");
+            //his.dataDrivenIndexTestHelper.CreateIndex($"PK_{TestTableName2}");
             this.dataDrivenIndexTestHelper.CreateIndex($"CCI_{TestTableName2}_Report");
             this.dataDrivenIndexTestHelper.CreateIndex($"CDX_{TestTableName1}");
             this.dataDrivenIndexTestHelper.CreateIndex($"NCCI_{TestTableName1}_Report");
@@ -92,8 +92,8 @@ namespace DOI.Tests.IntegrationTests.ErrorHandling
 
             this.sqlHelper.Execute($@"
             INSERT INTO DOI.[Tables]
-                    (DatabaseName, [SchemaName]	,[TableName]	,[PartitionColumn]	,[Storage_Desired]	,[IntendToPartition]	,[ReadyToQueue])
-            VALUES  ('{DatabaseName}','dbo'			,'{SpaceErrorTableName}'	, NULL				,'PRIMARY'		,0						,1)");
+                    (DatabaseName, [SchemaName]	,[TableName]	,[PartitionColumn]	,[Storage_Desired]	,[IntendToPartition]	,[ReadyToQueue] ,[UpdateTimeStampColumn])
+            VALUES  ('{DatabaseName}','dbo'			,'{SpaceErrorTableName}'	, NULL				,'PRIMARY'		,0						,1, '')");
 
             this.sqlHelper.Execute($@"
             INSERT INTO DOI.IndexesRowStore(DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired, [Fillfactor_Desired], OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, Storage_Desired, PartitionColumn_Desired)

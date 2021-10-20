@@ -233,7 +233,7 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
 				                        UNION ALL
 				                        SELECT DatabaseName, SchemaName, TableName, IndexName, ColumnList_Desired, PartitionColumn_Desired, 'ColumnStore'
 				                        FROM DOI.IndexesColumnStore ICS
-                                        WHERE IsClustered_Desired = 0 /*CCIs don't have column lists*/) AllIdx
+                                        WHERE IsClustered_Desired = 0 /*CCIs don't have column lists*/) AllIdx2
                                 ON AllIdx.DatabaseName = IC.DatabaseName
                                     AND AllIdx.SchemaName = IC.SchemaName
                                     AND AllIdx.TableName = IC.TableName
@@ -243,8 +243,8 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
                             AND IC.TableName = AllIdx.TableName
                             AND IC.IndexName = AllIdx.IndexName
                             AND IC.Desired = 1
-                            AND ((AllIdx.IndexType = 'RowStore' AND IC.IsKeyColumn = 1) 
-                                    OR (AllIdx.IndexType = 'ColumnStore')) 
+                            AND ((AllIdx2.IndexType = 'RowStore' AND IC.IsKeyColumn = 1) 
+                                    OR (AllIdx2.IndexType = 'ColumnStore')) 
                             AND IC.ColumnName = AllIdx.PartitionColumn_Desired) --partitioning column is NOT in the indexkey column.
 
     IF @ObjectList <> ''
@@ -272,7 +272,7 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
     IF @ObjectList <> ''
     BEGIN
         SET @ErrorMessage += @ObjectList
-	    ;THROW 50000 , @ErrorMessage, 1;
+		SELECT @ErrorMessage AS ErrorMessage
     END   
 
     --mismatch of compression setting between index and its partitions
@@ -375,7 +375,8 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
 
     SELECT @ObjectList += IC.SchemaName + '.' + IC.TableName + '.' + IC.ColumnName + ','
     FROM DOI.IndexColumns IC
-    WHERE NOT EXISTS(	SELECT 'True' 
+    WHERE IC.DatabaseName = @DatabaseName
+        AND NOT EXISTS(	SELECT 'True' 
 					    FROM DOI.SysSchemas s 
 						    INNER JOIN DOI.SysTables t ON s.database_id = t.database_id
                                 AND t.schema_id = s.schema_id 

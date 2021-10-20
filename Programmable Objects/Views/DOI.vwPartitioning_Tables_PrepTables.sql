@@ -220,7 +220,6 @@ FROM (  SELECT T.DatabaseName
 				,T.StorageType_Desired
 				,P.PartitionNumber
                 ,UFG_Desired.name AS PrepTableFilegroup
-				,0 AS IsNewPartitionedPrepTable
         --SELECT COUNT(*)
         FROM DOI.Tables T
             CROSS APPLY (   SELECT *, T.TableName + P.PrepTableNameSuffix AS PrepTableName
