@@ -97,9 +97,6 @@ BEGIN TRY
     EXEC DOI.spRefreshMetadata_System_SysDefaultConstraints
         @DatabaseName = @DatabaseName
 
-    EXEC DOI.spRefreshMetadata_User_Constraints_UpdateData
-        @DatabaseName = @DatabaseName
-
     EXEC [DOI].[spRefreshMetadata_System_SysTables]
         @DatabaseName = @DatabaseName
 

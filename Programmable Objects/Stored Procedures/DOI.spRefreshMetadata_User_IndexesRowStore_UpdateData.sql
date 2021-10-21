@@ -20,7 +20,7 @@ AS
     /************************************************   SQL SERVER METADATA (START) *******************************************/
 
     --ROW COUNTS
-    DECLARE @FilteredRowCounts FilteredRowCountsTT
+    DECLARE @FilteredRowCounts DOI.FilteredRowCountsTT
 
 
     DECLARE @SQL VARCHAR(MAX) = ''

@@ -81,6 +81,6 @@ AS
 															THEN 3 --one interval for historical, one for the sliding window, and one for the future.
 															ELSE 2 --one interval for historical and one for the future.
 														END, 
-        MinValueOfDataType = CASE WHEN PartitionFunctionDataType = 'DATETIME2' THEN '0001-01-01' ELSE 'Error' END
+        MinValueOfDataType = CASE WHEN PartitionFunctionDataType = 'DATETIME2' THEN '0001-01-01' WHEN PartitionFunctionDataType = 'DATETIME' THEN '1900-01-01' ELSE 'Error' END
 	WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END 
 GO

@@ -43,8 +43,9 @@ FROM DOI.SysDatabaseFiles p
 
 
 
-INSERT INTO DOI.SysDmOsVolumeStats
-SELECT * FROM #SysDmOsVolumeStats
+INSERT INTO DOI.SysDmOsVolumeStats([database_id], [file_id], [volume_mount_point], [volume_id], [logical_volume_name], [file_system_type], [total_bytes], [available_bytes], [supports_compression], [supports_alternate_streams], [supports_sparse_files], [is_read_only], [is_compressed])
+SELECT [database_id], [file_id], [volume_mount_point], [volume_id], [logical_volume_name], [file_system_type], [total_bytes], [available_bytes], [supports_compression], [supports_alternate_streams], [supports_sparse_files], [is_read_only], [is_compressed]
+FROM #SysDmOsVolumeStats
 
 DROP TABLE #SysDmOsVolumeStats
 GO

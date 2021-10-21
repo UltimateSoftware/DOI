@@ -35,7 +35,9 @@ SELECT	DatabaseName,
         NumOfTotalPartitionFunctionIntervals, --we can also use pf.fanout for this.
         MinValueOfDataType,
 		CASE WHEN pf.name IS NULL THEN 1 ELSE 0 END AS IsPartitionFunctionMissing,
-N'IF NOT EXISTS(SELECT * FROM sys.partition_functions WHERE name = ''' + PFM.PartitionFunctionName + ''')
+N'
+USE ' + PFM.DatabaseName + '
+IF NOT EXISTS(SELECT * FROM sys.partition_functions WHERE name = ''' + PFM.PartitionFunctionName + ''')
 BEGIN
 	CREATE PARTITION FUNCTION ' + PFM.PartitionFunctionName + ' (' + PFM.PartitionFunctionDataType + ') 
 		AS RANGE RIGHT FOR VALUES (' + STUFF(PfBoundaryList.BoundaryList, LEN(PfBoundaryList.BoundaryList), 1, SPACE(0)) + ')

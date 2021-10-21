@@ -215,7 +215,7 @@ BEGIN
 SET @SQL += '
 
     INSERT INTO @IndexesColumnStore([DatabaseName], [SchemaName], [TableName], [IndexName], [IsClustered_Desired], [ColumnList_Desired], [IsFiltered_Desired], [FilterPredicate_Desired], [OptionDataCompression_Desired], [OptionDataCompressionDelay_Desired], [PartitionFunction_Desired], [PartitionColumn_Desired])
-    SELECT ''' + @DatabaseName + ''', s.name, t.name, i.name, CASE WHEN i.type_desc LIKE ''%NONCLUSTERED%'' THEN 0 ELSE 1 END, STUFF(x.IndexIncludedColumnList, LEN(x.IndexIncludedColumnList), 1, SPACE(0)), i.has_filter, i.filter_definition, dc.data_compression_desc, i.compression_delay, p.PartitionFunctionName, p.PartitionColumnName
+    SELECT ''' + @DatabaseName + ''', s.name, t.name, i.name, CASE WHEN i.type_desc LIKE ''%NONCLUSTERED%'' THEN 0 ELSE 1 END, CASE WHEN i.type_desc NOT LIKE ''%NONCLUSTERED%'' THEN NULL ELSE STUFF(x.IndexIncludedColumnList, LEN(x.IndexIncludedColumnList), 1, SPACE(0)) END, i.has_filter, i.filter_definition, dc.data_compression_desc, i.compression_delay, p.PartitionFunctionName, p.PartitionColumnName
     FROM ' + @DatabaseName + '.sys.indexes i
         INNER JOIN ' + @DatabaseName + '.sys.tables t ON i.object_id = t.object_id
         INNER JOIN ' + @DatabaseName + '.sys.schemas s ON t.schema_id = s.schema_id
@@ -477,7 +477,7 @@ BEGIN
                             AND st.stats_id = sc.stats_id
                         ORDER BY sc.stats_column_id
                         FOR XML PATH('''')) x(ColumnList)
-        CROSS APPLY PaymentReporting.sys.dm_db_stats_properties(st.object_id, st.stats_id) sp 
+        CROSS APPLY ' + @DatabaseName + '.sys.dm_db_stats_properties(st.object_id, st.stats_id) sp 
 
     INSERT INTO DOI.[Statistics]([DatabaseName], [SchemaName], [TableName], [StatisticsName], [StatisticsColumnList_Desired], [SampleSizePct_Desired], [IsFiltered_Desired], [FilterPredicate_Desired], [IsIncremental_Desired], [NoRecompute_Desired], [ReadyToQueue], [LowerSampleSizeToDesired])
     SELECT *, 0 FROM @Statistics
@@ -525,7 +525,7 @@ BEGIN
                         FOR XML PATH('''')) rc(ColumnList)
 
     INSERT INTO DOI.ForeignKeys([DatabaseName], [ParentSchemaName], [ParentTableName], [ParentColumnList_Desired], [ReferencedSchemaName], [ReferencedTableName], [ReferencedColumnList_Desired], [FKName])
-    SELECT * FROM @ForeignKeys
+    SELECT [DatabaseName], [ParentSchemaName], [ParentTableName], [ParentColumnList_Desired], [ReferencedSchemaName], [ReferencedTableName], [ReferencedColumnList_Desired], [FKName] FROM @ForeignKeys
 END
 ELSE
 BEGIN
