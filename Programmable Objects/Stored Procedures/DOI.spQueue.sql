@@ -159,12 +159,12 @@ BEGIN TRY
 		        BEGIN
                     BEGIN TRY
 			            SELECT  @GetApplicationLockSQL	    = '
-EXEC DOI.DOI.spRun_GetApplicationLock
+EXEC DOI.spRun_GetApplicationLock
     @DatabaseName = ''' + @CurrentDatabaseName + ''',
     @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''',
     @IsOnlineOperation = ' + CAST(@OnlineOperations AS VARCHAR(1)),
 			                    @ReleaseApplicationLockSQL	= '
-EXEC DOI.DOI.spRun_ReleaseApplicationLock
+EXEC DOI.spRun_ReleaseApplicationLock
     @DatabaseName = ''' + @CurrentDatabaseName + ''',
     @BatchId = ''' + CAST(@BatchIdOUT AS VARCHAR(40)) + ''',
     @IsOnlineOperation = ' + CAST(@OnlineOperations AS VARCHAR(1))
@@ -320,7 +320,7 @@ EXEC DOI.DOI.spRun_ReleaseApplicationLock
 							IF (@WhichUniqueConstraintIsBeingDropped <> 'None' OR @IsClusteredIndexBeingDroppedForTable = 1) --DROP REF FKs IF PK OR UQ CONSTRAINTS ARE BEING UPDATED.
 					        BEGIN
 						        SET @DropRefFKs = '
-        EXEC DOI.DOI.spForeignKeysDrop	
+        EXEC DOI.spForeignKeysDrop	
 	        @DatabaseName = ''' + @CurrentDatabaseName + ''',
 	        @ReferencedSchemaName = ''' + @CurrentSchemaName + ''' , 
 	        @ReferencedTableName = ''' + @CurrentTableName + ''''

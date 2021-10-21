@@ -1,11 +1,10 @@
 
-GO
-
 CREATE TABLE [DOI].[Tables]
 (
 [DatabaseName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SchemaName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [TableName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[PartitionFunctionName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [PartitionColumn] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Storage_Desired] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Storage_Actual] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -28,13 +27,14 @@ CREATE TABLE [DOI].[Tables]
 [ColumnListWithTypes] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [UpdateColumnList] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [NewPartitionedPrepTableName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[PartitionFunctionName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-CONSTRAINT [PK_Tables] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName])
+CONSTRAINT [PK_Tables] PRIMARY KEY NONCLUSTERED ([DatabaseName], [SchemaName], [TableName])
 )
 WITH
 (
 MEMORY_OPTIMIZED = ON
 )
+GO
+ALTER TABLE [DOI].[Tables] ADD CONSTRAINT [Chk_Tables_PartitionFunction_PartitionColumn] CHECK (([PartitionFunctionName] IS NULL AND [PartitionColumn] IS NULL OR [PartitionFunctionName] IS NOT NULL AND [PartitionColumn] IS NOT NULL))
 GO
 ALTER TABLE [DOI].[Tables] ADD CONSTRAINT [Chk_Tables_PartitioningSetup] CHECK (([IntendToPartition]=(1) AND [PartitionColumn] IS NOT NULL OR [IntendToPartition]=(0) AND [PartitionColumn] IS NULL))
 GO

@@ -441,7 +441,7 @@ EXEC sp_rename
 END AS RenameExistingTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
-'UPDATE DOI.DOI.Run_PartitionState
+'UPDATE DOI.Run_PartitionState
 SET DataSynchState = 1
 WHERE SchemaName = ''' + AllTables.SchemaName + '''
 	AND PrepTableName = ''' + AllTables.PrepTableName + '''
@@ -452,7 +452,7 @@ END AS TurnOnDataSynchSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
 IF EXISTS (	SELECT ''True''
-			FROM DOI.DOI.Run_PartitionState WITH (NOLOCK)
+			FROM DOI.Run_PartitionState WITH (NOLOCK)
 			WHERE SchemaName = ''' + AllTables.SchemaName + '''
 				AND PrepTableName = ''' + AllTables.PrepTableName + '''
 				AND DataSynchState = 1)

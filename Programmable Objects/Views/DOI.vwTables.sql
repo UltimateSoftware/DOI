@@ -58,7 +58,7 @@ FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
 '		AS CreateFinalDataSynchTriggerSQL,
 
-'UPDATE DOI.DOI.Run_PartitionState
+'UPDATE DOI.Run_PartitionState
 SET DataSynchState = 0
 WHERE DatabaseName = ''' + T.DatabaseName + '''
 	AND SchemaName = ''' + T.SchemaName + '''
@@ -114,7 +114,7 @@ BEGIN
 END'
 AS DropDataSynchTableSQL,
 '
-DELETE DOI.DOI.Run_PartitionState 
+DELETE DOI.Run_PartitionState 
 WHERE DatabaseName = ''' + T.DatabaseName + '''
 	AND SchemaName = ''' + T.SchemaName + ''' 
     AND ParentTableName = ''' + T.TableName + '''' 
@@ -129,12 +129,12 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @DataSpaceAvailable = available_MB, 
         @DataSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM DOI.DOI.vwFreeSpaceOnDisk FS
-    INNER JOIN DOI.DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''' + T.DatabaseName + '''
     AND FS.FileType = ''DATA''
     AND EXISTS(	SELECT ''True''
-				FROM DOI.DOI.Queue Q 
+				FROM DOI.Queue Q 
 				WHERE Q.DatabaseName = FSI.DatabaseName
 					AND Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
@@ -161,12 +161,12 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @LogSpaceAvailable = available_MB, 
         @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM DOI.DOI.vwFreeSpaceOnDisk FS
-    INNER JOIN DOI.DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''' + T.DatabaseName + '''
     AND FS.FileType = ''LOG''
     AND EXISTS(	SELECT ''True''
-				FROM DOI.DOI.Queue Q 
+				FROM DOI.Queue Q 
 				WHERE Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
 
@@ -193,12 +193,12 @@ DECLARE @ErrorMessage NVARCHAR(500),
 SELECT @TempDBSpaceAvailable = available_MB, 
         @TempDBSpaceNeeded = FSI.SpaceNeededOnDrive,
         @DriveLetter = FS.DriveLetter
-FROM DOI.DOI.vwFreeSpaceOnDisk FS
-    INNER JOIN DOI.DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + T.DatabaseName + ''', ''' + T.SchemaName + ''', ''' + T.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
 WHERE DBName = ''TempDB''
     AND FS.FileType = ''DATA''
     AND EXISTS(	SELECT ''True''
-				FROM DOI.DOI.Queue Q 
+				FROM DOI.Queue Q 
 				WHERE Q.ParentSchemaName = FSI.SchemaName
 					AND Q.ParentTableName = FSI.TableName)
 

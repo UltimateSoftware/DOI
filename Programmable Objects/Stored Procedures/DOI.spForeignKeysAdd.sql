@@ -78,7 +78,7 @@ BEGIN TRY
 	ELSE
     BEGIN
 	    SELECT @AddFKsSQL += '
-    EXEC DOI.DOI.spEnableDisableAllFKs 
+    EXEC DOI.spEnableDisableAllFKs 
 		@DatabaseName = ' + CASE WHEN @DatabaseName IS NULL THEN 'NULL' ELSE '''' + @DatabaseName + '''' END + ',
 		@Action = ''DISABLE'''
 

@@ -1,6 +1,4 @@
 
-GO
-
 CREATE TABLE [DOI].[SysTypes]
 (
 [database_id] [int] NOT NULL,
@@ -19,7 +17,7 @@ CREATE TABLE [DOI].[SysTypes]
 [default_object_id] [int] NOT NULL,
 [rule_object_id] [int] NOT NULL,
 [is_table_type] [bit] NOT NULL,
-CONSTRAINT [PK_SysTypes] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [user_type_id])
+CONSTRAINT [PK_SysTypes] PRIMARY KEY NONCLUSTERED ([database_id], [user_type_id])
 )
 WITH
 (
