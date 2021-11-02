@@ -9,10 +9,5 @@ Post-Deployment Script Template
                SELECT * FROM [$(TableName)]
 --------------------------------------------------------------------------------------
 */
---EXEC DOI.spRun_RenameDefaultConstraints 
---	@Debug = 0
-
---EXEC DOI.spRun_RenameStatistics
---    @Debug = 0
 
 GO

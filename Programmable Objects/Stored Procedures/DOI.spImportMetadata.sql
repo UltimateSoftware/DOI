@@ -465,7 +465,7 @@ BEGIN
         [ReadyToQueue] [bit] NOT NULL DEFAULT ((0)))
 
     INSERT INTO @Statistics([DatabaseName], [SchemaName], [TableName], [StatisticsName], [StatisticsColumnList_Desired], [SampleSizePct_Desired], [IsFiltered_Desired], [FilterPredicate_Desired], [IsIncremental_Desired], [NoRecompute_Desired], [ReadyToQueue])
-    SELECT ''' + @DatabaseName + ''', s.name, t.name, st.name, x.ColumnList, ISNULL(sp.persisted_sample_percent, 0), st.has_filter, st.filter_definition, st.is_incremental, st.no_recompute, 0
+    SELECT ''' + @DatabaseName + ''', s.name, t.name, st.name, STUFF(x.ColumnList, LEN(x.ColumnList), 1, SPACE(0)), ISNULL(sp.persisted_sample_percent, 0), st.has_filter, st.filter_definition, st.is_incremental, st.no_recompute, 0
     FROM ' + @DatabaseName + '.sys.stats st
         INNER JOIN ' + @DatabaseName + '.sys.tables t ON st.object_id = t.object_id
         INNER JOIN ' + @DatabaseName + '.sys.schemas s ON t.schema_id = s.schema_id
@@ -503,7 +503,7 @@ BEGIN
         [ReferencedColumnList_Desired] [varchar] (MAX) NOT NULL)
 
     INSERT INTO @ForeignKeys([DatabaseName], [ParentSchemaName], [ParentTableName], [ParentColumnList_Desired], [ReferencedSchemaName], [ReferencedTableName], [ReferencedColumnList_Desired], [FKName])
-    SELECT ''' + @DatabaseName + ''', ps.name, pt.name, pc.ColumnList , rs.name, rt.name, rc.ColumnList, fk.name
+    SELECT ''' + @DatabaseName + ''', ps.name, pt.name, STUFF(pc.ColumnList, LEN(pc.ColumnList), 1, SPACE(0)) , rs.name, rt.name, STUFF(rc.ColumnList, LEN(rc.ColumnList), 1, SPACE(0)), fk.name
     FROM ' + @DatabaseName + '.sys.foreign_keys fk
         INNER JOIN ' + @DatabaseName + '.sys.tables pt ON fk.parent_object_id = pt.object_id
         INNER JOIN ' + @DatabaseName + '.sys.schemas ps ON pt.schema_id = ps.schema_id
@@ -514,6 +514,7 @@ BEGIN
                             INNER JOIN ' + @DatabaseName + '.sys.columns c ON c.column_id = fkc.parent_column_id
                                 AND c.object_id = fkc.parent_object_id
                         WHERE pt.object_id = fkc.parent_object_id
+                            AND fkc.constraint_object_id = fk.object_id
                         ORDER BY fkc.constraint_column_id
                         FOR XML PATH('''')) pc(ColumnList)
         CROSS APPLY (   SELECT c.name + '',''
@@ -521,6 +522,7 @@ BEGIN
                             INNER JOIN ' + @DatabaseName + '.sys.columns c ON c.column_id = fkc.referenced_column_id
                                 AND c.object_id = fkc.referenced_object_id
                         WHERE rt.object_id = fkc.referenced_object_id
+                            AND fkc.constraint_object_id = fk.object_id
                         ORDER BY fkc.constraint_column_id
                         FOR XML PATH('''')) rc(ColumnList)
 

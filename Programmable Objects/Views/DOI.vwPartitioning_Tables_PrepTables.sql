@@ -1,3 +1,6 @@
+-- <Migration ID="c01e57fb-0a94-43d4-ae82-ce75a441091b" />
+GO
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 IF OBJECT_ID('[DOI].[vwPartitioning_Tables_PrepTables]') IS NOT NULL
 	DROP VIEW [DOI].[vwPartitioning_Tables_PrepTables];
 
@@ -441,7 +444,7 @@ EXEC sp_rename
 END AS RenameExistingTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
-'UPDATE DOI.Run_PartitionState
+'UPDATE DOI.DOI.Run_PartitionState
 SET DataSynchState = 1
 WHERE SchemaName = ''' + AllTables.SchemaName + '''
 	AND PrepTableName = ''' + AllTables.PrepTableName + '''
@@ -452,7 +455,7 @@ END AS TurnOnDataSynchSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
 '
 IF EXISTS (	SELECT ''True''
-			FROM DOI.Run_PartitionState WITH (NOLOCK)
+			FROM DOI.DOI.Run_PartitionState WITH (NOLOCK)
 			WHERE SchemaName = ''' + AllTables.SchemaName + '''
 				AND PrepTableName = ''' + AllTables.PrepTableName + '''
 				AND DataSynchState = 1)
@@ -464,19 +467,21 @@ IF EXISTS (	SELECT ''True''
 				FROM deleted
 				WHERE ' + CASE WHEN AllTables.BoundaryValue = '0001-01-01' THEN '' ELSE AllTables.PartitionColumn + ' >= ''' + CONVERT(VARCHAR(30), AllTables.BoundaryValue, 120) + '''' + ' AND ' END + AllTables.PartitionColumn + ' < ''' + CONVERT(VARCHAR(50), ISNULL(AllTables.NextBoundaryValue, '9999-12-31'), 120) + ''' )
 BEGIN
-	INSERT INTO ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '
-	SELECT * 
+	INSERT INTO ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + '(' + AllTables.ColumnListForDataSynchTriggerInsert + ')
+	SELECT ' + AllTables.ColumnListForDataSynchTriggerSelect + /*FOR TEXT, IMAGE AND NTEXT COLUMNS, WE NEED TO PULL THEM FROM THE PT TABLE.*/'
 	FROM inserted T
+		INNER JOIN ' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT ON ' + AllTables.PKColumnListJoinClause + ' 
 	WHERE ' + CASE WHEN AllTables.BoundaryValue = '0001-01-01' THEN '' ELSE 'T.' + AllTables.PartitionColumn + ' >= ''' + CONVERT(VARCHAR(30), AllTables.BoundaryValue, 120) + '''' + ' AND ' END + 'T.' + AllTables.PartitionColumn + ' < ''' + CONVERT(VARCHAR(50), ISNULL(AllTables.NextBoundaryValue, '9999-12-31'), 120) + ''' 
 		AND NOT EXISTS (SELECT ''True''
 						FROM deleted PT 
 						WHERE ' + AllTables.PKColumnListJoinClause + ')
 
 	UPDATE PT
-	SET ' + AllTables.UpdateColumnList + '
+	SET ' + AllTables.ColumnListForDataSynchTriggerUpdate + '
 	FROM ' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ' PT
 		INNER JOIN inserted T ON ' + AllTables.PKColumnListJoinClause + '
 		INNER JOIN deleted d ON ' + REPLACE(AllTables.PKColumnListJoinClause, 'PT.', 'd.') + '
+		INNER JOIN ' + AllTables.SchemaName + '.' + AllTables.TableName + ' ST ON ' + REPLACE(AllTables.PKColumnListJoinClause, 'PT.', 'ST.') + ' 
 	WHERE ' + CASE WHEN AllTables.BoundaryValue = '0001-01-01' THEN '' ELSE 'T.' +AllTables.PartitionColumn + ' >= ''' + CONVERT(VARCHAR(30), AllTables.BoundaryValue, 120) + '''' + ' AND ' END + 'T.' + AllTables.PartitionColumn + ' < ''' + CONVERT(VARCHAR(50), ISNULL(AllTables.NextBoundaryValue, '9999-12-31'), 120) + ''' 
 
 	DELETE PT
@@ -490,9 +495,11 @@ END' END AS PrepTableTriggerSQLFragment,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
-INSERT INTO ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '
-SELECT ' + AllTables.ColumnListNoTypes + '
-FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
+INSERT INTO ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '(' + AllTables.ColumnListForDataSynchTriggerInsert + ')
+SELECT ' + REPLACE(AllTables.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + '
+FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T ' + 
+CASE WHEN AllTables.TableHasOldBlobColumns = 1 THEN '
+	INNER JOIN ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' ST ON ' + REPLACE(AllTables.PKColumnListJoinClause, 'PT.', 'ST.') ELSE '' END + '
 WHERE T.DMLType = ''I''
 	AND NOT EXISTS (SELECT ''True'' 
 					FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK)
@@ -513,9 +520,10 @@ END AS SynchInsertsPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 '
 UPDATE PT
-SET ' + AllTables.UpdateColumnList + '
-FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
-	INNER JOIN ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK) ON ' + AllTables.PKColumnListJoinClause + '
+SET ' + AllTables.ColumnListForDataSynchTriggerUpdate + '
+FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T' + 
+CASE WHEN AllTables.TableHasOldBlobColumns = 1 THEN '
+	INNER JOIN ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' ST WITH (TABLOCKX, XLOCK) ON ' + REPLACE(AllTables.PKColumnListJoinClause, 'PT.', 'ST.') ELSE '' END + '
 	INNER JOIN (SELECT ' + AllTables.PKColumnList + ', MAX(UpdatedUtcDt) AS UpdatedUtcDt 
 				FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch
 				WHERE  DMLType = ''U''
@@ -649,6 +657,10 @@ FROM (  SELECT T.DatabaseName
 				,T.ColumnListWithTypes
 				,T.ColumnListNoTypes
 				,T.UpdateColumnList
+				,T.ColumnListForDataSynchTriggerSelect
+				,T.ColumnListForDataSynchTriggerUpdate
+				,T.ColumnListForDataSynchTriggerInsert
+				,T.TableHasOldBlobColumns
     			,T.PartitionColumn
     			,T.PKColumnList
 				,T.PKColumnListJoinClause
@@ -755,6 +767,10 @@ FROM (  SELECT T.DatabaseName
 				,T.ColumnListWithTypes
 				,T.ColumnListNoTypes
 				,T.UpdateColumnList
+				,T.ColumnListForDataSynchTriggerSelect
+				,T.ColumnListForDataSynchTriggerUpdate
+				,T.ColumnListForDataSynchTriggerInsert
+				,T.TableHasOldBlobColumns
     			,T.PartitionColumn
     			,T.PKColumnList
 				,T.PKColumnListJoinClause

@@ -95,7 +95,7 @@ BEGIN TRY
             @DeletePartitionStateMetadataSQL            NVARCHAR(500) = '',
 			@PriorErrorValidationSQL					NVARCHAR(MAX) = '
 IF EXISTS(	SELECT ''True''
-			FROM DOI.Log 
+			FROM DOI.DOI.Log 
 			WHERE BatchId = ''' + CAST(@BatchId AS VARCHAR(40)) + '''
 				AND TableName LIKE ''%' + @TableName + '%''
 				AND ErrorText IS NOT NULL ) /*ONLY PROCEED IF NOTHING HAS FAILED IN THIS BATCH.*/
@@ -1037,7 +1037,8 @@ BEGIN TRAN',
 				DEALLOCATE CreateMissingStatistics_Cur
 
 				SET @DropParentOldTableFKs = '
-EXEC DOI.spForeignKeysDrop
+EXEC DOI.DOI.spForeignKeysDrop
+	@DatabaseName = ''' + @DatabaseName + ''',
 	@ParentSchemaName = ''' + @CurrentSchemaName + ''',
 	@ParentTableName = ''' + @CurrentTableName + ''''
 				
@@ -1059,7 +1060,8 @@ EXEC DOI.spForeignKeysDrop
 					@ExitTableLoopOnError			= 0
 
 				SET @DropRefOldTableFKs = '
-EXEC DOI.spForeignKeysDrop
+EXEC DOI.DOI.spForeignKeysDrop
+	@DatabaseName = ''' + @DatabaseName + ''',
 	@ReferencedSchemaName = ''' + @CurrentSchemaName + ''',
 	@ReferencedTableName = ''' + @CurrentTableName + ''''
 
@@ -1081,7 +1083,8 @@ EXEC DOI.spForeignKeysDrop
 					@ExitTableLoopOnError			= 0
 
 				SET @AddBackParentTableFKs = '
-EXEC DOI.spForeignKeysAdd
+EXEC DOI.DOI.spForeignKeysAdd
+	@DatabaseName = ''' + @DatabaseName + ''',
 	@ParentSchemaName = ''' + @CurrentSchemaName + ''',
 	@ParentTableName = ''' + @CurrentTableName + ''''
 				
@@ -1103,7 +1106,8 @@ EXEC DOI.spForeignKeysAdd
 					@ExitTableLoopOnError			= 0
 
 				SET @AddBackRefTableFKs = '
-EXEC DOI.spForeignKeysAdd
+EXEC DOI.DOI.spForeignKeysAdd
+	@DatabaseName = ''' + @DatabaseName + ''',
 	@ReferencedSchemaName = ''' + @CurrentSchemaName + ''',
 	@ReferencedTableName = ''' + @CurrentTableName + ''''
 

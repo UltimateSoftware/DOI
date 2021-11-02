@@ -395,7 +395,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RenameDefaultConstraints.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RenameStatistics.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\009_BusinessHoursSchedule_Table.sql" />
@@ -537,5 +536,23 @@
     <None Include="Schema-Model\Security\Users\USCOMEX6Q42N0.sql" />
     <None Include="Schema-Model\Security\Roles\db_owner.sql" />
     <None Include="Schema-Model\Security\Roles\db_securityadmin.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnOldBlobColumns.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnGetDataSynchTriggerColumnSelectListForTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnGetDataSynchTriggerColumnUpdateListForTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnGetDataSynchTriggerColumnInsertListForTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_NewPartitionedTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers.sql" />
   </ItemGroup>
 </Project>

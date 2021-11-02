@@ -1,3 +1,5 @@
+-- <Migration ID="c40d94a4-92bc-49f1-b6a6-df206c5848f1" />
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
 GO
 
@@ -37,10 +39,11 @@ DECLARE @BatchId UNIQUEIDENTIFIER = NEWID(),
 		@RowCount INT
 
 BEGIN TRY
-	IF NOT EXISTS(SELECT 'True' FROM sys.tables WHERE name = @TableName + '_OLD')
+    EXEC ('
+	IF NOT EXISTS(SELECT ''True'' FROM ' + @DatabaseName + '.sys.tables WHERE name = ''' + @TableName + '_OLD'')
 	BEGIN
-		RAISERROR('There is nothing to revert.  Either the Revert has already run, or nothing has been partitioned.', 16, 1)
-	END
+		RAISERROR(''There is nothing to revert.  Either the Revert has already run, or nothing has been partitioned.'', 16, 1)
+	END')
     
 	DECLARE Revert_Cur CURSOR LOCAL FAST_FORWARD FOR
 		SELECT  X.DatabaseName,
@@ -155,7 +158,7 @@ BEGIN TRAN' ,
 			@ExitTableLoopOnError			= 1
 	END
     
-	FETCH NEXT FROM Revert_Cur INTO @CurrentObjectName, @SQLStatement, @ObjectType, @TableChildOperationId
+	FETCH NEXT FROM Revert_Cur INTO @DatabaseName, @CurrentObjectName, @SQLStatement, @ObjectType, @TableChildOperationId
 		WHILE @@FETCH_STATUS <> -1
 		BEGIN
 			IF @@FETCH_STATUS <> -2
@@ -315,7 +318,7 @@ BEGIN TRAN' ,
 
 				END CATCH
 
-			FETCH NEXT FROM Revert_Cur INTO @CurrentObjectName, @SQLStatement, @ObjectType, @TableChildOperationId
+			FETCH NEXT FROM Revert_Cur INTO @DatabaseName, @CurrentObjectName, @SQLStatement, @ObjectType, @TableChildOperationId
 
 			END
         
@@ -324,13 +327,32 @@ BEGIN TRAN' ,
 		CLOSE Revert_Cur
 		DEALLOCATE Revert_Cur
 
+		EXEC DOI.spQueue_Insert 
+            @CurrentDatabaseName            = @DatabaseName,
+			@CurrentSchemaName				= @SchemaName , 
+			@CurrentTableName				= @TableName ,  
+			@CurrentIndexName				= 'N/A' ,
+			@CurrentPartitionNumber			= 0, 
+			@IndexSizeInMB					= 0,
+			@CurrentParentSchemaName		= @SchemaName ,
+			@CurrentParentTableName			= @TableName ,
+			@CurrentParentIndexName			= 'N/A' ,
+			@IndexOperation					= 'Commit Tran',
+			@IsOnlineOperation				= 1 ,
+			@TableChildOperationId			= 0 ,
+			@SQLStatement					= 'COMMIT TRAN' ,
+			@TransactionId					= @TransactionId ,
+			@BatchId						= @BatchId ,
+			@ExitTableLoopOnError			= 1
+
 		DECLARE @DropParentOldTableFKs NVARCHAR(MAX),
 				@DropRefOldTableFKs NVARCHAR(MAX),
 				@AddBackParentTableFKs NVARCHAR(MAX),
 				@AddBackRefTableFKs NVARCHAR(MAX)
 
 		SET @DropParentOldTableFKs = '
-EXEC DOI.spForeignKeysDrop
+EXEC DOI.DOI.spForeignKeysDrop
+	@DatabaseName = ''' + @DatabaseName + ''',
 	@ParentSchemaName = ''' + @SchemaName + ''',
 	@ParentTableName = ''' + @TableName + ''''
 				
@@ -352,7 +374,8 @@ EXEC DOI.spForeignKeysDrop
 			@ExitTableLoopOnError			= 1
 
 		SET @DropRefOldTableFKs = '
-EXEC DOI.spForeignKeysDrop
+EXEC DOI.DOI.spForeignKeysDrop
+	@DatabaseName = ''' + @DatabaseName + ''',
 	@ReferencedSchemaName = ''' + @SchemaName + ''',
 	@ReferencedTableName = ''' + @TableName + ''''
 
@@ -374,7 +397,8 @@ EXEC DOI.spForeignKeysDrop
 			@ExitTableLoopOnError			= 1
 
 		SET @AddBackParentTableFKs = '
-EXEC DOI.spForeignKeysAdd
+EXEC DOI.DOI.spForeignKeysAdd
+	@DatabaseName = ''' + @DatabaseName + ''',
 	@ParentSchemaName = ''' + @SchemaName + ''',
 	@ParentTableName = ''' + @TableName + ''''
 				
@@ -396,7 +420,8 @@ EXEC DOI.spForeignKeysAdd
 			@ExitTableLoopOnError			= 1
 
 		SET @AddBackRefTableFKs = '
-EXEC DOI.spForeignKeysAdd
+EXEC DOI.DOI.spForeignKeysAdd
+	@DatabaseName = ''' + @DatabaseName + ''',
 	@ReferencedSchemaName = ''' + @SchemaName + ''',
 	@ReferencedTableName = ''' + @TableName + ''''
 
@@ -415,24 +440,6 @@ EXEC DOI.spForeignKeysAdd
 			@SQLStatement					= @AddBackRefTableFKs,
 			@TransactionId					= @TransactionId,
 			@BatchId						= @BatchId,
-			@ExitTableLoopOnError			= 1
-
-		EXEC DOI.spQueue_Insert 
-            @CurrentDatabaseName            = @DatabaseName,
-			@CurrentSchemaName				= @SchemaName , 
-			@CurrentTableName				= @TableName ,  
-			@CurrentIndexName				= 'N/A' ,
-			@CurrentPartitionNumber			= 0, 
-			@IndexSizeInMB					= 0,
-			@CurrentParentSchemaName		= @SchemaName ,
-			@CurrentParentTableName			= @TableName ,
-			@CurrentParentIndexName			= 'N/A' ,
-			@IndexOperation					= 'Commit Tran',
-			@IsOnlineOperation				= 1 ,
-			@TableChildOperationId			= 0 ,
-			@SQLStatement					= 'COMMIT TRAN' ,
-			@TransactionId					= @TransactionId ,
-			@BatchId						= @BatchId ,
 			@ExitTableLoopOnError			= 1
 
 		--RUN REVERT
@@ -459,4 +466,5 @@ BEGIN CATCH
 
 	THROW;
 END CATCH
+
 GO

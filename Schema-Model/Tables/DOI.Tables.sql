@@ -27,6 +27,10 @@ CREATE TABLE [DOI].[Tables]
 [ColumnListWithTypes] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [UpdateColumnList] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [NewPartitionedPrepTableName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[TableHasOldBlobColumns] [bit] NULL,
+[ColumnListForDataSynchTriggerSelect] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ColumnListForDataSynchTriggerUpdate] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ColumnListForDataSynchTriggerInsert] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 CONSTRAINT [PK_Tables] PRIMARY KEY NONCLUSTERED ([DatabaseName], [SchemaName], [TableName])
 )
 WITH

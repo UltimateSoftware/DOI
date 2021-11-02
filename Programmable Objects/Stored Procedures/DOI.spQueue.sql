@@ -781,4 +781,7 @@ BEGIN
 
 	DEALLOCATE Databases_Queued_Cur
 END
+
+RETURN
+
 GO

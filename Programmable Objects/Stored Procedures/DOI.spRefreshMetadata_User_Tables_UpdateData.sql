@@ -1,3 +1,6 @@
+-- <Migration ID="d986aad9-0276-4deb-a7c0-65eb1d98ad69" />
+GO
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
 GO
 
@@ -29,6 +32,12 @@ FROM DOI.Tables T
         AND T.PartitionFunctionName = PF.PartitionFunctionName
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
+UPDATE T
+SET     [TableHasOldBlobColumns] = COALESCE(BC.HasBlobColumns, 0)
+FROM DOI.Tables T
+    OUTER APPLY (   SELECT 1 AS HasBlobColumns
+                    FROM DOI.fnOldBlobColumns(T.DatabaseName, T.SchemaName, T.TableName)) BC
+
 
 UPDATE T
 SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL),
@@ -38,7 +47,12 @@ SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName
     Storage_Actual = DS_Actual.name,
     StorageType_Actual = DS_Actual.type_desc,
     PKColumnList = DOI.fnGetPKColumnListForTable(T.DatabaseName, T.SchemaName, T.TableName),
-    PKColumnListJoinClause = DOI.fnGetJoinClauseForTable(T.DatabaseName, T.SchemaName, T.TableName, 1, 'T', 'PT')
+    PKColumnListJoinClause = DOI.fnGetJoinClauseForTable(T.DatabaseName, T.SchemaName, T.TableName, 1, 'T', 'PT'),
+    ColumnListForDataSynchTriggerSelect =   DOI.fnGetDataSynchTriggerColumnSelectListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1),
+    ColumnListForDataSynchTriggerUpdate =   DOI.fnGetDataSynchTriggerColumnUpdateListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1),
+    ColumnListForDataSynchTriggerInsert =   DOI.fnGetDataSynchTriggerColumnInsertListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1)
+
+
 FROM DOI.Tables T
     INNER JOIN DOI.SysDatabases d ON T.DatabaseName = d.name
     INNER JOIN DOI.SysTables T2 ON T2.database_id = d.database_id

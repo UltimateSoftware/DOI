@@ -49,12 +49,20 @@ END'
 AS CreateStatisticsSQL,
         '
 DROP STATISTICS ' + S.TableName + '.' + S.StatisticsName AS DropStatisticsSQL,
-        '   
-EXEC sys.sp_rename 
-    @objname = N''' + S.SchemaName + '.' + S.TableName + '.' + S.StatisticsName + ''', 
-    @newname = N''' + REPLACE(S.StatisticsName, S.TableName, S.TableName + '_OLD') + ''',
-    @objtype = N''STATISTICS'';' + CHAR(13) + CHAR(10) 
-AS RenameStatisticsSQL,
+        '  
+IF EXISTS ( SELECT ''True''
+    FROM SYS.stats st 
+        INNER JOIN SYS.TABLES t ON t.object_id = st.object_id 
+        INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+    WHERE s.name = ''' + S.SchemaName + '''
+        AND t.name = ''' + S.TableName + '''
+        AND st.name = ''' + S.StatisticsName  + ''')
+BEGIN
+    EXEC sys.sp_rename 
+        @objname = N''' + S.SchemaName + '.' + S.TableName + '.' + S.StatisticsName + ''', 
+        @newname = N''' + REPLACE(S.StatisticsName, S.TableName, S.TableName + '_OLD') + ''', 
+        @objtype = N''STATISTICS''
+END' AS RenameStatisticsSQL,
         '
 IF EXISTS ( SELECT ''True''
             FROM SYS.stats st 
