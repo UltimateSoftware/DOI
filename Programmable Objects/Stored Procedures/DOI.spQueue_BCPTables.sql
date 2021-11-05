@@ -48,6 +48,7 @@ BEGIN TRY
 			@CurrentParentIndexName						NVARCHAR(128),
 			@CurrentPartitionColumn						NVARCHAR(128),
             @CurrentStatisticsName                      NVARCHAR(128),
+			@CurrentTriggerName							NVARCHAR(128),
 			@PrepTableName								NVARCHAR(128),
 			@IndexName									NVARCHAR(128),
 			@CreatePrepTableSQL							NVARCHAR(MAX) = '',
@@ -83,6 +84,8 @@ BEGIN TRY
 			@AddBackRefTableFKs							NVARCHAR(MAX) = '',
             @SwitchPartitionsSQL						NVARCHAR(MAX) = '',
 			@DropTableSQL								NVARCHAR(MAX) = '',
+			@DropTriggerSQL								NVARCHAR(MAX) = '',
+			@CreateTriggerSQL							NVARCHAR(MAX) = '',
 			@NewPartitionedPrepTableName				SYSNAME,
 			@UnPartitionedPrepTableName					SYSNAME,
 			@TableChildOperationId						SMALLINT,
@@ -844,6 +847,49 @@ BEGIN TRAN',
 				CLOSE RenameAllStatistics_Cur
 				DEALLOCATE RenameAllStatistics_Cur
 
+				--before existing table rename, drop all triggers on it.
+				DECLARE DropAllTriggers_Cur CURSOR LOCAL FAST_FORWARD for
+					SELECT	TR.TriggerName,
+                            TR.DropTriggerSQL,
+							TR.RowNum
+					FROM  DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers TR
+					WHERE TR.DatabaseName = @CurrentDatabaseName
+						AND TR.SchemaName = @CurrentSchemaName
+						AND TR.TableName = @CurrentTableName
+
+				OPEN DropAllTriggers_Cur
+
+				FETCH NEXT FROM DropAllTriggers_Cur INTO @CurrentTriggerName, @DropTriggerSQL, @TableChildOperationId
+
+				WHILE @@FETCH_STATUS <> -1
+				BEGIN
+					IF @@FETCH_STATUS <> -2
+					BEGIN
+						EXEC DOI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
+							@CurrentSchemaName				= @CurrentSchemaName ,
+							@CurrentTableName				= @CurrentTableName, 
+							@CurrentIndexName				= 'N/A', 
+							@CurrentPartitionNumber			= 1, 
+							@IndexSizeInMB					= 0,
+							@CurrentParentSchemaName		= @CurrentSchemaName,
+							@CurrentParentTableName			= @CurrentTableName,
+							@CurrentParentIndexName			= 'N/A',
+							@IndexOperation					= 'Drop Trigger',
+							@IsOnlineOperation				= 1,
+							@TableChildOperationId			= @TableChildOperationId,
+							@SQLStatement					= @DropTriggerSQL,
+							@TransactionId					= @TransactionId,
+							@BatchId						= @BatchId,
+							@ExitTableLoopOnError			= 1
+					END
+
+					FETCH NEXT FROM DropAllTriggers_Cur INTO @CurrentTriggerName, @DropTriggerSQL, @TableChildOperationId
+				END
+
+				CLOSE DropAllTriggers_Cur
+				DEALLOCATE DropAllTriggers_Cur
+
                 --rename tables
 
 				EXEC DOI.spQueue_Insert
@@ -879,7 +925,51 @@ BEGIN TRAN',
 					@TransactionId					= @TransactionId,
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 1
-                
+
+				--after new table rename, create all triggers on it
+                DECLARE RecreateAllTriggers_Cur CURSOR LOCAL FAST_FORWARD for
+					SELECT	TR.TriggerName,
+                            TR.CreateTriggerSQL,
+							TR.RowNum
+					FROM  DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers TR
+					WHERE TR.DatabaseName = @CurrentDatabaseName
+						AND TR.SchemaName = @CurrentSchemaName
+						AND TR.TableName = @CurrentTableName
+
+				OPEN RecreateAllTriggers_Cur
+
+				FETCH NEXT FROM RecreateAllTriggers_Cur INTO @CurrentTriggerName, @CreateTriggerSQL, @TableChildOperationId
+
+				WHILE @@FETCH_STATUS <> -1
+				BEGIN
+					IF @@FETCH_STATUS <> -2
+					BEGIN
+						EXEC DOI.spQueue_Insert
+                            @CurrentDatabaseName            = @CurrentDatabaseName,
+							@CurrentSchemaName				= @CurrentSchemaName ,
+							@CurrentTableName				= @CurrentTableName, 
+							@CurrentIndexName				= 'N/A', 
+							@CurrentPartitionNumber			= 1, 
+							@IndexSizeInMB					= 0,
+							@CurrentParentSchemaName		= @CurrentSchemaName,
+							@CurrentParentTableName			= @CurrentTableName,
+							@CurrentParentIndexName			= 'N/A',
+							@IndexOperation					= 'Create Trigger',
+							@IsOnlineOperation				= 1,
+							@TableChildOperationId			= @TableChildOperationId,
+							@SQLStatement					= @CreateTriggerSQL,
+							@TransactionId					= @TransactionId,
+							@BatchId						= @BatchId,
+							@ExitTableLoopOnError			= 1
+					END
+
+					FETCH NEXT FROM RecreateAllTriggers_Cur INTO @CurrentTriggerName, @CreateTriggerSQL, @TableChildOperationId
+				END
+
+				CLOSE RecreateAllTriggers_Cur
+				DEALLOCATE RecreateAllTriggers_Cur
+
+
 				EXEC DOI.spQueue_Insert
                     @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
@@ -1256,7 +1346,25 @@ BEGIN CATCH
 
 		DEALLOCATE CreateMissingStatistics_Cur
 	END;
-    
+    IF (SELECT CURSOR_STATUS('local','DropAllTriggers_Cur')) >= -1
+	BEGIN
+		IF (SELECT CURSOR_STATUS('local','DropAllTriggers_Cur')) > -1
+		BEGIN
+			CLOSE DropAllTriggers_Cur
+		END
+
+		DEALLOCATE DropAllTriggers_Cur
+	END;
+
+	IF (SELECT CURSOR_STATUS('local','RecreateAllTriggers_Cur')) >= -1
+	BEGIN
+		IF (SELECT CURSOR_STATUS('local','RecreateAllTriggers_Cur')) > -1
+		BEGIN
+			CLOSE RecreateAllTriggers_Cur
+		END
+
+		DEALLOCATE RecreateAllTriggers_Cur
+	END;    
 	THROW;
 END CATCH
 

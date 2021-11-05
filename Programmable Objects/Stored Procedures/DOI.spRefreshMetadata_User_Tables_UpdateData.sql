@@ -38,6 +38,19 @@ FROM DOI.Tables T
     OUTER APPLY (   SELECT 1 AS HasBlobColumns
                     FROM DOI.fnOldBlobColumns(T.DatabaseName, T.SchemaName, T.TableName)) BC
 
+UPDATE T
+SET [TableHasIdentityColumn] = ISNULL(IC.HasIdentityColumn, 0)
+FROM DOI.Tables T
+    OUTER APPLY (   SELECT 1 HasIdentityColumn
+                    FROM DOI.SysDatabases D 
+                        INNER JOIN DOI.SysTables ST ON d.database_id = ST.database_id
+                        INNER JOIN DOI.SysSchemas S ON ST.schema_id = S.schema_id
+                        INNER JOIN DOI.SysIdentityColumns IC ON D.database_id = IC.database_id
+                            AND ST.object_id = IC.object_id
+                    WHERE T.DatabaseName = D.NAME
+                        AND T.SchemaName = S.name
+                        AND T.TableName = ST.name) IC
+
 
 UPDATE T
 SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL),
@@ -50,9 +63,8 @@ SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName
     PKColumnListJoinClause = DOI.fnGetJoinClauseForTable(T.DatabaseName, T.SchemaName, T.TableName, 1, 'T', 'PT'),
     ColumnListForDataSynchTriggerSelect =   DOI.fnGetDataSynchTriggerColumnSelectListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1),
     ColumnListForDataSynchTriggerUpdate =   DOI.fnGetDataSynchTriggerColumnUpdateListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1),
-    ColumnListForDataSynchTriggerInsert =   DOI.fnGetDataSynchTriggerColumnInsertListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1)
-
-
+    ColumnListForDataSynchTriggerInsert =   DOI.fnGetDataSynchTriggerColumnInsertListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1),
+    ColumnListForFinalDataSynchTriggerSelectForDelete = DOI.fnGetFinalDataSynchTriggerColumnSelectListForTableDeletes(T.DatabaseName, T.SchemaName, T.TableName, 1)
 FROM DOI.Tables T
     INNER JOIN DOI.SysDatabases d ON T.DatabaseName = d.name
     INNER JOIN DOI.SysTables T2 ON T2.database_id = d.database_id

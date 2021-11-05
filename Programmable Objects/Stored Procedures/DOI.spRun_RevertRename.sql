@@ -92,20 +92,38 @@ BEGIN TRY
 					AND ParentTableName = @TableName
 				UNION ALL
 				SELECT	DatabaseName,
+                        TriggerName,
+						DropTriggerSQL,
+						'Drop Trigger',
+						5
+				FROM DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers
+				WHERE SchemaName = @SchemaName
+					AND TableName = @TableName
+				UNION ALL
+				SELECT	DatabaseName,
                         TableName,
 						RevertRenameExistingTableSQL,
 						'Table',
-						5
+						6
 				FROM DOI.vwPartitioning_Tables_PrepTables
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
 					AND IsNewPartitionedPrepTable = 1
+				UNION ALL
+				SELECT	DatabaseName,
+                        TriggerName,
+						CreateTriggerSQL,
+						'Create Trigger',
+						7
+				FROM DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers
+				WHERE SchemaName = @SchemaName
+					AND TableName = @TableName
 				UNION ALL 
 				SELECT	DatabaseName,
                         PrepTableIndexName,
 						RevertRenameExistingTableIndexSQL,
 						'Index' AS ObjectType,
-						6
+						8
 				FROM DOI.vwPartitioning_Tables_PrepTables_Indexes
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
@@ -115,7 +133,7 @@ BEGIN TRY
                         ConstraintName,
 						RevertRenameExistingTableConstraintSQL,
 						'Constraint',
-						7
+						9
 				FROM DOI.vwPartitioning_Tables_PrepTables_Constraints
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
@@ -125,12 +143,13 @@ BEGIN TRY
                         StatisticsName,
 						RevertRenameExistingTableStatisticsSQL,
 						'Statistics',
-						8
+						10
 				FROM DOI.vwPartitioning_Tables_PrepTables_Statistics
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 )x
 		ORDER BY x.SortId ASC
+
 
 	OPEN Revert_Cur
 

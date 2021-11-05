@@ -555,4 +555,7 @@
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnGetFinalDataSynchTriggerColumnSelectListForTableDeletes.sql" />
+  </ItemGroup>
 </Project>

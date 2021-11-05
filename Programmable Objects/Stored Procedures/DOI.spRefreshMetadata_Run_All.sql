@@ -67,6 +67,9 @@ BEGIN TRY
     EXEC [DOI].[spRefreshMetadata_System_SysColumns]
         @DatabaseName = @DatabaseName
 
+    EXEC [DOI].[spRefreshMetadata_System_SysIdentityColumns]
+        @DatabaseName = @DatabaseName
+
 	EXEC DOI.spRefreshMetadata_System_SysCheckConstraints
         @DatabaseName = @DatabaseName
 
@@ -85,14 +88,17 @@ BEGIN TRY
     EXEC [DOI].[spRefreshMetadata_System_SysStatsColumns]
         @DatabaseName = @DatabaseName
 
+    EXEC [DOI].[spRefreshMetadata_System_SysSqlModules]
+        @DatabaseName = @DatabaseName
+
     EXEC DOI.spRefreshMetadata_System_SysTriggers
 	    @DatabaseName = @DatabaseName
 
     EXEC DOI.spRefreshMetadata_System_SysStats
         @DatabaseName = @DatabaseName
 
-    EXEC [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]    
-        @DatabaseName = @DatabaseName
+    --EXEC [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]    
+    --    @DatabaseName = @DatabaseName
 
     EXEC DOI.spRefreshMetadata_System_SysDefaultConstraints
         @DatabaseName = @DatabaseName

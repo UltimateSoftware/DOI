@@ -37,7 +37,8 @@ END
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
-AS
+AS ' + CASE WHEN T.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + ' ON' + CHAR(13) + CHAR(10) ELSE '' END + '
 
 INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', DMLType)
 SELECT ' + REPLACE(T.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + ', ''I''
@@ -62,10 +63,13 @@ END + '
 WHERE EXISTS (SELECT * FROM deleted PT WHERE ' + T.PKColumnListJoinClause + ')
 
 INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', DMLType)
-SELECT ' + T.ColumnListForDataSynchTriggerSelect + ', ''D''
+SELECT ' + T.ColumnListForFinalDataSynchTriggerSelectForDelete + ', ''D''
 FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
-'		AS CreateFinalDataSynchTriggerSQL,
+' + CASE WHEN T.TableHasIdentityColumn = 1 THEN '
+
+SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END
+AS CreateFinalDataSynchTriggerSQL,
 
 'UPDATE DOI.DOI.Run_PartitionState
 SET DataSynchState = 0
@@ -327,6 +331,7 @@ FROM (	SELECT DatabaseName
 				,ColumnListForDataSynchTriggerInsert
 				,ColumnListForDataSynchTriggerUpdate
 				,ColumnListForDataSynchTriggerSelect
+				,ColumnListForFinalDataSynchTriggerSelectForDelete
 				,UpdateColumnList
     			,PartitionColumn
     			,PKColumnList
@@ -336,6 +341,7 @@ FROM (	SELECT DatabaseName
 				,0 AS PartitionNumber
                 ,SPACE(0) AS PrepTableFilegroup
 				,TableHasOldBlobColumns
+				,TableHasIdentityColumn
 		FROM DOI.Tables
 		WHERE IntendToPartition = 1) T
     CROSS APPLY(SELECT STUFF((  SELECT PT.PrepTableTriggerSQLFragment

@@ -494,6 +494,8 @@ BEGIN
 END' END AS PrepTableTriggerSQLFragment,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
+CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' ON' + CHAR(13) + CHAR(10) ELSE '' END + 
 '
 INSERT INTO ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '(' + AllTables.ColumnListForDataSynchTriggerInsert + ')
 SELECT ' + REPLACE(AllTables.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + '
@@ -515,9 +517,13 @@ IF EXISTS(	SELECT ''True''
 								WHERE ' + AllTables.PKColumnListJoinClause + '))
 BEGIN
 	RAISERROR(''Not all INSERTs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
-END' 
+END' + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END
+
 END AS SynchInsertsPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
+CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' ON' + CHAR(13) + CHAR(10) ELSE '' END + 
 '
 UPDATE PT
 SET ' + AllTables.ColumnListForDataSynchTriggerUpdate + '
@@ -548,9 +554,13 @@ IF EXISTS(	SELECT ''True''
 				AND T.UpdatedUtcDt > PT.UpdatedUtcDt)
 BEGIN
 	RAISERROR(''Not all UPDATEs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
-END' 
+END'  + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END
 END AS SynchUpdatesPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
+CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' ON' + CHAR(13) + CHAR(10) ELSE '' END + 
+
 '
 DELETE PT
 FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' PT WITH (TABLOCKX, XLOCK)
@@ -569,7 +579,8 @@ IF EXISTS(	SELECT ''True''
 							WHERE ' + AllTables.PKColumnListJoinClause + '))
 BEGIN
 	RAISERROR(''Not all DELETEs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
-END' 
+END' + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END
 END AS SynchDeletesPrepTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
@@ -661,6 +672,7 @@ FROM (  SELECT T.DatabaseName
 				,T.ColumnListForDataSynchTriggerUpdate
 				,T.ColumnListForDataSynchTriggerInsert
 				,T.TableHasOldBlobColumns
+				,T.TableHasIdentityColumn
     			,T.PartitionColumn
     			,T.PKColumnList
 				,T.PKColumnListJoinClause
@@ -771,6 +783,7 @@ FROM (  SELECT T.DatabaseName
 				,T.ColumnListForDataSynchTriggerUpdate
 				,T.ColumnListForDataSynchTriggerInsert
 				,T.TableHasOldBlobColumns
+				,T.TableHasIdentityColumn
     			,T.PartitionColumn
     			,T.PKColumnList
 				,T.PKColumnListJoinClause

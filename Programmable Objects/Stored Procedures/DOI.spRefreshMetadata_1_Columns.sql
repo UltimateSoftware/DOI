@@ -16,4 +16,7 @@ AS
     EXEC [DOI].[spRefreshMetadata_System_SysColumns]
         @DatabaseName = @DatabaseName
 
+    EXEC [DOI].[spRefreshMetadata_System_SysIdentityColumns]
+        @DatabaseName = @DatabaseName
+
 GO

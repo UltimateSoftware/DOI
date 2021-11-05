@@ -1,5 +1,4 @@
 -- <Migration ID="272186f4-7737-473e-930c-b622a49bca27" />
-GO
 IF OBJECT_ID('[DOI].[vwPartitioning_Tables_NewPartitionedTable_Triggers]') IS NOT NULL
 	DROP VIEW [DOI].[vwPartitioning_Tables_NewPartitionedTable_Triggers];
 
@@ -9,16 +8,23 @@ GO
 CREATE     VIEW [DOI].[vwPartitioning_Tables_NewPartitionedTable_Triggers]
 
 /*
-	select top 10 CreateViewForBCPSQL
+	select *
 	from DOI.[vwPartitioning_Tables_NewPartitionedTable_Triggers]
-    where tablename = 'BAI2BANKTRANSACTIONS'
-	order by tablename, partitionnumber
+    where tablename = 'EmpHJob'
  */ 
 AS
 
-SELECT	*,
+SELECT	T.DatabaseName,
+		T.SchemaName,
+		T.TableName,
+		TR.name AS TriggerName,
+		TR.is_disabled,
+		TR.is_instead_of_trigger,
+		TR.type_desc,
 		1 AS IsNewPartitionedTable,
-        s.definition AS TriggerSQL
+        SQ.definition AS CreateTriggerSQL,
+		'DROP TRIGGER IF EXISTS ' + T.SchemaName + '.' + TR.name + ';' + CHAR(13) + CHAR(10) AS DropTriggerSQL,
+		ROW_NUMBER() OVER(PARTITION BY T.SchemaName, T.TableName ORDER BY T.SchemaName, T.TableName, TR.name) AS RowNum
 FROM (	SELECT DatabaseName
                 ,SchemaName
 				,TableName
@@ -41,15 +47,13 @@ FROM (	SELECT DatabaseName
                 ,SPACE(0) AS PrepTableFilegroup
 		FROM DOI.Tables
 		WHERE IntendToPartition = 1) T
-
-    INNER JOIN DOI.SysTriggers TR ON T.DatabaseName = TR.D
-    INNER JOIN DOI.SysSqlModules S ON S.database_id = TR.database_id
-		AND S.object_id = TR.object_id
+	INNER JOIN DOI.SysDatabases D ON D.name = T.DatabaseName
+	INNER JOIN DOI.SysSchemas S ON S.database_id = D.database_id
+		AND S.name = T.SchemaName
+	INNER JOIN DOI.SysTables T2 ON T2.database_id = D.database_id
+		AND T2.name = T.TableName
+    INNER JOIN DOI.SysTriggers TR ON TR.database_id = T2.database_id
+		AND TR.parent_id = T2.object_id
+    INNER JOIN DOI.SysSqlModules SQ ON SQ.database_id = TR.database_id
+		AND SQ.object_id = TR.object_id
 GO
-
-
-SELECT * FROM DOI.SysTriggers
---CREATE SYS.SQL_MODULES DOI TABLE
---CREATE SYNCH PROCESS FOR IT
---integrate new table synch into synch process
---JOIN TO THIS NEW TABLE HERE TO GET TRIGGER CODE.

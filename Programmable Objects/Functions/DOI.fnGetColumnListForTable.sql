@@ -68,8 +68,11 @@ BEGIN
 					THEN '(' + CASE WHEN c.max_length = -1 THEN 'MAX' ELSE CAST(CASE WHEN c.user_type_id IN (231, 239) THEN c.max_length/2 ELSE c.max_length END AS NVARCHAR(10)) END  + ')' 
 					WHEN ty.NAME IN ('DECIMAL', 'NUMERIC')
 					THEN '(' + CAST(c.precision AS NVARCHAR(10)) + ', ' + CAST(c.scale AS NVARCHAR(10)) + ')' 
+					WHEN ty.name LIKE '%INT'
+					THEN CASE WHEN c.is_identity = 1 THEN ' IDENTITY(' + CAST(ic.seed_value AS VARCHAR(10)) + ', ' + CAST(ic.increment_value AS VARCHAR(10)) + ')' ELSE '' END
 					ELSE '' 
 				END + 
+
 				CASE 
 					WHEN @ShowNullability = 1 
 					THEN CASE c.is_nullable WHEN 0 THEN ' NOT' ELSE SPACE(0) END + ' NULL' 
@@ -84,6 +87,9 @@ BEGIN
 		INNER JOIN DOI.SysSchemas s ON s.database_id = t.database_id
             AND s.schema_id = t.schema_id
 		INNER JOIN DOI.SysTypes ty ON c.user_type_id = ty.user_type_id
+		LEFT JOIN DOI.SysIdentityColumns ic ON c.database_id = ic.database_id
+			AND c.object_id = ic.object_id
+			AND c.column_id = ic.column_id
 	WHERE d.name = @DatabaseName
 		AND s.name = @SchemaName
 		AND t.name = @TableName

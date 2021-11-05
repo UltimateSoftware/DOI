@@ -77,9 +77,11 @@ CREATE TABLE [DOI].[Tables]
 [UpdateColumnList] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [NewPartitionedPrepTableName] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [TableHasOldBlobColumns] [bit] NULL,
+[TableHasIdentityColumn] [bit] NULL,
 [ColumnListForDataSynchTriggerSelect] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListForDataSynchTriggerUpdate] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListForDataSynchTriggerInsert] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ColumnListForFinalDataSynchTriggerSelectForDelete] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 CONSTRAINT [PK_Tables] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName])
 )
 WITH
@@ -592,27 +594,6 @@ CREATE TABLE [DOI].[IndexColumns]
 [ColumnSize] [decimal] (10, 2) NOT NULL CONSTRAINT [Def_IndexColumns_ColumnSize] DEFAULT ((0)),
 CONSTRAINT [PK_IndexColumns] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName], [IndexName], [ColumnName])
 )
-WITH
-(
-MEMORY_OPTIMIZED = ON
-)
-GO
-IF OBJECT_ID('[DOI].[SysSqlModules]') IS NULL
-CREATE TABLE DOI.SysSqlModules (
-    database_id INT NOT NULL,
-    object_id	int NOT NULL,
-    definition	NVARCHAR(MAX) NULL,
-    uses_ansi_nulls	bit NULL,
-    uses_quoted_identifier	bit NULL,
-    is_schema_bound	bit NULL,
-    uses_database_collation	bit NULL,
-    is_recompiled	bit NULL,
-    null_on_null_input	bit NULL,
-    execute_as_principal_id	int NULL,
-    uses_native_compilation	bit NULL,
-    inline_type	bit NULL,
-    is_inlineable	bit	NULL,
-    CONSTRAINT PK_SysSqlModules PRIMARY KEY NONCLUSTERED (database_id, object_id))
 WITH
 (
 MEMORY_OPTIMIZED = ON
