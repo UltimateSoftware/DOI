@@ -38,7 +38,7 @@ CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
 AS ' + CASE WHEN T.TableHasIdentityColumn = 1 THEN '
-SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + ' ON' + CHAR(13) + CHAR(10) ELSE '' END + '
+SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + '_DataSynch ON' + CHAR(13) + CHAR(10) ELSE '' END + '
 
 INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', DMLType)
 SELECT ' + REPLACE(T.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + ', ''I''
@@ -68,7 +68,7 @@ FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
 ' + CASE WHEN T.TableHasIdentityColumn = 1 THEN '
 
-SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END
+SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + '_DataSynch OFF' + CHAR(13) + CHAR(10) ELSE '' END
 AS CreateFinalDataSynchTriggerSQL,
 
 'UPDATE DOI.DOI.Run_PartitionState

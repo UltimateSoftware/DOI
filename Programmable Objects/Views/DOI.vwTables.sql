@@ -65,7 +65,8 @@ FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
 ' + CASE WHEN T.TableHasIdentityColumn = 1 THEN '
 
-SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + '_DataSynch OFF' + CHAR(13) + CHAR(10) ELSE '' END		AS CreateFinalDataSynchTriggerSQL,
+SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + '_DataSynch OFF' + CHAR(13) + CHAR(10) ELSE '' END
+AS CreateFinalDataSynchTriggerSQL,
 
 'UPDATE DOI.DOI.Run_PartitionState
 SET DataSynchState = 0

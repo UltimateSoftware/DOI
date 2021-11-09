@@ -969,7 +969,6 @@ BEGIN TRAN',
 				CLOSE RecreateAllTriggers_Cur
 				DEALLOCATE RecreateAllTriggers_Cur
 
-
 				EXEC DOI.spQueue_Insert
                     @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
@@ -980,18 +979,14 @@ BEGIN TRAN',
 					@CurrentParentSchemaName		= @CurrentSchemaName,
 					@CurrentParentTableName			= @CurrentTableName,
 					@CurrentParentIndexName			= 'N/A',
-					@IndexOperation					= 'Commit Tran',
+					@IndexOperation					= 'Drop Data Synch Trigger',
 					@IsOnlineOperation				= 1,
-					@TableChildOperationId			= 1,
-					@SQLStatement					= 'COMMIT TRAN',
+					@SQLStatement					= @DropDataSynchTriggerSQL,
 					@TransactionId					= @TransactionId,
 					@BatchId						= @BatchId,
-					@ExitTableLoopOnError			= 1
+					@ExitTableLoopOnError			= 0
 
-				SET @TransactionId = NULL 
 				--data synch
-				--AT THIS POINT, WE HAVE ALREADY RENAMED, SO NO MORE ERRORS SHOULD EXIT THE LOOP.
-
 				EXEC DOI.spQueue_Insert
                     @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
@@ -1042,7 +1037,7 @@ BEGIN TRAN',
 					@TransactionId					= @TransactionId,
 					@BatchId						= @BatchId,
 					@ExitTableLoopOnError			= 0
-
+					
 				EXEC DOI.spQueue_Insert
                     @CurrentDatabaseName            = @CurrentDatabaseName,
 					@CurrentSchemaName				= @CurrentSchemaName ,
@@ -1053,12 +1048,16 @@ BEGIN TRAN',
 					@CurrentParentSchemaName		= @CurrentSchemaName,
 					@CurrentParentTableName			= @CurrentTableName,
 					@CurrentParentIndexName			= 'N/A',
-					@IndexOperation					= 'Drop Data Synch Trigger',
+					@IndexOperation					= 'Commit Tran',
 					@IsOnlineOperation				= 1,
-					@SQLStatement					= @DropDataSynchTriggerSQL,
+					@TableChildOperationId			= 1,
+					@SQLStatement					= 'COMMIT TRAN',
 					@TransactionId					= @TransactionId,
 					@BatchId						= @BatchId,
-					@ExitTableLoopOnError			= 0
+					@ExitTableLoopOnError			= 1
+
+				SET @TransactionId = NULL 
+				--AT THIS POINT, WE HAVE ALREADY RENAMED, SO NO MORE ERRORS SHOULD EXIT THE LOOP.
 
 				EXEC DOI.spQueue_Insert
                     @CurrentDatabaseName            = @CurrentDatabaseName,

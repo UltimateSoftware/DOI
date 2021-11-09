@@ -508,6 +508,8 @@ WHERE T.DMLType = ''I''
 					WHERE ' + AllTables.PKColumnListJoinClause + ')
 
 SET @RowCountOUT = @@ROWCOUNT
+' + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END + '
 
 IF EXISTS(	SELECT ''True''
 			FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
@@ -517,8 +519,7 @@ IF EXISTS(	SELECT ''True''
 								WHERE ' + AllTables.PKColumnListJoinClause + '))
 BEGIN
 	RAISERROR(''Not all INSERTs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
-END' + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
-SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END
+END'
 
 END AS SynchInsertsPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
@@ -540,6 +541,8 @@ WHERE T.DMLType = ''U''
 	AND T.UpdatedUtcDt > PT.UpdatedUtcDt
 
 SET @RowCountOUT = @@ROWCOUNT
+'  + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END + '
 
 IF EXISTS(	SELECT ''True'' 
 			FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
@@ -554,8 +557,7 @@ IF EXISTS(	SELECT ''True''
 				AND T.UpdatedUtcDt > PT.UpdatedUtcDt)
 BEGIN
 	RAISERROR(''Not all UPDATEs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
-END'  + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
-SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END
+END'
 END AS SynchUpdatesPrepTableSQL,
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE 
 CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
@@ -570,6 +572,8 @@ WHERE EXISTS (	SELECT ''True''
 					AND ' + AllTables.PKColumnListJoinClause + ')
 
 SET @RowCountOUT = @@ROWCOUNT
+' + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
+SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END + '
 
 IF EXISTS(	SELECT ''True''
 			FROM ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch T
@@ -579,8 +583,7 @@ IF EXISTS(	SELECT ''True''
 							WHERE ' + AllTables.PKColumnListJoinClause + '))
 BEGIN
 	RAISERROR(''Not all DELETEs were synched to the new table for ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '.'', 10, 1)
-END' + CASE WHEN AllTables.TableHasIdentityColumn = 1 THEN '
-SET IDENTITY_INSERT ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + ' OFF' + CHAR(13) + CHAR(10) ELSE '' END
+END'
 END AS SynchDeletesPrepTableSQL,
 
 CASE WHEN AllTables.IsNewPartitionedPrepTable = 0 THEN '' ELSE '
