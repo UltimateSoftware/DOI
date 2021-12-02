@@ -558,4 +558,10 @@
   <ItemGroup>
     <None Include="Programmable Objects\Functions\DOI.fnGetFinalDataSynchTriggerColumnSelectListForTableDeletes.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_GetIdentityInsertStatus.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_TurnOffIdentityInsert.sql" />
+  </ItemGroup>
 </Project>

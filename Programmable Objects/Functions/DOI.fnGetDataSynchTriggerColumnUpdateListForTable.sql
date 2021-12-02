@@ -50,6 +50,7 @@ BEGIN
 		AND s.name = @SchemaName
 		AND t.name = @TableName
 		AND ty.name <> 'TIMESTAMP'
+		AND c.is_identity = 0
 	ORDER BY c.column_id
 	RETURN @ColumnList
 END

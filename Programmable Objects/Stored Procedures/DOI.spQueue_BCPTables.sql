@@ -1,3 +1,6 @@
+-- <Migration ID="89f1a962-345e-44f3-96ac-fd745dd9f8c0" />
+GO
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
 GO
 
@@ -168,11 +171,11 @@ RECONFIGURE
 				PT.PartitionColumn,
 				PT.PrepTableName,
 				PT.CreatePrepTableSQL,
-				TTP.CreateDataSynchTriggerSQL,
-				TTP.CreateFinalDataSynchTableSQL,
-				TTP.CreateFinalDataSynchTriggerSQL,
+				NPT.CreateDataSynchTriggerSQL,
+				NPT.CreateFinalDataSynchTableSQL,
+				NPT.CreateFinalDataSynchTriggerSQL,
 				PT.TurnOnDataSynchSQL,
-				TTP.TurnOffDataSynchSQL,
+				PT.TurnOffDataSynchSQL,
                 PT.CreateViewForBCPSQL,
 				PT.BCPSQL,
 				PT.Storage_Desired,
@@ -180,20 +183,23 @@ RECONFIGURE
 				PT.IsNewPartitionedPrepTable,
 				PT.NewPartitionedPrepTableName,
 				PT.CheckConstraintSQL,
-				PT.RenameNewPartitionedPrepTableSQL,
-				PT.RenameExistingTableSQL,
-				TTP.DropDataSynchTriggerSQL,
-				TTP.DropDataSynchTableSQL,
-				PT.SynchDeletesPrepTableSQL,
-				PT.SynchInsertsPrepTableSQL,
-				PT.SynchUpdatesPrepTableSQL,
-				PT.FinalRepartitioningValidationSQL,
-                TTP.DeletePartitionStateMetadataSQL,
-				PT.PostDataValidationMissingEventsSQL + @CRLF + PT.PostDataValidationCompareByPartitionSQL
+				NPT.RenameNewPartitionedPrepTableSQL,
+				NPT.RenameExistingTableSQL,
+				NPT.DropDataSynchTriggerSQL,
+				NPT.DropDataSynchTableSQL,
+				NPT.SynchDeletesPrepTableSQL,
+				NPT.SynchInsertsPrepTableSQL,
+				NPT.SynchUpdatesPrepTableSQL,
+				NPT.FinalRepartitioningValidationSQL,
+                NPT.DeletePartitionStateMetadataSQL,
+				PT.PostDataValidationMissingEventsSQL + '' + PT.PostDataValidationCompareByPartitionSQL
 		FROM DOI.vwTables TTP
 			INNER JOIN DOI.vwPartitioning_Tables_PrepTables PT ON PT.DatabaseName = TTP.DatabaseName
 				AND PT.SchemaName = TTP.SchemaName
 				AND PT.TableName = TTP.TableName
+			INNER JOIN DOI.vwPartitioning_Tables_NewPartitionedTable NPT ON TTP.DatabaseName = NPT.DatabaseName
+				AND TTP.SchemaName = NPT.SchemaName
+				AND TTP.TableName = NPT.TableName
 		WHERE TTP.IntendToPartition = 1
 			AND PT.PrepTableName IS NOT NULL
 			AND TTP.IsStorageChanging = 1

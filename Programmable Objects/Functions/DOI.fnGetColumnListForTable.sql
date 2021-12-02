@@ -16,7 +16,8 @@ CREATE   FUNCTION [DOI].[fnGetColumnListForTable](
 	@ListType					VARCHAR(50),
 	@NumberOfTabs				TINYINT = 1,
 	@SourceTableAlias			VARCHAR(50) = NULL,
-	@DestinationTableAlias		VARCHAR(50) = NULL)
+	@DestinationTableAlias		VARCHAR(50) = NULL,
+	@ShowIdentityProperty		BIT = 1)
 
 RETURNS NVARCHAR(MAX)
 AS
@@ -69,7 +70,7 @@ BEGIN
 					WHEN ty.NAME IN ('DECIMAL', 'NUMERIC')
 					THEN '(' + CAST(c.precision AS NVARCHAR(10)) + ', ' + CAST(c.scale AS NVARCHAR(10)) + ')' 
 					WHEN ty.name LIKE '%INT'
-					THEN CASE WHEN c.is_identity = 1 THEN ' IDENTITY(' + CAST(ic.seed_value AS VARCHAR(10)) + ', ' + CAST(ic.increment_value AS VARCHAR(10)) + ')' ELSE '' END
+					THEN CASE WHEN c.is_identity = 1 AND @ShowIdentityProperty = 1 THEN ' IDENTITY(' + CAST(ic.seed_value AS VARCHAR(10)) + ', ' + CAST(ic.increment_value AS VARCHAR(10)) + ')' ELSE '' END
 					ELSE '' 
 				END + 
 

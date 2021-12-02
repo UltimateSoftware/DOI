@@ -33,6 +33,7 @@ CREATE TABLE [DOI].[Tables]
 [ColumnListForDataSynchTriggerUpdate] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListForDataSynchTriggerInsert] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListForFinalDataSynchTriggerSelectForDelete] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ColumnListWithTypesNoIdentityProperty] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 CONSTRAINT [PK_Tables] PRIMARY KEY NONCLUSTERED ([DatabaseName], [SchemaName], [TableName])
 )
 WITH

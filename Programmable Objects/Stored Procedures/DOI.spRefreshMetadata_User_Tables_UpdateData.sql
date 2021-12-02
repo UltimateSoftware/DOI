@@ -53,9 +53,10 @@ FROM DOI.Tables T
 
 
 UPDATE T
-SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL),
-	ColumnListWithTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL),
-	UpdateColumnList = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'T'),
+SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL, 1),
+	ColumnListWithTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL, 1),
+    ColumnListWithTypesNoIdentityProperty =  DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL, 0),
+	UpdateColumnList = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'T', 1),
     NewPartitionedPrepTableName = CASE WHEN T.IntendToPartition = 1 THEN TableName + '_NewPartitionedTableFromPrep' ELSE NULL END,
     Storage_Actual = DS_Actual.name,
     StorageType_Actual = DS_Actual.type_desc,

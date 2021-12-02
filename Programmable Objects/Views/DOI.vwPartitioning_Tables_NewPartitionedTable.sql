@@ -23,22 +23,21 @@ CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
 AS
-' + 		DSTrigger.DSTriggerSQL AS CreateDataSynchTriggerSQL,
+' + 		DSTrigger.DSTriggerSQL AS CreateDataSynchTriggerSQL, --WE MAY WANT TO MOVE THIS TO ANOTHER OBJECT....THIS HAS NOTHING TO DO WITH THE NEW PARTITIONED TABLE.
 
 '
 DROP TABLE IF EXISTS ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch
 
 IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NULL
 BEGIN
-	CREATE TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + T.ColumnListWithTypes + CHAR(13) + CHAR(10) + ' ,DMLType CHAR(1) NOT NULL) ON [' + T.Storage_Desired + '] (' + T.PartitionColumn + ')
+	CREATE TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + T.ColumnListWithTypesNoIdentityProperty + CHAR(13) + CHAR(10) + ' ,DMLType CHAR(1) NOT NULL) ON [' + T.Storage_Desired + '] (' + T.PartitionColumn + ')
 END
 '		AS CreateFinalDataSynchTableSQL,
 		'
 CREATE OR ALTER TRIGGER ' + T.SchemaName + '.tr' + T.TableName + '_DataSynch
 ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
-AS ' + CASE WHEN T.TableHasIdentityColumn = 1 THEN '
-SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + '_DataSynch ON' + CHAR(13) + CHAR(10) ELSE '' END + '
+AS 
 
 INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', DMLType)
 SELECT ' + REPLACE(T.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + ', ''I''
@@ -66,26 +65,18 @@ INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_Data
 SELECT ' + T.ColumnListForFinalDataSynchTriggerSelectForDelete + ', ''D''
 FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
-' + CASE WHEN T.TableHasIdentityColumn = 1 THEN '
-
-SET IDENTITY_INSERT ' + T.SchemaName + '.' + T.TableName + '_DataSynch OFF' + CHAR(13) + CHAR(10) ELSE '' END
+'
 AS CreateFinalDataSynchTriggerSQL,
 
-'UPDATE DOI.DOI.Run_PartitionState
-SET DataSynchState = 0
-WHERE DatabaseName = ''' + T.DatabaseName + '''
-	AND SchemaName = ''' + T.SchemaName + '''
-	AND ParentTableName = ''' + T.TableName + '''
-'		AS TurnOffDataSynchSQL,
-
-		'
+'
 USE ' + T.DatabaseName + '
 IF EXISTS(SELECT * FROM sys.triggers tr WHERE tr.name = ''tr' + T.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + T.TableName + '_OLD'')
 BEGIN
 	DROP TRIGGER tr' + T.TableName + '_DataSynch
 END' 
-		AS DropDataSynchTriggerSQL,
-		'
+AS DropDataSynchTriggerSQL,
+
+'
 IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NOT NULL
 	AND OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ''') IS NOT NULL
 BEGIN
@@ -132,17 +123,30 @@ WHERE DatabaseName = ''' + T.DatabaseName + '''
     AND ParentTableName = ''' + T.TableName + '''' 
 AS DeletePartitionStateMetadataSQL,
 '
+EXEC DOI.DOI.spRun_TurnOffIdentityInsert
+	@DatabaseName = ''' + T.DatabaseName + ''',
+	@SchemaName = ''' + T.SchemaName + ''',
+	@TableName = ''' + T.TableName + '''' + 
+	
+CASE WHEN T.TableHasIdentityColumn = 0 THEN '' ELSE '
+SET IDENTITY_INSERT ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' ON 
+' END + '
+
 INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '(' + T.ColumnListForDataSynchTriggerInsert + ')
 SELECT ' + REPLACE(T.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + '
 FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch T ' + 
 CASE WHEN T.TableHasOldBlobColumns = 1 THEN '
-	INNER JOIN ' + T.SchemaName + '.' + T.TableName + ' ST ON ' + REPLACE(T.PKColumnListJoinClause, 'PT.', 'ST.') ELSE '' END + '
+	INNER JOIN ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' ST ON ' + REPLACE(T.PKColumnListJoinClause, 'PT.', 'ST.') ELSE '' END + '
 WHERE T.DMLType = ''I''
 	AND NOT EXISTS (SELECT ''True'' 
 					FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' PT WITH (TABLOCKX, XLOCK)
 					WHERE ' + T.PKColumnListJoinClause + ')
 
-SET @RowCountOUT = @@ROWCOUNT
+SET @RowCountOUT = @@ROWCOUNT' + 
+	
+CASE WHEN T.TableHasIdentityColumn = 0 THEN '' ELSE '
+SET IDENTITY_INSERT ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' OFF 
+' END + '
 
 IF EXISTS(	SELECT ''True''
 			FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch T
@@ -154,11 +158,16 @@ BEGIN
 	RAISERROR(''Not all INSERTs were synched to the new table for ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '.'', 10, 1)
 END' AS SynchInsertsPrepTableSQL,
 '
+EXEC DOI.DOI.spRun_TurnOffIdentityInsert
+	@DatabaseName = ''' + T.DatabaseName + ''',
+	@SchemaName = ''' + T.SchemaName + ''',
+	@TableName = ''' + T.TableName + '''
+
 UPDATE PT
 SET ' + T.ColumnListForDataSynchTriggerUpdate + '
 FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch T' + 
 CASE WHEN T.TableHasOldBlobColumns = 1 THEN '
-	INNER JOIN ' + T.SchemaName + '.' + T.TableName + ' ST ON ' + REPLACE(T.PKColumnListJoinClause, 'PT.', 'ST.') ELSE '' END + '
+	INNER JOIN ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' ST ON ' + REPLACE(T.PKColumnListJoinClause, 'PT.', 'ST.') ELSE '' END + '
 	INNER JOIN ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' PT WITH (TABLOCKX, XLOCK) ON ' + T.PKColumnListJoinClause + '
 	INNER JOIN (SELECT ' + T.PKColumnList + ', MAX(UpdatedUtcDt) AS UpdatedUtcDt 
 				FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch
@@ -187,6 +196,11 @@ BEGIN
 END' AS SynchUpdatesPrepTableSQL,
 
 '
+EXEC DOI.DOI.spRun_TurnOffIdentityInsert
+	@DatabaseName = ''' + T.DatabaseName + ''',
+	@SchemaName = ''' + T.SchemaName + ''',
+	@TableName = ''' + T.TableName + '''
+
 DELETE PT
 FROM ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + ' PT WITH (TABLOCKX, XLOCK)
 WHERE EXISTS (	SELECT ''True'' 
@@ -260,6 +274,264 @@ FROM (
 						WHERE ' + T.PKColumnListJoinClause + '))c
 ' AS DataSynchProgressSQL,
 '
+CREATE OR ALTER FUNCTION [dbo].[fnActualIndexesForTable](
+	@SchemaName SYSNAME,
+	@TableName SYSNAME,
+	@NameStringReplace SYSNAME = NULL,
+	@PartitionColumnToReplace SYSNAME = NULL)
+RETURNS TABLE
+AS RETURN
+(
+
+/*
+SELECT * 
+FROM DOI.fnActualIndexStructuresForTable(''' + T.SchemaName + ''',''' + T.TableName + ''', ''_NewPartitionedTableFromPrep'', ''' + T.PartitionColumn + ''')
+
+SELECT *
+FROM DOI.fnActualIndexStructuresForTable(''' + T.SchemaName + ''',''' + T.TableName + ''', ''_NewPartitionedTableFromPrep'', ''' + T.PartitionColumn + ''')
+*/
+SELECT 
+    d.name AS DatabaseName
+    ,s.name AS SchemaName
+    ,REPLACE(t.name, @NameStringReplace, SPACE(0)) AS TableName
+	,REPLACE(i.name, @NameStringReplace, SPACE(0)) AS IndexName
+	--,i.type
+	,i.type_desc
+	,i.is_unique
+	,i.ignore_dup_key
+	,i.is_primary_key
+	,i.is_unique_constraint
+	,i.is_disabled
+	,i.is_hypothetical
+	,i.has_filter
+	,i.filter_definition
+    ,i.key_column_list AS IndexKeys
+    ,i.included_column_list AS IncludedColumns 
+FROM sys.indexes i
+	INNER JOIN sys.tables t ON t.object_id = i.object_id
+	INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+WHERE s.name = @SchemaName
+	AND t.name = @TableName)
+' AS FinalRepartitioningValidation_CreateActualIndexesForTableFunctionSQL,
+'
+CREATE OR ALTER FUNCTION [dbo].[fnActualConstraintsForTable](
+	@SchemaName SYSNAME,
+	@TableName SYSNAME,
+	@NameStringReplace SYSNAME = NULL)
+RETURNS TABLE
+AS RETURN
+(
+
+/*
+SELECT * 
+FROM DOI.fnActualConstraintsForTable((''' + T.SchemaName + ''',''' + T.TableName + ''', ''_NewPartitionedTableFromPrep'', '' '')
+--order by ConstraintName	
+except
+SELECT *
+FROM DOI.fnActualConstraintsForTable((''' + T.SchemaName + ''',''' + T.TableName + ''', ''_NewPartitionedTableFromPrep'', ''_OLD'')
+order by ConstraintName	
+*/
+
+SELECT	REPLACE(cc.name, @NameStringReplace, SPACE(0)) AS ConstraintName, 
+		cc.type_desc, 
+		c.name AS ColumnName, 
+		cc.definition
+FROM DOI.SysCheckConstraints cc
+	INNER JOIN sys.tables t ON t.object_id = i.object_id
+	INNER JOIN sys.columns c ON c.object_id = t.object_id
+		AND c.column_id = cc.parent_column_id
+	INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+WHERE s.name = @SchemaName
+	AND t.name = @TableName
+UNION ALL
+SELECT	REPLACE(dc.name, @NameStringReplace, SPACE(0)) AS ConstraintName, 
+		dc.type_desc, 
+		c.name AS ColumnName, 
+		dc.definition
+FROM DOI.SysDefaultConstraints dc
+	INNER JOIN sys.tables t ON t.object_id = i.object_id
+	INNER JOIN sys.columns c ON c.object_id = t.object_id
+		AND c.column_id = cc.parent_column_id
+	INNER JOIN sys.schemas s ON s.schema_id = t.schema_id
+WHERE s.name = @SchemaName
+	AND t.name = @TableName)
+' AS FinalRepartitioningValidation_CreateActualConstraintsForTableFunctionSQL,
+'
+CREATE OR ALTER FUNCTION [dbo].[fnCompareTableStructuresDetails](
+    @DatabaseName SYSNAME,
+	@SchemaName1 SYSNAME,
+	@TableName1 SYSNAME,
+	@SchemaName2 SYSNAME,
+	@TableName2 SYSNAME,
+	@DiffBetTableNames SYSNAME,
+	@PartitionColumnToReplaceInPK SYSNAME)
+RETURNS TABLE
+
+AS
+
+/*
+    select * from dbo.fnCompareTableStructuresDetails(
+    ''PaymentReporting'',
+    ''dbo'',
+    ''Bai2BankTransactions'',
+    ''dbo'',
+    ''Bai2BankTransactions_NewPartitionedTableFromPrep'',
+    ''_NewPartitionedTableFromPrep'',
+    ''TransactionSysUtcDt'')
+*/
+RETURN (
+        SELECT *
+        FROM (  SELECT  AT.DatabaseName,
+                        ISNULL(AT.TableName, NPT.TableName) AS TableName,
+                        ISNULL(AT.IndexName, NPT.IndexName) AS IndexName,
+                        CASE 
+                            WHEN ISNULL(AT.type_desc, '''') <> ISNULL(NPT.type_desc, '''') 
+                            THEN ''TypeDiff:  Actual Table:  '' + ISNULL(AT.type_desc, '''') + ''// New Table:  '' + ISNULL(NPT.type_desc, '''') 
+                            ELSE ''''
+                        END + 
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_unique AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_unique AS CHAR(1)), '''') 
+                            THEN ''IsUniqueDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_unique AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_unique AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.ignore_dup_key AS CHAR(1)), '''') <> ISNULL(CAST(NPT.ignore_dup_key AS CHAR(1)), '''') 
+                            THEN ''OptionIgnoreDupKeyDiff:  Actual Table:  '' + ISNULL(CAST(AT.ignore_dup_key AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.ignore_dup_key AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_primary_key AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_primary_key AS CHAR(1)), '''') 
+                            THEN ''IsPrimaryKeyDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_primary_key AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_primary_key AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_unique_constraint AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_unique_constraint AS CHAR(1)), '''') 
+                            THEN ''IsUniqueConstraintDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_unique_constraint AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_unique_constraint AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_disabled AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_disabled AS CHAR(1)), '''') 
+                            THEN ''IsDisableDOIff:  Actual Table:  '' + ISNULL(CAST(AT.is_disabled AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_disabled AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.is_hypothetical AS CHAR(1)), '''') <> ISNULL(CAST(NPT.is_hypothetical AS CHAR(1)), '''') 
+                            THEN ''IsHypotheticalDiff:  Actual Table:  '' + ISNULL(CAST(AT.is_hypothetical AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.is_hypothetical AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(CAST(AT.has_filter AS CHAR(1)), '''') <> ISNULL(CAST(NPT.has_filter AS CHAR(1)), '''') 
+                            THEN ''IsFiltereDOIff:  Actual Table:  '' + ISNULL(CAST(AT.has_filter AS CHAR(1)), '''') + ''// New Table:  '' + ISNULL(CAST(NPT.has_filter AS CHAR(1)), '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(AT.filter_definition, '''') <> ISNULL(NPT.filter_definition, '''') 
+                            THEN ''FilterPredicateDiff:  Actual Table:  '' + ISNULL(AT.filter_definition, '''') + ''// New Table:  '' + ISNULL(NPT.filter_definition, '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(AT.IndexKeys, '''') <> ISNULL(NPT.IndexKeys, '''') 
+                            THEN ''KeyColumnListDiff:  Actual Table:  '' + ISNULL(AT.IndexKeys, '''') + ''// New Table:  '' + ISNULL(NPT.IndexKeys, '''') 
+                            ELSE ''''
+                        END +
+                        CASE 
+                            WHEN ISNULL(AT.IncludedColumns, '''') <> ISNULL(NPT.IncludedColumns, '''') 
+                            THEN ''IncludedColumnListDiff:  Actual Table:  '' + ISNULL(AT.IncludedColumns, '''') + ''// New Table:  '' + ISNULL(NPT.IncludedColumns, '''') 
+                            ELSE ''''
+                        END COLLATE DATABASE_DEFAULT AS SchemaDifferences
+                FROM dbo.fnActualIndexesForTable(@SchemaName1,@TableName1, @DiffBetTableNames, @PartitionColumnToReplaceInPK) AT
+                    FULL OUTER JOIN dbo.fnActualIndexesForTable(@SchemaName2,@TableName2, @DiffBetTableNames, @PartitionColumnToReplaceInPK) NPT
+                        ON AT.TableName = NPT.TableName
+                            AND AT.IndexName = NPT.IndexName) x
+        WHERE EXISTS (  SELECT *
+                        FROM (
+                                SELECT * 
+                                FROM dbo.fnActualIndexesForTable(@SchemaName1,@TableName1, @DiffBetTableNames, @PartitionColumnToReplaceInPK)
+                                WHERE TableName = @TableName1
+                                EXCEPT
+                                SELECT *
+                                FROM dbo.fnActualIndexesForTable(@SchemaName2,@TableName2, @DiffBetTableNames, @PartitionColumnToReplaceInPK)
+                                WHERE TableName = @TableName1)Diff
+                        WHERE Diff.TableName = x.TableName
+                            AND Diff.IndexName = x.IndexName))
+' AS FinalRepartitioningValidation_CreateCompareTableStructuresDetailsFunctionSQL,
+'
+
+CREATE OR ALTER FUNCTION [dbo].[fnCompareTableStructures](
+    @DatabaseName SYSNAME,
+	@SchemaName1 SYSNAME,
+	@TableName1 SYSNAME,
+	@SchemaName2 SYSNAME,
+	@TableName2 SYSNAME,
+	@DiffBetTableNames SYSNAME,
+	@PartitionColumnToReplaceInPK SYSNAME)
+RETURNS TABLE
+AS RETURN
+(
+
+/*
+
+SELECT * FROM dbo.fnCompareTableStructures(
+    ''PaymentReporting'',
+    ''dbo'',
+    ''Liabilities'',
+    ''dbo'',
+    ''Liabilities_NewPartitionedTableFromPrep'',
+    ''_NewPartitionedTableFromPrep'',
+    ''PayDate'')	
+*/
+
+
+SELECT 
+(SELECT	COUNT(*) AS Counts
+FROM (	SELECT * 
+		FROM sys.dm_exec_describe_first_result_set (N''SELECT * FROM '' + @SchemaName1 + ''.'' + @TableName1 , NULL, 0) 
+		WHERE name NOT IN (''DMLType'')) Live 
+	FULL OUTER JOIN (	SELECT * 
+						FROM sys.dm_exec_describe_first_result_set (N''SELECT * FROM '' + @SchemaName2 + ''.'' + @TableName2, NULL, 0) 
+						WHERE name NOT IN (''DMLType'')) Prep 
+		ON Live.name = Prep.name 
+WHERE (Live.is_nullable <> Prep.is_nullable
+		OR live.system_type_name <> prep.system_type_name
+		OR live.is_identity_column <> prep.is_identity_column
+		OR Live.max_length <> Prep.max_length
+		OR Live.precision <> Prep.precision
+		OR Live.collation_name <> Prep.collation_name
+		OR Live.scale <> Prep.scale
+		OR Live.is_part_of_unique_key <> Prep.is_part_of_unique_key
+		OR Live.name IS NULL
+		OR Prep.name IS NULL))
++ --indexes
+(SELECT COUNT(*)
+FROM (
+		SELECT * 
+		FROM dbo.fnActualIndexStructuresForTable(@SchemaName1,@TableName1, @DiffBetTableNames, @PartitionColumnToReplaceInPK)
+		WHERE NOT EXISTS (  SELECT ''True''
+                            FROM DOI.IndexesNotInMetadata INIM 
+                            WHERE DatabaseName = INIM.DatabaseName
+                                AND SchemaName = INIM.SchemaName
+                                AND TableName = INIM.TableName
+                                AND INIM.IndexName = IndexName)
+		EXCEPT
+		SELECT *
+		FROM dbo.fnActualIndexStructuresForTable(@SchemaName2,@TableName2, @DiffBetTableNames, @PartitionColumnToReplaceInPK)
+		WHERE NOT EXISTS (  SELECT ''True'' 
+                            FROM DOI.IndexesNotInMetadata INIM 
+                            WHERE DatabaseName = INIM.DatabaseName
+                                AND SchemaName = INIM.SchemaName
+                                AND TableName = INIM.TableName
+                                AND INIM.IndexName = IndexName))x)
++ --constraints
+(SELECT COUNT(*)
+FROM (
+		SELECT * 
+		FROM dbo.fnActualConstraintsForTable(@SchemaName1,@TableName1, @DiffBetTableNames)
+		EXCEPT
+		SELECT *
+		FROM dbo.fnActualConstraintsForTable(@SchemaName2,@TableName2, @DiffBetTableNames))x) AS Counts
+)
+' AS FinalRepartitioningValidation_CreateCompareTableStructuresFunctionSQL,
+'
 IF (SELECT * FROM dbo.fnCompareTableStructures(''' + T.SchemaName + ''',''' + T.TableName + ''',''' + T.SchemaName + ''',''' + T.NewPartitionedPrepTableName + ''', ''_NewPartitionedTableFromPrep'',''' + T.PartitionColumn + ''')) > 0
 BEGIN
     DECLARE @ErrorMessage VARCHAR(MAX) = ''Schemas from the 2 tables do not match!!''
@@ -327,6 +599,7 @@ FROM (	SELECT DatabaseName
 				,'9999-12-31' AS NextBoundaryValue
 				,'0001-01-01' AS BoundaryValue
 				,ColumnListWithTypes
+				,ColumnListWithTypesNoIdentityProperty
 				,ColumnListNoTypes
 				,ColumnListForDataSynchTriggerInsert
 				,ColumnListForDataSynchTriggerUpdate
