@@ -120,7 +120,7 @@ BEGIN
 			,@RowCount					= 0
 			,@TransactionId				= NULL 
 			,@TableChildOperationId		= 0
-			,@BatchId					= NULL--@BatchId
+			,@BatchId					= '00000000-0000-0000-0000-000000000000'--@BatchId
 			,@SeqNo						= 0
 			,@ExitTableLoopOnError		= 0
 			,@RunStatus					= 'Start'
@@ -139,7 +139,7 @@ BEGIN
 			,@RowCount					= 0
 			,@TransactionId				= NULL 
 			,@TableChildOperationId		= 0
-			,@BatchId					= NULL--@BatchId
+			,@BatchId					= '00000000-0000-0000-0000-000000000000'--@BatchId
 			,@SeqNo						= 0
 			,@ExitTableLoopOnError		= 0
 			,@RunStatus					= 'Finish'

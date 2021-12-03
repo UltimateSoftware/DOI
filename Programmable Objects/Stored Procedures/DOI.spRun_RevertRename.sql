@@ -57,10 +57,9 @@ BEGIN TRY
 						RevertRenameNewPartitionedPrepTableSQL AS SQLStatement, 
 						'Table' AS ObjectType,
 						1 AS SortId
-				FROM DOI.vwPartitioning_Tables_PrepTables
+				FROM DOI.vwPartitioning_Tables_NewPartitionedTable
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
-					AND IsNewPartitionedPrepTable = 1
 				UNION ALL 
 				SELECT	DatabaseName,
                         PrepTableIndexName,
@@ -105,10 +104,9 @@ BEGIN TRY
 						RevertRenameExistingTableSQL,
 						'Table',
 						6
-				FROM DOI.vwPartitioning_Tables_PrepTables
+				FROM DOI.vwPartitioning_Tables_NewPartitionedTable
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
-					AND IsNewPartitionedPrepTable = 1
 				UNION ALL
 				SELECT	DatabaseName,
                         TriggerName,
