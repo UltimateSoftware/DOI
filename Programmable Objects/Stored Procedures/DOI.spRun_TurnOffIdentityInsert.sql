@@ -107,6 +107,41 @@ BEGIN
 
     END CATCH
 
+    EXEC DOI.spRun_LogInsert
+            @CurrentDatabaseName        = @DatabaseName 
+			,@CurrentSchemaName			= @SchemaName
+			,@CurrentTableName			= @TableName
+			,@CurrentIndexName			= 'N/A'
+			,@CurrentPartitionNumber	= 0
+			,@IndexSizeInMB				= 0
+			,@SQLStatement				= @IdentityInsert
+			,@IndexOperation			= 'Identity Insert'
+			,@IsOnlineOperation			= 1
+			,@RowCount					= 0
+			,@TransactionId				= NULL 
+			,@TableChildOperationId		= 0
+			,@BatchId					= NULL--@BatchId
+			,@SeqNo						= 0
+			,@ExitTableLoopOnError		= 0
+			,@RunStatus					= 'Start'
     SELECT [IDENTITY_INSERT] = @IdentityInsert
+
+    EXEC DOI.spRun_LogInsert
+            @CurrentDatabaseName        = @DatabaseName
+			,@CurrentSchemaName			= @SchemaName
+			,@CurrentTableName			= @TableName
+			,@CurrentIndexName			= 'N/A'
+			,@CurrentPartitionNumber	= 0
+			,@IndexSizeInMB				= 0
+			,@SQLStatement				= @IdentityInsert
+			,@IndexOperation			= 'Identity Insert'
+			,@IsOnlineOperation			= 1
+			,@RowCount					= 0
+			,@TransactionId				= NULL 
+			,@TableChildOperationId		= 0
+			,@BatchId					= NULL--@BatchId
+			,@SeqNo						= 0
+			,@ExitTableLoopOnError		= 0
+			,@RunStatus					= 'Finish'
 END
 GO
