@@ -26,7 +26,7 @@ RETURN
             TY.name AS DataType
     FROM DOI.SysColumns C
         INNER JOIN DOI.SysDatabases D ON D.database_id = C.database_id
-        INNER JOIN DOI.DOI.SysSchemas S ON S.database_id = C.database_id
+        INNER JOIN DOI.SysSchemas S ON S.database_id = C.database_id
         INNER JOIN DOI.SysTables T ON T.database_id = c.database_id
             AND T.schema_id = S.schema_id
             AND T.object_id = c.object_id

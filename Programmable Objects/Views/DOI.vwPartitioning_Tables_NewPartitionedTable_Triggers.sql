@@ -1,4 +1,3 @@
--- <Migration ID="272186f4-7737-473e-930c-b622a49bca27" />
 IF OBJECT_ID('[DOI].[vwPartitioning_Tables_NewPartitionedTable_Triggers]') IS NOT NULL
 	DROP VIEW [DOI].[vwPartitioning_Tables_NewPartitionedTable_Triggers];
 

@@ -44,7 +44,7 @@ BEGIN
     DECLARE @ErrorNumber INT;
     DECLARE @object_id INT;
 
-    SET @DbSchemaTable = @dbname + '.' + @schemaname + '.' + @table
+    SET @DbSchemaTable = @DatabaseName + '.' + @SchemaName + '.' + @TableName
 
     SET @object_id = OBJECT_ID(@DbSchemaTable)
     IF @object_id IS NULL

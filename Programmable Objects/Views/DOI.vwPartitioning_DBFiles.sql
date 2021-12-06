@@ -101,7 +101,7 @@ END;' AS DropFileSQL
                                         THEN CAST(df.growth AS VARCHAR(50)) + ' PERCENT'
                                         ELSE CAST((df.growth*8)/1024 AS VARCHAR(50)) + ' MB'
                                     END AS FileGrowth,
-                                    SUBSTRING(df.physical_name, 1, LEN(df.physical_name) + 1 - CHARINDEX('\', REVERSE(df.physical_name)))
+                                    SUBSTRING(df.physical_name, 1, LEN(df.physical_name) + 1 - CHARINDEX('\', REVERSE(df.physical_name))) AS DBFilePath
 					        FROM DOI.SysDatabaseFiles df
                                 INNER JOIN DOI.SysDatabases d ON d.database_id = df.database_id
 					        WHERE df.physical_name LIKE '%.mdf'
