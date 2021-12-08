@@ -6,6 +6,11 @@ RECONFIGURE WITH OVERRIDE
 GO
 
 
+EXEC sp_configure 'user options', 0 ;  
+GO  
+RECONFIGURE WITH OVERRIDE;  
+GO  
+
 IF (DB_ID(N'$(DatabaseName)') IS NULL)
 BEGIN
 	PRINT N'Creating $(DatabaseName)...';

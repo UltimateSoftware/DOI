@@ -241,7 +241,7 @@ FROM (  SELECT T.DatabaseName
 					                                    + CAST(MONTH(CONVERT(DATE, BoundaryValue, 112)) AS VARCHAR(4)) --'Monthly' 
 			                                    WHEN DateDiffs = 1
 			                                    THEN 'Daily'
-			                                    WHEN BoundaryValue = '0001-01-01'
+			                                    WHEN BoundaryValue < InitialDate--= '0001-01-01'
 			                                    THEN 'Historical' 
 			                                    WHEN NextBoundaryValue = '9999-12-31'
 			                                    THEN 'LastPartition'
@@ -256,7 +256,8 @@ FROM (  SELECT T.DatabaseName
                                                     DATEDIFF(DAY, PFI.BoundaryValue, CAST(LEAD(BoundaryValue, 1, '9999-12-31') OVER (PARTITION BY PartitionFunctionName ORDER BY BoundaryValue) AS DATE)) AS DateDiffs,
                                                     ROW_NUMBER() OVER(PARTITION BY PartitionFunctionName ORDER BY BoundaryValue) AS PartitionNumber,
 				                                    PFI.IncludeInPartitionFunction,
-                                                    PFI.IncludeInPartitionScheme
+                                                    PFI.IncludeInPartitionScheme,
+													PFI.InitialDate
                                             --SELECT count(*)
                                             FROM (  SELECT	TOP (1234567890987) *
                                                     FROM (SELECT DISTINCT
@@ -337,7 +338,7 @@ FROM (  SELECT T.DatabaseName
 				,T.Storage_Desired
 				,T.StorageType_Desired
 				,0 AS PartitionNumber
-                ,NULL AS PrepTableFilegroup
+                ,'PRIMARY' AS PrepTableFilegroup
 				,1 AS IsNewPartitionedPrepTable
         FROM DOI.Tables T
         WHERE IntendToPartition = 1) AllTables

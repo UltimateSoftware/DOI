@@ -76,10 +76,10 @@ ALTER TABLE ' + I.SchemaName + '.' + PT.PrepTableName + CHAR(13) + CHAR(10) + CH
 '			ON [' +	CASE 
                         WHEN PT.IsNewPartitionedPrepTable = 0
                         THEN PT.PrepTableFilegroup
-                        ELSE PT.Storage_Desired
+                        ELSE I.Storage_Desired
                     END + ']' +
 					        CASE 
-								WHEN PT.IsNewPartitionedPrepTable = 0
+								WHEN (PT.IsNewPartitionedPrepTable = 0 OR I.PartitionColumn_Desired IS NULL)
                                 THEN ''
                                 ELSE '(' + I.PartitionColumn_Desired + ')'  
 							END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
@@ -120,10 +120,10 @@ ALTER TABLE ' + I.SchemaName + '.' + PT.PrepTableName + CHAR(13) + CHAR(10) + CH
 											'		ON [' + CASE 
                                                                 WHEN PT.IsNewPartitionedPrepTable = 0
                                                                 THEN PT.PrepTableFilegroup
-                                                                ELSE PT.Storage_Desired
+                                                                ELSE I.Storage_Desired
                                                             END + ']'
 															+	CASE 
-																	WHEN PT.IsNewPartitionedPrepTable = 0
+																	WHEN (PT.IsNewPartitionedPrepTable = 0 OR I.PartitionColumn_Desired IS NULL)
 	    															THEN ''
 	    															ELSE '(' + I.PartitionColumn_Desired + ')'  
 																END + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
@@ -148,10 +148,10 @@ BEGIN
 										'		ON [' + CASE 
                                                             WHEN PT.IsNewPartitionedPrepTable = 0
                                                             THEN PT.PrepTableFilegroup
-                                                            ELSE PT.Storage_Desired
+                                                            ELSE I.Storage_Desired
                                                         END + ']'
 														+	CASE 
-																WHEN PT.IsNewPartitionedPrepTable = 0
+																WHEN (PT.IsNewPartitionedPrepTable = 0 OR I.PartitionColumn_Desired IS NULL)
 																THEN ''
 																ELSE '(' + I.PartitionColumn_Desired + ')'  
 															END + CHAR(13) + CHAR(10) + '

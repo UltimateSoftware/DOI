@@ -55,33 +55,33 @@ BEGIN
 END;' AS DropFileSQL
         --SELECT count(*)
         FROM (  SELECT	TOP (1234567890987) *
-                FROM (SELECT DISTINCT
-		                PFM.*,
-		                CASE  
-			                WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
-			                THEN PFM.LastBoundaryDate
-			                WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
-			                THEN DATEADD(MONTH, RowNum-1, InitialDate)
-			                WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
-			                THEN PFM.LastBoundaryDate
-			                WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
-			                THEN DATEADD(YEAR, RowNum-1, InitialDate)
-		                END AS BoundaryValue,
-		                CASE 
-			                WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
-			                THEN 'Active'
-			                WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
-			                THEN LEFT(CONVERT(VARCHAR(20), DATEADD(MONTH, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
-			                WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
-			                THEN 'Active'
-			                WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
-			                THEN LEFT(CONVERT(VARCHAR(20), DATEADD(YEAR, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
-		                END AS Suffix,
-		                1 AS IncludeInPartitionFunction,
-		                1 AS IncludeInPartitionScheme
+                FROM (	SELECT DISTINCT
+							PFM.*,
+							CASE  
+								WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
+								THEN PFM.LastBoundaryDate
+								WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
+								THEN DATEADD(MONTH, RowNum-1, InitialDate)
+								WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
+								THEN PFM.LastBoundaryDate
+								WHEN BoundaryInterval = 'Yearly' AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
+								THEN DATEADD(YEAR, RowNum-1, InitialDate)
+							END AS BoundaryValue,
+							CASE 
+								WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) > PFM.LastBoundaryDate) 
+								THEN 'Active'
+								WHEN BoundaryInterval = 'Monthly' AND (DATEADD(MONTH, RowNum-1, InitialDate) <= PFM.LastBoundaryDate) 
+								THEN LEFT(CONVERT(VARCHAR(20), DATEADD(MONTH, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
+								WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) > PFM.LastBoundaryDate)
+								THEN 'Active'
+								WHEN BoundaryInterval = 'Yearly'  AND (DATEADD(YEAR, RowNum-1, InitialDate) <= PFM.LastBoundaryDate)
+								THEN LEFT(CONVERT(VARCHAR(20), DATEADD(YEAR, RowNum-1, InitialDate), 112), NumOfCharsInSuffix) 
+							END AS Suffix,
+							1 AS IncludeInPartitionFunction,
+							1 AS IncludeInPartitionScheme
                 --select count(*)
-                FROM DOI.PartitionFunctions PFM
-	                CROSS APPLY DOI.fnNumberTable(ISNULL(NumOfTotalPartitionFunctionIntervals, 0)) PSN
+						FROM DOI.PartitionFunctions PFM
+							CROSS APPLY DOI.fnNumberTable(ISNULL(NumOfTotalPartitionFunctionIntervals, 0)) PSN
                 UNION ALL
                 SELECT	PFM.*,
 		                MinInterval.MinValueOfDataType AS BoundaryValue,
@@ -106,7 +106,7 @@ END;' AS DropFileSQL
                                 INNER JOIN DOI.SysDatabases d ON d.database_id = df.database_id
 					        WHERE df.physical_name LIKE '%.mdf'
                                 AND d.name = PFI.DatabaseName) DBFilePath)X
-	LEFT JOIN ( SELECT	CASE 
+	LEFT JOIN ( SELECT	CASE
 							WHEN type_desc = 'ROWS' AND data_space_id = 1
 							THEN name + '.mdf'
 							WHEN type_desc = 'ROWS' AND data_space_id > 1

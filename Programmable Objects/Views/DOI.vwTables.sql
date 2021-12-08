@@ -121,6 +121,7 @@ FROM DOI.Tables T
 								WHERE PT.DatabaseName = T.DatabaseName
 									AND PT.SchemaName = T.SchemaName
 									AND PT.TableName = T.TableName
+                                    AND PT.IsNewPartitionedPrepTable = 0
 								FOR XML PATH(''), TYPE).value(N'.[1]', N'nvarchar(max)'), 1, 1, '')) DSTrigger(DSTriggerSQL)
 
 GO

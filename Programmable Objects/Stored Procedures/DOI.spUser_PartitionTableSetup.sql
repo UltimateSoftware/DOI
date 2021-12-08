@@ -34,7 +34,7 @@ EXEC [DOI].spImportMetadata
 DECLARE @MinValueOfDataType DATE = CASE WHEN @PartitionColumnDataType = 'DATETIME2' THEN '0001-01-01' WHEN @PartitionColumnDataType = 'DATETIME' THEN '1900-01-01' END
 
 EXEC('
-IF NOT EXISTS(SELECT ''True'' FROM ' + @DatabaseName + '.sys.columns c INNER JOIN ' + @DatabaseName + '.sys.tables t WHERE T.NAME = ''' + @TableName + ''' AND c.name = ''UpdatedUtcDt'')
+IF NOT EXISTS(SELECT ''True'' FROM ' + @DatabaseName + '.sys.columns c INNER JOIN ' + @DatabaseName + '.sys.tables t ON c.object_id = t.object_id WHERE T.NAME = ''' + @TableName + ''' AND c.name = ''UpdatedUtcDt'')
 BEGIN
    ALTER TABLE ' + @DatabaseName + '.' + @SchemaName + '.' + @TableName + ' ADD UpdatedUtcDt DATETIME2 NOT NULL CONSTRAINT Def_' + @TableName + '_UpdatedUtcDt DEFAULT SYSDATETIME()
 END
