@@ -70,6 +70,9 @@ BEGIN TRY
     EXEC [DOI].[spRefreshMetadata_System_SysIdentityColumns]
         @DatabaseName = @DatabaseName
 
+    EXEC [DOI].[spRefreshMetadata_System_SysColumns_UpdateData]
+        @DatabaseName = @DatabaseName
+
 	EXEC DOI.spRefreshMetadata_System_SysCheckConstraints
         @DatabaseName = @DatabaseName
 
@@ -111,6 +114,10 @@ BEGIN TRY
 
     EXEC [DOI].[spRefreshMetadata_System_SysForeignKeys]
         @DatabaseName = @DatabaseName
+
+    EXEC [DOI].[spRefreshMetadata_System_SysColumnStoreRowGroups]
+        @DatabaseName = @DatabaseName
+
 
     --level 2
     EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats

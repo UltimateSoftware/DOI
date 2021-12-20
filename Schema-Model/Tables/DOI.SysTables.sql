@@ -47,3 +47,14 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE name = 'HDX_SysTables_TableName')
+BEGIN
+    ALTER TABLE DOI.SysTables ADD INDEX HDX_SysTables_TableName HASH (database_id, schema_id, name) WITH (BUCKET_COUNT = 50000)
+END
+GO
+
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE name = 'IDX_SysTables_Name')
+BEGIN
+    ALTER TABLE [DOI].[SysTables] ADD INDEX IDX_SysTables_Name NONCLUSTERED ([name])
+END
+GO

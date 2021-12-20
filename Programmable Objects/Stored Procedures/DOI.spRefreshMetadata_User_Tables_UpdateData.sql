@@ -51,21 +51,11 @@ FROM DOI.Tables T
                         AND T.SchemaName = S.name
                         AND T.TableName = ST.name) IC
 
-
+--4 updates, splitting off the ones who don't need sysindexes from the ones who do
 UPDATE T
-SET ColumnListNoTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'INSERT', 1, NULL, NULL, 1),
-	ColumnListWithTypes = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL, 1),
-    ColumnListWithTypesNoIdentityProperty =  DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'CREATETABLE', 1, NULL, NULL, 0),
-	UpdateColumnList = DOI.fnGetColumnListForTable (@DatabaseName, T.SchemaName, T.TableName, 'UPDATE', 1, 'PT', 'T', 1),
-    NewPartitionedPrepTableName = CASE WHEN T.IntendToPartition = 1 THEN TableName + '_NewPartitionedTableFromPrep' ELSE NULL END,
+SET NewPartitionedPrepTableName = CASE WHEN T.IntendToPartition = 1 THEN TableName + '_NewPartitionedTableFromPrep' ELSE NULL END,
     Storage_Actual = DS_Actual.name,
-    StorageType_Actual = DS_Actual.type_desc,
-    PKColumnList = DOI.fnGetPKColumnListForTable(T.DatabaseName, T.SchemaName, T.TableName),
-    PKColumnListJoinClause = DOI.fnGetJoinClauseForTable(T.DatabaseName, T.SchemaName, T.TableName, 1, 'T', 'PT'),
-    ColumnListForDataSynchTriggerSelect =   DOI.fnGetDataSynchTriggerColumnSelectListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1),
-    ColumnListForDataSynchTriggerUpdate =   DOI.fnGetDataSynchTriggerColumnUpdateListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1),
-    ColumnListForDataSynchTriggerInsert =   DOI.fnGetDataSynchTriggerColumnInsertListForTable(T.DatabaseName, T.SchemaName, T.TableName, 1),
-    ColumnListForFinalDataSynchTriggerSelectForDelete = DOI.fnGetFinalDataSynchTriggerColumnSelectListForTableDeletes(T.DatabaseName, T.SchemaName, T.TableName, 1)
+    StorageType_Actual = DS_Actual.type_desc
 FROM DOI.Tables T
     INNER JOIN DOI.SysDatabases d ON T.DatabaseName = d.name
     INNER JOIN DOI.SysTables T2 ON T2.database_id = d.database_id
@@ -77,6 +67,178 @@ FROM DOI.Tables T
         AND I.type_desc IN ('CLUSTERED', 'HEAP')
     INNER JOIN DOI.SysDataSpaces DS_Actual ON i.database_id = DS_Actual.database_id
         AND i.data_space_id = DS_Actual.data_space_id
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
+
+--1 sec
+UPDATE T
+SET PKColumnList = REPLACE(PKCL.PKColumnList, '&#x0D;', SPACE(0)),
+    PKColumnListJoinClause = REPLACE(JC.JoinClause, '&#x0D;', SPACE(0))
+FROM DOI.Tables T
+    INNER JOIN DOI.SysDatabases d ON T.DatabaseName = d.name
+    INNER JOIN DOI.SysTables T2 ON T2.database_id = d.database_id
+        AND T.TableName = T2.name
+    INNER JOIN DOI.SysSchemas s ON s.database_id = t2.database_id
+		AND s.schema_id = t2.schema_id
+        AND s.name = T.SchemaName
+    INNER JOIN DOI.SysIndexes I ON d.database_id = i.database_id
+        AND T2.object_id = I.object_id
+		AND i.is_primary_key = 1
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + c.name
+									FROM DOI.SysIndexColumns ic 
+										INNER JOIN DOI.SysColumns c ON c.database_id = ic.database_id
+											AND c.column_id = ic.column_id
+											AND c.object_id = ic.object_id
+									WHERE ic.database_id = i.database_id
+										AND ic.object_id = i.object_id
+										AND ic.index_id = i.index_id
+									ORDER BY ic.key_ordinal ASC
+									FOR XML PATH('')), 1, 1, '')) PKCL(PKColumnList)
+	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + N'AND T.' + c.name + N' = PT.' + c.name + NCHAR(13) + NCHAR(10)
+									FROM DOI.SysIndexColumns ic 
+										INNER JOIN DOI.SysColumns c ON c.database_id = ic.database_id
+											AND c.column_id = ic.column_id
+											AND c.object_id = ic.OBJECT_ID
+									WHERE ic.database_id = i.database_id
+										AND ic.index_id = i.index_id
+										AND ic.object_id = i.object_id
+									ORDER BY ic.key_ordinal ASC
+									FOR XML PATH ('')), 1, 1, '')) JC(JoinClause)
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
+
+--6 seconds
+UPDATE T
+SET ColumnListNoTypes = REPLACE(ICL.InsertColumnList, '&#x0D;', SPACE(0)),
+	ColumnListWithTypes = REPLACE(CTCL.CreateTableColumnList, '&#x0D;', SPACE(0)),
+    ColumnListWithTypesNoIdentityProperty = REPLACE(CTCLNIP.CreateTableColumnListNoIdentityProperty, '&#x0D;', SPACE(0)),
+	UpdateColumnList = REPLACE(UCL.UpdateColumnList, '&#x0D;', SPACE(0))
+FROM DOI.Tables T
+    INNER JOIN DOI.SysDatabases d ON T.DatabaseName = d.name
+    INNER JOIN DOI.SysTables T2 ON T2.database_id = d.database_id
+        AND T.TableName = T2.name
+    INNER JOIN DOI.SysSchemas s ON s.database_id = t2.database_id
+		AND s.schema_id = t2.schema_id
+        AND s.name = T.SchemaName
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + N'[' + c.name + N']' + NCHAR(13) + NCHAR(10)
+									FROM DOI.SysColumns c 
+									WHERE c.database_id = T2.database_id
+										AND c.object_id = t2.object_id
+										AND C.is_computed = 0
+									ORDER BY c.column_id
+									FOR XML PATH ('')), 1, 1, '')) ICL(InsertColumnList)
+	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + N'[' + c.name + N'] ' + 
+										UPPER(ty.name) + 
+											CASE 
+												WHEN ty.NAME LIKE '%CHAR%' 
+												THEN N'(' + CASE WHEN c.max_length = -1 THEN N'MAX' ELSE CAST(CASE WHEN c.user_type_id IN (231, 239) THEN c.max_length/2 ELSE c.max_length END AS NVARCHAR(10)) END  + N')' 
+												WHEN ty.NAME IN ('DECIMAL', 'NUMERIC')
+												THEN N'(' + CAST(c.precision AS NVARCHAR(10)) + ', ' + CAST(c.scale AS NVARCHAR(10)) + N')' 
+												WHEN ty.name LIKE '%INT'
+												THEN CASE WHEN c.is_identity = 1 THEN N' IDENTITY(' + CAST(c.identity_seed_value AS NVARCHAR(10)) + N', ' + CAST(c.identity_incr_value AS NVARCHAR(10)) + N')' ELSE N'' END
+												ELSE N'' 
+											END + 
+											CASE c.is_nullable WHEN 0 THEN N' NOT' ELSE SPACE(0) END + N' NULL' +
+											',' + NCHAR(13) + NCHAR(10)
+									FROM DOI.SysColumns c
+										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
+											AND c.user_type_id = ty.user_type_id
+									WHERE c.database_id = t2.database_id
+										AND c.object_id = t2.object_id
+										AND C.is_computed = 0
+									ORDER BY c.column_id
+									FOR XML PATH ('')), 1, 1, '')) CTCL(CreateTableColumnList)
+	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + N'[' + c.name + N'] ' + 
+										UPPER(ty.name) + 
+											CASE 
+												WHEN ty.NAME LIKE '%CHAR%' 
+												THEN N'(' + CASE WHEN c.max_length = -1 THEN N'MAX' ELSE CAST(CASE WHEN c.user_type_id IN (231, 239) THEN c.max_length/2 ELSE c.max_length END AS NVARCHAR(10)) END  + N')' 
+												WHEN ty.NAME IN ('DECIMAL', 'NUMERIC')
+												THEN N'(' + CAST(c.precision AS NVARCHAR(10)) + ', ' + CAST(c.scale AS NVARCHAR(10)) + N')' 
+												ELSE N'' 
+											END + 
+											CASE c.is_nullable WHEN 0 THEN N' NOT' ELSE SPACE(0) END + N' NULL,' + NCHAR(13) + NCHAR(10)
+									FROM DOI.SysColumns c 
+										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
+											AND c.user_type_id = ty.user_type_id
+									WHERE c.database_id = t2.database_id
+										AND c.object_id = t2.object_id
+										AND C.is_computed = 0
+									ORDER BY c.column_id
+									FOR XML PATH ('')), 1, 1, '')) CTCLNIP(CreateTableColumnListNoIdentityProperty)
+	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + N'PT.[' + c.name + N'] = T.[' + c.name + N'],'+ NCHAR(13) + NCHAR(10)
+									FROM DOI.SysColumns c 
+									WHERE c.database_id = t2.database_id
+										AND c.object_id = t2.object_id
+										AND C.is_computed = 0
+									ORDER BY c.column_id
+									FOR XML PATH ('')), 1, 1, '')) UCL(UpdateColumnList)
+WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
+
+--3 seconds
+UPDATE T
+SET ColumnListForDataSynchTriggerSelect = REPLACE(FDSTSCL.ColumnListForDataSynchTriggerSelect, '&#x0D;', SPACE(0)),
+    ColumnListForDataSynchTriggerUpdate = REPLACE(FDSTUCL.ColumnListForDataSynchTriggerUpdate, '&#x0D;', SPACE(0)),
+    ColumnListForDataSynchTriggerInsert = REPLACE(FDSTICL.ColumnListForDataSynchTriggerInsert, '&#x0D;', SPACE(0)),
+    ColumnListForFinalDataSynchTriggerSelectForDelete = REPLACE(FDSTSCLFD.ColumnListForFinalDataSynchTriggerSelectForDelete, '&#x0D;', SPACE(0))
+FROM DOI.Tables T
+    INNER JOIN DOI.SysDatabases d ON T.DatabaseName = d.name
+    INNER JOIN DOI.SysTables T2 ON T2.database_id = d.database_id
+        AND T.TableName = T2.name
+    INNER JOIN DOI.SysSchemas s ON s.database_id = t2.database_id
+		AND s.schema_id = t2.schema_id
+        AND s.name = T.SchemaName
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + 
+										CASE
+											WHEN TY.name IN ('TEXT', 'NTEXT', 'IMAGE')--Old BLOB columns cannot be selected from inserted and deleted tables.
+											THEN N'PT.'
+											ELSE N'T.'
+										END + N'[' + c.name + N'] ' + NCHAR(13) + NCHAR(10)
+									FROM DOI.SysColumns c 
+										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
+											AND c.user_type_id = ty.user_type_id
+									WHERE c.database_id = t2.database_id
+										AND c.object_id = t2.object_id
+										AND ty.name <> N'TIMESTAMP'
+									ORDER BY c.column_id
+									FOR XML PATH('')), 1, 1, '')) FDSTSCL(ColumnListForDataSynchTriggerSelect)
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + N'PT.[' + c.name + N'] = ' + 
+										CASE
+											WHEN TY.name IN ('TEXT', 'NTEXT', 'IMAGE')--Old BLOB columns cannot be selected from inserted and deleted tables.
+											THEN N'ST.'
+											ELSE N'T.' 
+										END + N'[' + c.name + N'] ' + NCHAR(13) + NCHAR(10)
+									FROM DOI.SysColumns c 
+										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
+											AND c.user_type_id = ty.user_type_id
+									WHERE c.database_id = t2.database_id
+										AND c.object_id = t2.object_id
+										AND ty.name <> N'TIMESTAMP'
+										AND c.is_identity = 0
+									ORDER BY c.column_id
+									FOR XML PATH('')), 1, 1, ''))FDSTUCL(ColumnListForDataSynchTriggerUpdate)
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + N'[' + c.name + N'] '  + NCHAR(13) + NCHAR(10)
+									FROM DOI.SysColumns c 
+										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
+											AND c.user_type_id = ty.user_type_id
+									WHERE c.database_id = t2.database_id
+										AND c.object_id = t2.object_id
+										AND C.is_computed = 0
+										AND ty.name <> N'TIMESTAMP'
+									ORDER BY c.column_id
+									FOR XML PATH('')), 1, 1, '')) FDSTICL(ColumnListForDataSynchTriggerInsert)
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) +  
+										CASE
+											WHEN TY.name IN ('TEXT', 'NTEXT', 'IMAGE') --Old BLOB columns cannot be selected from inserted and deleted tables.
+											THEN N'NULL'
+											ELSE N'T.[' + c.name + N']'
+										END + N' ' + NCHAR(13) + NCHAR(10)
+									FROM DOI.SysColumns c 
+										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
+											AND c.user_type_id = ty.user_type_id
+									WHERE c.database_id = t2.database_id
+										AND c.object_id = t2.object_id
+										AND ty.name <> N'TIMESTAMP'
+									ORDER BY c.column_id
+									FOR XML PATH('')), 1, 1, '')) FDSTSCLFD(ColumnListForFinalDataSynchTriggerSelectForDelete)
 WHERE T.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN T.DatabaseName ELSE @DatabaseName END 
 
 

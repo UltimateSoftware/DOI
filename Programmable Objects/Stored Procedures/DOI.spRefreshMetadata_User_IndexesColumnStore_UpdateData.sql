@@ -59,7 +59,7 @@ AS
         AND ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
 
     UPDATE ICS
-    SET NumRows_Actual = p.NumRows
+    SET NumRows_Actual = p.NumRows --integrate this with index size update below?
     --SELECT p.*
     FROM DOI.IndexesColumnStore ICS
         CROSS APPLY (   SELECT d.name, s.name AS SchemaName, t.name AS TableName, SUM(p.rows) AS NumRows
@@ -90,6 +90,13 @@ AS
         IndexMeetsMinimumSize = ISNULL(TS.IndexMeetsMinimumSize,0),
         OptionDataCompression_Actual = TS.data_compression_desc
     FROM DOI.IndexesColumnStore ICS
+        OUTER APPLY (   SELECT * 
+                        FROM DOI.fnActualIndexSizing() AIS 
+                        WHERE AIS.DatabaseName = ICS.DatabaseName 
+                            AND AIS.SchemaName = ICS.SchemaName 
+                            AND AIS.TableName = ICS.TableName 
+                            AND AIS.IndexName = ICS.IndexName) TS --try this both with params inside the function or a correlated subquery...wonder which one is faster?
+    /*
         OUTER APPLY (   SELECT  s.NAME AS SchemaName,
                                 t.NAME AS TableName,
                                 i.NAME AS IndexName,
@@ -113,8 +120,15 @@ AS
                             INNER JOIN DOI.SysPartitions p ON p.database_id = i.database_id
                                 AND p.OBJECT_ID = i.OBJECT_ID
                                 AND p.index_id = I.index_id
-                            INNER JOIN DOI.SysAllocationUnits a ON p.database_id = a.database_id
-                                AND p.hobt_id = a.container_id
+							INNER JOIN DOI.SysColumnStoreRowGroups CSRG ON p.database_id = csrg.database_id
+								AND p.object_id = csrg.object_id
+								AND p.index_id = csrg.index_id
+								AND p.partition_number = csrg.partition_number
+							INNER JOIN DOI.SysAllocationUnits a ON a.database_id = d.database_id
+								AND ((a.type IN (1,3)
+										AND  container_id = csrg.delta_store_hobt_id)
+									OR (a.type = 2
+										AND container_id = p.partition_id))
                             INNER JOIN DOI.SysDatabaseFiles df ON a.database_id = df.database_id
                                 AND df.data_space_id = a.data_space_id
 			                INNER JOIN (SELECT DatabaseName, CAST(SettingValue AS INT) AS SizeCutoffValue
@@ -132,8 +146,8 @@ AS
                             AND t.NAME = ICS.TableName
                             AND i.NAME = ICS.IndexName
 		                GROUP BY d.name, s.name, t.name, i.name) TS
-    WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END 
-
+    WHERE ICS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN ICS.DatabaseName ELSE @DatabaseName END */
+    OPTION (FORCE ORDER)
     --FRAG
     UPDATE ICS
     SET Fragmentation = F.Fragmentation,

@@ -13,10 +13,10 @@ CREATE   FUNCTION [DOI].[fnGetColumnListForTable](
 	@DatabaseName				SYSNAME,
 	@SchemaName					SYSNAME, 
 	@TableName					SYSNAME, 
-	@ListType					VARCHAR(50),
+	@ListType					NVARCHAR(50),
 	@NumberOfTabs				TINYINT = 1,
-	@SourceTableAlias			VARCHAR(50) = NULL,
-	@DestinationTableAlias		VARCHAR(50) = NULL,
+	@SourceTableAlias			NVARCHAR(50) = NULL,
+	@DestinationTableAlias		NVARCHAR(50) = NULL,
 	@ShowIdentityProperty		BIT = 1)
 
 RETURNS NVARCHAR(MAX)
@@ -28,59 +28,60 @@ AS
 */
 
 BEGIN
-	DECLARE @ColumnList NVARCHAR(MAX) = CHAR(13) + CHAR(10),
-			@ShowNullability BIT = CASE WHEN @ListType IN ('CREATETABLE') THEN 1 ELSE 0 END,
-			@ShowDataTypes BIT = CASE WHEN @ListType IN ('CREATETABLE', 'DECLARE') THEN 1 ELSE 0 END,
-			@ShowParameterMarker BIT = CASE WHEN @ListType IN ('DECLARE', 'SELECTPARAMASSIGN') THEN 1 ELSE 0 END,
-			@TabString NVARCHAR(20) = REPLICATE(CHAR(9), @NumberOfTabs)
+	DECLARE @ColumnList NVARCHAR(MAX) = NCHAR(13) + NCHAR(10),
+			@ShowNullability BIT = CASE WHEN @ListType IN (N'CREATETABLE') THEN 1 ELSE 0 END,
+			@ShowDataTypes BIT = CASE WHEN @ListType IN (N'CREATETABLE', N'DECLARE') THEN 1 ELSE 0 END,
+			@ShowParameterMarker NCHAR(1) = CASE WHEN @ListType IN (N'DECLARE', N'SELECTPARAMASSIGN') THEN N'1' ELSE N'0' END,
+			@TabString NVARCHAR(20) = REPLICATE(CHAR(9), @NumberOfTabs),
+			@ShowComputedColumns BIT = CASE WHEN @ListType = N'INSERT' THEN 1 ELSE 0 END
 
 	
 	DECLARE
-			@NameDelimiterBeginMarker CHAR(1) = CASE WHEN @ShowParameterMarker = 1 THEN '' ELSE '[' END,
-			@NameDelimiterEndMarker CHAR(1) = CASE WHEN @ShowParameterMarker = 1 THEN '' ELSE ']' END       
+			@NameDelimiterBeginMarker NCHAR(1) = CASE WHEN @ShowParameterMarker = 1 THEN N'' ELSE N'[' END,
+			@NameDelimiterEndMarker NCHAR(1) = CASE WHEN @ShowParameterMarker = 1 THEN N'' ELSE N']' END       
 
 	SELECT @ColumnList += @TabString + 
 		CASE 
-			WHEN @ColumnList = CHAR(13) + CHAR(10) THEN '  ' 
-			ELSE ', ' 
+			WHEN @ColumnList = NCHAR(13) + NCHAR(10) THEN N'  ' 
+			ELSE N', ' 
 		END + 
 		CASE 
 			WHEN @SourceTableAlias IS NULL 
-			THEN '' 
-			ELSE @SourceTableAlias + '.' 
+			THEN N'' 
+			ELSE @SourceTableAlias + N'.' 
 		END +
 		@NameDelimiterBeginMarker + 
-		CASE WHEN @ShowParameterMarker = 1 
-			THEN '@' 
-			ELSE '' 
+		CASE WHEN @ShowParameterMarker = N'1' 
+			THEN N'@' 
+			ELSE N'' 
 		END + c.name + @NameDelimiterEndMarker + 
 		CASE	
-			WHEN @ListType = 'SELECTPARAMASSIGN'
-			THEN ' = ' + '[' + c.name + ']'
-			WHEN @ListType = 'UPDATE'
-			THEN ' = ' + @DestinationTableAlias + '.[' + c.name + ']'
-			ELSE ''
-		END + SPACE(1) +
+			WHEN @ListType = N'SELECTPARAMASSIGN'
+			THEN N' = ' + N'[' + c.name + N']'
+			WHEN @ListType = N'UPDATE'
+			THEN N' = ' + @DestinationTableAlias + N'.[' + c.name + N']'
+			ELSE N''
+		END + N' ' +
 		CASE 
 			WHEN @ShowDataTypes = 1
 			THEN UPPER(ty.name) + 
 				CASE 
 					WHEN ty.NAME LIKE '%CHAR%' 
-					THEN '(' + CASE WHEN c.max_length = -1 THEN 'MAX' ELSE CAST(CASE WHEN c.user_type_id IN (231, 239) THEN c.max_length/2 ELSE c.max_length END AS NVARCHAR(10)) END  + ')' 
+					THEN N'(' + CASE WHEN c.max_length = -1 THEN N'MAX' ELSE CAST(CASE WHEN c.user_type_id IN (231, 239) THEN c.max_length/2 ELSE c.max_length END AS NVARCHAR(10)) END  + N')' 
 					WHEN ty.NAME IN ('DECIMAL', 'NUMERIC')
-					THEN '(' + CAST(c.precision AS NVARCHAR(10)) + ', ' + CAST(c.scale AS NVARCHAR(10)) + ')' 
+					THEN N'(' + CAST(c.precision AS NVARCHAR(10)) + ', ' + CAST(c.scale AS NVARCHAR(10)) + N')' 
 					WHEN ty.name LIKE '%INT'
-					THEN CASE WHEN c.is_identity = 1 AND @ShowIdentityProperty = 1 THEN ' IDENTITY(' + CAST(ic.seed_value AS VARCHAR(10)) + ', ' + CAST(ic.increment_value AS VARCHAR(10)) + ')' ELSE '' END
-					ELSE '' 
+					THEN CASE WHEN c.is_identity = 1 AND @ShowIdentityProperty = 1 THEN N' IDENTITY(' + CAST(ic.seed_value AS NVARCHAR(10)) + N', ' + CAST(ic.increment_value AS NVARCHAR(10)) + N')' ELSE N'' END
+					ELSE N'' 
 				END + 
 
 				CASE 
 					WHEN @ShowNullability = 1 
-					THEN CASE c.is_nullable WHEN 0 THEN ' NOT' ELSE SPACE(0) END + ' NULL' 
-					ELSE '' 
+					THEN CASE c.is_nullable WHEN 0 THEN N' NOT' ELSE SPACE(0) END + N' NULL' 
+					ELSE N'' 
 				END
-			ELSE ''
-		END + CHAR(13) + CHAR(10)
+			ELSE N''
+		END + NCHAR(13) + NCHAR(10)
 	FROM DOI.SysTables t
         INNER JOIN DOI.SysDatabases d ON T.database_id = d.database_id
 		INNER JOIN DOI.SysColumns c ON c.database_id = t.database_id
@@ -94,7 +95,7 @@ BEGIN
 	WHERE d.name = @DatabaseName
 		AND s.name = @SchemaName
 		AND t.name = @TableName
-        AND C.is_computed = CASE WHEN @ListType = 'INSERT' THEN 0 ELSE C.is_computed END 
+        AND C.is_computed = @ShowComputedColumns
 	ORDER BY c.column_id
 	RETURN @ColumnList
 END

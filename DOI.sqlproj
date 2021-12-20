@@ -193,7 +193,6 @@
     <None Include="Programmable Objects\Functions\DOI.fn_ListToTable.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnActualIndex_Frag.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnActualIndex_NumPages.sql" />
-    <None Include="Programmable Objects\Functions\DOI.fnActualIndexSize.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnEstimateIndexSize_AllColSize.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnEstimateIndexSize_InclFixedColSize.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnEstimateIndexSize_InclVarColSize.sql" />
@@ -541,22 +540,10 @@
     <None Include="Programmable Objects\Functions\DOI.fnOldBlobColumns.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Functions\DOI.fnGetDataSynchTriggerColumnSelectListForTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Programmable Objects\Functions\DOI.fnGetDataSynchTriggerColumnUpdateListForTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Programmable Objects\Functions\DOI.fnGetDataSynchTriggerColumnInsertListForTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_NewPartitionedTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Programmable Objects\Functions\DOI.fnGetFinalDataSynchTriggerColumnSelectListForTableDeletes.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_GetIdentityInsertStatus.sql" />
@@ -575,5 +562,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spUser_PartitionTableSetup.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Schema-Model\Tables\DOI.SysColumnStoreRowGroups.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysColumns_UpdateData.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnActualIndexSizing.sql" />
   </ItemGroup>
 </Project>

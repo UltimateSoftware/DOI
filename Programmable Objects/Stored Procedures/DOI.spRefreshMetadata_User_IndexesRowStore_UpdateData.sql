@@ -91,7 +91,13 @@ AS
         IndexMeetsMinimumSize = ISNULL(TS.IndexMeetsMinimumSize,0),
         OptionDataCompression_Actual = TS.data_compression_desc
     FROM DOI.IndexesRowStore IRS
-        OUTER APPLY (   SELECT  db.name AS DatabaseName,
+        OUTER APPLY (   SELECT * 
+                        FROM DOI.fnActualIndexSizing() AIS 
+                        WHERE AIS.DatabaseName = IRS.DatabaseName 
+                            AND AIS.SchemaName = IRS.SchemaName 
+                            AND AIS.TableName = IRS.TableName 
+                            AND AIS.IndexName = IRS.IndexName) TS --try this both with params inside the function or a correlated subquery...wonder which one is faster?
+        /*OUTER APPLY (   SELECT  db.name AS DatabaseName,
                                 s.NAME AS SchemaName,
                                 t.NAME AS TableName,
                                 i.NAME AS IndexName,
@@ -107,6 +113,7 @@ AS
                                 MAX(p.data_compression_desc) COLLATE DATABASE_DEFAULT AS data_compression_desc,
                                 CASE WHEN SUM(a.total_pages) > MAX(SS2.MinNumPages) THEN 1 ELSE 0 END AS IndexMeetsMinimumSize
 		                FROM DOI.systables t 
+                            INNER JOIN DOI.SysDatabases d ON t.database_id = d.database_id
                             INNER JOIN DOI.SysSchemas s ON t.database_id = s.database_id
                                 AND t.SCHEMA_ID = s.SCHEMA_ID
                             INNER JOIN DOI.SysIndexes i ON i.database_id = t.database_id
@@ -114,8 +121,11 @@ AS
                             INNER JOIN DOI.SysPartitions p ON p.database_id = t.database_id
                                 AND p.OBJECT_ID = t.OBJECT_ID
                                 AND p.index_id = I.index_id
-                            INNER JOIN DOI.SysAllocationUnits a ON p.database_id = a.database_id
-                                AND p.hobt_id = a.container_id
+							INNER JOIN DOI.SysAllocationUnits a ON a.database_id = d.database_id
+								AND ((a.type IN (1,3)
+										AND  a.container_id = p.hobt_id)
+									OR (a.type = 2
+										AND a.container_id = p.partition_id))
                             INNER JOIN DOI.SysDatabaseFiles df ON df.database_id = a.database_id
                                 AND df.data_space_id = a.data_space_id
 			                CROSS JOIN (SELECT CAST(SettingValue AS INT) AS SizeCutoffValue
@@ -133,7 +143,7 @@ AS
                             AND s.NAME = IRS.SchemaName
                             AND t.NAME = IRS.TableName
                             AND i.NAME = IRS.IndexName
-		                GROUP BY db.name, s.name, t.name, i.name) TS
+		                GROUP BY db.name, s.name, t.name, i.name) TS*/
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
     --FRAG
@@ -158,7 +168,7 @@ AS
                             AND FN.IndexName = IRS.IndexName) F
     WHERE IRS.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN IRS.DatabaseName ELSE @DatabaseName END 
 
-    --partition functions & storage for partitioned tables
+    --partition functions & storage for partitioned tables, for non-partitioned tables, 
     UPDATE IRS
     SET Storage_Desired = PF.PartitionSchemeName
     FROM DOI.IndexesRowStore IRS

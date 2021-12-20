@@ -22,9 +22,9 @@ AS
 */
 
 BEGIN
-	DECLARE @ColumnList NVARCHAR(MAX) = ''
+	DECLARE @ColumnList NVARCHAR(MAX) = N''
     
-    SELECT @ColumnList += CASE WHEN @ColumnList = '' THEN '' ELSE ',' END + c.name
+    SELECT @ColumnList += CASE WHEN @ColumnList = N'' THEN N'' ELSE N',' END + c.name
     --select *
     FROM DOI.SysIndexes i
         INNER JOIN DOI.SysDatabases d ON d.database_id = i.database_id

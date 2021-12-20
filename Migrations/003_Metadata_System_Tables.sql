@@ -341,6 +341,13 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE name = 'IDX_SysIndexColumns_FunctionCover')
+BEGIN
+    ALTER TABLE [DOI].[SysIndexColumns] ADD INDEX IDX_SysIndexColumns_FunctionCover NONCLUSTERED ([object_id],[index_id], [column_id])
+END
+GO
+
 IF OBJECT_ID('[DOI].[SysIndexes]') IS NULL
 CREATE TABLE [DOI].[SysIndexes]
 (
@@ -374,6 +381,13 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE name = 'IDX_SysIndexes_FunctionCover')
+BEGIN
+    ALTER TABLE [DOI].[SysIndexes] ADD INDEX IDX_SysIndexes_FunctionCover NONCLUSTERED ([object_id], [is_primary_key])
+END
+GO
+
 IF OBJECT_ID('[DOI].[SysIndexPhysicalStats]') IS NULL
 CREATE TABLE [DOI].[SysIndexPhysicalStats]
 (
@@ -537,6 +551,14 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+
+
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE name = 'IDX_SysSchemas_name')
+BEGIN
+    ALTER TABLE DOI.SysSchemas ADD INDEX IDX_SysSchemas_name NONCLUSTERED (name)
+END
+GO
+
 IF OBJECT_ID('[DOI].[SysStats]') IS NULL
 CREATE TABLE [DOI].[SysStats]
 (
@@ -621,6 +643,21 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE name = 'HDX_SysTables_TableName')
+BEGIN
+    ALTER TABLE DOI.SysTables ADD INDEX HDX_SysTables_TableName HASH (database_id, schema_id, name) WITH (BUCKET_COUNT = 50000)
+END
+GO
+
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE name = 'IDX_SysTables_Name')
+BEGIN
+    ALTER TABLE [DOI].[SysTables] ADD INDEX IDX_SysTables_Name NONCLUSTERED ([name])
+END
+GO
+
+
+
 IF OBJECT_ID('[DOI].[SysTriggers]') IS NULL
 CREATE TABLE [DOI].[SysTriggers]
 (
@@ -671,6 +708,14 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+
+--HELPS PERF WITH fnGetColumnListForTable
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE NAME = 'HDX_SysTypes_user_type_id')
+BEGIN
+	ALTER TABLE doi.SysTypes ADD INDEX HDX_SysTypes_user_type_id HASH ([user_type_id]) WITH (BUCKET_COUNT = 1500)
+END
+GO
+
 IF OBJECT_ID('[DOI].[SysColumns]') IS NULL
 CREATE TABLE [DOI].[SysColumns]
 (
@@ -709,6 +754,8 @@ CREATE TABLE [DOI].[SysColumns]
 [column_encryption_key_database_name] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [is_hidden] [bit] NULL,
 [is_masked] [bit] NULL,
+[identity_seed_value] INT NULL,
+[identity_incr_value] INT NULL,
 CONSTRAINT [PK_SysColumns] PRIMARY KEY NONCLUSTERED  ([database_id], [object_id], [column_id]),
 INDEX [IDX_SysColumns_object_id] NONCLUSTERED ([object_id])
 )
@@ -832,6 +879,25 @@ CREATE TABLE DOI.SysIdentityColumns (
     [graph_type]	                        INT	NULL,
     [graph_type_desc]	                    NVARCHAR(120) NULL,
     CONSTRAINT PK_SysIdentityColumns PRIMARY KEY NONCLUSTERED (database_id, object_id, column_id))
+WITH
+(
+MEMORY_OPTIMIZED = ON
+)
+GO
+IF OBJECT_ID('[DOI].[SysColumnStoreRowGroups]') IS NULL
+CREATE TABLE DOI.SysColumnStoreRowGroups (
+    [database_id]                           INT NOT NULL,
+    [object_id]	                            INT NOT NULL,
+    [index_id]                              INT NOT NULL,
+    [partition_number]                      INT NOT NULL,
+    [row_group_id]                          INT NOT NULL,
+    [delta_store_hobt_id]                   BIGINT NULL,
+    [state]                                 TINYINT NOT NULL,
+    [state_description]                     NVARCHAR(60) NOT NULL,
+    [total_rows]                            BIGINT NOT NULL,
+    [deleted_rows]                          BIGINT NULL,
+    [size_in_bytes]                         BIGINT NOT NULL
+    CONSTRAINT PK_SysColumStoreRowGroups PRIMARY KEY NONCLUSTERED (database_id, object_id, index_id, partition_number, row_group_id))
 WITH
 (
 MEMORY_OPTIMIZED = ON

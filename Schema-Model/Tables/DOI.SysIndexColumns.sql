@@ -19,3 +19,8 @@ WITH
 MEMORY_OPTIMIZED = ON
 )
 GO
+IF NOT EXISTS(SELECT 'True' FROM sys.indexes WHERE name = 'IDX_SysIndexColumns_FunctionCover')
+BEGIN
+    ALTER TABLE [DOI].[SysIndexColumns] ADD INDEX IDX_SysIndexColumns_FunctionCover NONCLUSTERED ([object_id],[index_id], [column_id])
+END
+GO
