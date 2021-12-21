@@ -192,7 +192,6 @@
     <None Include="Migrations\003_Metadata_System_Tables.sql" />
     <None Include="Programmable Objects\Functions\DOI.fn_ListToTable.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnActualIndex_Frag.sql" />
-    <None Include="Programmable Objects\Functions\DOI.fnActualIndex_NumPages.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnEstimateIndexSize_AllColSize.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnEstimateIndexSize_InclFixedColSize.sql" />
     <None Include="Programmable Objects\Functions\DOI.fnEstimateIndexSize_InclVarColSize.sql" />
