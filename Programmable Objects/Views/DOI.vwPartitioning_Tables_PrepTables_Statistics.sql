@@ -56,7 +56,7 @@ WE NEED THE IF EXISTS HERE, because when Renaming an index with statistics it al
 if an index is renamed before its statistic, then the statistic will no longer be there.
 */
             CASE 
-                WHEN T.IsNewPartitionedPrepTable = 0
+                WHEN T.IsNewPartitionedTable = 0
                 THEN ''
                 ELSE    CASE 
                             WHEN STM.IsStatisticsMissing = 1
@@ -65,12 +65,12 @@ if an index is renamed before its statistic, then the statistic will no longer b
                         END 
             END AS RenameExistingTableStatisticsSQL,
             CASE 
-                WHEN T.IsNewPartitionedPrepTable = 0
+                WHEN T.IsNewPartitionedTable = 0
                 THEN ''
                 ELSE STM.RevertRenameStatisticsSQL
             END AS RevertRenameExistingTableStatisticsSQL,
             CASE
-                WHEN T.IsNewPartitionedPrepTable = 0
+                WHEN T.IsNewPartitionedTable = 0
                 THEN ''
                 ELSE '
 IF EXISTS ( SELECT ''True''
@@ -89,7 +89,7 @@ BEGIN
 END'
             END AS RenameNewPartitionedPrepTableStatisticsSQL,
             CASE
-                WHEN T.IsNewPartitionedPrepTable = 0
+                WHEN T.IsNewPartitionedTable = 0
                 THEN ''
                 ELSE '
 IF EXISTS ( SELECT ''True''
@@ -110,6 +110,6 @@ END'
 	FROM  DOI.vwPartitioning_Tables_PrepTables T
         INNER JOIN DOI.[vwStatistics] STM ON STM.SchemaName = T.SchemaName 
             AND STM.TableName = T.TableName
-    WHERE T.IsNewPartitionedPrepTable = 1
+    WHERE T.IsNewPartitionedTable = 1
 
 GO

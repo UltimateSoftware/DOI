@@ -1,5 +1,4 @@
 -- <Migration ID="c01e57fb-0a94-43d4-ae82-ce75a441091b" />
-GO
 -- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 IF OBJECT_ID('[DOI].[vwPartitioning_Tables_PrepTables]') IS NOT NULL
 	DROP VIEW [DOI].[vwPartitioning_Tables_PrepTables];
@@ -11,7 +10,7 @@ SET ANSI_NULLS ON
 GO
 
 
-CREATE     VIEW [DOI].[vwPartitioning_Tables_PrepTables]
+CREATE VIEW [DOI].[vwPartitioning_Tables_PrepTables]
 
 /*
 	select top 10 CreateViewForBCPSQL
@@ -49,6 +48,7 @@ SELECT  AllTables.DatabaseName,
         StorageType_Desired,
         AllTables.PrepTableFilegroup,
         PartitionNumber,
+		AllTables.IsNewPartitionedTable,
         '
 IF OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.PrepTableName + ''') IS NOT NULL
 BEGIN
@@ -123,9 +123,9 @@ WHERE DatabaseName = ''' + AllTables.DatabaseName + '''
 	AND SchemaName = ''' + AllTables.SchemaName + '''
 	AND ParentTableName = ''' + AllTables.TableName + '''
 '
-END AS TurnOffDataSynchSQL,
+AS TurnOffDataSynchSQL,
 
-CASE WHEN AllTables.IsNewPartitionedPrepTable = 1 THEN '' ELSE 
+CASE WHEN AllTables.IsNewPartitionedTable = 1 THEN '' ELSE 
 '
 IF EXISTS (	SELECT ''True''
 			FROM DOI.DOI.Run_PartitionState WITH (NOLOCK)
@@ -164,7 +164,7 @@ BEGIN
 		AND NOT EXISTS (SELECT ''True''
 						FROM inserted i 
 						WHERE ' + REPLACE(AllTables.PKColumnListJoinClause, 'PT.', 'i.') + ')
-END' AS PrepTableTriggerSQLFragment,
+END' END AS PrepTableTriggerSQLFragment,
 
 '
 SELECT COUNT(*), ''MissingInserts''
@@ -220,6 +220,7 @@ FROM (  SELECT T.DatabaseName
 				,T.StorageType_Desired
 				,P.PartitionNumber
                 ,UFG_Desired.name AS PrepTableFilegroup
+				,0 AS IsNewPartitionedTable
         --SELECT COUNT(*)
         FROM DOI.Tables T
             CROSS APPLY (   SELECT *, T.TableName + P.PrepTableNameSuffix AS PrepTableName
@@ -304,13 +305,35 @@ FROM (  SELECT T.DatabaseName
                     AND P.PartitionNumber = DDS_Desired.destination_id
                 INNER JOIN DOI.SysDataSpaces UFG_Desired ON DDS_Desired.database_id = UFG_Desired.database_id
                     AND DDS_Desired.data_space_id = UFG_Desired.data_space_id
+WHERE IntendToPartition = 1
+        UNION ALL
+        SELECT	T.DatabaseName
+                ,T.SchemaName
+				,T.TableName
+				,0 AS DateDiffs
+				,T.TableName + '_NewPartitionedTableFromPrep' AS PrepTableName
+				,'_NewPartitionedTableFromPrep' AS PrepTableNameSuffix
+				,T.TableName + '_NewPartitionedTableFromPrep' AS NewPartitionedPrepTableName
+				,T.PartitionFunctionName
+				,'9999-12-31' AS NextBoundaryValue
+				,'0001-01-01' AS BoundaryValue
+				,T.ColumnListWithTypes
+				,T.ColumnListNoTypes
+				,T.UpdateColumnList
 				,T.ColumnListForDataSynchTriggerSelect
 				,T.ColumnListForDataSynchTriggerUpdate
 				,T.ColumnListForDataSynchTriggerInsert
 				,T.TableHasOldBlobColumns
 				,T.TableHasIdentityColumn
+    			,T.PartitionColumn
+    			,T.PKColumnList
+				,T.PKColumnListJoinClause
+				,T.Storage_Desired
+				,T.StorageType_Desired
+				,0 AS PartitionNumber
                 ,'PRIMARY' AS PrepTableFilegroup
+				,1 AS IsNewPartitionedTable
+        FROM DOI.Tables T
         WHERE IntendToPartition = 1) AllTables
     CROSS JOIN (SELECT * FROM DOI.DOISettings WHERE SettingName = 'UTEBCP Filepath') SS
-
 GO

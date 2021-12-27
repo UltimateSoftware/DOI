@@ -180,7 +180,7 @@ RECONFIGURE
 				PT.BCPSQL,
 				PT.Storage_Desired,
 				PT.StorageType_Desired,
-				PT.IsNewPartitionedPrepTable,
+				PT.IsNewPartitionedTable,
 				PT.NewPartitionedPrepTableName,
 				PT.CheckConstraintSQL,
 				NPT.RenameNewPartitionedPrepTableSQL,
@@ -206,7 +206,7 @@ RECONFIGURE
 			AND TTP.DatabaseName = @DatabaseName
 			AND TTP.SchemaName = @SchemaName
 			AND TTP.TableName = @TableName
-		ORDER BY PT.IsNewPartitionedPrepTable, PT.PartitionNumber
+		ORDER BY PT.IsNewPartitionedTable, PT.PartitionNumber
 	
 	OPEN PrepTable_Cur
 

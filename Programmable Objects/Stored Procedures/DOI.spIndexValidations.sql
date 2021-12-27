@@ -242,7 +242,7 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
                             AND IC.SchemaName = AllIdx.SchemaName
                             AND IC.TableName = AllIdx.TableName
                             AND IC.IndexName = AllIdx.IndexName
-                            AND IC.Desired = 1
+                            --AND IC.Desired = 1
                             AND ((AllIdx2.IndexType = 'RowStore' AND IC.IsKeyColumn = 1) 
                                     OR (AllIdx2.IndexType = 'ColumnStore')) 
                             AND IC.ColumnName = AllIdx.PartitionColumn_Desired) --partitioning column is NOT in the indexkey column.

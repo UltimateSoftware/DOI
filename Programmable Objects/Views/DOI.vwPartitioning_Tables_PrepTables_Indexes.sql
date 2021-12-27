@@ -39,7 +39,7 @@ SELECT  PT.DatabaseName,
 		PT.PartitionFunctionName,
 		PT.BoundaryValue,
 		PT.NextBoundaryValue,
-        0 AS IsNewPartitionedPrepTable,
+        0 AS IsNewPartitionedTable,
         I.Storage_Actual,
         I.StorageType_Actual,
         I.Storage_Desired,
@@ -139,7 +139,7 @@ SELECT  NPT.DatabaseName,
 		NPT.PartitionFunctionName,
 		NPT.BoundaryValue,
 		NPT.NextBoundaryValue,
-        1 AS IsNewPartitionedPrepTable,
+        1 AS IsNewPartitionedTable,
         I.Storage_Actual,
         I.StorageType_Actual,
         I.Storage_Desired,
@@ -172,9 +172,16 @@ ALTER TABLE ' + I.SchemaName + '.' + NPT.PrepTableName + CHAR(13) + CHAR(10) + C
 						ALLOW_ROW_LOCKS = ' + CASE WHEN I.OptionAllowRowLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 						ALLOW_PAGE_LOCKS = ' + CASE WHEN I.OptionAllowPageLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 						DATA_COMPRESSION = ' + I.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) + CHAR(9) +
-'			ON [' +	NPT.Storage_Desired + ']' + '(' + I.PartitionColumn_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
-                        ELSE I.Storage_Desired
-								WHEN (PT.IsNewPartitionedPrepTable = 0 OR I.PartitionColumn_Desired IS NULL)
+'			ON [' +	CASE
+						WHEN (NPT.IsNewPartitionedTable = 0 OR I.PartitionColumn_Desired IS NULL)
+						THEN NPT.PrepTableFilegroup
+						ELSE NPT.Storage_Desired
+					END + 
+					CASE
+						WHEN (NPT.IsNewPartitionedTable = 0 OR I.PartitionColumn_Desired IS NULL)
+						THEN ']'
+						ELSE ']' + '(' + I.PartitionColumn_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
+					END
 					ELSE '
 	CREATE' +	CASE I.IsUnique_Desired WHEN 1 THEN ' UNIQUE ' ELSE ' ' END + CASE WHEN I.IsClustered_Desired = 0 THEN ' NON' ELSE ' ' END + 'CLUSTERED INDEX ' + REPLACE(I.IndexName, I.TableName, NPT.PrepTableName) + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 											'	ON ' + I.SchemaName + '.' + NPT.PrepTableName + '(' + I.KeyColumnList_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
@@ -205,9 +212,16 @@ ALTER TABLE ' + I.SchemaName + '.' + NPT.PrepTableName + CHAR(13) + CHAR(10) + C
 								ALLOW_PAGE_LOCKS = ' + CASE WHEN I.OptionAllowPageLocks_Desired = 1 THEN 'ON' ELSE 'OFF' END + ',
 								MAXDOP = 0,
 								DATA_COMPRESSION = ' + I.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
-											'		ON [' + NPT.Storage_Desired + ']' + '(' + I.PartitionColumn_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
-                                                                ELSE I.Storage_Desired
-																	WHEN (PT.IsNewPartitionedPrepTable = 0 OR I.PartitionColumn_Desired IS NULL)
+'		ON [' +	CASE
+					WHEN (NPT.IsNewPartitionedTable = 0 OR I.PartitionColumn_Desired IS NULL)
+					THEN NPT.PrepTableFilegroup
+					ELSE NPT.Storage_Desired
+				END + 
+				CASE
+					WHEN (NPT.IsNewPartitionedTable = 0 OR I.PartitionColumn_Desired IS NULL)
+					THEN ']'
+					ELSE ']' + '(' + I.PartitionColumn_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9)
+				END
 			END + 
 'END'
                 WHEN indexType = 'ColumnStore'
@@ -228,7 +242,7 @@ BEGIN
 						DATA_COMPRESSION = ' + I.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										'		ON [' + NPT.Storage_Desired + ']' +	'(' + I.PartitionColumn_Desired + ')' + CHAR(13) + CHAR(10) + '
                                                             ELSE I.Storage_Desired
-																WHEN (PT.IsNewPartitionedPrepTable = 0 OR I.PartitionColumn_Desired IS NULL)
+																WHEN (PT.IsNewPartitionedTable = 0 OR I.PartitionColumn_Desired IS NULL)
 END'
         END AS PrepTableIndexCreateSQL,
         I.CreateStatement AS OrigCreateSQL,

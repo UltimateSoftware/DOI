@@ -69,7 +69,7 @@ BEGIN TRY
 				FROM DOI.vwPartitioning_Tables_PrepTables_Indexes
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
-					AND IsNewPartitionedPrepTable = 1
+					AND IsNewPartitionedTable = 1
 				UNION ALL
 				SELECT	DatabaseName,
                         ConstraintName,
@@ -79,7 +79,7 @@ BEGIN TRY
 				FROM DOI.vwPartitioning_Tables_PrepTables_Constraints
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
-					AND IsNewPartitionedPrepTable = 1
+					AND IsNewPartitionedTable = 1
 				UNION ALL
 				SELECT	DatabaseName,
                         StatisticsName,
@@ -125,7 +125,7 @@ BEGIN TRY
 				FROM DOI.vwPartitioning_Tables_PrepTables_Indexes
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
-					AND IsNewPartitionedPrepTable = 1
+					AND IsNewPartitionedTable = 1
 				UNION ALL
 				SELECT	DatabaseName,
                         ConstraintName,
@@ -135,7 +135,7 @@ BEGIN TRY
 				FROM DOI.vwPartitioning_Tables_PrepTables_Constraints
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
-					AND IsNewPartitionedPrepTable = 1
+					AND IsNewPartitionedTable = 1
                 UNION ALL
 				SELECT	DatabaseName,
                         StatisticsName,
@@ -282,7 +282,26 @@ BEGIN TRAN' ,
 										    BatchId ,
 										    SeqNo ,
 										    ExitTableLoopOnError )
-					SELECT *
+					SELECT	LogID,
+							DatabaseName,
+							SchemaName ,
+							TableName ,
+							IndexName ,
+							PartitionNumber ,
+							IndexSizeInMB ,
+							LoginName ,
+							UserName ,
+							LogDateTime ,
+							SQLStatement ,
+							IndexOperation ,
+							[RowCount] ,
+							TableChildOperationId ,
+							RunStatus ,
+							ErrorText ,
+							TransactionId ,
+							BatchId ,
+							SeqNo ,
+							ExitTableLoopOnError
 					FROM   @Log T
 					WHERE  NOT EXISTS ( SELECT 't'
 										FROM   DOI.Log L

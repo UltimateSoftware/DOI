@@ -55,7 +55,7 @@ FROM DOI.Tables T
 UPDATE T
 SET NewPartitionedPrepTableName = CASE WHEN T.IntendToPartition = 1 THEN TableName + '_NewPartitionedTableFromPrep' ELSE NULL END,
     Storage_Actual = DS_Actual.name,
-    StorageType_Actual = DS_Actual.type_desc
+    StorageType_Actual = DS_Actual.type_desc,
     PKColumnList_Desired = DOI.fnGetPKColumnListForTable_Desired(T.DatabaseName, T.SchemaName, T.TableName),
     PKColumnListJoinClause_Desired = DOI.fnGetJoinClauseForTable_Desired(T.DatabaseName, T.SchemaName, T.TableName, 1, 'T', 'PT')
 FROM DOI.Tables T
@@ -120,14 +120,14 @@ FROM DOI.Tables T
     INNER JOIN DOI.SysSchemas s ON s.database_id = t2.database_id
 		AND s.schema_id = t2.schema_id
         AND s.name = T.SchemaName
-	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + N'[' + c.name + N']' + NCHAR(13) + NCHAR(10)
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + QUOTENAME(c.name, ']') + SPACE(1) + NCHAR(13) + NCHAR(10)
 									FROM DOI.SysColumns c 
 									WHERE c.database_id = T2.database_id
 										AND c.object_id = t2.object_id
 										AND C.is_computed = 0
 									ORDER BY c.column_id
 									FOR XML PATH ('')), 1, 1, '')) ICL(InsertColumnList)
-	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + N'[' + c.name + N'] ' + 
+	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + QUOTENAME(c.name, ']') + SPACE(1) +
 										UPPER(ty.name) + 
 											CASE 
 												WHEN ty.NAME LIKE '%CHAR%' 
@@ -148,7 +148,7 @@ FROM DOI.Tables T
 										AND C.is_computed = 0
 									ORDER BY c.column_id
 									FOR XML PATH ('')), 1, 1, '')) CTCL(CreateTableColumnList)
-	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + N'[' + c.name + N'] ' + 
+	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + QUOTENAME(c.name, ']') + SPACE(1) +
 										UPPER(ty.name) + 
 											CASE 
 												WHEN ty.NAME LIKE '%CHAR%' 
@@ -166,7 +166,7 @@ FROM DOI.Tables T
 										AND C.is_computed = 0
 									ORDER BY c.column_id
 									FOR XML PATH ('')), 1, 1, '')) CTCLNIP(CreateTableColumnListNoIdentityProperty)
-	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + N'PT.[' + c.name + N'] = T.[' + c.name + N'],'+ NCHAR(13) + NCHAR(10)
+	CROSS APPLY (	SELECT STUFF((	SELECT CHAR(9) + N'PT.' + QUOTENAME(c.name, ']') + N' = T.' + QUOTENAME(c.name, ']') + N','+ NCHAR(13) + NCHAR(10)
 									FROM DOI.SysColumns c 
 									WHERE c.database_id = t2.database_id
 										AND c.object_id = t2.object_id
@@ -193,7 +193,7 @@ FROM DOI.Tables T
 											WHEN TY.name IN ('TEXT', 'NTEXT', 'IMAGE')--Old BLOB columns cannot be selected from inserted and deleted tables.
 											THEN N'PT.'
 											ELSE N'T.'
-										END + N'[' + c.name + N'] ' + NCHAR(13) + NCHAR(10)
+										END + QUOTENAME(c.name, ']') + SPACE(1) + NCHAR(13) + NCHAR(10)
 									FROM DOI.SysColumns c 
 										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
 											AND c.user_type_id = ty.user_type_id
@@ -202,12 +202,12 @@ FROM DOI.Tables T
 										AND ty.name <> N'TIMESTAMP'
 									ORDER BY c.column_id
 									FOR XML PATH('')), 1, 1, '')) FDSTSCL(ColumnListForDataSynchTriggerSelect)
-	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + N'PT.[' + c.name + N'] = ' + 
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + N'PT.' + QUOTENAME(c.name, ']') + N' = ' + 
 										CASE
 											WHEN TY.name IN ('TEXT', 'NTEXT', 'IMAGE')--Old BLOB columns cannot be selected from inserted and deleted tables.
 											THEN N'ST.'
 											ELSE N'T.' 
-										END + N'[' + c.name + N'] ' + NCHAR(13) + NCHAR(10)
+										END + QUOTENAME(c.name, ']') + SPACE(1) + NCHAR(13) + NCHAR(10)
 									FROM DOI.SysColumns c 
 										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
 											AND c.user_type_id = ty.user_type_id
@@ -217,7 +217,7 @@ FROM DOI.Tables T
 										AND c.is_identity = 0
 									ORDER BY c.column_id
 									FOR XML PATH('')), 1, 1, ''))FDSTUCL(ColumnListForDataSynchTriggerUpdate)
-	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + N'[' + c.name + N'] '  + NCHAR(13) + NCHAR(10)
+	CROSS APPLY (	SELECT STUFF((	SELECT ',' + CHAR(9) + QUOTENAME(c.name, ']') + SPACE(1) + NCHAR(13) + NCHAR(10)
 									FROM DOI.SysColumns c 
 										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id
 											AND c.user_type_id = ty.user_type_id
@@ -231,7 +231,7 @@ FROM DOI.Tables T
 										CASE
 											WHEN TY.name IN ('TEXT', 'NTEXT', 'IMAGE') --Old BLOB columns cannot be selected from inserted and deleted tables.
 											THEN N'NULL'
-											ELSE N'T.[' + c.name + N']'
+											ELSE N'T.' + QUOTENAME(c.name, ']') + SPACE(1)
 										END + N' ' + NCHAR(13) + NCHAR(10)
 									FROM DOI.SysColumns c 
 										INNER JOIN DOI.SysTypes ty ON c.database_id = ty.database_id

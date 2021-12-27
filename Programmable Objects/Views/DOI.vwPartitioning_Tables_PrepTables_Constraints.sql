@@ -27,7 +27,7 @@ SELECT	FN.DatabaseName,
 		FN.PartitionFunctionName,
 		FN.BoundaryValue,
 		FN.NextBoundaryValue,
-		FN.IsNewPartitionedPrepTable,
+		FN.IsNewPartitionedTable,
 		REPLACE(C.ConstraintName, FN.TableName, FN.PrepTableName) AS ConstraintName,
 		C.ConstraintType,
 		C.CreateConstraintStatement,
@@ -50,7 +50,7 @@ BEGIN
 END' + CHAR(13) + CHAR(10) 
 AS CreateConstraintStatement,
 
-CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
+CASE WHEN FN.IsNewPartitionedTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + dc.DefaultConstraintName + ''',
@@ -58,7 +58,7 @@ EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + dc.DefaultConstraintName +
 				@objtype = ''OBJECT''' END 
 AS RenameExistingTableConstraintSQL,
 
-CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
+CASE WHEN FN.IsNewPartitionedTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstraintName, FN.TableName, FN.PrepTableName) + ''',
@@ -66,7 +66,7 @@ EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstrai
 				@objtype = ''OBJECT''' END 
 AS RenameNewPartitionedPrepTableConstraintSQL,
 
-CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
+CASE WHEN FN.IsNewPartitionedTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstraintName, FN.TableName, FN.TableName + '_OLD') + ''',
@@ -74,7 +74,7 @@ EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstrai
 				@objtype = ''OBJECT''' END 
 AS RevertRenameExistingTableConstraintSQL,
 
-CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
+CASE WHEN FN.IsNewPartitionedTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(dc.DefaultConstraintName, FN.PrepTableName, FN.TableName) + ''',
@@ -96,7 +96,7 @@ BEGIN
 END' + CHAR(13) + CHAR(10) 
 AS CreateConstraintStatement,
 
-CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
+CASE WHEN FN.IsNewPartitionedTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + cc.CheckConstraintName + ''',
@@ -104,7 +104,7 @@ EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + cc.CheckConstraintName + '
 				@objtype = ''OBJECT''' END 
 AS RenameExistingTableConstraintSQL,
 
-CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
+CASE WHEN FN.IsNewPartitionedTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.PrepTableName) + ''',
@@ -112,7 +112,7 @@ EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraint
 				@objtype = ''OBJECT''' END 
 AS RenameNewPartitionedPrepTableConstraintSQL,
 
-CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
+CASE WHEN FN.IsNewPartitionedTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.TableName, FN.TableName + '_OLD') + ''',
@@ -120,7 +120,7 @@ EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraint
 				@objtype = ''OBJECT''' END 
 AS RevertRenameExistingTableConstraintSQL,
 
-CASE WHEN FN.IsNewPartitionedPrepTable = 0 THEN '' ELSE
+CASE WHEN FN.IsNewPartitionedTable = 0 THEN '' ELSE
 '
 SET DEADLOCK_PRIORITY 10
 EXEC sp_rename @objname = ''' + FN.SchemaName + '.' + REPLACE(cc.CheckConstraintName, FN.PrepTableName, FN.TableName) + ''',

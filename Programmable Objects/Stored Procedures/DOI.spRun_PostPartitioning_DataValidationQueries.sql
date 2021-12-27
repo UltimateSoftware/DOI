@@ -1,5 +1,4 @@
 
-
 IF OBJECT_ID('[DOI].[spRun_PostPartitioning_DataValidationQueries]') IS NOT NULL
 	DROP PROCEDURE [DOI].spRun_PostPartitioning_DataValidationQueries;
 
@@ -30,7 +29,7 @@ FROM DOI.vwPartitioning_Tables_PrepTables
 WHERE DatabaseName = @DatabaseName
 	AND SchemaName = @SchemaName
 	AND TableName = @TableName
-	AND IsNewPartitionedPrepTable = 1
+	AND IsNewPartitionedTable = 1
 
 SELECT @PostDataValidationQueriesSQL
 GO
