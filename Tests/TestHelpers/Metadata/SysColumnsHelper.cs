@@ -74,7 +74,9 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT C.* 
-            FROM DOI.DOI.{SysTableName} C"));
+            FROM DOI.DOI.{SysTableName} C
+                INNER JOIN DOI.DOI.SysDatabases d ON C.database_id = d.database_id
+            WHERE d.name = '{DatabaseName}'"));
 
             List<SysColumns> actualSysColumns = new List<SysColumns>();
 

@@ -375,7 +375,7 @@ namespace DOI.Tests.TestHelpers.Metadata
 
         #region Assert Helpers
 
-        public static void AssertIndexRowStoreChangeBits(string indexName, string preOrPostChange, string bitToAssert = null)
+        public static void AssertIndexRowStoreChangeBits(string indexName, string preOrPostChange, string bitToAssert = null, bool isColumnListChanging = false)
         {
             var indexRow = GetActualUserValues_RowStore(indexName).Find(x => x.IndexName == indexName);
 
@@ -389,7 +389,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsIgnoreDupKeyChanging") ? true : false, indexRow.IsIgnoreDupKeyChanging, "IsIgnoreDupKeyChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsIncludedColumnListChanging") ? true : false, indexRow.IsIncludedColumnListChanging, "IsIncludedColumnListChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPrimaryKeyChanging") ? true : false, indexRow.IsPrimaryKeyChanging, "IsPrimaryKeyChanging");
-            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsKeyColumnListChanging") ? true : false, indexRow.IsKeyColumnListChanging, "IsKeyColumnListChanging");
+            Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsKeyColumnListChanging") ? true : isColumnListChanging, indexRow.IsKeyColumnListChanging, "IsKeyColumnListChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPadIndexChanging") ? true : false, indexRow.IsPadIndexChanging, "IsPadIndexChanging");
             Assert.AreEqual((preOrPostChange == "Post" && (bitToAssert == "IsStorageChanging" || bitToAssert == "IsPartitioningChanging")) ? true : false, indexRow.IsStorageChanging, "IsStorageChanging");
             Assert.AreEqual((preOrPostChange == "Post" && bitToAssert == "IsPartitioningChanging") ? true : false, indexRow.IsPartitioningChanging, "IsPartitioningChanging");
@@ -724,9 +724,17 @@ namespace DOI.Tests.TestHelpers.Metadata
 
         #region Partitioning Helpers
 
-        public static void UpdateTableMetadataForPartitioning(string tableName, string partitionFunctionName, string partitionColumnName, string indexName)
+        public static bool UpdateTableMetadataForPartitioning(string tableName, string partitionFunctionName, string partitionColumnName, string indexName)
         {
             SqlHelper sqlHelper = new SqlHelper();
+            bool isColumnListChanging = false;
+
+            isColumnListChanging = sqlHelper.ExecuteScalar<bool>($@"SELECT CAST(1 AS BIT)
+                                                                        FROM DOI.IndexesRowStore 
+                                                                        WHERE DatabaseName = '{DatabaseName}' 
+                                                                            AND TableName = '{tableName}'
+                                                                            AND IndexName = '{indexName}'
+                                                                            AND KeyColumnList_Desired NOT LIKE '%{partitionColumnName}%'");
 
             sqlHelper.Execute($@"
                         UPDATE DOI.Tables
@@ -741,7 +749,8 @@ namespace DOI.Tests.TestHelpers.Metadata
                         UPDATE DOI.IndexesRowStore
                         SET PartitionFunction_Desired = '{partitionFunctionName}',
                             PartitionColumn_Desired = '{partitionColumnName}',
-                            OptionStatisticsIncremental_Desired = 1
+                            OptionStatisticsIncremental_Desired = 1,
+                            KeyColumnList_Desired = CASE WHEN KeyColumnList_Desired NOT LIKE '%{partitionColumnName}%' THEN KeyColumnList_Desired + ',' + '{partitionColumnName}' ELSE KeyColumnList_Desired END
                         WHERE SchemaName = 'dbo'
                             AND TableName = '{tableName}'
                             AND IndexName = '{indexName}'");
@@ -749,21 +758,46 @@ namespace DOI.Tests.TestHelpers.Metadata
             sqlHelper.Execute($@"
                         UPDATE DOI.IndexesColumnStore
                         SET PartitionFunction_Desired = '{partitionFunctionName}',
-                            PartitionColumn_Desired = '{partitionColumnName}'
+                            PartitionColumn_Desired = '{partitionColumnName}',
+                            ColumnList_Desired = CASE WHEN ColumnList_Desired NOT LIKE '%{partitionColumnName}%' THEN ColumnList_Desired + ',' + '{partitionColumnName}' ELSE ColumnList_Desired END
                         WHERE SchemaName = 'dbo'
                             AND TableName = '{tableName}'
                             AND IndexName = '{indexName}'");
 
             //now, update the other indexes so they don't throw any validation errors as well.
             sqlHelper.Execute(
-                $"UPDATE DOI.IndexesRowStore SET Storage_Desired = '{partitionFunctionName.Replace("pf", "ps")}', PartitionFunction_Desired = '{partitionFunctionName}', PartitionColumn_Desired = '{partitionColumnName}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'",
+                $@" UPDATE DOI.IndexesRowStore 
+                        SET Storage_Desired = '{partitionFunctionName.Replace("pf", "ps")}', 
+                            PartitionFunction_Desired = '{partitionFunctionName}', 
+                            PartitionColumn_Desired = '{partitionColumnName}',
+                            KeyColumnList_Desired = CASE WHEN KeyColumnList_Desired NOT LIKE '%{partitionColumnName}%' THEN KeyColumnList_Desired + ',' + '{partitionColumnName}' ELSE KeyColumnList_Desired END
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND SchemaName = 'dbo' 
+                            AND TableName = '{tableName}'
+                            AND IndexName <> '{indexName}'",
                 120);
             sqlHelper.Execute(
-                $"UPDATE DOI.IndexesColumnStore SET Storage_Desired = '{partitionFunctionName.Replace("pf", "ps")}', PartitionFunction_Desired = '{partitionFunctionName}', PartitionColumn_Desired = '{partitionColumnName}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'",
+                $@"  UPDATE DOI.IndexesColumnStore
+                        SET Storage_Desired = '{partitionFunctionName.Replace("pf", "ps")}',
+                            PartitionFunction_Desired = '{partitionFunctionName}',
+                            PartitionColumn_Desired = '{partitionColumnName}',
+                            ColumnList_Desired = CASE WHEN ColumnList_Desired NOT LIKE '%{partitionColumnName}%' THEN ColumnList_Desired + ',' + '{partitionColumnName}' ELSE ColumnList_Desired END
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND SchemaName = 'dbo' 
+                            AND TableName = '{tableName}'
+                            AND IndexName <> '{indexName}'",
                 120);
             sqlHelper.Execute(
-                $"UPDATE DOI.Tables SET IntendToPartition = 1, PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}', PartitionColumn = '{TestHelper.PartitionColumnName}' WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = '{tableName}'",
+                $@"  UPDATE DOI.Tables
+                        SET IntendToPartition = 1,
+                            PartitionFunctionName = '{TestHelper.PartitionFunctionNameYearly}',
+                            PartitionColumn = '{TestHelper.PartitionColumnName}' 
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND SchemaName = 'dbo' 
+                            AND TableName = '{tableName}'",
                 120);
+
+            return isColumnListChanging;
         }
 
         public static void CreatePartitioningContainerObjects(string partitionFunctionName)

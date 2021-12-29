@@ -51,6 +51,15 @@ FROM DOI.Tables T
                         AND T.SchemaName = S.name
                         AND T.TableName = ST.name) IC
 
+UPDATE T
+SET TableHasColumnStoreIndex = 1
+FROM DOI.Tables T
+WHERE EXISTS (	SELECT 'True' 
+				FROM DOI.IndexesColumnStore ICS 
+				WHERE ICS.DatabaseName = T.DatabaseName 
+					AND ICS.SchemaName = T.SchemaName 
+					AND ICS.TableName = T.TableName)
+
 --4 updates, splitting off the ones who don't need sysindexes from the ones who do
 UPDATE T
 SET NewPartitionedPrepTableName = CASE WHEN T.IntendToPartition = 1 THEN TableName + '_NewPartitionedTableFromPrep' ELSE NULL END,

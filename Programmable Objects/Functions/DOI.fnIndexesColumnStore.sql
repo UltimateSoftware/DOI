@@ -104,6 +104,7 @@ RETURN(
                     ,'ColumnStore' AS IndexType
                     ,ICS.IsIndexLarge
                     ,ICS.DriveLetter
+					,TTP.TableHasColumnStoreIndex
 			FROM DOI.Tables TTP
                 INNER JOIN DOI.SysDatabases d on d.name = TTP.DatabaseName
 				INNER JOIN DOI.IndexesColumnStore ICS ON TTP.DatabaseName = ICS.DatabaseName

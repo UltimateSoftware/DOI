@@ -84,6 +84,7 @@ CREATE TABLE [DOI].[Tables]
 [ColumnListForFinalDataSynchTriggerSelectForDelete] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ColumnListWithTypesNoIdentityProperty] VARCHAR(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [UpdateTimeStampColumn] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[TableHasColumnStoreIndex] [BIT] NOT NULL CONSTRAINT [Def_Tables_TableHasColumnStoreIndex] DEFAULT ((0)),
 CONSTRAINT [PK_Tables] PRIMARY KEY NONCLUSTERED  ([DatabaseName], [SchemaName], [TableName])
 )
 WITH

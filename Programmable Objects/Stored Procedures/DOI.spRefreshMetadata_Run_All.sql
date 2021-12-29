@@ -11,6 +11,7 @@ CREATE   PROCEDURE [DOI].[spRefreshMetadata_Run_All]
     @DatabaseName NVARCHAR(128) = NULL,
     @IncludeMaintenance BIT = 0,
     @RunValidations BIT = 1,
+    @ShowProgress BIT = 0,
     @Debug BIT = 0
 
 AS
@@ -22,121 +23,121 @@ AS
 
 BEGIN TRY
 	--level 0
-
-    PRINT 'Starting SysDatabases'
+    
+    IF @ShowProgress = 1 PRINT 'Starting SysIdentityColumns'
 	EXEC DOI.spRefreshMetadata_System_SysDatabases
 		@DatabaseName = @DatabaseName
 
 	--level 1
 
-    PRINT 'Starting SysFileGroups'
+    IF @ShowProgress = 1 PRINT 'Starting SysFileGroups'
     EXEC [DOI].[spRefreshMetadata_System_SysFileGroups]
         @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysMasterFiles'
+    IF @ShowProgress = 1 PRINT 'Starting SysMasterFiles'
     EXEC DOI.spRefreshMetadata_System_SysMasterFiles
 	    @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysDatabaseFiles'
+    IF @ShowProgress = 1 PRINT 'Starting SysDatabaseFiles'
     EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles
 	    @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysPartitionFunctions'
+    IF @ShowProgress = 1 PRINT 'Starting SysPartitionFunctions'
     EXEC [DOI].[spRefreshMetadata_System_SysPartitionFunctions]
         @DatabaseName = @DatabaseName
 
-    PRINT 'Starting PartitionFunctions Update'
+    IF @ShowProgress = 1 PRINT 'Starting PartitionFunctions Update'
     EXEC DOI.spRefreshMetadata_User_PartitionFunctions_UpdateData
         @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysAllocationUnits'
+    IF @ShowProgress = 1 PRINT 'Starting SysAllocationUnits'
     EXEC [DOI].[spRefreshMetadata_System_SysAllocationUnits]
         @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysDataSpaces'
+    IF @ShowProgress = 1 PRINT 'Starting SysDataSpaces'
     EXEC [DOI].[spRefreshMetadata_System_SysDataSpaces]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysDestinationDataSpaces'
+    IF @ShowProgress = 1 PRINT 'Starting SysDestinationDataSpaces'
     EXEC DOI.spRefreshMetadata_System_SysDestinationDataSpaces
 	    @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysPartitionRangeValues'
+    IF @ShowProgress = 1 PRINT 'Starting SysPartitionRangeValues'
     EXEC [DOI].[spRefreshMetadata_System_SysPartitionRangeValues]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysPartitions'
+    IF @ShowProgress = 1 PRINT 'Starting SysPartitions'
     EXEC [DOI].[spRefreshMetadata_System_SysPartitions]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysPartitionSchemes'
+    IF @ShowProgress = 1 PRINT 'Starting SysPartitionSchemes'
     EXEC [DOI].[spRefreshMetadata_System_SysPartitionSchemes]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysSchemas'
+    IF @ShowProgress = 1 PRINT 'Starting SysSchemas'
     EXEC [DOI].[spRefreshMetadata_System_SysSchemas]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysTypes'
+    IF @ShowProgress = 1 PRINT 'Starting SysTypes'
     EXEC [DOI].[spRefreshMetadata_System_SysTypes]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysColumns'
+    IF @ShowProgress = 1 PRINT 'Starting SysColumns'
     EXEC [DOI].[spRefreshMetadata_System_SysColumns]
         @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysIdentityColumns'
+    IF @ShowProgress = 1 PRINT 'Starting SysIdentityColumns'
     EXEC [DOI].[spRefreshMetadata_System_SysIdentityColumns]
         @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysColumns Update'
+    IF @ShowProgress = 1 PRINT 'Starting SysColumns Update'
         EXEC [DOI].[spRefreshMetadata_System_SysColumns_UpdateData]
         @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysCheckConstraints'
+    IF @ShowProgress = 1 PRINT 'Starting SysCheckConstraints'
     EXEC DOI.spRefreshMetadata_System_SysCheckConstraints
         @DatabaseName = @DatabaseName
 
-    PRINT 'Starting SysForeignKeyColumns'
+    IF @ShowProgress = 1 PRINT 'Starting SysForeignKeyColumns'
     EXEC [DOI].[spRefreshMetadata_System_SysForeignKeyColumns]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysIndexColumns'
+    IF @ShowProgress = 1 PRINT 'Starting SysIndexColumns'
     EXEC [DOI].[spRefreshMetadata_System_SysIndexColumns]
         @DatabaseName = @DatabaseName
 
     IF @IncludeMaintenance = 1
     BEGIN
-       PRINT 'Starting SysIndexPhysicalStats'
+       IF @ShowProgress = 1 PRINT 'Starting SysIndexPhysicalStats'
        EXEC [DOI].[spRefreshMetadata_System_SysIndexPhysicalStats]
             @DatabaseName = @DatabaseName
     END
 
 
-    PRINT 'Starting SysStatsColumns'
+    IF @ShowProgress = 1 PRINT 'Starting SysStatsColumns'
     EXEC [DOI].[spRefreshMetadata_System_SysStatsColumns]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysSqlModules'
+    IF @ShowProgress = 1 PRINT 'Starting SysSqlModules'
     EXEC [DOI].[spRefreshMetadata_System_SysSqlModules]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysTriggers'
+    IF @ShowProgress = 1 PRINT 'Starting SysTriggers'
     EXEC DOI.spRefreshMetadata_System_SysTriggers
 	    @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysStats'
+    IF @ShowProgress = 1 PRINT 'Starting SysStats'
     EXEC DOI.spRefreshMetadata_System_SysStats
         @DatabaseName = @DatabaseName
 
@@ -144,112 +145,115 @@ BEGIN TRY
     --    @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysDefaultConstraints'
+    IF @ShowProgress = 1 PRINT 'Starting SysDefaultConstraints'
     EXEC DOI.spRefreshMetadata_System_SysDefaultConstraints
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysTables'
+    IF @ShowProgress = 1 PRINT 'Starting SysTables'
     EXEC [DOI].[spRefreshMetadata_System_SysTables]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysIndexes'
+    IF @ShowProgress = 1 PRINT 'Starting SysIndexes'
     EXEC [DOI].[spRefreshMetadata_System_SysIndexes]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysForeignKeys'
+    IF @ShowProgress = 1 PRINT 'Starting SysForeignKeys'
     EXEC [DOI].[spRefreshMetadata_System_SysForeignKeys]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysColumnStoreRowGroups'
+    IF @ShowProgress = 1 PRINT 'Starting SysColumnStoreRowGroups'
     EXEC [DOI].[spRefreshMetadata_System_SysColumnStoreRowGroups]
         @DatabaseName = @DatabaseName
 
 
     --level 2
 
-    PRINT 'Starting SysDmOsVolumeStats'
+    IF @ShowProgress = 1 PRINT 'Starting SysDmOsVolumeStats'
     EXEC DOI.spRefreshMetadata_System_SysDmOsVolumeStats
 	    @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysStats Update'
+    IF @ShowProgress = 1 PRINT 'Starting SysStats Update'
 	EXEC DOI.spRefreshMetadata_System_SysStats_UpdateData
 		@DatabaseName = @DatabaseName
 
+    IF @ShowProgress = 1 PRINT 'Starting CheckConstraints & DefaultConstraints Update'
+	EXEC DOI.spRefreshMetadata_User_Constraints_UpdateData
+		@DatabaseName = @DatabaseName
 
-    PRINT 'Starting Statistics Update'
+    IF @ShowProgress = 1 PRINT 'Starting Statistics Update'
 	EXEC DOI.spRefreshMetadata_User_Statistics_UpdateData
 		@DatabaseName = @DatabaseName
      
 
-    PRINT 'Starting Tables Update'
+    IF @ShowProgress = 1 PRINT 'Starting Tables Update'
     EXEC DOI.spRefreshMetadata_User_Tables_UpdateData
 		@DatabaseName = @DatabaseName
 
     --level 3
 
-    PRINT 'Starting SysForeignKeys Update'
+    IF @ShowProgress = 1 PRINT 'Starting SysForeignKeys Update'
     EXEC [DOI].[spRefreshMetadata_System_SysForeignKeys_UpdateData] --only depends on the 'Tables' table because we need to find out when to deploy the FK...once we move everything to jobs we don't need this anymore.
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting ForeignKeys Update'
+    IF @ShowProgress = 1 PRINT 'Starting ForeignKeys Update'
     EXEC [DOI].[spRefreshMetadata_User_ForeignKeys_UpdateData] --also, the 'DeploymentTime' column exists in both SysForeignKeys and ForeignKeys tables.  Why both?
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting SysIndexes Update'
+    IF @ShowProgress = 1 PRINT 'Starting SysIndexes Update'
 	EXEC DOI.spRefreshMetadata_System_SysIndexes_UpdateData		
 		@DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting IndexesColumnStore Update'
+    IF @ShowProgress = 1 PRINT 'Starting IndexesColumnStore Update'
 	EXEC DOI.spRefreshMetadata_User_IndexesColumnStore_UpdateData
 		@DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting IndexesRowStore Update'
+    IF @ShowProgress = 1 PRINT 'Starting IndexesRowStore Update'
 	EXEC DOI.spRefreshMetadata_User_IndexesRowStore_UpdateData
 		@DatabaseName = @DatabaseName
 
     --level 4
 
-    PRINT 'Starting Tables_IndexAggColumns'
+    IF @ShowProgress = 1 PRINT 'Starting Tables_IndexAggColumns'
     EXEC [DOI].[spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting IndexPartitions_RowStore Insert'
+    IF @ShowProgress = 1 PRINT 'Starting IndexPartitions_RowStore Insert'
     EXEC [DOI].[spRefreshMetadata_User_IndexPartitions_RowStore_InsertData]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting IndexPartitions_RowStore Update'
+    IF @ShowProgress = 1 PRINT 'Starting IndexPartitions_RowStore Update'
     EXEC [DOI].[spRefreshMetadata_User_IndexPartitions_RowStore_UpdateData]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting IndexPartitions_ColumnStore Insert'
+    IF @ShowProgress = 1 PRINT 'Starting IndexPartitions_ColumnStore Insert'
     EXEC [DOI].[spRefreshMetadata_User_IndexPartitions_ColumnStore_InsertData]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting IndexPartitions_ColumnStore Update'
+    IF @ShowProgress = 1 PRINT 'Starting IndexPartitions_ColumnStore Update'
     EXEC [DOI].[spRefreshMetadata_User_IndexPartitions_ColumnStore_UpdateData]
         @DatabaseName = @DatabaseName
 
 
-    PRINT 'Starting IndexColumns'
+    IF @ShowProgress = 1 PRINT 'Starting IndexColumns'
     EXEC DOI.spRefreshMetadata_User_IndexColumns_InsertData
 		@DatabaseName = @DatabaseName
        
     IF @RunValidations = 1
     BEGIN
-        PRINT 'Starting Index Validations'
+        IF @ShowProgress = 1 PRINT 'Starting Index Validations'
         EXEC DOI.spIndexValidations 
             @DatabaseName = @DatabaseName
     END

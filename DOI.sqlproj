@@ -614,4 +614,7 @@
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysColumnStoreRowGroups.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Constraints_UpdateData.sql" />
+  </ItemGroup>
 </Project>

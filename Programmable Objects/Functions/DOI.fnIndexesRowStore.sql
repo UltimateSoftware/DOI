@@ -109,6 +109,7 @@ RETURN  (
                     ,'RowStore' AS IndexType
                     ,IRS.IsIndexLarge
                     ,IRS.DriveLetter
+					,TTP.TableHasColumnStoreIndex
 			FROM DOI.Tables TTP
                 INNER JOIN DOI.SysDatabases d on d.name = TTP.DatabaseName
 				INNER JOIN DOI.IndexesRowStore IRS ON TTP.DatabaseName = IRS.DatabaseName

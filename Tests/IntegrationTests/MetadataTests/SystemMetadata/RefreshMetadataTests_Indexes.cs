@@ -942,12 +942,12 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
 
             //action
             //ResetOtherIndexPropertiesToAvoidValidationFailures(databaseName, tableName, indexName, "IsPartitioningChanging");
-            TestHelper.UpdateTableMetadataForPartitioning(tableName, TestHelper.PartitionFunctionNameYearly, TestHelper.PartitionColumnName, indexName);
+            var isColumnListChanging = TestHelper.UpdateTableMetadataForPartitioning(tableName, TestHelper.PartitionFunctionNameYearly, TestHelper.PartitionColumnName, indexName);
 
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //only the correct change bit should be turned on.  All others should still be off.
-            TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsPartitioningChanging");
+            TestHelper.AssertIndexRowStoreChangeBits(indexName, "Post", "IsPartitioningChanging", isColumnListChanging);
         }
 
         [TestCase("DOIUnitTests", "TempA", "CCI_TempA", TestName = "IndexUpdateTests_ChangeBits_PartitioningChanging_ColumnStore_Clustered")]

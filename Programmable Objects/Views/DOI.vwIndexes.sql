@@ -54,13 +54,22 @@ FROM (	SELECT	 IRS.*
 					WHEN IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.AreDropRecreateOptionsChanging = 1
 						AND (IRS.IsClusteredChanging = 1 OR IRS.IsPrimaryKeyChanging = 1 OR IRS.IsPrimaryKey_Actual = 1) --handles the above 2 cases
+						--need to handle the case where table is going to be rebuilt but it has a columnstore index.
 					THEN 'ExchangeTableNonPartitioned'
 					WHEN (IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.NeedsPartitionLevelOperations = 0 
 						AND IRS.AreDropRecreateOptionsChanging = 0 )
 							AND ((IRS.FragmentationType = 'Heavy' OR IRS.AreRebuildOnlyOptionsChanging = 1)
-								OR (IRS.FragmentationType = 'Light' AND IRS.AreSetOptionsChanging = 1))
+								OR (IRS.FragmentationType = 'Light' AND IRS.AreSetOptionsChanging = 1)
+						AND IRS.TableHasColumnStoreIndex = 0) --online rebuilds only work if the table doesn't have a columnstore index.
 					THEN 'AlterRebuild'	
+					WHEN (IRS.IsIndexMissingFromSQLServer = 0
+						AND IRS.NeedsPartitionLevelOperations = 0 
+						AND IRS.AreDropRecreateOptionsChanging = 0 )
+							AND ((IRS.FragmentationType = 'Heavy' OR IRS.AreRebuildOnlyOptionsChanging = 1)
+								OR (IRS.FragmentationType = 'Light' AND IRS.AreSetOptionsChanging = 1))
+						AND IRS.TableHasColumnStoreIndex = 1 --so if it has a columnstore index, do the table swap instead.
+					THEN 'ExchangeTableNonPartitioned'	
 					WHEN (IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.NeedsPartitionLevelOperations = 1 
 						AND IRS.AreDropRecreateOptionsChanging = 0)
@@ -321,7 +330,7 @@ END AS CreateReferencingFKs
 						AND ICS.AreDropRecreateOptionsChanging = 0 )
 							AND ((ICS.FragmentationType = 'Heavy' OR ICS.AreRebuildOnlyOptionsChanging = 1)
 								OR (ICS.FragmentationType = 'Light' AND ICS.AreSetOptionsChanging = 1))
-					THEN 'AlterRebuild'	
+					THEN 'ExchangeTableNonPartitioned'	
 					WHEN (ICS.IsIndexMissingFromSQLServer = 0
 						AND ICS.NeedsPartitionLevelOperations = 1 
 						AND ICS.AreDropRecreateOptionsChanging = 0 )

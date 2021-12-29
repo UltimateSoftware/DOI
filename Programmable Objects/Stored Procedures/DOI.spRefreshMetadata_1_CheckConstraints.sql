@@ -21,5 +21,8 @@ AS
 
     EXEC DOI.spRefreshMetadata_System_SysCheckConstraints
         @DatabaseName = @DatabaseName
+
+    EXEC DOI.spRefreshMetadata_User_Constraints_UpdateData
+        @DatabaseName = @DatabaseName
 --END
 GO

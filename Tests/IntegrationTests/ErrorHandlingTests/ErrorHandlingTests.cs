@@ -4,6 +4,7 @@ using DOI.Tests.Integration;
 using DOI.Tests.Integration.Models;
 using DOI.Tests.TestHelpers;
 using NUnit.Framework;
+using Simple.Data.Ado.Schema;
 using TestHelper = DOI.Tests.TestHelpers.Metadata.SystemMetadata;
 
 namespace DOI.Tests.IntegrationTests.ErrorHandling
