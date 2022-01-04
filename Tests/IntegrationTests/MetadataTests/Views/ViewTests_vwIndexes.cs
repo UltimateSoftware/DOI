@@ -74,7 +74,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             sqlHelper.Execute(TestHelper.CreateNCIndexMetadataSql);
 
 
-            var columnsToUpdateSql = TestHelper.GetColumnsToUpdateFromIndexTypeSql(indexUpdateType);
+            var columnsToUpdateSql = TestHelper.GetColumnsToUpdateFromIndexTypeSql(indexUpdateType, "RowStore");
 
             sqlHelper.Execute(
                 $@" UPDATE DOI.IndexesRowStore 
@@ -98,8 +98,8 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
         [TestCase("CreateMissing", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_CreateMissing_C")]
         [TestCase("CreateDropExisting", 0, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_CreateDropExisting_NC")]
         [TestCase("CreateDropExisting", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_CreateDropExisting_C")]
-        [TestCase("AlterRebuild", 0, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuild_NC")]
-        [TestCase("AlterRebuild", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuild_C")]
+        [TestCase("ExchangeTableNonPartitioned", 0, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuild_NC")]
+        [TestCase("ExchangeTableNonPartitioned", 1, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuild_C")]
         [TestCase("AlterRebuild-PartitionLevel", 0, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuildPartitionLevel_NC")]
         [TestCase("AlterRebuild-PartitionLevel", 1, 1, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterRebuildPartitionLevel_C")]
         [TestCase("AlterReorganize", 0, 0, TestName = "ViewTests_vwIndexes_NeedsSpaceOnTempDBDrive_ColumnStore_AlterReorganize_NC")]
@@ -115,7 +115,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             sqlHelper.Execute(TestHelper.CreateNCCIIndexMetadataSql);
 
 
-            var columnsToUpdateSql = TestHelper.GetColumnsToUpdateFromIndexTypeSql(indexUpdateType);
+            var columnsToUpdateSql = TestHelper.GetColumnsToUpdateFromIndexTypeSql(indexUpdateType, "ColumnStore");
             columnsToUpdateSql += string.Concat(isClustered_Desired == 1 ? ", ColumnList_Desired = NULL" : String.Empty);
 
             sqlHelper.Execute(
@@ -125,6 +125,15 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                         WHERE DatabaseName = '{DatabaseName}' 
                             AND TableName = '{TestTableName1}'
                             AND IndexName = '{TestHelper.NCCIIndexName}'");
+
+            var actualIndexUpdateType = sqlHelper.ExecuteScalar<string>(
+                $@" SELECT IndexUpdateType 
+                        FROM DOI.vwIndexes 
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND TableName = '{TestTableName1}'
+                            AND IndexName = '{TestHelper.NCCIIndexName}'");
+
+            Assert.AreEqual(indexUpdateType, actualIndexUpdateType);
 
             var actualNeedsSpaceOnTempDBDrive = sqlHelper.ExecuteScalar<int>(
                 $@" SELECT NeedsSpaceOnTempDBDrive 
@@ -154,14 +163,14 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IsPrimaryKey", "1", "IsPrimaryKey, Uniqueness", TestName = "IndexUpdateTests_ListOfChanges_RowStore_IsPrimaryKey")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "KeyColumnList", "TempAId", "KeyColumnList", TestName = "IndexUpdateTests_ListOfChanges_RowStore_KeyColumnList")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionPadIndex", "0", "PadIndex", TestName = "IndexUpdateTests_ListOfChanges_RowStore_PadIndex")]
-        [TestCase("DOIUnitTests", "TempA_Partitioned", "IDX_TempA_Partitioned", "PartitionFunction", "pfTestsYearly", "Partitioning, Storage", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Partitioning")]
+        [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "PartitionFunction", "pfTestsYearly", "Partitioning, Storage", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Partitioning")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "OptionStatisticsNoRecompute", "1", "StatisticsNoRecompute", TestName = "IndexUpdateTests_ListOfChanges_RowStore_StatisticsNoRecompute")]
-        [TestCase("DOIUnitTests", "TempA_Partitioned", "IDX_TempA_Partitioned", "OptionStatisticsIncremental", "1", "StatisticsIncremental", TestName = "IndexUpdateTests_ListOfChanges_RowStore_StatisticsIncremental")]
+        [TestCase("DOIUnitTests", "TempA_Partitioned", "IDX_TempA_Partitioned", "OptionStatisticsIncremental", "0", "StatisticsIncremental", TestName = "IndexUpdateTests_ListOfChanges_RowStore_StatisticsIncremental")]
         [TestCase("DOIUnitTests", "TempA", "IDX_TempA", "IsUnique", "1", "Uniqueness", TestName = "IndexUpdateTests_ListOfChanges_RowStore_Uniqueness")]
 
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "IsClustered", "1", "Clustered", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Clustered")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "ColumnList", "TempAId", "KeyColumnList", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_ColumnList")]
-        [TestCase("DOIUnitTests", "TempA_Partitioned", "NCCI_TempA_Partitioned", "PartitionFunction", "pfTestsYearly", "Partitioning, Storage", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Partitioning")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "PartitionFunction", "pfTestsYearly", "Partitioning, Storage", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Partitioning")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Fragmentation", "Light", "Fragmentation:  Light", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_FragmentationLight")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Fragmentation", "Heavy", "Fragmentation:  Heavy", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_FragmentationHeavy")]
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "Storage", "Test1FG2", "Storage", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_Storage")]
@@ -170,6 +179,12 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
         [TestCase("DOIUnitTests", "TempA", "NCCI_TempA", "OptionDataCompression", "COLUMNSTORE_ARCHIVE", "DataCompression", TestName = "IndexUpdateTests_ListOfChanges_ColumnStore_DataCompression")]
         public void IndexUpdateTests_ListOfChanges(string databaseName, string tableName, string indexName, string columnToUpdate, string newValue, string expectedListOfChanges)
         {
+            //set up partitioning container objects
+            if (columnToUpdate == "PartitionFunction")
+            {
+                TestHelper_Indexes.CreatePartitioningContainerObjects(TestHelper.PartitionFunctionNameYearly);
+            }
+
             //set up table and index.
             if (tableName == $"{TestHelper.TableName}")
             {
@@ -261,7 +276,36 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                         AND SchemaName = 'dbo' 
                         AND TableName = '{tableName}'");
             }
-            
+
+            //WHEN DOING A PARTITIONING CHANGE, IN ORDER TO PASS VALIDATIONS, YOU HAVE TO UPDATE ALL THE OTHER INDEXES TO HAVE THE PARTITION COLUMN AND THE PARTITION FUNCTION/SCHEME.
+            sqlHelper.Execute($@"
+                    UPDATE DOI.IndexesRowStore
+                    SET PartitionColumn_Desired = '{TestHelper.PartitionColumnName}',
+                        PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}',
+                        KeyColumnList_Desired = CASE
+                                                    WHEN KeyColumnList_Desired NOT LIKE '%{TestHelper.PartitionColumnName}%'
+                                                    THEN KeyColumnList_Desired + ',{TestHelper.PartitionColumnName} ASC' 
+                                                    ELSE KeyColumnList_Desired
+                                                END 
+                    WHERE DatabaseName = '{databaseName}' 
+                        AND SchemaName = 'dbo' 
+                        AND TableName = '{tableName}'
+                        AND IndexName <> '{indexName}'");
+
+            sqlHelper.Execute($@"
+                    UPDATE DOI.IndexesColumnStore
+                    SET PartitionColumn_Desired = '{TestHelper.PartitionColumnName}',
+                        PartitionFunction_Desired = '{TestHelper.PartitionFunctionNameYearly}', 
+                        ColumnList_Desired =    CASE
+                                                    WHEN IsClustered_Desired = 0 AND ColumnList_Desired NOT LIKE '%{TestHelper.PartitionColumnName}%'
+                                                    THEN ColumnList_Desired + ',{TestHelper.PartitionColumnName}' 
+                                                    ELSE ColumnList_Desired
+                                                END 
+                    WHERE DatabaseName = '{databaseName}' 
+                        AND SchemaName = 'dbo' 
+                        AND TableName = '{tableName}'
+                        AND IndexName <> '{indexName}'");
+
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             var actualListOfChanges = sqlHelper.ExecuteScalar<string>($@"
@@ -333,6 +377,45 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                             AND TableName = '{TestTableName1}'
                             AND IndexName = '{TestHelper.NCIndexName}'");
 
+            if (expectedIndexUpdateType == "CreateDropExisting")
+            {
+                sqlHelper.Execute(
+                    $@" UPDATE DOI.IndexesRowStore 
+                        SET IsPrimaryKey_Desired = 0,
+                            IsPrimaryKey_Actual = 0
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND TableName = '{TestTableName1}'
+                            AND IndexName = '{TestHelper.NCIndexName}'");
+            }
+            else if (expectedIndexUpdateType == "ExchangeTableNonPartitioned")
+            {
+                sqlHelper.Execute(
+                    $@" UPDATE DOI.IndexesRowStore 
+                        SET IsPrimaryKeyChanging = 1,
+                            IsPrimaryKey_Actual = 1
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND TableName = '{TestTableName1}'
+                            AND IndexName = '{TestHelper.NCIndexName}'");
+            }
+            else if (expectedIndexUpdateType == "AlterRebuild")
+            {
+                sqlHelper.Execute(
+                    $@" UPDATE DOI.Tables 
+                        SET TableHasColumnStoreIndex = 0
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND TableName = '{TestTableName1}'");
+            }
+            else if (expectedIndexUpdateType == "TableHasColumnStoreIndex")
+            {
+                sqlHelper.Execute(
+                    $@" UPDATE DOI.Tables 
+                        SET TableHasColumnStoreIndex = 1
+                        WHERE DatabaseName = '{DatabaseName}' 
+                            AND TableName = '{TestTableName1}'");
+            }
+
+            //don't run the metadata refresh process on this.  we are "mocking" the bit results above, and if you run refresh metadata it will reset the bits.
+            //HOWEVER, THERE ARE MORE COLUMNS INVOLVED THAT HAVE TO BE "MOCKED" FOR THIS TO WORK.
             var actualIndexUpdateType = sqlHelper.ExecuteScalar<string>(
                 $@" SELECT IndexUpdateType 
                         FROM DOI.vwIndexes 

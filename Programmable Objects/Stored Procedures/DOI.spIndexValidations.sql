@@ -178,6 +178,7 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
 						    TableName, 
 						    IndexName, 
 						    PartitionColumn_Desired, 
+                            PartitionFunction_Desired,
 						    Storage_Desired
 				    FROM DOI.IndexesRowStore IRS
                     WHERE IRS.DatabaseName = @DatabaseName
@@ -186,13 +187,14 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
 						    TableName , 
 						    IndexName, 
 						    PartitionColumn_Desired, 
+                            PartitionFunction_Desired,
 						    Storage_Desired
 				    FROM DOI.IndexesColumnStore ICS
                     WHERE ICS.DatabaseName = @DatabaseName) AllIdx
 		    ON AllIdx.SchemaName = T.SchemaName
 			    AND AllIdx.TableName = T.TableName
 	    LEFT JOIN DOI.PartitionFunctions pf ON pf.DatabaseName = T.DatabaseName
-            AND AllIdx.Storage_Desired = pf.PartitionSchemeName
+            AND AllIdx.PartitionFunction_Desired = pf.PartitionFunctionName
     WHERE T.ReadyToQueue = 1
         AND T.DatabaseName = @DatabaseName
         AND (T.IntendToPartition = 1

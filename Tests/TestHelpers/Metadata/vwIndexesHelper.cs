@@ -156,7 +156,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             }
         }
 
-        public static string GetColumnsToUpdateFromIndexTypeSql(string indexUpdateType)
+        public static string GetColumnsToUpdateFromIndexTypeSql(string indexUpdateType, string indexType)
         {
             string columnsToUpdateSql = string.Empty;
 
@@ -166,7 +166,10 @@ namespace DOI.Tests.TestHelpers.Metadata
                     columnsToUpdateSql = "IsIndexMissingFromSQLServer = 1";
                     break;
                 case "CreateDropExisting":
-                    columnsToUpdateSql = "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 1";
+                    columnsToUpdateSql = indexType == "RowStore" ? "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 1, IsPrimaryKey_Desired = 0, IsPrimaryKey_Actual = 0" : "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 1";
+                    break;
+                case "ExchangeTableNonPartitioned":
+                    columnsToUpdateSql = "IsIndexMissingFromSQLServer = 0, AreDropRecreateOptionsChanging = 1, IsClusteredChanging = 1";
                     break;
                 case "AlterRebuild":
                     columnsToUpdateSql =

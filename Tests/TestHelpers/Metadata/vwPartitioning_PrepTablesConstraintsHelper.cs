@@ -25,7 +25,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             FROM DOI.DOI.{UserTableName}
             WHERE DatabaseName = '{DatabaseName}'
                 AND PartitionFunctionName = '{partitionFunctionName}'
-                AND IsNewPartitionedPrepTable = 0 
+                AND IsNewPartitionedTable = 0 
             ORDER BY BoundaryValue"));
 
             List<vwPartitioning_Tables_PrepTables> expectedvwPartitioning_Tables_PrepTables = new List<vwPartitioning_Tables_PrepTables>();
