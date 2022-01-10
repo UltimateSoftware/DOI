@@ -124,14 +124,24 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             sqlHelper.Execute($@"
                         UPDATE DOI.IndexesRowStore
                         SET PartitionFunction_Desired = '{partitionFunctionName}',
-                            PartitionColumn_Desired = 'TransactionUtcDt'
+                            PartitionColumn_Desired = 'TransactionUtcDt',
+                            KeyColumnList_Desired = CASE
+                                                        WHEN KeyColumnList_Desired NOT LIKE '%{TestHelper.PartitionColumnName}%'
+                                                        THEN KeyColumnList_Desired + ',{TestHelper.PartitionColumnName} ASC' 
+                                                        ELSE KeyColumnList_Desired
+                                                    END 
                         WHERE SchemaName = 'dbo'
                             AND TableName = '{TestTableName1}'");
 
             sqlHelper.Execute($@"
                         UPDATE DOI.IndexesColumnStore
                         SET PartitionFunction_Desired = '{partitionFunctionName}',
-                            PartitionColumn_Desired = 'TransactionUtcDt'
+                            PartitionColumn_Desired = 'TransactionUtcDt',
+                            ColumnList_Desired =    CASE
+                                                        WHEN ColumnList_Desired NOT LIKE '%{TestHelper.PartitionColumnName}%'
+                                                        THEN ColumnList_Desired + ',{TestHelper.PartitionColumnName} ASC' 
+                                                        ELSE ColumnList_Desired
+                                                    END 
                         WHERE SchemaName = 'dbo'
                             AND TableName = '{TestTableName1}'");
 

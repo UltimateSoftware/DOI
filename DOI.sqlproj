@@ -617,4 +617,7 @@
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_User_Constraints_UpdateData.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Schema-Model\Tables\DOI.SysIdentityColumns.sql" />
+  </ItemGroup>
 </Project>

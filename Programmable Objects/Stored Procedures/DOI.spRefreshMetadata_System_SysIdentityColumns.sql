@@ -36,32 +36,29 @@ BEGIN
     SET @ColumnList += ', [graph_type], [graph_type_desc]'
 END
 
-SELECT TOP 1 @SQL += '
+SELECT @SQL += '
 
 SELECT TOP 1 DB_ID(''' + DatabaseName + ''') AS database_id, ' + REPLACE(@ColumnList, '[database_id], ', SPACE(0)) + '
 INTO #SysIdentityColumns
 FROM ' + D.DatabaseName + '.sys.identity_columns
-WHERE 1 = 2'
---select count(*)
-FROM DOI.Databases D
-WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
-
-SELECT @SQL += '
+WHERE 1 = 2
 
 INSERT INTO #SysIdentityColumns
 SELECT DB_ID(''' + DatabaseName + ''') AS database_id, ' + REPLACE(@ColumnList, '[database_id], ', SPACE(0)) + '
-FROM ' + D.DatabaseName + '.sys.identity_columns'
+FROM ' + D.DatabaseName + '.sys.identity_columns
+
+INSERT INTO DOI.SysIdentityColumns(' + @ColumnList + ')
+SELECT [database_id], [object_id], [name], [column_id], [system_type_id], [user_type_id], [max_length], [precision], [scale], [collation_name], [is_nullable], [is_ansi_padded], [is_rowguidcol], [is_identity], [is_filestream], [is_replicated], [is_non_sql_subscribed], [is_merge_published], [is_dts_replicated], [is_xml_document], [xml_collection_id], [default_object_id], [rule_object_id], CAST([seed_value] AS BIGINT), CAST([increment_value] AS BIGINT), CAST([last_value] AS BIGINT), [is_not_for_replication], [is_computed], [is_sparse], [is_column_set], [generated_always_type], [generated_always_type_desc], [encryption_type], [encryption_type_desc], [encryption_algorithm_name], [column_encryption_key_id], [column_encryption_key_database_name], [is_hidden], [is_masked]
+FROM #SysIdentityColumns
+
+DROP TABLE IF EXISTS #SysIdentityColumns
+GO
+'
 --select count(*)
 FROM DOI.Databases D
 WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
-SELECT @SQL += '
-INSERT INTO DOI.SysIdentityColumns(' + @ColumnList + ')
-SELECT [database_id], [object_id], [name], [column_id], [system_type_id], [user_type_id], [max_length], [precision], [scale], [collation_name], [is_nullable], [is_ansi_padded], [is_rowguidcol], [is_identity], [is_filestream], [is_replicated], [is_non_sql_subscribed], [is_merge_published], [is_dts_replicated], [is_xml_document], [xml_collection_id], [default_object_id], [rule_object_id], CAST([seed_value] AS INT), CAST([increment_value] AS INT), CAST([last_value] AS INT), [is_not_for_replication], [is_computed], [is_sparse], [is_column_set], [generated_always_type], [generated_always_type_desc], [encryption_type], [encryption_type_desc], [encryption_algorithm_name], [column_encryption_key_id], [column_encryption_key_database_name], [is_hidden], [is_masked]
-FROM #SysIdentityColumns
 
-DROP TABLE IF EXISTS #SysIdentityColumns
-'
 IF @Debug = 1
 BEGIN
     EXEC DOI.spPrintOutLongSQL
@@ -70,7 +67,8 @@ BEGIN
 END
 ELSE
 BEGIN
-    EXEC(@SQL)
+    EXEC DOI.sp_ExecuteSQLByBatch 
+        @SQL = @SQL
 END
 
 GO

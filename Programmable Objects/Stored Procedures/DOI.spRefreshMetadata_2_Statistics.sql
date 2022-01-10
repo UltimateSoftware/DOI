@@ -7,7 +7,8 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_2_Statistics]
-    @DatabaseName NVARCHAR(128) = NULL
+    @DatabaseName NVARCHAR(128) = NULL,
+    @RunValidations BIT = 1
 
 AS
     EXEC DOI.spRefreshMetadata_0_Databases
@@ -31,6 +32,9 @@ AS
 	EXEC DOI.spRefreshMetadata_User_Statistics_UpdateData
 		@DatabaseName = @DatabaseName
 
-    EXEC DOI.spIndexValidations 
-        @DatabaseName = @DatabaseName
+    IF @RunValidations = 1
+    BEGIN
+        EXEC DOI.spIndexValidations 
+            @DatabaseName = @DatabaseName
+    END
 GO

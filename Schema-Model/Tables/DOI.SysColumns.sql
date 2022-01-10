@@ -38,6 +38,8 @@ CREATE TABLE [DOI].[SysColumns]
 [column_encryption_key_database_name] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [is_hidden] [bit] NULL,
 [is_masked] [bit] NULL,
+[identity_seed_value] BIGINT NULL,
+[identity_incr_value] BIGINT NULL,
 CONSTRAINT [PK_SysColumns] PRIMARY KEY NONCLUSTERED  ([database_id], [object_id], [column_id]),
 INDEX [IDX_SysColumns_object_id] NONCLUSTERED ([object_id])
 )

@@ -19,7 +19,7 @@ namespace DOI.Tests.IntegrationTests.Models
         public DateTime BoundaryValue { get; set; }
         public DateTime NextBoundaryValue { get; set; }
         public string PartitionColumn { get; set; }
-        public int IsNewPartitionedPrepTable { get; set; }
+        public int IsNewPartitionedTable { get; set; }
         public string PKColumnList { get; set; }
         public string PKColumnListJoinClause { get; set; }
         public string UpdateColumnList { get; set; }

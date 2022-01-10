@@ -588,7 +588,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
                 'COLUMNSTORE', 0, N'{PartitionSchemeNameMonthly}', N'PARTITION_SCHEME', '{PartitionFunctionNameMonthly}', 
                 'TransactionUtcDt')";
 
-        public static string RefreshMetadata_SysIndexesSql = $@"EXEC DOI.spRefreshMetadata_3_Indexes @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysIndexesSql = $@"EXEC DOI.spRefreshMetadata_3_Indexes @DatabaseName = '{DatabaseName}', @RunValidations = 0";
 
         public static string RefreshMetadata_SysIndexColumnsSql = $@"EXEC DOI.spRefreshMetadata_4_IndexColumns @DatabaseName = '{DatabaseName}'";
 
@@ -608,7 +608,7 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         public static string DropStatsSql = $"DROP STATISTICS dbo.{TableName}.{StatsName}";
 
-        public static string RefreshMetadata_SysStatsSql = $@"EXEC DOI.spRefreshMetadata_2_Statistics @DatabaseName = '{DatabaseName}'";
+        public static string RefreshMetadata_SysStatsSql = $@"EXEC DOI.spRefreshMetadata_2_Statistics @DatabaseName = '{DatabaseName}', @RunValidations = 0";
 
         public static string RefreshMetadata_SysStatsColumnsSql = $@"EXEC DOI.spRefreshMetadata_1_StatsColumns @DatabaseName = '{DatabaseName}'";
 

@@ -71,6 +71,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             SetUpTableUnderTest();
 
             //Action
+                
             RunPartitionJobAndWaitForItToFinish();
 
             //Validation

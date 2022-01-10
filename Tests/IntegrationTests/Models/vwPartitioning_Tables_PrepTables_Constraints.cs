@@ -16,7 +16,7 @@ namespace DOI.Tests.IntegrationTests.Models
         public string PartitionFunctionName { get; set; }
         public DateTime BoundaryValue { get; set; }
         public DateTime NextBoundaryValue { get; set; }
-        public int IsNewPartitionedPrepTable { get; set; }
+        public int IsNewPartitionedTable { get; set; }
         public string ConstraintName { get; set; }
         public string ConstraintType { get; set; }
         public string CreateConstraintStatement { get; set; }

@@ -58,6 +58,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             WHERE DatabaseName = '{DatabaseName}' 
                 AND PartitionFunctionName = '{partitionFunctionName}'
                 AND ParentTableName = '{tableName}'
+                AND IsNewPartitionedTable = 0
             ORDER BY PartitionFunctionValue"));
 
 

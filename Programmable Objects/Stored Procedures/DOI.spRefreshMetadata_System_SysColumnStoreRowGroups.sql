@@ -44,6 +44,7 @@ INSERT INTO DOI.SysColumnStoreRowGroups(database_id,object_id,index_id,partition
 SELECT * FROM #SysColumnStoreRowGroups
 
 DROP TABLE IF EXISTS #SysColumnStoreRowGroups
+GO
 '
 
 FROM DOI.Databases
@@ -58,6 +59,7 @@ BEGIN
 END
 ELSE
 BEGIN
-    EXEC (@SQL)
+    EXEC DOI.sp_ExecuteSQLByBatch 
+        @SQL = @SQL
 END
 GO

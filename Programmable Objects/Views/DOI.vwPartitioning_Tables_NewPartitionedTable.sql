@@ -34,7 +34,7 @@ DROP TABLE IF EXISTS ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName
 
 IF OBJECT_ID(''' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch'') IS NULL
 BEGIN
-	CREATE TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + T.ColumnListWithTypes + CHAR(13) + CHAR(10) + ' ,DMLType CHAR(1) NOT NULL) ON [' + T.Storage_Desired + '] (' + T.PartitionColumn + ')
+	CREATE TABLE ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + T.ColumnListWithTypes + CHAR(9) + '[DMLType] CHAR(1) NOT NULL) ON [' + T.Storage_Desired + '] (' + T.PartitionColumn + ')
 END
 '		AS CreateFinalDataSynchTableSQL,
 		'
@@ -43,32 +43,32 @@ ON ' + T.SchemaName + '.' + T.TableName + '
 AFTER INSERT, UPDATE, DELETE
 AS
 
-INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', DMLType)
+INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', [DMLType])
 SELECT ' + REPLACE(T.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + ', ''I''
 FROM inserted T ' + 
 CASE 
 	WHEN T.TableHasOldBlobColumns = 1 
 	THEN '
-	INNER JOIN ' + T.SchemaName + '.' + T.TableName + ' ST ON ' + REPLACE(T.PKColumnListJoinClause, 'PT.', 'ST.') + CHAR(13) + CHAR(10) 
+	INNER JOIN ' + T.SchemaName + '.' + T.TableName + ' ST ON ' + REPLACE(T.PKColumnListJoinClause_Desired, 'PT.', 'ST.') + CHAR(13) + CHAR(10) 
 	ELSE '' 
 END + '
-WHERE NOT EXISTS(SELECT ''True'' FROM deleted PT WHERE ' + T.PKColumnListJoinClause + ')
+WHERE NOT EXISTS(SELECT ''True'' FROM deleted PT WHERE ' + T.PKColumnListJoinClause_Desired + ')
 
-INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', DMLType)
+INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', [DMLType])
 SELECT ' + REPLACE(T.ColumnListForDataSynchTriggerSelect, 'PT.', 'ST.') + ', ''U''
 FROM inserted T' + 
 CASE 
 	WHEN T.TableHasOldBlobColumns = 1 
 	THEN '
-	INNER JOIN ' + T.SchemaName + '.' + T.TableName + ' ST ON ' + REPLACE(T.PKColumnListJoinClause, 'PT.', 'ST.') + CHAR(13) + CHAR(10) 
+	INNER JOIN ' + T.SchemaName + '.' + T.TableName + ' ST ON ' + REPLACE(T.PKColumnListJoinClause_Desired, 'PT.', 'ST.') + CHAR(13) + CHAR(10) 
 	ELSE '' 
 END + '
-WHERE EXISTS (SELECT * FROM deleted PT WHERE ' + T.PKColumnListJoinClause + ')
+WHERE EXISTS (SELECT * FROM deleted PT WHERE ' + T.PKColumnListJoinClause_Desired + ')
 
-INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', DMLType)
+INSERT INTO ' + T.DatabaseName + '.' + T.SchemaName + '.' + T.TableName + '_DataSynch (' + T.ColumnListForDataSynchTriggerInsert + ', [DMLType])
 SELECT ' + T.ColumnListForFinalDataSynchTriggerSelectForDelete + ', ''D''
 FROM deleted T
-WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause + ')
+WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + T.PKColumnListJoinClause_Desired + ')
 '
 AS CreateFinalDataSynchTriggerSQL,
 
@@ -613,6 +613,7 @@ FROM (	SELECT DatabaseName
     			,PartitionColumn
     			,PKColumnList
 				,PKColumnListJoinClause
+				,PKColumnListJoinClause_Desired
 				,Storage_Desired
 				,StorageType_Desired
 				,0 AS PartitionNumber

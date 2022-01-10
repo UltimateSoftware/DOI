@@ -25,7 +25,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             FROM DOI.DOI.{UserTableName} T
             WHERE T.DatabaseName = '{DatabaseName}'
                 AND T.PartitionFunctionName = '{partitionFunctionName}'
-                AND T.IsNewPartitionedPrepTable = 0 
+                AND T.IsNewPartitionedTable = 0 
             ORDER BY BoundaryValue"));
 
             List<vwPartitioning_Tables_PrepTables> expectedvwPartitioning_Tables_PrepTables = new List<vwPartitioning_Tables_PrepTables>();
@@ -43,7 +43,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PartitionFunctionName = row.First(x => x.First == "PartitionFunctionName").Second.ToString();
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
                 columnValue.NextBoundaryValue = row.First(x => x.First == "NextBoundaryValue").Second.ObjectToDateTime();
-                columnValue.IsNewPartitionedPrepTable = row.First(x => x.First == "IsNewPartitionedPrepTable").Second.ObjectToInteger();
+                columnValue.IsNewPartitionedTable = row.First(x => x.First == "IsNewPartitionedTable").Second.ObjectToInteger();
                 columnValue.Storage_Desired = row.First(x => x.First == "Storage_Desired").Second.ToString();
                 columnValue.StorageType_Desired = row.First(x => x.First == "StorageType_Desired").Second.ToString();
                 columnValue.PrepTableFilegroup = row.First(x => x.First == "PrepTableFilegroup").Second.ToString();
@@ -63,7 +63,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             WHERE DatabaseName = '{DatabaseName}' 
                 AND PartitionFunctionName = '{partitionFunctionName}'
                 AND ParentTableName = '{tableName}'
-                AND IsNewPartitionedPrepTable = 0 
+                AND IsNewPartitionedTable = 0 
             ORDER BY RowNum"));
 
 
@@ -82,7 +82,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PartitionFunctionName = row.First(x => x.First == "PartitionFunctionName").Second.ToString();
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
                 columnValue.NextBoundaryValue = row.First(x => x.First == "NextBoundaryValue").Second.ObjectToDateTime();
-                columnValue.IsNewPartitionedPrepTable = row.First(x => x.First == "IsNewPartitionedPrepTable").Second.ObjectToInteger();
+                columnValue.IsNewPartitionedTable = row.First(x => x.First == "IsNewPartitionedTable").Second.ObjectToInteger();
                 columnValue.Storage_Actual = row.First(x => x.First == "Storage_Actual").Second.ToString();
                 columnValue.StorageType_Actual = row.First(x => x.First == "StorageType_Actual").Second.ToString();
                 columnValue.Storage_Desired = row.First(x => x.First == "Storage_Desired").Second.ToString();
@@ -112,7 +112,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                         FROM DOI.vwPartitioning_Tables_PrepTables
                         WHERE DatabaseName = '{DatabaseName}' 
                             AND TableName = '{TableName}'
-                            AND IsNewPartitionedPrepTable = 0");
+                            AND IsNewPartitionedTable = 0");
 
             var actualIndexCount = sqlHelper.ExecuteScalar<int>(
                 $@" SELECT COUNT(*)
@@ -131,7 +131,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                         FROM DOI.{ViewName} 
                         WHERE DatabaseName = '{DatabaseName}' 
                             AND ParentTableName = '{TableName}' 
-                            AND IsNewPartitionedPrepTable = 0");
+                            AND IsNewPartitionedTable = 0");
 
             Assert.IsTrue(actual.Count > 0, "RowsReturned");
             Assert.AreEqual(expectedPartitionCount * actualIndexCount, actualPrepTableIndexRowCount, "MatchingRowCounts"); //should have 'x' Indexes per partition.
@@ -151,7 +151,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowRowStoreIndex.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRowRowStoreIndex.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowRowStoreIndex.NextBoundaryValue, "NextBoundaryValue");
-                Assert.AreEqual(expectedRow.IsNewPartitionedPrepTable, actualRowRowStoreIndex.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
+                Assert.AreEqual(expectedRow.IsNewPartitionedTable, actualRowRowStoreIndex.IsNewPartitionedTable, "IsNewPartitionedTable");
                 Assert.AreEqual("PRIMARY", actualRowRowStoreIndex.Storage_Actual, "Storage_Actual");
                 Assert.AreEqual("ROWS_FILEGROUP", actualRowRowStoreIndex.StorageType_Actual, "StorageType_Actual");
                 Assert.AreEqual(expectedRow.Storage_Desired, actualRowRowStoreIndex.Storage_Desired, "Storage_Desired");
@@ -171,7 +171,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowRowStoreIndex.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRowRowStoreIndex.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowRowStoreIndex.NextBoundaryValue, "NextBoundaryValue");
-                Assert.AreEqual(expectedRow.IsNewPartitionedPrepTable, actualRowRowStoreIndex.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
+                Assert.AreEqual(expectedRow.IsNewPartitionedTable, actualRowRowStoreIndex.IsNewPartitionedTable, "IsNewPartitionedTable");
                 Assert.AreEqual("PRIMARY", actualRowRowStoreIndex.Storage_Actual, "Storage_Actual");
                 Assert.AreEqual("ROWS_FILEGROUP", actualRowRowStoreIndex.StorageType_Actual, "StorageType_Actual");
                 Assert.AreEqual(expectedRow.Storage_Desired, actualRowRowStoreIndex.Storage_Desired, "Storage_Desired");
@@ -191,7 +191,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowColumnStoreIndex.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRowColumnStoreIndex.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowColumnStoreIndex.NextBoundaryValue, "NextBoundaryValue");
-                Assert.AreEqual(expectedRow.IsNewPartitionedPrepTable, actualRowColumnStoreIndex.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
+                Assert.AreEqual(expectedRow.IsNewPartitionedTable, actualRowColumnStoreIndex.IsNewPartitionedTable, "IsNewPartitionedTable");
                 Assert.AreEqual("PRIMARY", actualRowColumnStoreIndex.Storage_Actual, "Storage_Actual");
                 Assert.AreEqual("ROWS_FILEGROUP", actualRowColumnStoreIndex.StorageType_Actual, "StorageType_Actual");
                 Assert.AreEqual(expectedRow.Storage_Desired, actualRowColumnStoreIndex.Storage_Desired, "Storage_Desired");

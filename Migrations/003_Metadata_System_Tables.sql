@@ -6,7 +6,7 @@ CREATE TABLE [DOI].[MappingSqlServerDMVToDOITables]
 [SQLServerObjectName] [sys].[sysname] NOT NULL,
 [SQLServerObjectType] [varchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [HasDatabaseIdInOutput] [bit] NOT NULL,
-[DatabaseOutputString] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[DatabaseOutputString] [varidchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [FunctionParameterList] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [FunctionParentDMV] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 CONSTRAINT [PK_MappingSqlServerDMVToDOITables] PRIMARY KEY NONCLUSTERED  ([DOITableName], [SQLServerObjectName])
@@ -754,8 +754,8 @@ CREATE TABLE [DOI].[SysColumns]
 [column_encryption_key_database_name] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [is_hidden] [bit] NULL,
 [is_masked] [bit] NULL,
-[identity_seed_value] INT NULL,
-[identity_incr_value] INT NULL,
+[identity_seed_value] BIGINT NULL,
+[identity_incr_value] BIGINT NULL,
 CONSTRAINT [PK_SysColumns] PRIMARY KEY NONCLUSTERED  ([database_id], [object_id], [column_id]),
 INDEX [IDX_SysColumns_object_id] NONCLUSTERED ([object_id])
 )
@@ -860,9 +860,9 @@ CREATE TABLE DOI.SysIdentityColumns (
     [xml_collection_id]	                    int		NOT NULL,
     [default_object_id]	                    int		NOT NULL,
     [rule_object_id]	                    int		NOT NULL,
-    [seed_value]	                        int	NULL,
-    [increment_value]	                    int	NULL,
-    [last_value]	                        INT NULL,
+    [seed_value]	                        BIGINT	NULL,
+    [increment_value]	                    BIGINT	NULL,
+    [last_value]	                        BIGINT NULL,
     [is_not_for_replication]	            bit	NULL,
     [is_computed]	                        BIT		NOT NULL,
     [is_sparse]	                            BIT		NOT NULL,

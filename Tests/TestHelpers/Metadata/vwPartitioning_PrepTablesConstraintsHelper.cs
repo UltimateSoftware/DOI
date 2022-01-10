@@ -43,7 +43,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PartitionFunctionName = row.First(x => x.First == "PartitionFunctionName").Second.ToString();
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
                 columnValue.NextBoundaryValue = row.First(x => x.First == "NextBoundaryValue").Second.ObjectToDateTime();
-                columnValue.IsNewPartitionedPrepTable = row.First(x => x.First == "IsNewPartitionedPrepTable").Second.ObjectToInteger();
+                columnValue.IsNewPartitionedTable = row.First(x => x.First == "IsNewPartitionedTable").Second.ObjectToInteger();
 
                 expectedvwPartitioning_Tables_PrepTables.Add(columnValue);
             }
@@ -60,7 +60,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             WHERE DatabaseName = '{DatabaseName}' 
                 AND PartitionFunctionName = '{partitionFunctionName}'
                 AND ParentTableName = '{tableName}'
-                AND IsNewPartitionedPrepTable = 0 
+                AND IsNewPartitionedTable = 0 
             ORDER BY BoundaryValue"));
 
 
@@ -77,7 +77,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.PartitionFunctionName = row.First(x => x.First == "PartitionFunctionName").Second.ToString();
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
                 columnValue.NextBoundaryValue = row.First(x => x.First == "NextBoundaryValue").Second.ObjectToDateTime();
-                columnValue.IsNewPartitionedPrepTable = row.First(x => x.First == "IsNewPartitionedPrepTable").Second.ObjectToInteger();
+                columnValue.IsNewPartitionedTable = row.First(x => x.First == "IsNewPartitionedTable").Second.ObjectToInteger();
                 columnValue.ConstraintName = row.First(x => x.First == "ConstraintName").Second.ToString();
                 columnValue.ConstraintType = row.First(x => x.First == "ConstraintType").Second.ToString();
                 columnValue.RowNum = row.First(x => x.First == "RowNum").Second.ObjectToInteger();
@@ -104,7 +104,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                         FROM DOI.vwPartitioning_Tables_PrepTables
                         WHERE DatabaseName = '{DatabaseName}' 
                             AND TableName = '{TableName_Partitioned}'
-                            AND IsNewPartitionedPrepTable = 0");
+                            AND IsNewPartitionedTable = 0");
 
             var actualConstraintCount = sqlHelper.ExecuteScalar<int>(
                 $@" SELECT COUNT(*)
@@ -119,7 +119,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                                    AND TableName = '{TableName_Partitioned}')x");
 
             var actualPrepTableConstraintRowCount = sqlHelper.ExecuteScalar<int>(
-                $"SELECT COUNT(*) FROM DOI.{ViewName} WHERE DatabaseName = '{DatabaseName}' AND ParentTableName = '{TableName_Partitioned}' AND IsNewPartitionedPrepTable = 0");
+                $"SELECT COUNT(*) FROM DOI.{ViewName} WHERE DatabaseName = '{DatabaseName}' AND ParentTableName = '{TableName_Partitioned}' AND IsNewPartitionedTable = 0");
 
             Assert.IsTrue(actual.Count > 0, "RowsReturned");
             Assert.AreEqual(expectedConstraintCount * actualConstraintCount, actualPrepTableConstraintRowCount, "MatchingRowCounts"); //should have 'x' constraints per partition.
@@ -127,7 +127,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             foreach (var expectedRow in expected)
             {
                 //defaults
-                var actualRowDefaultConstraints = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.ConstraintType == "DEFAULT");
+                var actualRowDefaultConstraints = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.ConstraintType == "DEFAULT" && x.ConstraintName.Contains("UpdatedUtcDt"));
 
                 Assert.AreEqual(expectedRow.SchemaName, actualRowDefaultConstraints.SchemaName, "SchemaName");
                 Assert.AreEqual(expectedRow.TableName, actualRowDefaultConstraints.ParentTableName, "ParentTableName");
@@ -136,10 +136,23 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowDefaultConstraints.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRowDefaultConstraints.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowDefaultConstraints.NextBoundaryValue, "NextBoundaryValue");
-                Assert.AreEqual(isNewPartitionedPrepTable, actualRowDefaultConstraints.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
-                Assert.AreEqual(string.Concat("Def_", expectedRow.PrepTableName, "_TransactionUtcDt"), actualRowDefaultConstraints.ConstraintName, "ConstraintName");
+                Assert.AreEqual(isNewPartitionedPrepTable, actualRowDefaultConstraints.IsNewPartitionedTable, "IsNewPartitionedPrepTable");
+                Assert.AreEqual(string.Concat("Def_", expectedRow.PrepTableName, "_UpdatedUtcDt"), actualRowDefaultConstraints.ConstraintName, "ConstraintName");
                 Assert.AreEqual(1, actualRowDefaultConstraints.RowNum, "RowNum");
-                
+
+                actualRowDefaultConstraints = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.ConstraintType == "DEFAULT" && x.ConstraintName.Contains(PartitionColumnName));
+
+                Assert.AreEqual(expectedRow.SchemaName, actualRowDefaultConstraints.SchemaName, "SchemaName");
+                Assert.AreEqual(expectedRow.TableName, actualRowDefaultConstraints.ParentTableName, "ParentTableName");
+                Assert.AreEqual(expectedRow.PrepTableName, actualRowDefaultConstraints.PrepTableName, "PrepTableName");
+                Assert.AreEqual(expectedRow.NewPartitionedPrepTableName, actualRowDefaultConstraints.NewPartitionedPrepTableName, "NewPartitionedPrepTableName");
+                Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowDefaultConstraints.PartitionFunctionName, "PartitionFunctionName");
+                Assert.AreEqual(expectedRow.BoundaryValue, actualRowDefaultConstraints.BoundaryValue, "BoundaryValue");
+                Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowDefaultConstraints.NextBoundaryValue, "NextBoundaryValue");
+                Assert.AreEqual(isNewPartitionedPrepTable, actualRowDefaultConstraints.IsNewPartitionedTable, "IsNewPartitionedPrepTable");
+                Assert.AreEqual(string.Concat("Def_", expectedRow.PrepTableName, "_TransactionUtcDt"), actualRowDefaultConstraints.ConstraintName, "ConstraintName");
+                Assert.AreEqual(2, actualRowDefaultConstraints.RowNum, "RowNum");
+
                 //check
                 var actualRowCheckConstraints = actual.Find(x => x.DatabaseName == expectedRow.DatabaseName && x.PrepTableName == expectedRow.PrepTableName && x.BoundaryValue == expectedRow.BoundaryValue && x.ConstraintType == "CHECK");
 
@@ -150,9 +163,9 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.PartitionFunctionName, actualRowCheckConstraints.PartitionFunctionName, "PartitionFunctionName");
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRowCheckConstraints.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRowCheckConstraints.NextBoundaryValue, "NextBoundaryValue");
-                Assert.AreEqual(isNewPartitionedPrepTable, actualRowCheckConstraints.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
+                Assert.AreEqual(isNewPartitionedPrepTable, actualRowCheckConstraints.IsNewPartitionedTable, "IsNewPartitionedPrepTable");
                 Assert.AreEqual(string.Concat("Chk_", expectedRow.PrepTableName, "_IncludedColumn"), actualRowCheckConstraints.ConstraintName, "ConstraintName");
-                Assert.AreEqual(2, actualRowCheckConstraints.RowNum, "RowNum");
+                Assert.AreEqual(3, actualRowCheckConstraints.RowNum, "RowNum");
             }
         }
     }

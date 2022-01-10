@@ -39,8 +39,8 @@ namespace DOI.Tests.IntegrationTests.RunTests.Maintenance
         [SetUp]
         public void SetupFragmentation()
         {
-            this.dataDrivenIndexTestHelper.CreateIndex("PK_TempA");
-            this.dataDrivenIndexTestHelper.CreateIndex("PK_TempB");
+            //this.dataDrivenIndexTestHelper.CreateIndex("PK_TempA");
+            //this.dataDrivenIndexTestHelper.CreateIndex("PK_TempB");
             this.dataDrivenIndexTestHelper.CreateIndex("CCI_TempB_Report");
             this.dataDrivenIndexTestHelper.CreateIndex("CDX_TempA");
             this.dataDrivenIndexTestHelper.CreateIndex("NCCI_TempA_Report");

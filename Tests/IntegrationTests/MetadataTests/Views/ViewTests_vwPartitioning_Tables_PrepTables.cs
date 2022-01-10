@@ -83,6 +83,20 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
             //create table metadata
             sqlHelper.Execute(tableMetadataSql);
             sqlHelper.Execute(tableSql, 30, true, DatabaseName);
+
+            //update all indexes so they pass validations
+            sqlHelper.Execute($@"   UPDATE DOI.IndexesRowStore 
+                                        SET PartitionColumn_Desired = '{TestHelper.PartitionColumnName}', 
+                                            PartitionFunction_Desired = '{partitionFunctionName}',
+                                            KeyColumnList_Desired = CASE
+                                                                        WHEN KeyColumnList_Desired NOT LIKE '%{TestHelper.PartitionColumnName}%'
+                                                                        THEN KeyColumnList_Desired + ',{TestHelper.PartitionColumnName} ASC' 
+                                                                        ELSE KeyColumnList_Desired
+                                                                    END 
+                                        WHERE DatabaseName = '{DatabaseName}' 
+                                            AND SchemaName = 'dbo' 
+                                            AND TableName = '{TestHelper.TableName_Partitioned}'");
+
             sqlHelper.Execute(TestHelper.RefreshMetadata_All);
 
             //partition function metadata has already been created, so views should show the filegroups & files that need to be created, plus the fact that they are missing.

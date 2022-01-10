@@ -208,8 +208,6 @@ namespace DOI.Tests.IntegrationTests.RunTests
         [Test]
         public void Delete_PrimaryKey()
         {
-            this.dataDrivenIndexTestHelper.CreateIndex("PK_TempA");
-
             sqlHelper.Execute($"USE {DatabaseName}; ALTER TABLE dbo.TempA DROP CONSTRAINT PK_TempA", 120);
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysIndexesSql);
 

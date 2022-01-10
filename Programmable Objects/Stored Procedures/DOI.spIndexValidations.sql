@@ -74,7 +74,8 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
             AND T.TableName = IRS.TableName
     WHERE IRS.IsUnique_Desired = 1
 	    AND T.IntendToPartition = 1 --are the indexes partitioned?
-	    AND T.PartitionColumn = IRS.PartitionColumn_Desired --are the indexes aligned?
+	    AND T.Storage_Actual = IRS.Storage_Desired --indexes are aligned.  The table must already exist before the index is created, so we match index.Storage_Desired to table.Storage_Actual.
+        AND T.StorageType_Actual = 'PARTITION_SCHEME'
 	    AND IRS.OptionStatisticsIncremental_Desired = 0
         AND IRS.DatabaseName = @DatabaseName
 
@@ -96,7 +97,8 @@ BEGIN ATOMIC WITH (LANGUAGE = 'English', TRANSACTION ISOLATION LEVEL = SNAPSHOT)
     WHERE IRS.IsUnique_Desired = 1
 	    AND T.IntendToPartition = 1 --are the indexes partitioned?
 	    AND IRS.OptionStatisticsIncremental_Desired = 1
-        AND IRS.PartitionColumn_Desired <> T.PartitionColumn --and indexes are not aligned.
+        AND IRS.Storage_Desired <> T.Storage_Actual --and indexes are not aligned.  The table must already exist before the index is created, so we match index.Storage_Desired to table.Storage_Actual.
+        AND T.StorageType_Actual = 'PARTITION_SCHEME'
         AND IRS.DatabaseName = @DatabaseName
 
 

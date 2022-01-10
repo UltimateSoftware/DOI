@@ -119,7 +119,7 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
         ,OptionAllowRowLocks_Desired            = 1
         ,OptionAllowPageLocks_Desired           = 1
         ,OptionDataCompression_Desired          = 'PAGE'
-        ,PartitionFunction_Desired              = 'psMonthlyTest'
+        ,PartitionFunction_Desired              = 'pfMonthlyTest'
         ,PartitionColumn_Desired                = 'MyDatetime'
         ,Storage_Desired                        = 'psMonthlyTest'
                      
@@ -148,7 +148,7 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
         ,OptionAllowRowLocks_Desired            = 1
         ,OptionAllowPageLocks_Desired           = 1
         ,OptionDataCompression_Desired          = 'PAGE'
-        ,PartitionFunction_Desired              = 'psMonthlyTest'
+        ,PartitionFunction_Desired              = 'pfMonthlyTest'
         ,PartitionColumn_Desired                = 'MyDatetime'
         ,Storage_Desired                        = 'psMonthlyTest'
     
@@ -177,7 +177,7 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
         ,OptionAllowRowLocks_Desired            = 1
         ,OptionAllowPageLocks_Desired           = 1
         ,OptionDataCompression_Desired          = 'PAGE'
-        ,PartitionFunction_Desired              = 'psMonthlyTest'
+        ,PartitionFunction_Desired              = 'pfMonthlyTest'
         ,PartitionColumn_Desired                = 'MyDatetime'
         ,Storage_Desired                        = 'psMonthlyTest'
                   
@@ -196,7 +196,7 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                     , [FilterPredicate]             = NULL
                     , [OptionDataCompression]       = N'COLUMNSTORE'
                     , [OptionDataCompressionDelay]  = 0
-                    , PartitionFunction_Desired     = 'psMonthlyTest'
+                    , PartitionFunction_Desired     = 'pfMonthlyTest'
                     , PartitionColumn               = 'MyDatetime'
                     , Storage_Desired               = 'psMonthlyTest'
                     ";

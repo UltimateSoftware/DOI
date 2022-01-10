@@ -57,7 +57,7 @@ namespace DOI.Tests.TestHelpers.Metadata
             WHERE DatabaseName = '{DatabaseName}' 
                 AND PartitionFunctionName = '{partitionFunctionName}'
                 AND TableName = '{tableName}'
-                AND IsNewPartitionedPrepTable = 0 
+                AND IsNewPartitionedTable = 0 
             ORDER BY BoundaryValue"));
 
 
@@ -77,7 +77,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 columnValue.BoundaryValue = row.First(x => x.First == "BoundaryValue").Second.ObjectToDateTime();
                 columnValue.NextBoundaryValue = row.First(x => x.First == "NextBoundaryValue").Second.ObjectToDateTime();
                 columnValue.PartitionColumn = row.First(x => x.First == "PartitionColumn").Second.ToString();
-                columnValue.IsNewPartitionedPrepTable = row.First(x => x.First == "IsNewPartitionedPrepTable").Second.ObjectToInteger();
+                columnValue.IsNewPartitionedTable = row.First(x => x.First == "IsNewPartitionedTable").Second.ObjectToInteger();
                 columnValue.PKColumnList = row.First(x => x.First == "PKColumnList").Second.ToString();
                 columnValue.PKColumnListJoinClause = row.First(x => x.First == "PKColumnListJoinClause").Second.ToString();
                 columnValue.UpdateColumnList = row.First(x => x.First == "UpdateColumnList").Second.ToString();
@@ -116,7 +116,7 @@ namespace DOI.Tests.TestHelpers.Metadata
                 Assert.AreEqual(expectedRow.BoundaryValue, actualRow.BoundaryValue, "BoundaryValue");
                 Assert.AreEqual(expectedRow.NextBoundaryValue, actualRow.NextBoundaryValue, "NextBoundaryValue");
                 Assert.AreEqual(PartitionColumnName, actualRow.PartitionColumn, "PartitionColumn");
-                Assert.AreEqual(isNewPartitionedPrepTable, actualRow.IsNewPartitionedPrepTable, "IsNewPartitionedPrepTable");
+                Assert.AreEqual(isNewPartitionedPrepTable, actualRow.IsNewPartitionedTable, "IsNewPartitionedTable");
                 Assert.AreEqual(PartitionedTable_PKColumnList, actualRow.PKColumnList, "PKColumnList");
                 Assert.AreEqual(expectedRow.PartitionSchemeName, actualRow.Storage_Desired, "Storage_Desired");
                 Assert.AreEqual("PARTITION_SCHEME", actualRow.StorageType_Desired, "StorageType_Desired");

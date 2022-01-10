@@ -7,7 +7,8 @@ GO
 SET ANSI_NULLS ON
 GO
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_3_Indexes]
-    @DatabaseName NVARCHAR(128) = NULL
+    @DatabaseName NVARCHAR(128) = NULL,
+    @RunValidations BIT = 1
 
 AS
     --Level 0
@@ -95,6 +96,9 @@ AS
     EXEC [DOI].[spRefreshMetadata_User_IndexColumns_InsertData]
         @DatabaseName = @DatabaseName
 
-    EXEC DOI.spIndexValidations 
-        @DatabaseName = @DatabaseName
+    IF @RunValidations = 1
+    BEGIN
+        EXEC DOI.spIndexValidations 
+            @DatabaseName = @DatabaseName
+    END
 GO

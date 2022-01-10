@@ -356,7 +356,7 @@ namespace DOI.Tests.TestHelpers
 
         private void CreatePKTempA()
         {
-            this.sqlHelper.Execute($@"USE {DatabaseName} ALTER TABLE dbo.TempA ADD CONSTRAINT PK_TempA PRIMARY KEY NONCLUSTERED (
+            this.sqlHelper.Execute($@"USE {DatabaseName} IF NOT EXISTS (SELECT ''True'' FROM sys.indexes WHERE object_id = object_id('dbo.TempA') AND name = 'PK_TempA') ALTER TABLE dbo.TempA ADD CONSTRAINT PK_TempA PRIMARY KEY NONCLUSTERED (
                                         TempAId ASC
                                     ) WITH (PAD_INDEX = ON, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)");
 

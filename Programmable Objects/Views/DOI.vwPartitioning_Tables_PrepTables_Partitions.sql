@@ -27,6 +27,7 @@ SELECT	PTNonPartitioned.DatabaseName,
 		PTPartitioned.NewPartitionedPrepTableName,
 		PTNonPartitioned.PrepTableName AS UnPartitionedPrepTableName,
 		PTNonPartitioned.BoundaryValue AS PartitionFunctionValue,
+		PTNonPartitioned.IsNewPartitionedTable,
 		ISNULL(PTNonPartitioned.NextBoundaryValue, '9999-12-31') AS NextPartitionFunctionValue,
 			'
 IF EXISTS(	SELECT ''True'' 
@@ -47,6 +48,6 @@ FROM DOI.vwPartitioning_Tables_PrepTables PTNonPartitioned
 	INNER JOIN DOI.vwPartitioning_Tables_NewPartitionedTable PTPartitioned ON PTNonPartitioned.DatabaseName = PTPartitioned.DatabaseName
 		AND PTNonPartitioned.SchemaName = PTPartitioned.SchemaName
 		AND PTPartitioned.TableName = PTNonPartitioned.TableName
-
+WHERE PTNonPartitioned.IsNewPartitionedTable = 0
 
 GO

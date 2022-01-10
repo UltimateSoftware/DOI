@@ -24,7 +24,7 @@ AS
 BEGIN TRY
 	--level 0
     
-    IF @ShowProgress = 1 PRINT 'Starting SysIdentityColumns'
+    IF @ShowProgress = 1 PRINT 'Starting SysDatabases'
 	EXEC DOI.spRefreshMetadata_System_SysDatabases
 		@DatabaseName = @DatabaseName
 

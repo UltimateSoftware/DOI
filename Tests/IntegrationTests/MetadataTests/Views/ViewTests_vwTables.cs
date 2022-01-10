@@ -208,6 +208,11 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                     break;
             }
 
+            //run refresh process to populate all the NULL 'Actual' columns, which are needed to compute the IndexAggColumns below
+            sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Run_All @DatabaseName = N'{DatabaseName}'");
+
+
+            //mock the indexUpdateType by updating the computed columns directly...running the refresh process after this update will revert these changes, so that's why we don't run it after this
             if (columnToUpdate == "AreReorgOptionsChanging")
             {
                 sqlHelper.Execute(
@@ -227,6 +232,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                             AND IndexName = '{indexName}'");
             }
 
+            //issue:  the IndexAggColumns SP below uses the IndexUpdateType, not the bitgroup columns, to update the 'AreIndexesBeingUpdated' column.....so we need to mock this update by changing IndexUpdateType, not the bitgroups.
 
             sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_User_Tables_IndexAggColumns_UpdateData @DatabaseName = '{DatabaseName}'");
 

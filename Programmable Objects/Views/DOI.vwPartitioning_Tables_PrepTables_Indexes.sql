@@ -39,7 +39,7 @@ SELECT  PT.DatabaseName,
 		PT.PartitionFunctionName,
 		PT.BoundaryValue,
 		PT.NextBoundaryValue,
-        0 AS IsNewPartitionedTable,
+        PT.IsNewPartitionedTable,
         I.Storage_Actual,
         I.StorageType_Actual,
         I.Storage_Desired,
@@ -126,6 +126,7 @@ FROM DOI.vwPartitioning_Tables_PrepTables PT
     INNER JOIN DOI.vwIndexes I ON I.DatabaseName = PT.DatabaseName
         AND I.SchemaName = PT.SchemaName
         AND I.TableName = PT.TableName
+WHERE PT.IsNewPartitionedTable = 0
 
 UNION ALL
 
@@ -139,7 +140,7 @@ SELECT  NPT.DatabaseName,
 		NPT.PartitionFunctionName,
 		NPT.BoundaryValue,
 		NPT.NextBoundaryValue,
-        1 AS IsNewPartitionedTable,
+        NPT.IsNewPartitionedTable,
         I.Storage_Actual,
         I.StorageType_Actual,
         I.Storage_Desired,
@@ -241,8 +242,7 @@ BEGIN
 						MAXDOP = 0,
 						DATA_COMPRESSION = ' + I.OptionDataCompression_Desired + ')' + CHAR(13) + CHAR(10) + CHAR(9) + CHAR(9) +
 										'		ON [' + NPT.Storage_Desired + ']' +	'(' + I.PartitionColumn_Desired + ')' + CHAR(13) + CHAR(10) + '
-                                                            ELSE I.Storage_Desired
-																WHEN (PT.IsNewPartitionedTable = 0 OR I.PartitionColumn_Desired IS NULL)
+
 END'
         END AS PrepTableIndexCreateSQL,
         I.CreateStatement AS OrigCreateSQL,

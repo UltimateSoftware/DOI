@@ -116,7 +116,6 @@ BEGIN
 			,@IndexSizeInMB				= 0
 			,@SQLStatement				= @IdentityInsert
 			,@IndexOperation			= 'Identity Insert'
-			,@IsOnlineOperation			= 1
 			,@RowCount					= 0
 			,@TransactionId				= NULL 
 			,@TableChildOperationId		= 0
@@ -135,7 +134,6 @@ BEGIN
 			,@IndexSizeInMB				= 0
 			,@SQLStatement				= @IdentityInsert
 			,@IndexOperation			= 'Identity Insert'
-			,@IsOnlineOperation			= 1
 			,@RowCount					= 0
 			,@TransactionId				= NULL 
 			,@TableChildOperationId		= 0

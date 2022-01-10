@@ -1,5 +1,4 @@
 
-GO
 
 IF OBJECT_ID('[DOI].[spRun_RefreshPartitionState]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRun_RefreshPartitionState];
@@ -52,6 +51,7 @@ WHERE EXISTS (	SELECT 'True'
                         AND PS.SchemaName = PT.SchemaName
 						AND PS.ParentTableName = PT.TableName
 						AND PS.PrepTableName = PT.PrepTableName)
+	AND PT.IsNewPartitionedTable = 0
 
 --IN CASE THE PARTITIONING STRATEGY CHANGES FOR A TABLE, DELETE THE OLD PARTITIONS THAT NO LONGER EXIST.
 DELETE PS
