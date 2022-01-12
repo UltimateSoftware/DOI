@@ -278,7 +278,14 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.IndexValidations
         [Test]
         public void IndexValidationTests_NonPartitionedAlignedIndexesWithIncrementalStats()
         {
-            sqlHelper.Execute($"UPDATE DOI.IndexesRowStore SET PartitionColumn_Desired = 'TempAId', OptionStatisticsIncremental_Desired = 1 WHERE DatabaseName = '{DatabaseName}' AND TableName = '{TestHelper.TableName_Partitioned}' AND IndexName = '{TestHelper.PKIndexName_Partitioned}'");
+            sqlHelper.Execute($@"UPDATE DOI.IndexesRowStore 
+                                    SET PartitionColumn_Desired = NULL, 
+                                        OptionStatisticsIncremental_Desired = 1,
+                                        PartitionFunction_Desired = NULL,
+                                        Storage_Desired = '[PRIMARY]'
+                                    WHERE DatabaseName = '{DatabaseName}' 
+                                        AND TableName = '{TestHelper.TableName_Partitioned}' 
+                                        AND IndexName = '{TestHelper.PKIndexName_Partitioned}'");
             sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Run_All @DatabaseName = N'{DatabaseName}', @RunValidations = 0");
 
             var dbMetadataReader = this.sqlHelper.ExecuteReader($"EXEC DOI.spIndexValidations @DatabaseName = '{DatabaseName}'");

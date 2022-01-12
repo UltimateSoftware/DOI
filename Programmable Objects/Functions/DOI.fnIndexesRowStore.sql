@@ -1,8 +1,6 @@
 -- <Migration ID="b010f08f-8a2e-4bd4-bd6f-73dac7150910" />
 GO
--- <Migration ID="11c143d9-29c7-421b-9038-5793f63cf735" />
-GO
--- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
+
 IF OBJECT_ID('[DOI].[fnIndexesRowStore]') IS NOT NULL
 	DROP FUNCTION [DOI].[fnIndexesRowStore];
 

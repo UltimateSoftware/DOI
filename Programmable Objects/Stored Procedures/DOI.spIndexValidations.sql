@@ -1,8 +1,4 @@
 -- <Migration ID="80b9d690-808a-5c9a-b27c-cc2c0ea09e87" TransactionHandling="Custom" />
-IF OBJECT_ID('DOI.trIndexesRowStore_IndexValidations') IS NOT NULL
-DROP TRIGGER DOI.trIndexesRowStore_IndexValidations
-GO
-
 IF OBJECT_ID('[DOI].[spIndexValidations]') IS NOT NULL
 DROP PROCEDURE [DOI].[spIndexValidations];
 GO

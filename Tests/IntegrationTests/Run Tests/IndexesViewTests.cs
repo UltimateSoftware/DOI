@@ -38,12 +38,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 IndexUpdateType = "None",
                 IsClustered_Desired = true,
                 DropStatement = "DROP INDEX IF EXISTS [dbo].[TempA].CDX_TempA",
-                CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'CDX_TempA')  BEGIN   CREATE  CLUSTERED INDEX CDX_TempA     ON [dbo].[TempA](TempAId ASC,TransactionUtcDt ASC)               WITH (           PAD_INDEX = ON,          FILLFACTOR = 90,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = ON,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
+                CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM {DatabaseName}.sys.indexes i INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id INNER JOIN {DatabaseName}.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'CDX_TempA')  BEGIN   CREATE  CLUSTERED INDEX CDX_TempA     ON [dbo].[TempA](TempAId ASC,TransactionUtcDt ASC)               WITH (           PAD_INDEX = ON,          FILLFACTOR = 90,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = ON,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
                 AlterSetStatement = "ALTER INDEX CDX_TempA ON [dbo].[TempA]   SET ( IGNORE_DUP_KEY = OFF,     STATISTICS_NORECOMPUTE = OFF,     ALLOW_ROW_LOCKS = ON,     ALLOW_PAGE_LOCKS = ON)",
                 AlterRebuildStatement = "ALTER INDEX CDX_TempA ON [dbo].[TempA]   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 90,      SORT_IN_TEMPDB = ON,      IGNORE_DUP_KEY = OFF,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)",
                 AlterReorganizeStatement = "ALTER INDEX CDX_TempA ON [dbo].[TempA]   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)",
-                RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.CDX_TempA',   @newname = 'CDX_TempA_OLD',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.CDX_TempA_OLD',   @newname = 'CDX_TempA',   @objtype = 'INDEX'"
+                RenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.CDX_TempA',   @newname = 'CDX_TempA_OLD',   @objtype = 'INDEX'",
+                RevertRenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.CDX_TempA_OLD',   @newname = 'CDX_TempA',   @objtype = 'INDEX'"
             });
 
             this.expectedIndexViews.Add(new vwIndexes()
@@ -54,12 +54,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 IndexName = "NIDX_TempA_Report",
                 IndexUpdateType = "None",
                 DropStatement = "DROP INDEX IF EXISTS [dbo].[TempA].NIDX_TempA_Report",
-                CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'NIDX_TempA_Report')  BEGIN   CREATE  NONCLUSTERED INDEX NIDX_TempA_Report     ON [dbo].[TempA](TransactionUtcDt ASC) INCLUDE(TextCol)              WITH (           PAD_INDEX = ON,          FILLFACTOR = 80,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = ON,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
+                CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM {DatabaseName}.sys.indexes i INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id INNER JOIN {DatabaseName}.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'NIDX_TempA_Report')  BEGIN   CREATE  NONCLUSTERED INDEX NIDX_TempA_Report     ON [dbo].[TempA](TransactionUtcDt ASC) INCLUDE(TextCol)              WITH (           PAD_INDEX = ON,          FILLFACTOR = 80,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = ON,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
                 AlterSetStatement = "ALTER INDEX NIDX_TempA_Report ON [dbo].[TempA]   SET ( IGNORE_DUP_KEY = OFF,     STATISTICS_NORECOMPUTE = OFF,     ALLOW_ROW_LOCKS = ON,     ALLOW_PAGE_LOCKS = ON)    ",
                 AlterRebuildStatement = "ALTER INDEX NIDX_TempA_Report ON [dbo].[TempA]   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 80,      SORT_IN_TEMPDB = ON,      IGNORE_DUP_KEY = OFF,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)    ",
                 AlterReorganizeStatement = "ALTER INDEX NIDX_TempA_Report ON [dbo].[TempA]   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)    ",
-                RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_Report',   @newname = 'NIDX_TempA_OLD_Report',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_OLD_Report',   @newname = 'NIDX_TempA_Report',   @objtype = 'INDEX'"
+                RenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.NIDX_TempA_Report',   @newname = 'NIDX_TempA_OLD_Report',   @objtype = 'INDEX'",
+                RevertRenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.NIDX_TempA_OLD_Report',   @newname = 'NIDX_TempA_Report',   @objtype = 'INDEX'"
             });
 
             this.expectedIndexViews.Add(new vwIndexes()
@@ -70,12 +70,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 IndexName = "NIDX_TempA_Report2",
                 IndexUpdateType = "None",
                 DropStatement = "DROP INDEX IF EXISTS [dbo].[TempA].NIDX_TempA_Report2",
-                CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'NIDX_TempA_Report2')  BEGIN   CREATE  NONCLUSTERED INDEX NIDX_TempA_Report2     ON [dbo].[TempA](TransactionUtcDt ASC)               WITH (           PAD_INDEX = ON,          FILLFACTOR = 90,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = ON,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
+                CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM {DatabaseName}.sys.indexes i INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id INNER JOIN {DatabaseName}.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'NIDX_TempA_Report2')  BEGIN   CREATE  NONCLUSTERED INDEX NIDX_TempA_Report2     ON [dbo].[TempA](TransactionUtcDt ASC)               WITH (           PAD_INDEX = ON,          FILLFACTOR = 90,          SORT_IN_TEMPDB = ON,          IGNORE_DUP_KEY = OFF,          STATISTICS_NORECOMPUTE = OFF,          STATISTICS_INCREMENTAL = OFF,          DROP_EXISTING = OFF,          ONLINE = ON,          ALLOW_ROW_LOCKS = ON,          ALLOW_PAGE_LOCKS = ON,          MAXDOP = 0,          DATA_COMPRESSION = NONE)      ON [PRIMARY]    END",
                 AlterSetStatement = "ALTER INDEX NIDX_TempA_Report2 ON [dbo].[TempA]   SET ( IGNORE_DUP_KEY = OFF,     STATISTICS_NORECOMPUTE = OFF,     ALLOW_ROW_LOCKS = ON,     ALLOW_PAGE_LOCKS = ON)    ",
                 AlterRebuildStatement = "ALTER INDEX NIDX_TempA_Report2 ON [dbo].[TempA]   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 90,      SORT_IN_TEMPDB = ON,      IGNORE_DUP_KEY = OFF,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)    ",
                 AlterReorganizeStatement = "ALTER INDEX NIDX_TempA_Report2 ON [dbo].[TempA]   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)    ",
-                RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_Report2',   @newname = 'NIDX_TempA_OLD_Report2',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NIDX_TempA_OLD_Report2',   @newname = 'NIDX_TempA_Report2',   @objtype = 'INDEX'"
+                RenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.NIDX_TempA_Report2',   @newname = 'NIDX_TempA_OLD_Report2',   @objtype = 'INDEX'",
+                RevertRenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.NIDX_TempA_OLD_Report2',   @newname = 'NIDX_TempA_Report2',   @objtype = 'INDEX'"
             });
 
             this.expectedIndexViews.Add(new vwIndexes()
@@ -86,12 +86,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 IndexName = "PK_TempA",
                 IndexUpdateType = "None",
                 DropStatement = "ALTER TABLE [dbo].[TempA] DROP CONSTRAINT IF EXISTS PK_TempA",
-                CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'PK_TempA')  BEGIN  ALTER TABLE [dbo].[TempA]     ADD CONSTRAINT PK_TempA      PRIMARY KEY  NONCLUSTERED (TempAId ASC)         WITH (         PAD_INDEX = ON,        FILLFACTOR = 90,        IGNORE_DUP_KEY = OFF,        STATISTICS_NORECOMPUTE = OFF,        STATISTICS_INCREMENTAL = OFF,        ALLOW_ROW_LOCKS = ON,        ALLOW_PAGE_LOCKS = ON,        DATA_COMPRESSION = NONE)        ON [PRIMARY]    END",
+                CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM {DatabaseName}.sys.indexes i INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id INNER JOIN {DatabaseName}.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'PK_TempA')  BEGIN  ALTER TABLE [dbo].[TempA]     ADD CONSTRAINT PK_TempA      PRIMARY KEY  NONCLUSTERED (TempAId ASC)         WITH (         PAD_INDEX = ON,        FILLFACTOR = 90,        IGNORE_DUP_KEY = OFF,        STATISTICS_NORECOMPUTE = OFF,        STATISTICS_INCREMENTAL = OFF,        ALLOW_ROW_LOCKS = ON,        ALLOW_PAGE_LOCKS = ON,        DATA_COMPRESSION = NONE)        ON [PRIMARY]    END",
                 AlterSetStatement = "ALTER INDEX PK_TempA ON [dbo].[TempA]   SET ( IGNORE_DUP_KEY = OFF,     STATISTICS_NORECOMPUTE = OFF,     ALLOW_ROW_LOCKS = ON,     ALLOW_PAGE_LOCKS = ON)    ",
                 AlterRebuildStatement = "ALTER INDEX PK_TempA ON [dbo].[TempA]   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 90,      SORT_IN_TEMPDB = ON,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)    ",
                 AlterReorganizeStatement = "ALTER INDEX PK_TempA ON [dbo].[TempA]   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)    ",
-                RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.PK_TempA',   @newname = 'PK_TempA_OLD',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.PK_TempA_OLD',   @newname = 'PK_TempA',   @objtype = 'INDEX'"
+                RenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.PK_TempA',   @newname = 'PK_TempA_OLD',   @objtype = 'INDEX'",
+                RevertRenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.PK_TempA_OLD',   @newname = 'PK_TempA',   @objtype = 'INDEX'"
             });
 
             this.expectedIndexViews.Add(new vwIndexes()
@@ -102,12 +102,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 IndexName = "NCCI_TempA_Report",
                 IndexUpdateType = "None",
                 DropStatement = "DROP INDEX IF EXISTS [dbo].[TempA].NCCI_TempA_Report",
-                CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'NCCI_TempA_Report')  BEGIN   CREATE NONCLUSTERED COLUMNSTORE INDEX NCCI_TempA_Report     ON [dbo].[TempA](TransactionUtcDt)          WITH (         DROP_EXISTING = OFF,        COMPRESSION_DELAY = 0,        MAXDOP = 0,        DATA_COMPRESSION = COLUMNSTORE)      ON [PRIMARY]    END",
+                CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM {DatabaseName}.sys.indexes i INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id INNER JOIN {DatabaseName}.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempA' AND i.name = 'NCCI_TempA_Report')  BEGIN   CREATE NONCLUSTERED COLUMNSTORE INDEX NCCI_TempA_Report     ON [dbo].[TempA](TransactionUtcDt)          WITH (         DROP_EXISTING = OFF,        COMPRESSION_DELAY = 0,        MAXDOP = 0,        DATA_COMPRESSION = COLUMNSTORE)      ON [PRIMARY]    END",
                 AlterSetStatement = "  ALTER INDEX NCCI_TempA_Report ON [dbo].[TempA]   SET (COMPRESSION_DELAY = COLUMNSTORE)    ",
                 AlterRebuildStatement = "  ALTER INDEX NCCI_TempA_Report ON [dbo].[TempA]   REBUILD PARTITION = ALL WITH ( DATA_COMPRESSION = COLUMNSTORE)  ",
                 AlterReorganizeStatement = "  ALTER INDEX NCCI_TempA_Report ON [dbo].[TempA]   REORGANIZE PARTITION = ALL    WITH (COMPRESS_ALL_ROW_GROUPS = OFF)    ",
-                RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NCCI_TempA_Report',   @newname = 'NCCI_TempA_OLD_Report',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempA.NCCI_TempA_OLD_Report',   @newname = 'NCCI_TempA_Report',   @objtype = 'INDEX'"
+                RenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.NCCI_TempA_Report',   @newname = 'NCCI_TempA_OLD_Report',   @objtype = 'INDEX'",
+                RevertRenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempA.NCCI_TempA_OLD_Report',   @newname = 'NCCI_TempA_Report',   @objtype = 'INDEX'"
             });
 
             this.expectedIndexViews.Add(new vwIndexes()
@@ -119,12 +119,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 IndexUpdateType = "None",
                 IsClustered_Desired = true,
                 DropStatement = "DROP INDEX IF EXISTS [dbo].[TempB].CCI_TempB_Report",
-                CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempB' AND i.name = 'CCI_TempB_Report')  BEGIN   CREATE CLUSTERED COLUMNSTORE INDEX CCI_TempB_Report     ON [dbo].[TempB]          WITH (         DROP_EXISTING = OFF,        COMPRESSION_DELAY = 0,        MAXDOP = 0,        DATA_COMPRESSION = COLUMNSTORE)      ON [PRIMARY]    END",
+                CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM {DatabaseName}.sys.indexes i INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id INNER JOIN {DatabaseName}.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempB' AND i.name = 'CCI_TempB_Report')  BEGIN   CREATE CLUSTERED COLUMNSTORE INDEX CCI_TempB_Report     ON [dbo].[TempB]          WITH (         DROP_EXISTING = OFF,        COMPRESSION_DELAY = 0,        MAXDOP = 0,        DATA_COMPRESSION = COLUMNSTORE)      ON [PRIMARY]    END",
                 AlterSetStatement = "  ALTER INDEX CCI_TempB_Report ON [dbo].[TempB]   SET (COMPRESSION_DELAY = COLUMNSTORE)    ",
                 AlterRebuildStatement = "  ALTER INDEX CCI_TempB_Report ON [dbo].[TempB]   REBUILD PARTITION = ALL WITH ( DATA_COMPRESSION = COLUMNSTORE)  ",
                 AlterReorganizeStatement = "  ALTER INDEX CCI_TempB_Report ON [dbo].[TempB]   REORGANIZE PARTITION = ALL    WITH (COMPRESS_ALL_ROW_GROUPS = OFF)    ",
-                RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.CCI_TempB_Report',   @newname = 'CCI_TempB_OLD_Report',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.CCI_TempB_OLD_Report',   @newname = 'CCI_TempB_Report',   @objtype = 'INDEX'"
+                RenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempB.CCI_TempB_Report',   @newname = 'CCI_TempB_OLD_Report',   @objtype = 'INDEX'",
+                RevertRenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempB.CCI_TempB_OLD_Report',   @newname = 'CCI_TempB_Report',   @objtype = 'INDEX'"
             });
 
             this.expectedIndexViews.Add(new vwIndexes()
@@ -135,12 +135,12 @@ namespace DOI.Tests.IntegrationTests.RunTests
                 IndexName = "PK_TempB",
                 IndexUpdateType = "None",
                 DropStatement = "ALTER TABLE [dbo].[TempB] DROP CONSTRAINT IF EXISTS PK_TempB",
-                CreateStatement = "IF NOT EXISTS (SELECT 'True' FROM sys.indexes i INNER JOIN sys.tables t ON i.object_id = t.object_id INNER JOIN sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempB' AND i.name = 'PK_TempB')  BEGIN  ALTER TABLE [dbo].[TempB]     ADD CONSTRAINT PK_TempB      PRIMARY KEY  NONCLUSTERED (TempBId ASC)         WITH (         PAD_INDEX = ON,        FILLFACTOR = 90,        IGNORE_DUP_KEY = OFF,        STATISTICS_NORECOMPUTE = OFF,        STATISTICS_INCREMENTAL = OFF,        ALLOW_ROW_LOCKS = ON,        ALLOW_PAGE_LOCKS = ON,        DATA_COMPRESSION = NONE)        ON [PRIMARY]    END",
+                CreateStatement = $"IF NOT EXISTS (SELECT 'True' FROM {DatabaseName}.sys.indexes i INNER JOIN {DatabaseName}.sys.tables t ON i.object_id = t.object_id INNER JOIN {DatabaseName}.sys.schemas s ON s.schema_id = t.schema_id WHERE s.name = 'dbo' AND t.name = 'TempB' AND i.name = 'PK_TempB')  BEGIN  ALTER TABLE [dbo].[TempB]     ADD CONSTRAINT PK_TempB      PRIMARY KEY  NONCLUSTERED (TempBId ASC)         WITH (         PAD_INDEX = ON,        FILLFACTOR = 90,        IGNORE_DUP_KEY = OFF,        STATISTICS_NORECOMPUTE = OFF,        STATISTICS_INCREMENTAL = OFF,        ALLOW_ROW_LOCKS = ON,        ALLOW_PAGE_LOCKS = ON,        DATA_COMPRESSION = NONE)        ON [PRIMARY]    END",
                 AlterSetStatement = "ALTER INDEX PK_TempB ON [dbo].[TempB]   SET ( IGNORE_DUP_KEY = OFF,     STATISTICS_NORECOMPUTE = OFF,     ALLOW_ROW_LOCKS = ON,     ALLOW_PAGE_LOCKS = ON)    ",
                 AlterRebuildStatement = "ALTER INDEX PK_TempB ON [dbo].[TempB]   REBUILD PARTITION = ALL    WITH (       PAD_INDEX = ON,      FILLFACTOR = 90,      SORT_IN_TEMPDB = ON,      STATISTICS_NORECOMPUTE = OFF,      STATISTICS_INCREMENTAL = OFF,      ONLINE =  ON(WAIT_AT_LOW_PRIORITY (MAX_DURATION = 0 MINUTES, ABORT_AFTER_WAIT = NONE)),      ALLOW_ROW_LOCKS = ON,      ALLOW_PAGE_LOCKS = ON,      MAXDOP = 0,      DATA_COMPRESSION = NONE)    ",
                 AlterReorganizeStatement = "ALTER INDEX PK_TempB ON [dbo].[TempB]   REORGANIZE PARTITION = ALL    WITH ( LOB_COMPACTION = ON)    ",
-                RenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.PK_TempB',   @newname = 'PK_TempB_OLD',   @objtype = 'INDEX'",
-                RevertRenameIndexSQL = "  SET DEADLOCK_PRIORITY 10  EXEC sp_rename   @objname = 'dbo.TempB.PK_TempB_OLD',   @newname = 'PK_TempB',   @objtype = 'INDEX'"
+                RenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempB.PK_TempB',   @newname = 'PK_TempB_OLD',   @objtype = 'INDEX'",
+                RevertRenameIndexSQL = $"  SET DEADLOCK_PRIORITY 10  EXEC {DatabaseName}.sys.sp_rename   @objname = 'dbo.TempB.PK_TempB_OLD',   @newname = 'PK_TempB',   @objtype = 'INDEX'"
             });
 
             this.expectedForeignKeys.Add(new ForeignKeys()

@@ -44,6 +44,7 @@ CREATE TABLE dbo.TempA(
 
 	CONSTRAINT PK_TempA
 		PRIMARY KEY NONCLUSTERED (TempAId)
+			WITH (FILLFACTOR = 90, PAD_INDEX = ON)
 )
 
 --Create table TempB used to test Foreign keys

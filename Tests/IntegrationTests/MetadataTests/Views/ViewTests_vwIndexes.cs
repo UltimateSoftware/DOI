@@ -306,7 +306,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.Views
                         AND TableName = '{tableName}'
                         AND IndexName <> '{indexName}'");
 
-            sqlHelper.Execute(TestHelper.RefreshMetadata_All);
+            sqlHelper.Execute(TestHelper.RefreshMetadata_All_NoValidations);
 
             var actualListOfChanges = sqlHelper.ExecuteScalar<string>($@"
                 SELECT ListOfChanges 

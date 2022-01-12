@@ -636,6 +636,9 @@ VALUES	 (N'{DatabaseName}'   ,N'dbo'               , N'{ChildTableName}'   , N'T
 
         public static string RefreshMetadata_All = $@"EXEC DOI.spRefreshMetadata_Run_All @DatabaseName = '{DatabaseName}'";
 
+        public static string RefreshMetadata_All_NoValidations = $@"EXEC DOI.spRefreshMetadata_Run_All @DatabaseName = '{DatabaseName}', @RunValidations = 0";
+
+
         #endregion
 
 

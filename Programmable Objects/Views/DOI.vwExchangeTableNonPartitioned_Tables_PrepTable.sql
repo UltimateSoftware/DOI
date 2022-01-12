@@ -1,14 +1,8 @@
 -- <Migration ID="39dd4fb0-685b-450a-ab56-2f939541670b" />
--- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 IF OBJECT_ID('[DOI].[vwExchangeTableNonPartitioned_Tables_PrepTable]') IS NOT NULL
 	DROP VIEW [DOI].[vwExchangeTableNonPartitioned_Tables_PrepTable];
 
 GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
-
 
 CREATE     VIEW [DOI].[vwExchangeTableNonPartitioned_Tables_PrepTable]
 
@@ -46,7 +40,7 @@ DROP TABLE IF EXISTS ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '
 
 IF OBJECT_ID(''' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch'') IS NULL
 BEGIN
-	CREATE TABLE ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + AllTables.ColumnListWithTypes + CHAR(13) + CHAR(10) + ' ,DMLType CHAR(1) NOT NULL) ON [' + AllTables.Storage_Desired + ']' + '
+	CREATE TABLE ' + AllTables.DatabaseName + '.' + AllTables.SchemaName + '.' + AllTables.TableName + '_DataSynch (' + CHAR(13) + CHAR(10) + AllTables.ColumnListWithTypes + CHAR(13) + CHAR(10) + ' DMLType CHAR(1) NOT NULL) ON [' + AllTables.Storage_Desired + ']' + '
 END
 '		AS CreateFinalDataSynchTableSQL,
 		'

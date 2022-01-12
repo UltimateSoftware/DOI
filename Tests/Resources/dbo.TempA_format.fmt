@@ -1,6 +1,7 @@
 14.0
-4
-1       SQLUNIQUEID         1       16      ""   1     TempAId                              ""
-2       SQLDATETIME2        0       8       ""   2     TransactionUtcDt                     ""
-3       SQLCHAR             2       100     ""   3     IncludedColumn                       SQL_Latin1_General_CP1_CI_AS
-4       SQLCHAR             2       8000    ""   4     TextCol                              SQL_Latin1_General_CP1_CI_AS
+5
+1       SQLCHAR             0       37      "\t"     1     TempAId                              ""
+2       SQLCHAR             0       30      "\t"     2     TransactionUtcDt                     ""
+3       SQLCHAR             0       100     "\t"     3     IncludedColumn                       SQL_Latin1_General_CP1_CI_AS
+4       SQLCHAR             0       8000    "\t"     4     TextCol                              SQL_Latin1_General_CP1_CI_AS
+5       SQLCHAR             0       30      "\r\n"   5     UpdatedUtcDt                         ""

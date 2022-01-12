@@ -598,6 +598,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="IntegrationTests\Run Tests\TablePartitioningTests\utebcp.exe" />
+    <Content Include="Resources\Create TempA BCP File.sql" />
     <EmbeddedResource Include="Resources\Create Test Database.sql" />
     <EmbeddedResource Include="Resources\IndexesViewTests_Setup.sql" />
     <EmbeddedResource Include="Resources\IndexesViewTests_TearDown.sql" />
