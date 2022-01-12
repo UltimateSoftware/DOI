@@ -26,7 +26,8 @@ AS
         @DatabaseName = @DatabaseName
     EXEC [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]    
         @DatabaseName = @DatabaseName
-
+    EXEC [DOI].[spRefreshMetadata_System_SysDmDbIncrementalStatsProperties]    
+        @DatabaseName = @DatabaseName
 	EXEC DOI.spRefreshMetadata_System_SysStats_UpdateData
 		@DatabaseName = @DatabaseName
 	EXEC DOI.spRefreshMetadata_User_Statistics_UpdateData

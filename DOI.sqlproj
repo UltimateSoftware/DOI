@@ -621,4 +621,10 @@
   <ItemGroup>
     <None Include="Schema-Model\Tables\DOI.SysIdentityColumns.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Schema-Model\Tables\DOI.SysDmDbIncrementalStatsProperties.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysDmDbIncrementalStatsProperties.sql" />
+  </ItemGroup>
 </Project>

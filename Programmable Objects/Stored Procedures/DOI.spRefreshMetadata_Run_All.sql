@@ -141,9 +141,13 @@ BEGIN TRY
     EXEC DOI.spRefreshMetadata_System_SysStats
         @DatabaseName = @DatabaseName
 
-    --EXEC [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]    
-    --    @DatabaseName = @DatabaseName
+    IF @ShowProgress = 1 PRINT 'Starting SysDmDbStatsProperties'
+    EXEC DOI.spRefreshMetadata_System_SysDmDbStatsProperties  
+        @DatabaseName = @DatabaseName
 
+    IF @ShowProgress = 1 PRINT 'Starting SysDmDbIncrementalStatsProperties'
+    EXEC DOI.spRefreshMetadata_System_SysDmDbIncrementalStatsProperties
+        @DatabaseName = @DatabaseName
 
     IF @ShowProgress = 1 PRINT 'Starting SysDefaultConstraints'
     EXEC DOI.spRefreshMetadata_System_SysDefaultConstraints

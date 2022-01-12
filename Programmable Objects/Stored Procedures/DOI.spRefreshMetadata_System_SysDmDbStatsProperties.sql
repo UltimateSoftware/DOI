@@ -19,9 +19,6 @@ AS
 /*
     EXEC [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]
          @DatabaseName = 'DOIUnitTests'
-
-    NOTE:  THIS SP IS FLAWED!  sys.dm_db_stats_properties only returns its data when called from its current database.  3 part-name calls work but they return null data.
-    need to figure out how to get around this.  if we try to use dynamic sql we get the error stating that a "user transaction that accesses memory-optimized tables cannot read from 2 databases".
 */
 
 DELETE SP
