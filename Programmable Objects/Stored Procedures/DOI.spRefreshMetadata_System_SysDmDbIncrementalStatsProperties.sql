@@ -27,16 +27,13 @@ WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName EN
 
 DECLARE @SQL NVARCHAR(MAX) = ''
 
-SELECT TOP 1 @SQL += '
+SELECT @SQL += '
 
-SELECT TOP 1 DB_ID(''' + DatabaseName + ''') AS database_id, FN.*
+SELECT TOP 1 DB_ID(''model'') AS database_id, FN.*
 INTO #SysDmDbIncrementalStatsProperties
-FROM sys.stats p
-    CROSS APPLY sys.dm_db_incremental_stats_properties(p.object_id, p.stats_id) FN  
+FROM model.sys.stats p
+    CROSS APPLY model.sys.dm_db_incremental_stats_properties(p.object_id, p.stats_id) FN  
 WHERE 1 = 2' + CHAR(13) + CHAR(10)
---select count(*)
-FROM DOI.Databases D
-WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
 SELECT @SQL += '
 

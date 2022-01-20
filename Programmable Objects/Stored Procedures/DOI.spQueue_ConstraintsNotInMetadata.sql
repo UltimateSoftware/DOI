@@ -32,25 +32,30 @@ INSERT INTO DOI.CheckConstraintsNotInMetadata ( DatabaseName, SchemaName ,TableN
 SELECT d.name, s.name, t.name, c.name, ch.definition, ch.is_disabled, ch.name
 FROM DOI.SysCheckConstraints ch
     INNER JOIN DOI.SysDatabases d ON d.database_id = ch.database_id 
-	INNER JOIN DOI.SysSchemas s ON s.schema_id = ch.schema_id
-	INNER JOIN (SELECT	name, 
+	INNER JOIN DOI.SysSchemas s ON s.database_id = ch.database_id
+        AND s.schema_id = ch.schema_id
+	INNER JOIN (SELECT	database_id,
+                        name, 
 						object_id 
-				FROM DOI.SysTables) t ON t.object_id = ch.parent_object_id
-	LEFT JOIN DOI.SysColumns c ON c.object_id = t.object_id
-		AND ch.parent_column_id = c.column_id
+				FROM DOI.SysTables) t ON t.database_id = ch.database_id
+        AND t.object_id = ch.parent_object_id
+	LEFT JOIN DOI.SysColumns c ON c.database_id = ch.database_id
+        AND c.object_id = ch.parent_object_id
+		AND c.column_id = ch.parent_column_id
 WHERE t.name NOT LIKE '%|_OLD' ESCAPE '|'
 	AND t.name NOT IN ('DBDefragLog')
 	AND NOT EXISTS (SELECT 'True' 
 					FROM DOI.CheckConstraints CC 
-					WHERE s.name = cc.SchemaName COLLATE DATABASE_DEFAULT
+					WHERE d.name = cc.DatabaseName
+                        AND s.name = cc.SchemaName COLLATE DATABASE_DEFAULT
 						AND t.name = cc.TableName COLLATE DATABASE_DEFAULT 
 						AND ch.name = cc.CheckConstraintName COLLATE DATABASE_DEFAULT)
 	AND NOT EXISTS(	SELECT 'True' 
 					FROM DOI.CheckConstraintsNotInMetadata CH2 
-					WHERE s.Name = CH2.SchemaName COLLATE DATABASE_DEFAULT
+					WHERE d.name = CH2.DatabaseName
+                        AND s.Name = CH2.SchemaName COLLATE DATABASE_DEFAULT
 						AND t.Name = CH2.TableName COLLATE DATABASE_DEFAULT 
 						AND ch.NAME = CH2.CheckConstraintName COLLATE DATABASE_DEFAULT)
-	AND d.name = CASE WHEN @DatabaseName IS NULL THEN d.name ELSE @DatabaseName END 
 																		
 INSERT INTO DOI.DefaultConstraintsNotInMetadata ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition )
 SELECT d.name, s.name, t.name, c.name, df.definition

@@ -1,21 +1,4 @@
 ﻿-- <Migration ID="34c17dd7-07bb-4639-9759-e17109d3ebbc" TransactionHandling="Custom" />
-IF OBJECT_ID('[DOI].[MappingSqlServerDMVToDOITables]') IS NULL
-CREATE TABLE [DOI].[MappingSqlServerDMVToDOITables]
-(
-[DOITableName] [sys].[sysname] NOT NULL,
-[SQLServerObjectName] [sys].[sysname] NOT NULL,
-[SQLServerObjectType] [varchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-[HasDatabaseIdInOutput] [bit] NOT NULL,
-[DatabaseOutputString] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[FunctionParameterList] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[FunctionParentDMV] [nvarchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-CONSTRAINT [PK_MappingSqlServerDMVToDOITables] PRIMARY KEY NONCLUSTERED  ([DOITableName], [SQLServerObjectName])
-)
-WITH
-(
-MEMORY_OPTIMIZED = ON
-)
-GO
 IF OBJECT_ID('[DOI].[SysDatabases]') IS NULL
 CREATE TABLE [DOI].[SysDatabases]
 (
@@ -589,6 +572,7 @@ CREATE TABLE [DOI].[SysStatsColumns]
 [stats_id] [int] NOT NULL,
 [stats_column_id] [int] NOT NULL,
 [column_id] [int] NOT NULL,
+ColumnList VARCHAR(MAX) NULL,
 CONSTRAINT [PK_SysStatsColumns] PRIMARY KEY NONCLUSTERED  ([database_id], [object_id], [stats_id], [stats_column_id])
 )
 WITH

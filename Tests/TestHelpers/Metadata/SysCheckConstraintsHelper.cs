@@ -59,7 +59,9 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT CC.* 
-            FROM DOI.DOI.{SysTableName} CC"));
+            FROM DOI.DOI.{SysTableName} CC
+                INNER JOIN DOI.DOI.SysDatabases D ON CC.database_id = D.database_id
+            WHERE D.name = '{DatabaseName}'"));
 
             List<SysCheckConstraints> actualSysCheckConstraints = new List<SysCheckConstraints>();
 

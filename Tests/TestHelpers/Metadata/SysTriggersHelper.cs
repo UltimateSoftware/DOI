@@ -54,7 +54,9 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT TR.* 
-            FROM DOI.DOI.{SysTableName} TR"));
+            FROM DOI.DOI.{SysTableName} TR
+                INNER JOIN DOI.DOI.SysDatabases D ON TR.database_id = D.database_id
+            WHERE D.name = '{DatabaseName}'"));
 
             List<SysTriggers> actualSysTriggers = new List<SysTriggers>();
 

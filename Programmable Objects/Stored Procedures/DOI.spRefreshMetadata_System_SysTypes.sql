@@ -11,7 +11,8 @@ SET ANSI_NULLS ON
 GO
 
 CREATE   PROCEDURE [DOI].[spRefreshMetadata_System_SysTypes]
-    @DatabaseName NVARCHAR(128) = NULL
+    @DatabaseName NVARCHAR(128) = NULL,
+    @Debug BIT = 0
 
 AS
 
@@ -26,9 +27,40 @@ FROM DOI.SysTypes S
 WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END 
 
 
-EXEC DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs
-    @TableName = 'SysTypes',
-    @DatabaseName = @DatabaseName
+DECLARE @SQL NVARCHAR(MAX) = ''
+SELECT @SQL += '
 
+SELECT TOP 1 DB_ID(''model'') AS database_id, *
+INTO #SysTypes
+FROM model.sys.types
+WHERE 1 = 2'
+
+SELECT @SQL += '
+
+INSERT INTO #SysTypes
+SELECT DB_ID(''' + DatabaseName + ''') AS database_id, *
+FROM ' + DatabaseName + '.sys.types '
+--select count(*)
+FROM DOI.Databases D
+WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
+
+
+SELECT @SQL += '    
+INSERT INTO DOI.SysTypes
+SELECT *
+FROM #SysTypes
+
+DROP TABLE IF EXISTS #SysTypes' + CHAR(13) + CHAR(10)
+
+IF @Debug = 1
+BEGIN
+    EXEC DOI.spPrintOutLongSQL
+        @SQLInput = @SQL,
+        @VariableName = '@SQL'
+END
+ELSE
+BEGIN
+    EXEC(@SQL)
+END
 
 GO

@@ -49,7 +49,9 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT P.* 
-            FROM DOI.DOI.{SysTableName} P "));
+            FROM DOI.DOI.{SysTableName} P 
+                INNER JOIN DOI.DOI.SysDatabases D ON P.database_id = D.database_id
+            WHERE D.name = '{DatabaseName}'"));
 
             List<SysPartitions> actualSysPartitions = new List<SysPartitions>();
 

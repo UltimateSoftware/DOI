@@ -28,25 +28,20 @@ WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName EN
 
 DECLARE @SQL NVARCHAR(MAX) = ''
 
-SELECT TOP 1 @SQL += '
+SELECT @SQL += '
 
-SELECT TOP 1 ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE 'DB_ID(''' + DatabaseName + ''') AS database_id,' END + ' *, NULL AS key_column_list, NULL AS included_column_list, NULL AS has_LOB_columns
+SELECT TOP 1 DB_ID(''model'') AS database_id, *, NULL AS key_column_list, NULL AS included_column_list, NULL AS has_LOB_columns
 INTO #SysIndexes
-FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + '
+FROM model.sys.indexes
 WHERE 1 = 2'
---select count(*)
-FROM DOI.Databases D
-    INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = 'SysIndexes'
-WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
 SELECT @SQL += '
 
 INSERT INTO #SysIndexes
-SELECT ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE 'DB_ID(''' + DatabaseName + ''') AS database_id,' END + ' *, NULL, NULL, NULL
-FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + ''
+SELECT DB_ID(''' + DatabaseName + ''') AS database_id, *, NULL, NULL, NULL
+FROM ' + DatabaseName + '.sys.indexes'
 --select count(*)
 FROM DOI.Databases D
-    INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = 'SysIndexes'
 WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
 SELECT @SQL += '

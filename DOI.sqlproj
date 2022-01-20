@@ -192,7 +192,7 @@
   <ItemGroup>
     <None Include="Provisioning\CreateDatabase.sql" />
     <None Include="Provisioning\DropDatabase.sql" />
-    <None Include="Post-Deployment\04_Finalize_Deployment.sql" />
+    <None Include="Post-Deployment\03_Finalize_Deployment.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\003_Metadata_System_Tables.sql" />
@@ -218,7 +218,6 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_BCPTables.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_IndexesNotInMetadata.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_LoadSQLMetadataFromTableForAllDBs.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_4_Tables_IndexAggColumns.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Run_All.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysAllocationUnits.sql" />
@@ -278,7 +277,6 @@
     <None Include="Schema-Model\Tables\DOI.IndexesNotInMetadata.sql" />
     <None Include="Schema-Model\Tables\DOI.IndexesRowStore.sql" />
     <None Include="Schema-Model\Tables\DOI.IndexRowStorePartitions.sql" />
-    <None Include="Schema-Model\Tables\DOI.MappingSqlServerDMVToDOITables.sql" />
     <None Include="Schema-Model\Tables\DOI.PartitionFunctions.sql" />
     <None Include="Schema-Model\Tables\DOI.Log.sql" />
     <None Include="Schema-Model\Tables\DOI.Queue.sql" />
@@ -310,10 +308,9 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_Insert.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Post-Deployment\03_Insert Data Into MappingSqlServerDMVToDOITables.sql" />
-    <None Include="Post-Deployment\05_Create Sql Agent Job - Refresh Metadata.sql" />
-    <None Include="Post-Deployment\06_Create Sql Agent Job - Refresh Indexes.sql" />
-    <None Include="Post-Deployment\07_Create Sql Agent Job - Refresh Storage Containers.sql" />
+    <None Include="Post-Deployment\04_Create Sql Agent Job - Refresh Metadata.sql" />
+    <None Include="Post-Deployment\05_Create Sql Agent Job - Refresh Indexes.sql" />
+    <None Include="Post-Deployment\06_Create Sql Agent Job - Refresh Storage Containers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\005_NotInMetadata_Tables.sql" />
@@ -394,7 +391,7 @@
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_PrepTables_Statistics.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RevertRename.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_Partitioning_RevertRename.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_RenameDefaultConstraints.sql" />

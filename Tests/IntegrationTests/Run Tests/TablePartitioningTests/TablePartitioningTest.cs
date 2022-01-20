@@ -65,7 +65,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
 
         [Test]
         //need to add revert rename tests and also test if the log rows are preserved on rollback on a rename.
-        public void HappyPath_PartitionTable()
+        public void HappyPath_PartitionTableAndRevert()
         {
             //Setup
             SetUpTableUnderTest();
@@ -79,7 +79,7 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
 
             //tables
             ValidateThatTheOldTableExists();
-            ValidateThatTheNewTableExists();
+            ValidateThatTheLiveTableExists();
             ValidateThatTheNewTableIsPartitioned();
 
             //data
@@ -100,11 +100,80 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             ValidateStatisticsAreThereOnNewTableAfterPartitioning();
             ValidateStatisticsAreThereOnOldTableAfterPartitioning();
 
+            //triggers
+            ValidateTriggersAreThereOnLiveTable();
+            ValidateTriggersAreNotThereOnOldTable();
+
             //queue
             ValidateThatTheQueueIsEmptyAfterPartitioning();
             //metadata
             ValidateThatPartitionStateMetadataTableIsEmptyAfterPartitioning();
             //log has no errors.
+            ValidateThatLogTableHasNoErrors();
+
+/*************************************************  REVERT PARTITIONING ****************************************************/
+            RevertPartitioningToUnpartitionedTable();
+
+            //tables
+            ValidateThatTheLiveTableExists();
+            ValidateThatTheOfflinePartitionedTableExists();
+            ValidateThatTheLiveTableIsNotPartitioned();
+            ValidateThatTheOfflinePartitionedTableIsPartitioned();
+
+            //indexes
+            ValidateIndexesAreThereOnNewTableAfterPartitioning();
+            ValidateIndexesAreThereOnOfflinePartitionedTableAfterRevert();
+
+            //constraints
+            ValidateConstraintsAreThereOnNewTableAfterPartitioning();
+            ValidateConstraintsAreThereOnOfflinePartitionedTableAfterRevert();
+
+            //statistics
+            ValidateStatisticsAreThereOnNewTableAfterPartitioning();
+            ValidateStatisticsAreThereOnOfflinePartitionedTableAfterRevert();
+
+            //triggers
+            ValidateTriggersAreThereOnLiveTable();
+            ValidateThatTriggersAreNotThereOnOfflineTable();
+
+            //there should be no rows in the queue after revert
+            ValidateThatTheQueueIsEmptyAfterPartitioning();
+
+            //there should be no errors in the log after revert
+            ValidateThatLogTableHasNoErrors();
+
+
+            /*************************************************  RE-REVERT PARTITIONING ****************************************************/
+            ReRevertPartitioningToPartitionedTable();
+
+            //tables
+            ValidateThatTheOldTableExists();
+            ValidateThatTheLiveTableExists();
+            ValidateThatTheNewTableIsPartitioned();
+
+            //indexes
+            ValidateIndexesAreThereOnNewTableAfterPartitioning();
+            ValidateIndexesAreThereOnOldTableAfterPartitioning();
+
+            //constraints
+            ValidateConstraintsAreThereOnNewTableAfterPartitioning();
+            ValidateConstraintsAreThereOnOldTableAfterPartitioning();
+
+            //statistics
+            ValidateStatisticsAreThereOnNewTableAfterPartitioning();
+            ValidateStatisticsAreThereOnOldTableAfterPartitioning();
+
+            //triggers
+            ValidateTriggersAreThereOnLiveTable();
+
+            //reverted offline table should not have ANY triggers.
+            ValidateThatTriggersAreNotThereOnOfflineTable();
+            ValidateTriggersAreNotThereOnOldTable();
+
+            //there should be no rows in the queue after revert
+            ValidateThatTheQueueIsEmptyAfterPartitioning();
+
+            //there should be no errors in the log after revert
             ValidateThatLogTableHasNoErrors();
         }
         
@@ -127,6 +196,9 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             sqlHelper.Execute(SetupSqlStatements_Partitioned.TableCreation, 30, true, DatabaseName);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.DataInsert, 30, true, DatabaseName);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.TableToMetadata);
+
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.CreateTrigger, 30, true, DatabaseName);
+            sqlHelper.Execute(SystemMetadataHelper.RefreshMetadata_SysTriggersSql);
 
             sqlHelper.Execute(SetupSqlStatements_Partitioned.RowStoreIndexes);
             sqlHelper.Execute(SetupSqlStatements_Partitioned.ColumnStoreIndexes);
@@ -219,14 +291,19 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
                                         5 = Status unknown");
         }
 
+        private void ValidateThatTheLiveTableExists()
+        {
+            Assert.IsNotEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckLiveTable)), " The new partitioned table [dbo].[PartitioningTestAutomationTable] does not exist.");
+        }
+
         private void ValidateThatTheOldTableExists()
         {
             Assert.IsNotEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckOldTable)), " The old table [dbo].[PartitioningTestAutomationTable_Old] does not exist.");
         }
 
-        private void ValidateThatTheNewTableExists()
+        private void ValidateThatTheOfflinePartitionedTableExists()
         {
-            Assert.IsNotEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckNewTable)), " The new partitioned table [dbo].[PartitioningTestAutomationTable] does not exist.");
+            Assert.IsNotEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.CheckOfflinePartitionedTable)), " The old table [dbo].[PartitioningTestAutomationTable_NewPartitionedTableFromPrep] does not exist.");
         }
 
         private void ValidateThatTheNewTableIsPartitioned()
@@ -235,13 +312,35 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             /*Sam explained that the number of partitions is equal to the number of month since January 2018
              and one year from now, plus 2 more partitions()*/
              //get this from the PartitionFunctions table.
-            short minimumNumberOfExpectedPartitions = sqlHelper.ExecuteScalar<short>(@"SELECT NumOfTotalPartitionFunctionIntervals 
-                                                                                 FROM DOI.PartitionFunctions 
-                                                                                 WHERE PartitionFunctionName = 'pfMonthlyTest'");
+            short minimumNumberOfExpectedPartitions = sqlHelper.ExecuteScalar<short>(@"   SELECT NumOfTotalPartitionFunctionIntervals 
+                                                                                             FROM DOI.PartitionFunctions 
+                                                                                             WHERE PartitionFunctionName = 'pfMonthlyTest'");
             List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.RowsInFileGroupsProcedureCall));
             Assert.IsTrue(list.Count >= minimumNumberOfExpectedPartitions, $"Expecting at least {minimumNumberOfExpectedPartitions} partition but found {list.Count}");
         }
 
+        private void ValidateThatTheLiveTableIsNotPartitioned()
+        {
+            int actualNumPartitions = sqlHelper.ExecuteScalar<int>($@"USE {DatabaseName}
+                                                                            SELECT COUNT(*) 
+                                                                             FROM sys.partitions p
+                                                                                INNER JOIN sys.tables t ON t.object_id = p.object_id
+                                                                             WHERE t.name = 'PartitioningTestAutomationTable'
+                                                                                AND index_id IN (0,1)");
+            Assert.AreEqual(1, actualNumPartitions); //if it only has 1 partition then the table is 'unpartitioned'
+        }
+
+        private void ValidateThatTheOfflinePartitionedTableIsPartitioned()
+        {
+            int actualNumPartitions = sqlHelper.ExecuteScalar<int>($@"USE {DatabaseName}
+                                                                            SELECT COUNT(*) 
+                                                                             FROM sys.partitions p
+                                                                                INNER JOIN sys.tables t ON t.object_id = p.object_id
+                                                                             WHERE t.name = 'PartitioningTestAutomationTable_NewPartitionedTableFromPrep'
+                                                                                AND index_id IN (0,1)");
+            Assert.Less(1, actualNumPartitions); //if has more than 1 partition then the table is 'partitioned'
+        }
+        
         private void ValidateThatTheNewTableHasAllTheData()
         {
             Assert.IsEmpty(sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.DataMismatchValidation)), "Error: There is a data mismatch between the new and the old table.");
@@ -283,6 +382,15 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "PK_PartitioningTestAutomationTable_OLD"), "Index PK_PartitioningTestAutomationTable_OLD is missing.");
         }
 
+        private void ValidateIndexesAreThereOnOfflinePartitionedTableAfterRevert()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.IndexesAfterRevertPartitionedTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable_NewPartitionedTableFromPrep"), "Index CDX_PartitioningTestAutomationTable_NewPartitionedTableFromPrep is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments"), "Index NCCI_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments"), "Index IDX_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "PK_PartitioningTestAutomationTable_NewPartitionedTableFromPrep"), "Index PK_PartitioningTestAutomationTable_NewPartitionedTableFromPrep is missing.");
+        }
+
         private void ValidateConstraintsAreThereOnNewTableAfterPartitioning()
         {
             List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.ConstraintsAfterPartitioningNewTable));
@@ -295,6 +403,13 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.ConstraintsAfterPartitioningOldTable));
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Chk_PartitioningTestAutomationTable_OLD_updatedUtcDt"), "Constraint Chk_PartitioningTestAutomationTable_OLD_updatedUtcDt is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Def_PartitioningTestAutomationTable_OLD_updatedUtcDt"), "Constraint Def_PartitioningTestAutomationTable_OLD_updatedUtcDt is missing.");
+        }
+
+        private void ValidateConstraintsAreThereOnOfflinePartitionedTableAfterRevert()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.ConstraintsAfterRevertPartitionedTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Chk_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_updatedUtcDt"), "Constraint Chk_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_updatedUtcDt is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "Def_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_updatedUtcDt"), "Constraint Def_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_updatedUtcDt is missing.");
         }
 
         private void ValidateStatisticsAreThereOnNewTableAfterPartitioning()
@@ -321,6 +436,37 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_OLD_myDateTime"), "Statistics ST_PartitioningTestAutomationTable_OLD_myDateTime is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_OLD_Comments"), "Statistics ST_PartitioningTestAutomationTable_OLD_Comments is missing.");
             Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_OLD_updatedUtcDt"), "Statistics ST_PartitioningTestAutomationTable_OLD_updatedUtcDt is missing.");
+        }
+
+        private void ValidateStatisticsAreThereOnOfflinePartitionedTableAfterRevert()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.StatisticsAfterRevertPartitionedTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "CDX_PartitioningTestAutomationTable_NewPartitionedTableFromPrep"), "Statistics for index CDX_PartitioningTestAutomationTable_NewPartitionedTableFromPrep is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "NCCI_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments"), "Statistics for index NCCI_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "IDX_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments"), "Statistics for index IDX_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "PK_PartitioningTestAutomationTable_NewPartitionedTableFromPrep"), "Statistics for index PK_PartitioningTestAutomationTable_NewPartitionedTableFromPrep is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_id"), "Statistics ST_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_id is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_myDateTime"), "Statistics ST_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_myDateTime is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments"), "Statistics ST_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_Comments is missing.");
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "ST_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_updatedUtcDt"), "Statistics ST_PartitioningTestAutomationTable_NewPartitionedTableFromPrep_updatedUtcDt is missing.");
+        }
+
+        private void ValidateTriggersAreNotThereOnOldTable()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.TriggersDoNotExistOnOldTable));
+            Assert.IsEmpty(list.Where(x => (string)(x[0].Second) == "trPartitioningTestAutomationTable_OLD_ins"), "Trigger trPartitioningTestAutomationTable_OLD_ins exists, but should not be there.");
+        }
+
+        private void ValidateTriggersAreThereOnLiveTable()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.TriggersExistOnLiveTable));
+            Assert.IsNotEmpty(list.Where(x => (string)(x[0].Second) == "trPartitioningTestAutomationTable_ins"), "Trigger trPartitioningTestAutomationTable_ins is missing.");
+        }
+
+        private void ValidateThatTriggersAreNotThereOnOfflineTable()
+        {
+            List<List<Pair<string, object>>> list = sqlHelper.ExecuteQuery(new SqlCommand(SetupSqlStatements_Partitioned.TriggersDoNotExistOnOfflineTable));
+            Assert.IsEmpty(list.Where(x => (string)(x[0].Second) == "trPartitioningTestAutomationTable_NewPartitionedTableFromPrep_ins"), "Constraint trPartitioningTestAutomationTable_NewPartitionedTableFromPrep_ins exists, but should not be there.");
         }
 
         private void ValidateThatTheQueueIsEmptyAfterPartitioning()
@@ -377,6 +523,26 @@ namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
             {
                 return JObject.FromObject(this).ToString();
             }
+        }
+
+        private void RevertPartitioningToUnpartitionedTable()
+        {
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.RevertPartitioningToUnpartitionedTable);
+        }
+
+        private void ValidateStateAfterRevertToUnpartitionedTable()
+        {
+
+        }
+
+        private void ReRevertPartitioningToPartitionedTable()
+        {
+            sqlHelper.Execute(SetupSqlStatements_Partitioned.ReRevertPartitioningToPartitionedTable);
+        }
+
+        private void ValidateStateAfterReRevertToPartitionedTable()
+        {
+
         }
     }
 }

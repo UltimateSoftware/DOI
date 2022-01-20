@@ -47,15 +47,19 @@ namespace DOI.Tests.TestHelpers.Metadata
             var numOfFutureIntervals_Actual = sqlHelper.ExecuteScalar<int>($@"
                 SELECT NumFutureIntervals
                 FROM DOI.SysPartitionFunctions pf
-                    INNER JOIN DOI.SysPartitionSchemes ps ON ps.function_id = pf.function_id
-                    OUTER APPLY (   SELECT prv.function_id, COUNT(prv.boundary_id) AS NumFutureIntervals
+                    INNER JOIN DOI.SysPartitionSchemes ps ON ps.database_id = pf.database_id
+                        AND ps.function_id = pf.function_id
+                    OUTER APPLY (   SELECT prv.database_id, prv.function_id, COUNT(prv.boundary_id) AS NumFutureIntervals
                                     FROM DOI.SysDestinationDataSpaces AS DDS 
-    				                    INNER JOIN DOI.SysFilegroups AS FG ON FG.data_space_id = DDS.data_space_ID 
-					                    LEFT JOIN DOI.SysPartitionRangeValues AS PRV ON PRV.Boundary_ID = DDS.destination_id 
+    				                    INNER JOIN DOI.SysFilegroups AS FG ON FG.database_id = DDS.database_id
+                                            AND FG.data_space_id = DDS.data_space_ID 
+					                    LEFT JOIN DOI.SysPartitionRangeValues AS PRV ON PRV.database_id = DDS.database_id
+                                            AND PRV.Boundary_ID = DDS.destination_id 
 						                    AND prv.function_id = ps.function_id 
-				                    WHERE DDS.partition_scheme_id = ps.data_space_id
+				                    WHERE DDS.database_id = ps.database_id
+                                        AND DDS.partition_scheme_id = ps.data_space_id
                                         AND prv.value > GETDATE()
-                                    GROUP BY PRV.function_id)x
+                                    GROUP BY prv.database_id, prv.function_id)x
                 WHERE pf.name = '{partitionFunctionName}'");
 
             List<vwPartitionFunctions> expectedVwPartitionFunctions = new List<vwPartitionFunctions>();

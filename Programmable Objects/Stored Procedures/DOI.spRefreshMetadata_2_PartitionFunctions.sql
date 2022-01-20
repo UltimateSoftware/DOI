@@ -13,6 +13,9 @@ AS
     EXEC DOI.spRefreshMetadata_0_Databases
         @DatabaseName = @DatabaseName
 
+    EXEC DOI.spRefreshMetadata_1_DataSpaces
+        @DatabaseName = @DatabaseName
+
     EXEC DOI.spRefreshMetadata_System_SysMasterFiles
 	    @DatabaseName = @DatabaseName
     EXEC DOI.spRefreshMetadata_System_SysDatabaseFiles

@@ -50,6 +50,8 @@ namespace DOI.Tests.TestHelpers.Metadata
             var actual =  sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT AU.* 
             FROM DOI.DOI.{SysTableName} AU 
+                INNER JOIN DOI.DOI.SysDatabases D ON AU.database_id = D.database_id
+            WHERE D.name = '{DatabaseName}'
             ORDER BY container_id, type"));
 
             List<SysAllocationUnits> actualSysAllocationUnits = new List<SysAllocationUnits>();

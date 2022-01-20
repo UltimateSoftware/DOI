@@ -36,17 +36,16 @@ DECLARE @SQL NVARCHAR(MAX) = ''
 SELECT TOP 1 @SQL += '
 SELECT TOP 1 *
 INTO #SysMasterFiles
-FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + '
+FROM sys.master_files
 WHERE 1 = 2
 
 INSERT INTO #SysMasterFiles
 SELECT *
-FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + '
+FROM sys.master_files
 WHERE database_id IN (2, ' + CAST(SD.database_id AS VARCHAR(20)) + ')'
 --select count(*)
 FROM DOI.Databases D
     INNER JOIN DOI.SysDatabases SD ON D.DatabaseName = SD.name
-    INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = 'SysMasterFiles'
 WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
 SELECT @SQL += '    

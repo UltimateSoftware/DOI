@@ -24,13 +24,15 @@ AS
 	FROM DOI.IndexesNotInMetadata INIM
 	WHERE EXISTS  (	SELECT 'T' 
 					FROM DOI.IndexesRowStore IRS 
-					WHERE IRS.SchemaName = INIM.SchemaName
+					WHERE IRS.DatabaseName = INIM.DatabaseName
+						AND IRS.SchemaName = INIM.SchemaName
 						AND IRS.TableName = INIM.TableName
 						AND IRS.IndexName = INIM.IndexName
 					UNION ALL 
 					SELECT 'T' 
 					FROM DOI.IndexesColumnStore ICS 
-					WHERE ICS.SchemaName = INIM.SchemaName 
+					WHERE ICS.DatabaseName = INIM.DatabaseName
+						AND ICS.SchemaName = INIM.SchemaName 
 						AND ICS.TableName = INIM.TableName
 						AND ICS.IndexName = INIM.IndexName)
 		OR (INIM.TableName LIKE '%|_OLD' ESCAPE '|'
@@ -42,9 +44,11 @@ AS
 	SELECT d.name, S.NAME AS SchemaName, T.NAME AS TableName, I.NAME AS IndexName, ''DROP INDEX '' + S.NAME + ''.'' + T.NAME + ''.'' + I.NAME AS ScriptToDropIndex
 	FROM DOI.SysIndexes I
 		INNER JOIN DOI.SysDatabases d ON d.database_id = i.database_id
-		INNER JOIN DOI.SysTables T ON T.object_id = I.object_id
-		INNER JOIN DOI.SysSchemas S ON S.schema_id = T.schema_id
-		INNER JOIN DOI.Tables T2 ON T2.DatabaseName = d.name	COLLATE DATABASE_DEFAULT
+		INNER JOIN DOI.SysTables T ON T.database_id = i.database_id
+			AND T.object_id = I.object_id
+		INNER JOIN DOI.SysSchemas S ON S.database_id = T.database_id
+			AND S.schema_id = T.schema_id
+		INNER JOIN DOI.Tables T2 ON T2.DatabaseName = d.name COLLATE DATABASE_DEFAULT
 			AND T2.SchemaName = s.name	COLLATE DATABASE_DEFAULT
 			AND T2.TableName = t.name	COLLATE DATABASE_DEFAULT
 	WHERE NOT EXISTS (	SELECT ''T'' 
@@ -63,10 +67,9 @@ AS
 		AND NOT EXISTS (SELECT ''True'' 
 						FROM DOI.IndexesNotInMetadata INIM 
 						WHERE INIM.DatabaseName = d.name COLLATE DATABASE_DEFAULT
-							AND INIM.SchemaName = s.name 	COLLATE DATABASE_DEFAULT
+							AND INIM.SchemaName = s.name COLLATE DATABASE_DEFAULT
 							AND INIM.TableName = t.name COLLATE DATABASE_DEFAULT
 							AND INIM.IndexName = i.name	COLLATE DATABASE_DEFAULT)
-		--AND S.NAME IN (''dbo'', ''DataMart'')
 		AND I.type_desc <> ''HEAP''
 		AND t.name NOT LIKE ''%|_OLD'' ESCAPE ''|''
 		AND t.name NOT LIKE ''%|_NewPartitionedTableFromPrep'' ESCAPE ''|''' + 
@@ -79,11 +82,5 @@ END
 
 	EXEC(@InsertSQL)
 
-	UPDATE INIM
-	SET ignore = 1
-	--SELECT *
-	FROM DOI.IndexesNotInMetadata INIM
-	WHERE DatabaseName = 'PaymentReporting'
-		AND IndexName = 'IDX_Pays_CheckSummaryReportCover2' --need to remove this!!!
 
 GO

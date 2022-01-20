@@ -46,6 +46,8 @@ namespace DOI.Tests.TestHelpers.Metadata
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT SC.* 
             FROM DOI.DOI.{SysTableName} SC
+                INNER JOIN DOI.DOI.SysDatabases D ON SC.database_id = D.database_id
+            WHERE D.name = '{DatabaseName}'
             ORDER BY object_id, stats_id, stats_column_id"));
 
             List<SysStatsColumns> actualSysStatsColumns = new List<SysStatsColumns>();

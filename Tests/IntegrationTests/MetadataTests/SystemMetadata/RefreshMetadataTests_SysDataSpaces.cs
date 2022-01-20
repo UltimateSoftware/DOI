@@ -25,7 +25,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         }
 
         [Test]
-        public void RefreshMetadata_SysMasterFiles_MetadataIsAccurate()
+        public void RefreshMetadata_SysDataSpaces_MetadataIsAccurate()
         {
             //run refresh metadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysDataSpacesSql);

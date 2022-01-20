@@ -44,7 +44,9 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT T.* 
-            FROM DOI.{SysTableName} T"));
+            FROM DOI.{SysTableName} T
+                INNER JOIN DOI.DOI.SysDatabases D ON T.database_id = D.database_id
+            WHERE D.name = '{DatabaseName}'"));
 
             List<SysDestinationDataSpaces> actualSysDestinationDataSpaces = new List<SysDestinationDataSpaces>();
 

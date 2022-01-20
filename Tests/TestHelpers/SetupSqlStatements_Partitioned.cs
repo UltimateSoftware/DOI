@@ -3,18 +3,18 @@ using System.Text;
 
 namespace DOI.Tests.TestHelpers
 {
-        public static class SetupSqlStatements_Partitioned
-        {
-            private const string DatabaseName = "DOIUnitTests";
+    public static class SetupSqlStatements_Partitioned
+    {
+        private const string DatabaseName = "DOIUnitTests";
 
         public static string PartitionFunction_Setup_Metadata = $@"
 INSERT INTO DOI.PartitionFunctions ( 
 				DatabaseName    , PartitionFunctionName			,PartitionFunctionDataType	,BoundaryInterval	,NumOfFutureIntervals	, InitialDate	, UsesSlidingWindow	, SlidingWindowSize	, IsDeprecated  , PartitionSchemeName   , NumOfCharsInSuffix, LastBoundaryDate  , NumOfTotalPartitionFunctionIntervals  , NumOfTotalPartitionSchemeIntervals, MinValueOfDataType)
 VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			, 1					    , '2019-08-01'	, 0					, NULL				, 0             , NULL                  , NULL              , NULL              , NULL                                  , NULL                              , NULL);";
 
-            public static string PartitionFunction_Teardown_Metadata = @"DELETE DOI.PartitionFunctions WHERE DatabaseName = 'DOIUnitTests'";
+        public static string PartitionFunction_Teardown_Metadata = @"DELETE DOI.PartitionFunctions WHERE DatabaseName = 'DOIUnitTests'";
 
-            public static string TableCreation = @"
+        public static string TableCreation = @"
                                         SET ANSI_NULLS ON
                                         SET QUOTED_IDENTIFIER ON
 
@@ -92,6 +92,14 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                     WITH SAMPLE 20 PERCENT /*, PERSIST_SAMPLE_PERCENT = ON  this has to wait until 2016 SP2.                  , MAXDOP = 0*/ ,
                                                          INCREMENTAL = OFF;
                                             END;";
+
+        public static string CreateTrigger = @"  CREATE TRIGGER dbo.trPartitioningTestAutomationTable_ins  
+                                                    ON dbo.PartitioningTestAutomationTable AFTER insert 
+                                                    AS 
+
+                                                    SET NOCOUNT ON
+                                                                                                        
+                                                    DECLARE @SysDate DATETIME2 = SYSDATETIME()";
 
         public static string RowStoreIndexes = $@"            
     INSERT INTO DOI.IndexesRowStore (DatabaseName, SchemaName, TableName, IndexName, IsUnique_Desired, IsPrimaryKey_Desired, IsUniqueConstraint_Desired, IsClustered_Desired, KeyColumnList_Desired, IncludedColumnList_Desired, IsFiltered_Desired, FilterPredicate_Desired,Fillfactor_Desired, OptionPadIndex_Desired, OptionStatisticsNoRecompute_Desired, OptionStatisticsIncremental_Desired, OptionIgnoreDupKey_Desired, OptionResumable_Desired, OptionMaxDuration_Desired, OptionAllowRowLocks_Desired, OptionAllowPageLocks_Desired, OptionDataCompression_Desired, PartitionFunction_Desired, PartitionColumn_Desired, Storage_Desired)
@@ -301,9 +309,12 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
         }
 
 
-        public static string CheckNewTable => GenerateTableExistenceCheckScript("PartitioningTestAutomationTable", "dbo");
+        public static string CheckLiveTable => GenerateTableExistenceCheckScript("PartitioningTestAutomationTable", "dbo");
 
         public static string CheckOldTable => GenerateTableExistenceCheckScript("PartitioningTestAutomationTable_Old", "dbo");
+
+        public static string CheckOfflinePartitionedTable => GenerateTableExistenceCheckScript("PartitioningTestAutomationTable_NewPartitionedTableFromPrep", "dbo");
+        
 
         private static string GenerateTableExistenceCheckScript(string tablename, string schemaname)
         {
@@ -438,6 +449,15 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                             AND t.name = 'PartitioningTestAutomationTable_OLD'
                                                             AND s.name = 'dbo'";
 
+        public static string IndexesAfterRevertPartitionedTable = $@"USE {DatabaseName}
+                                                        SELECT IndexName = ix.Name
+                                                        FROM sys.indexes ix 
+                                                            JOIN sys.tables t  on ix.object_id = t.object_id
+                                                            JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                        WHERE 1=1
+                                                            AND t.name = 'PartitioningTestAutomationTable_NewPartitionedTableFromPrep'
+                                                            AND s.name = 'dbo'";
+
         public static string ConstraintsAfterPartitioningNewTable = $@"USE {DatabaseName}
                                                             SELECT ConstraintName = x.Name
                                                             FROM (  SELECT parent_object_id, name
@@ -462,6 +482,18 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                             WHERE t.name = 'PartitioningTestAutomationTable_OLD'
                                                                 AND s.name = 'dbo'";
 
+        public static string ConstraintsAfterRevertPartitionedTable = $@"USE {DatabaseName}
+                                                            SELECT ConstraintName = x.Name
+                                                            FROM (  SELECT parent_object_id, name
+                                                                    FROM sys.check_constraints c
+                                                                    UNION ALL
+                                                                    SELECT parent_object_id, name
+                                                                    FROM sys.default_constraints d) x
+                                                                INNER JOIN sys.tables t  on x.parent_object_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            WHERE t.name = 'PartitioningTestAutomationTable_NewPartitionedTableFromPrep'
+                                                                AND s.name = 'dbo'";
+
         public static string StatisticsAfterPartitioningNewTable = $@"USE {DatabaseName}
                                                             SELECT StatisticsName = st.Name
                                                             FROM sys.stats st
@@ -477,6 +509,39 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
                                                                 INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
                                                             WHERE t.name = 'PartitioningTestAutomationTable_OLD'
                                                                 AND s.name = 'dbo'";
+
+        public static string StatisticsAfterRevertPartitionedTable = $@"USE {DatabaseName}
+                                                            SELECT StatisticsName = st.Name
+                                                            FROM sys.stats st
+                                                                INNER JOIN sys.tables t  on st.object_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            WHERE t.name = 'PartitioningTestAutomationTable_NewPartitionedTableFromPrep'
+                                                                AND s.name = 'dbo'";
+
+        public static string TriggersExistOnLiveTable = $@"USE {DatabaseName}
+                                                            SELECT TriggerName = tr.Name
+                                                            FROM sys.triggers tr
+                                                                INNER JOIN sys.tables t  on tr.parent_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            WHERE t.name = 'PartitioningTestAutomationTable'
+                                                                AND s.name = 'dbo'";
+
+        public static string TriggersDoNotExistOnOldTable = $@"USE {DatabaseName}
+                                                            SELECT TriggerName = tr.Name
+                                                            FROM sys.triggers tr
+                                                                INNER JOIN sys.tables t  on tr.parent_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            WHERE t.name = 'PartitioningTestAutomationTable_OLD'
+                                                                AND s.name = 'dbo'";
+
+        public static string TriggersDoNotExistOnOfflineTable = $@"USE {DatabaseName}
+                                                            SELECT TriggerName = tr.Name
+                                                            FROM sys.triggers tr
+                                                                INNER JOIN sys.tables t  on tr.parent_id = t.object_id
+                                                                INNER JOIN sys.schemas s  on s.schema_id = t.schema_id
+                                                            WHERE t.name = 'PartitioningTestAutomationTable_NewPartitionedTableFromPrep'
+                                                                AND s.name = 'dbo'";
+
 
         public static string RecordsInTheQueue = @"Select * FROM  DOI.Queue";
 
@@ -528,5 +593,17 @@ VALUES		(	'{DatabaseName}'  , 'pfMonthlyTest'				, 'DATETIME2'				, 'Monthly'			
             WHERE SchemaName = '{schemaName}'
             AND ParentTableName = '{tableName}'";   
         }
+
+        public static string RevertPartitioningToUnpartitionedTable = $@"
+                                                        EXEC DOI.spRun_Partitioning_RevertRename
+                                                            @DatabaseName = '{DatabaseName}',
+		                                                    @SchemaName = 'dbo',
+		                                                    @TableName = 'PartitioningTestAutomationTable'";
+
+        public static string ReRevertPartitioningToPartitionedTable = $@"
+                                                        EXEC DOI.spRun_Partitioning_ReRevertRename
+                                                            @DatabaseName = '{DatabaseName}',
+		                                                    @SchemaName = 'dbo',
+		                                                    @TableName = 'PartitioningTestAutomationTable'";
     }
 }

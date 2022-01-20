@@ -26,34 +26,28 @@ FROM DOI.SysStats ST
 WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName END
 
 
-DECLARE @SQL NVARCHAR(MAX) = ''
-
-SELECT TOP 1 @SQL += '
-SELECT TOP 1 ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE 'DB_ID(''' + DatabaseName + ''') AS database_id,' END + ' *, SPACE(0) AS ColumnList
+DECLARE @SQL NVARCHAR(MAX) = '
+SELECT TOP 1 DB_ID(''model'') AS database_id, *, SPACE(0) AS ColumnList
 INTO #SysStats
-FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + '
+FROM model.sys.stats
 WHERE 1 = 2'
---select count(*)
-FROM DOI.Databases D
-    INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = 'SysStats' 
-WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
 SELECT @SQL += '
 
 INSERT INTO #SysStats
-SELECT ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE 'DB_ID(''' + DatabaseName + ''') AS database_id,' END + ' *, NULL
-FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + ''
-
+SELECT DB_ID(''' + DatabaseName + ''') AS database_id, *, NULL
+FROM ' + DatabaseName + '.sys.stats'
 --select count(*)
 FROM DOI.Databases D
-    INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = 'SysStats' 
 WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
 SELECT @SQL += '
 
-    INSERT INTO DOI.SysStats([database_id], [object_id], [name], [stats_id], [auto_created], [user_created], [no_recompute], [has_filter], [filter_definition], [is_temporary], [is_incremental])
-    SELECT [database_id], [object_id], [name], [stats_id], [auto_created], [user_created], [no_recompute], [has_filter], [filter_definition], [is_temporary], [is_incremental]
-    FROM #SysStats
+INSERT INTO DOI.SysStats([database_id], [object_id], [name], [stats_id], [auto_created], [user_created], [no_recompute], [has_filter], [filter_definition], [is_temporary], [is_incremental])
+SELECT [database_id], [object_id], [name], [stats_id], [auto_created], [user_created], [no_recompute], [has_filter], [filter_definition], [is_temporary], [is_incremental]
+FROM #SysStats
+
+DROP TABLE IF EXISTS #SysStats
 '
 
 IF @Debug = 1

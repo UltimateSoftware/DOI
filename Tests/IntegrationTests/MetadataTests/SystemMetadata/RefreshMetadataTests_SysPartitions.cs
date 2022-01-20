@@ -28,7 +28,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         }
 
         [Test]
-        public void RefreshMetadata_SysIndexes_MetadataIsAccurate()
+        public void RefreshMetadata_SysPartitions_MetadataIsAccurate()
         {
             //run refresh metadata
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysPartitionsSql);

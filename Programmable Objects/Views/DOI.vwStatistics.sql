@@ -70,11 +70,11 @@ IF EXISTS ( SELECT ''True''
                 INNER JOIN ' + S.DatabaseName + '.sys.schemas s ON s.schema_id = t.schema_id
             WHERE s.name = ''' + S.SchemaName + '''
                 AND t.name = ''' + S.TableName + '''
-                AND st.name = ''ST_' + S.TableName + '_' + S.StatisticsColumnList_Actual + ''')
+                AND st.name = ''ST_' + S.TableName + '_OLD_' + S.StatisticsColumnList_Actual + ''')
 BEGIN
     SET DEADLOCK_PRIORITY 10
     EXEC ' + S.DatabaseName + '.sys.sp_rename 
-        @objname = ''' + S.SchemaName + '.' + S.TableName + '_OLD.ST_' + S.TableName + '_OLD_' + S.StatisticsColumnList_Actual + '''
+        @objname = ''' + S.SchemaName + '.' + S.TableName + '.ST_' + S.TableName + '_OLD_' + S.StatisticsColumnList_Actual + '''
         ,@newname = ''' + S.StatisticsName + '''
         ,@objtype = ''STATISTICS''
 END' AS RevertRenameStatisticsSQL

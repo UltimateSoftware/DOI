@@ -1,10 +1,8 @@
--- <Migration ID="c40d94a4-92bc-49f1-b6a6-df206c5848f1" />
--- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
 GO
 
-IF OBJECT_ID('[DOI].[spRun_RevertRename]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spRun_RevertRename];
+IF OBJECT_ID('[DOI].[spRun_Partitioning_RevertRename]') IS NOT NULL
+	DROP PROCEDURE [DOI].[spRun_Partitioning_RevertRename];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -12,7 +10,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
-CREATE   PROCEDURE [DOI].[spRun_RevertRename]
+CREATE   PROCEDURE [DOI].[spRun_Partitioning_RevertRename]
     @DatabaseName SYSNAME,
 	@SchemaName SYSNAME,
 	@TableName SYSNAME,
@@ -21,7 +19,7 @@ CREATE   PROCEDURE [DOI].[spRun_RevertRename]
 AS
 
 /*
-	EXEC DOI.spRun_RevertRename
+	EXEC DOI.spRun_Partitioning_RevertRename
 		@SchemaName = 'dbo',
 		@TableName = 'Pays',
 		@Debug = 1
@@ -167,8 +165,6 @@ BEGIN TRY
 			@TableChildOperationId			= 0 ,
 			@SQLStatement					= 'SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 BEGIN TRAN' ,
-			--@RunAutomaticallyOnDeployment	= 0 ,
-			--@RunAutomaticallyOnSQLJob		= 1 ,
 			@TransactionId					= @TransactionId ,
 			@BatchId						= @BatchId ,
 			@ExitTableLoopOnError			= 1
@@ -368,7 +364,6 @@ BEGIN TRAN' ,
 			@CurrentParentTableName			= @TableName ,
 			@CurrentParentIndexName			= 'N/A' ,
 			@IndexOperation					= 'Commit Tran',
-			@IsOnlineOperation				= 1 ,
 			@TableChildOperationId			= 0 ,
 			@SQLStatement					= 'COMMIT TRAN' ,
 			@TransactionId					= @TransactionId ,

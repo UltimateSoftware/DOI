@@ -1,3 +1,6 @@
+-- <Migration ID="5be8f60f-4405-4c64-b1ed-e65389693f92" />
+GO
+-- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
 GO
 
@@ -28,25 +31,21 @@ WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName EN
 
 DECLARE @SQL NVARCHAR(MAX) = ''
 
-SELECT TOP 1 @SQL += '
+SELECT @SQL += '
 
-SELECT TOP 1 ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE 'DB_ID(''' + DatabaseName + ''') AS database_id,' END + ' *
+SELECT DB_ID(''model'') AS database_id, *
 INTO #SysColumns
-FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + '
+FROM model.sys.columns
 WHERE 1 = 2'
---select count(*)
-FROM DOI.Databases D
-    INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = 'SysColumns'
-WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
+
 
 SELECT @SQL += '
 
 INSERT INTO #SysColumns
-SELECT ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE 'DB_ID(''' + DatabaseName + ''') AS database_id,' END + ' *
-FROM ' + CASE HasDatabaseIdInOutput WHEN 1 THEN '' ELSE DatabaseName + '.' END + M.SQLServerObjectName + CASE WHEN M.SQLServerObjectType = 'FN' THEN '(' + REPLACE(FunctionParameterList, '{DatabaseName}', DatabaseName) + ')' ELSE '' END + ''
+SELECT DB_ID(''' + DatabaseName + ''') AS database_id, *
+FROM ' + DatabaseName + '.sys.columns'
 --select count(*)
 FROM DOI.Databases D
-    INNER JOIN DOI.MappingSqlServerDMVToDOITables M ON M.DOITableName = 'SysColumns'
 WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
 
 SELECT @SQL += '

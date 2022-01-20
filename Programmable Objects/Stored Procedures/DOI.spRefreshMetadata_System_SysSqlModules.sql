@@ -34,11 +34,21 @@ END
 
 SET @SQL += '
 
-SELECT ' + @ColumnList + '
+SELECT DB_ID(''model'') AS ' + @ColumnList + '
 INTO #SysSqlModules
-FROM ' + @DatabaseName + '.sys.sql_modules
-	INNER JOIN sys.databases d ON d.name = ''' + @DatabaseName + '''
-WHERE 1 = 0
+FROM model.sys.sql_modules
+WHERE 1 = 0'
+
+SELECT @SQL += '
+
+INSERT INTO #SysSqlModules
+SELECT DB_ID(''' + DatabaseName + ''') AS database_id, *
+FROM ' + DatabaseName + '.sys.sql_modules'
+--select count(*)
+FROM DOI.Databases D
+WHERE D.DatabaseName = CASE WHEN @DatabaseName IS NULL THEN D.DatabaseName ELSE @DatabaseName END
+
+SET @SQL += '
 
 INSERT INTO DOI.SysSqlModules(' + @ColumnList + ')
 SELECT ' + @ColumnList + '

@@ -30,15 +30,21 @@ WHERE D.name = CASE WHEN @DatabaseName IS NULL THEN D.name ELSE @DatabaseName EN
 DECLARE @SQL VARCHAR(MAX) = ''
 
 SELECT @SQL += '
-
-SELECT TOP 1  DB_ID(''' + DatabaseName + ''') AS database_id, csrg.*
+SELECT TOP 1  DB_ID(''model'') AS database_id, csrg.*
 INTO #SysColumnStoreRowGroups
-FROM ' + DatabaseName + '.sys.column_store_row_groups csrg 
-WHERE 1 = 2
+FROM model.sys.column_store_row_groups csrg 
+WHERE 1 = 2'
+
+SELECT @SQL += '
 
 INSERT INTO #SysColumnStoreRowGroups
 SELECT  DB_ID(''' + DatabaseName + '''), csrg.*
-FROM ' + DatabaseName + '.sys.column_store_row_groups csrg 
+FROM ' + DatabaseName + '.sys.column_store_row_groups csrg '
+FROM DOI.Databases
+WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END
+
+
+SELECT @SQL += '
 
 INSERT INTO DOI.SysColumnStoreRowGroups(database_id,object_id,index_id,partition_number,row_group_id,delta_store_hobt_id,state,state_description,total_rows,deleted_rows,size_in_bytes)
 SELECT * FROM #SysColumnStoreRowGroups
@@ -46,10 +52,6 @@ SELECT * FROM #SysColumnStoreRowGroups
 DROP TABLE IF EXISTS #SysColumnStoreRowGroups
 GO
 '
-
-FROM DOI.Databases
-WHERE DatabaseName = CASE WHEN @DatabaseName IS NULL THEN DatabaseName ELSE @DatabaseName END
-
 
 IF @Debug = 1
 BEGIN

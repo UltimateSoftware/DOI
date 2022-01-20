@@ -14,6 +14,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.SystemMetadata
         [SetUp]
         public void Setup()
         {
+            TearDown();
             sqlHelper.Execute(TestHelper.RefreshMetadata_SysDatabasesSql);
             sqlHelper.Execute(TestHelper.CreateSchemaSql, 30, true, "DOIUnitTests");
             sqlHelper.Execute(TestHelper.CreateTableSql, 30, true, "DOIUnitTests");

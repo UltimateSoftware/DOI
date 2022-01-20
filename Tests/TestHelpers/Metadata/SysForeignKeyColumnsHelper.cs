@@ -46,7 +46,9 @@ namespace DOI.Tests.TestHelpers.Metadata
             SqlHelper sqlHelper = new SqlHelper();
             var actual = sqlHelper.ExecuteQuery(new SqlCommand($@"
             SELECT FKC.* 
-            FROM DOI.DOI.{SysTableName} FKC"));
+            FROM DOI.DOI.{SysTableName} FKC
+                INNER JOIN DOI.DOI.SysDatabases D ON FKC.database_id = D.database_id
+            WHERE D.name = '{DatabaseName}'"));
 
             List<SysForeignKeyColumns> actualSysForeignKeyColumns = new List<SysForeignKeyColumns>();
 
