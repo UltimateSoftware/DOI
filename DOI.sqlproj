@@ -624,4 +624,7 @@
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysDmDbIncrementalStatsProperties.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_Partitioning_ReRevertRename.sql" />
+  </ItemGroup>
 </Project>
