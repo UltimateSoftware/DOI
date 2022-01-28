@@ -194,7 +194,23 @@ FROM (	SELECT CAST(YEAR(' + AllTables.PartitionColumn + ') AS CHAR(4)) + ''-'' +
 				GROUP BY CAST(YEAR(' + AllTables.PartitionColumn + ') AS CHAR(4)) + ''-'' + CASE WHEN MONTH(' + AllTables.PartitionColumn + ') < 10 THEN ''0'' ELSE SPACE(0) END + CAST(MONTH(' + AllTables.PartitionColumn + ') AS VARCHAR(2))) OldTable
 		ON OldTable.DatePeriod = NewTable.DatePeriod
 WHERE (NewTable.NumRows - ISNULL(OldTable.NumRows, 0)) <> 0
-ORDER BY NewTable.DatePeriod' AS PostDataValidationCompareByPartitionSQL
+ORDER BY NewTable.DatePeriod' AS PostDataValidationCompareByPartitionSQL,
+'
+EXEC sp_configure ''allow updates'', 0
+RECONFIGURE
+EXEC sp_configure ''show advanced options'', 1
+RECONFIGURE
+EXEC sp_configure ''xp_cmdshell'', 1
+RECONFIGURE
+' AS EnableCmdShellSQL,
+'
+EXEC sp_configure ''allow updates'', 0
+RECONFIGURE
+EXEC sp_configure ''show advanced options'', 1
+RECONFIGURE
+EXEC sp_configure ''xp_cmdshell'', 0
+RECONFIGURE
+' AS DisableCmdShellSQL
 FROM (  SELECT T.DatabaseName
                 ,T.SchemaName
 				,T.TableName

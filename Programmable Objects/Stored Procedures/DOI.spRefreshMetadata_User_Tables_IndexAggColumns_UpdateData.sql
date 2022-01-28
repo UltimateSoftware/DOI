@@ -34,7 +34,7 @@ FROM DOI.Tables T
                 SELECT  I.DatabaseName,
                         I.SchemaName,
                         I.TableName,
-                        MIN(I.IndexUpdateType) AS AreIndexesBeingUpdated,
+                        MIN(CAST(I.IndexUpdateType AS VARCHAR(50))) AS AreIndexesBeingUpdated,
                         MIN(I.FragmentationType) AS FragmentationType,
                         MAX(CAST(I.IsStorageChanging AS TINYINT)) AS IsStorageChanging,
                         MAX(CAST(I.IsIndexMissingFromSQLServer AS TINYINT)) AS AreIndexesMissing

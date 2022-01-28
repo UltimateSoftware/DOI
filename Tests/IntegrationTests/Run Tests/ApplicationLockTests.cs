@@ -4,7 +4,7 @@ using DOI.Tests.TestHelpers;
 using NUnit.Framework;
 
 
-namespace DOI.Tests.IntegrationTests.RunTests.TablePartitioning
+namespace DOI.Tests.IntegrationTests.RunTests
 {
     [TestFixture]
     [Category("Integration")]

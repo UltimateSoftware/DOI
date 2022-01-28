@@ -1,11 +1,6 @@
--- <Migration ID="3663d78d-3e60-4bc9-a623-a1452e275eeb" />
-GO
--- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 
-GO
-
-IF OBJECT_ID('[DOI].[spRun_ExchangeTableNonPartitioning_ReRevertRename]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spRun_ExchangeTableNonPartitioning_ReRevertRename];
+IF OBJECT_ID('[DOI].[spRun_ExchangeTableNonPartitioning_RevertRename]') IS NOT NULL
+	DROP PROCEDURE [DOI].[spRun_ExchangeTableNonPartitioning_RevertRename];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -13,7 +8,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
-CREATE   PROCEDURE [DOI].[spRun_ExchangeTableNonPartitioning_ReRevertRename]
+CREATE   PROCEDURE [DOI].[spRun_ExchangeTableNonPartitioning_RevertRename]
     @DatabaseName SYSNAME,
 	@SchemaName SYSNAME,
 	@TableName SYSNAME,
@@ -22,7 +17,8 @@ CREATE   PROCEDURE [DOI].[spRun_ExchangeTableNonPartitioning_ReRevertRename]
 AS
 
 /*
-	EXEC DOI.spRun_ExchangeTableNonPartitioning_ReRevertRename
+	EXEC DOI.spRun_ExchangeTableNonPartitioning_RevertRename
+        @DatabaseName = 'DOIUnitTests',
 		@SchemaName = 'dbo',
 		@TableName = 'Pays',
 		@Debug = 1
@@ -41,12 +37,12 @@ DECLARE @BatchId UNIQUEIDENTIFIER = NEWID(),
 
 BEGIN TRY
     EXEC ('
-	IF NOT EXISTS(SELECT ''True'' FROM ' + @DatabaseName + '.sys.tables WHERE name = ''' + @TableName + '_NewTableFromPrep'')
+	IF NOT EXISTS(SELECT ''True'' FROM ' + @DatabaseName + '.sys.tables WHERE name = ''' + @TableName + '_OLD'')
 	BEGIN
-		RAISERROR(''There is nothing to Re-Revert.  Either the Re-Revert has already run, or nothing has been partitioned.'', 16, 1)
+		RAISERROR(''There is nothing to revert.  Either the Revert has already run, or nothing has been partitioned.'', 16, 1)
 	END')
     
-	DECLARE Re_Revert_Cur CURSOR LOCAL FAST_FORWARD FOR
+	DECLARE Revert_Cur CURSOR LOCAL FAST_FORWARD FOR
 		SELECT  X.DatabaseName,
                 X.ObjectName,
 				X.SQLStatement,
@@ -54,43 +50,41 @@ BEGIN TRY
 				ROW_NUMBER() OVER (ORDER BY X.SortId) AS RowNum
 		FROM (
 				SELECT	DatabaseName,
-                        PrepTableIndexName AS ObjectName,
-						RenameExistingTableIndexSQL AS SQLStatement,
-						'Index' AS ObjectType,
+                        TableName AS ObjectName,
+						RevertRenameNewTableSQL AS SQLStatement, 
+						'Table' AS ObjectType,
 						1 AS SortId
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Indexes
-				WHERE SchemaName = @SchemaName
-					AND ParentTableName = @TableName
-					AND IsNewTable = 1
-				UNION ALL
-				SELECT	DatabaseName,
-                        ConstraintName,
-						RenameExistingTableConstraintSQL,
-						'Constraint',
-						2
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Constraints
-				WHERE SchemaName = @SchemaName
-					AND ParentTableName = @TableName
-					AND IsNewTable = 1
-				UNION ALL 
-				SELECT	DatabaseName,
-                        StatisticsName,
-						RenameExistingTableStatisticsSQL,
-						'Statistics',
-						3
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Statistics
-				WHERE SchemaName = @SchemaName
-					AND ParentTableName = @TableName
-				UNION ALL
-				SELECT	DatabaseName,
-                        TableName,
-						RenameExistingTableSQL,
-						'Table',
-						4
 				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
 				UNION ALL 
+				SELECT	DatabaseName,
+                        NewTableIndexName,
+						RevertRenameNewTableIndexSQL,
+						'Index',
+						2
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Indexes
+				WHERE SchemaName = @SchemaName
+					AND ParentTableName = @TableName
+				UNION ALL
+				SELECT	DatabaseName,
+                        NewTableConstraintName,
+						RevertRenameNewTableConstraintSQL,
+						'Constraint',
+						3
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Constraints
+				WHERE SchemaName = @SchemaName
+					AND ParentTableName = @TableName
+				UNION ALL
+				SELECT	DatabaseName,
+                        NewTableStatisticsName,
+						RevertRenameNewTableStatisticsSQL,
+						'Statistics',
+						4
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Statistics
+				WHERE SchemaName = @SchemaName
+					AND ParentTableName = @TableName
+				UNION ALL
 				SELECT	DatabaseName,
                         TriggerName,
 						DropTriggerSQL,
@@ -101,39 +95,10 @@ BEGIN TRY
 					AND TableName = @TableName
 				UNION ALL
 				SELECT	DatabaseName,
-                        PrepTableIndexName,
-						RenameNewPrepTableIndexSQL,
-						'Index',
-						6
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Indexes
-				WHERE SchemaName = @SchemaName
-					AND ParentTableName = @TableName
-					AND IsNewTable = 1
-				UNION ALL
-				SELECT	DatabaseName,
-                        ConstraintName,
-						RenameNewPrepTableConstraintSQL,
-						'Constraint',
-						7
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Constraints
-				WHERE SchemaName = @SchemaName
-					AND ParentTableName = @TableName
-					AND IsNewTable = 1
-				UNION ALL
-				SELECT	DatabaseName,
-                        StatisticsName,
-						RenameNewPrepTableStatisticsSQL,
-						'Statistics',
-						8
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Statistics
-				WHERE SchemaName = @SchemaName
-					AND ParentTableName = @TableName
-				UNION ALL
-				SELECT	DatabaseName,
                         TableName,
-						RenameNewPrepTableSQL, 
+						RevertRenameExistingTableSQL,
 						'Table',
-						9
+						6
 				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
@@ -142,14 +107,42 @@ BEGIN TRY
                         TriggerName,
 						CreateTriggerSQL,
 						'Create Trigger',
-						10
+						7
 				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Triggers
 				WHERE SchemaName = @SchemaName
-					AND TableName = @TableName)x
+					AND TableName = @TableName
+				UNION ALL 
+				SELECT	DatabaseName,
+                        NewTableIndexName,
+						RevertRenameExistingTableIndexSQL,
+						'Index' AS ObjectType,
+						8
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Indexes
+				WHERE SchemaName = @SchemaName
+					AND ParentTableName = @TableName
+				UNION ALL
+				SELECT	DatabaseName,
+                        NewTableConstraintName,
+						RevertRenameExistingTableConstraintSQL,
+						'Constraint',
+						9
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Constraints
+				WHERE SchemaName = @SchemaName
+					AND ParentTableName = @TableName
+                UNION ALL
+				SELECT	DatabaseName,
+                        NewTableStatisticsName,
+						RevertRenameExistingTableStatisticsSQL,
+						'Statistics',
+						10
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Statistics
+				WHERE SchemaName = @SchemaName
+					AND ParentTableName = @TableName
+)x
 		ORDER BY x.SortId ASC
 
 
-	OPEN Re_Revert_Cur
+	OPEN Revert_Cur
 
 	IF (@SchemaName + '.' + @TableName) IS NOT NULL 
 	BEGIN 
@@ -172,13 +165,13 @@ BEGIN TRAN' ,
 			@ExitTableLoopOnError			= 1
 	END
     
-	FETCH NEXT FROM Re_Revert_Cur INTO @DatabaseName, @CurrentObjectName, @SQLStatement, @ObjectType, @TableChildOperationId
+	FETCH NEXT FROM Revert_Cur INTO @DatabaseName, @CurrentObjectName, @SQLStatement, @ObjectType, @TableChildOperationId
 		WHILE @@FETCH_STATUS <> -1
 		BEGIN
 			IF @@FETCH_STATUS <> -2
 			BEGIN
 				BEGIN TRY
-					SET @IndexOperation = @ObjectType + ' Rename'
+					SET @IndexOperation = @ObjectType + ' Revert Rename'
 
 					EXEC DOI.spQueue_Insert 
                         @CurrentDatabaseName            = @DatabaseName,
@@ -346,14 +339,14 @@ BEGIN TRAN' ,
 
 				END CATCH
 
-			FETCH NEXT FROM Re_Revert_Cur INTO @DatabaseName, @CurrentObjectName, @SQLStatement, @ObjectType, @TableChildOperationId
+			FETCH NEXT FROM Revert_Cur INTO @DatabaseName, @CurrentObjectName, @SQLStatement, @ObjectType, @TableChildOperationId
 
 			END
         
 		END
     
-		CLOSE Re_Revert_Cur
-		DEALLOCATE Re_Revert_Cur
+		CLOSE Revert_Cur
+		DEALLOCATE Revert_Cur
 
 		EXEC DOI.spQueue_Insert 
             @CurrentDatabaseName            = @DatabaseName,
@@ -476,14 +469,14 @@ EXEC DOI.DOI.spForeignKeysAdd
 END TRY
 BEGIN CATCH
 	--CLOSE CURSORS IF OPEN
-	IF (SELECT CURSOR_STATUS('local','Re_Revert_Cur')) >= -1
+	IF (SELECT CURSOR_STATUS('local','Revert_Cur')) >= -1
 	BEGIN
-		IF (SELECT CURSOR_STATUS('local','Re_Revert_Cur')) > -1
+		IF (SELECT CURSOR_STATUS('local','Revert_Cur')) > -1
 		BEGIN
-			CLOSE Re_Revert_Cur
+			CLOSE Revert_Cur
 		END
 
-		DEALLOCATE Re_Revert_Cur
+		DEALLOCATE Revert_Cur
 	END;
 
 	THROW;

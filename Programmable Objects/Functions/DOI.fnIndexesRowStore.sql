@@ -108,8 +108,10 @@ RETURN  (
                     ,IRS.IsIndexLarge
                     ,IRS.DriveLetter
 					,TTP.TableHasColumnStoreIndex
+					,D.OnlineOperations
 			FROM DOI.Tables TTP
-                INNER JOIN DOI.SysDatabases d on d.name = TTP.DatabaseName
+                INNER JOIN DOI.SysDatabases sd on sd.name = TTP.DatabaseName
+				INNER JOIN DOI.Databases D ON D.DatabaseName = sd.name
 				INNER JOIN DOI.IndexesRowStore IRS ON TTP.DatabaseName = IRS.DatabaseName
                     AND TTP.SchemaName = IRS.SchemaName
 					AND TTP.TableName = IRS.TableName

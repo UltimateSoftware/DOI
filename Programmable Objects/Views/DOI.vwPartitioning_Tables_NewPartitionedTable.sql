@@ -591,7 +591,39 @@ IF ABS( @RowCount_NewPrepTable - @RowCount_OldTable ) > @MaximumAllowedRowsDiffe
 BEGIN
 	RAISERROR(''RowCounts from 2 tables are too far apart!!'', 16, 1)
 END'
-AS FinalRepartitioningValidationSQL
+AS FinalRepartitioningValidationSQL,
+'
+DECLARE @BatchId UNIQUEIDENTIFIER = (SELECT TOP 1 BatchId FROM DOI.DOI.Log ORDER BY LogDateTime DESC)
+
+IF EXISTS(	SELECT ''True''
+			FROM DOI.DOI.Log 
+			WHERE BatchId = @BatchId
+				AND TableName LIKE ''%' + T.TableName + '%''
+				AND ErrorText IS NOT NULL ) /*ONLY PROCEED IF NOTHING HAS FAILED IN THIS BATCH.*/
+BEGIN
+	RAISERROR(''At least 1 step failed in the BCP process.  Aborting partition switch and rename.'', 16, 1)  
+END
+' AS PriorErrorValidationSQL,
+'
+EXEC DOI.DOI.spForeignKeysDrop
+	@DatabaseName = ''' + T.DatabaseName + ''',
+	@ParentSchemaName = ''' + T.SchemaName + ''',
+	@ParentTableName = ''' + T.TableName + '''' AS DropParentOldTableFKSQL,
+'
+EXEC DOI.DOI.spForeignKeysDrop
+	@DatabaseName = ''' + T.DatabaseName + ''',
+	@ReferencedSchemaName = ''' + T.SchemaName + ''',
+	@ReferencedTableName = ''' + T.TableName + '''' AS DropRefOldTableFKSQL,
+'
+EXEC DOI.DOI.spForeignKeysAdd
+	@DatabaseName = ''' + T.DatabaseName + ''',
+	@ParentSchemaName = ''' + T.SchemaName + ''',
+	@ParentTableName = ''' + T.TableName + '''' AS AddBackParentTableFKSQL,
+'
+EXEC DOI.DOI.spForeignKeysAdd
+	@DatabaseName = ''' + T.DatabaseName + ''',
+	@ReferencedSchemaName = ''' + T.SchemaName + ''',
+	@ReferencedTableName = ''' + T.TableName + '''' AS AddBackRefTableFKSQL
 FROM (	SELECT DatabaseName
                 ,SchemaName
 				,TableName

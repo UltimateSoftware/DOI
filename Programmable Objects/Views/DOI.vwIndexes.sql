@@ -45,36 +45,56 @@ FROM (	SELECT	 IRS.*
 				,CASE
 					WHEN IRS.IsIndexMissingFromSQLServer = 1
 					THEN 'CreateMissing'
-					WHEN IRS.IsIndexMissingFromSQLServer = 0
-						AND IRS.AreDropRecreateOptionsChanging = 1
-						AND IRS.IsClusteredChanging = 0 --DROP_EXISTING CAN'T HANDLE THIS.
-						AND IRS.IsPrimaryKey_Desired = 0 --DROP_EXISTING CAN'T HANDLE THIS, IF THE PK IS CLUSTERED, WHICH IT OFTEN IS.
-						AND IRS.IsPrimaryKey_Actual = 0 --DROP_EXISTING OPTION DOES NOT EXIST ON CONSTRAINTS
-					THEN 'CreateDropExisting'
-					WHEN IRS.IsIndexMissingFromSQLServer = 0
-						AND IRS.AreDropRecreateOptionsChanging = 1
-						AND (IRS.IsClusteredChanging = 1 OR IRS.IsPrimaryKeyChanging = 1 OR IRS.IsPrimaryKey_Actual = 1) --handles the above 2 cases
-						--need to handle the case where table is going to be rebuilt but it has a columnstore index.
-					THEN 'ExchangeTableNonPartitioned'
-					WHEN (IRS.IsIndexMissingFromSQLServer = 0
-						AND IRS.NeedsPartitionLevelOperations = 0 
-						AND IRS.AreDropRecreateOptionsChanging = 0 )
-							AND ((IRS.FragmentationType = 'Heavy' OR IRS.AreRebuildOnlyOptionsChanging = 1)
-								OR (IRS.FragmentationType = 'Light' AND IRS.AreSetOptionsChanging = 1)
-						AND IRS.TableHasColumnStoreIndex = 0) --online rebuilds only work if the table doesn't have a columnstore index.
-					THEN 'AlterRebuild'	
-					WHEN (IRS.IsIndexMissingFromSQLServer = 0
-						AND IRS.NeedsPartitionLevelOperations = 0 
-						AND IRS.AreDropRecreateOptionsChanging = 0 )
-							AND ((IRS.FragmentationType = 'Heavy' OR IRS.AreRebuildOnlyOptionsChanging = 1)
-								OR (IRS.FragmentationType = 'Light' AND IRS.AreSetOptionsChanging = 1))
-						AND IRS.TableHasColumnStoreIndex = 1 --so if it has a columnstore index, do the table swap instead.
-					THEN 'ExchangeTableNonPartitioned'	
-					WHEN (IRS.IsIndexMissingFromSQLServer = 0
-						AND IRS.NeedsPartitionLevelOperations = 1 
-						AND IRS.AreDropRecreateOptionsChanging = 0)
-							AND (IRS.FragmentationType = 'Heavy' OR IRS.IsDataCompressionChanging = 1)
-					THEN 'AlterRebuild-PartitionLevel'
+					WHEN IRS.OnlineOperations = 1
+					THEN	CASE 
+								WHEN IRS.IsIndexMissingFromSQLServer = 0
+									AND IRS.AreDropRecreateOptionsChanging = 1
+									AND IRS.IsClusteredChanging = 0 --DROP_EXISTING CAN'T HANDLE THIS.
+									AND IRS.IsPrimaryKey_Desired = 0 --DROP_EXISTING CAN'T HANDLE THIS, IF THE PK IS CLUSTERED, WHICH IT OFTEN IS.
+									AND IRS.IsPrimaryKey_Actual = 0 --DROP_EXISTING OPTION DOES NOT EXIST ON CONSTRAINTS
+								THEN 'CreateDropExisting'
+								WHEN IRS.IsIndexMissingFromSQLServer = 0
+									AND IRS.AreDropRecreateOptionsChanging = 1
+									AND (IRS.IsClusteredChanging = 1 OR IRS.IsPrimaryKeyChanging = 1 OR IRS.IsPrimaryKey_Actual = 1) --handles the above 2 cases
+									--need to handle the case where table is going to be rebuilt but it has a columnstore index.
+								THEN 'ExchangeTableNonPartitioned'
+								WHEN (IRS.IsIndexMissingFromSQLServer = 0
+									AND IRS.NeedsPartitionLevelOperations = 0 
+									AND IRS.AreDropRecreateOptionsChanging = 0 )
+										AND ((IRS.FragmentationType = 'Heavy' OR IRS.AreRebuildOnlyOptionsChanging = 1)
+											OR (IRS.FragmentationType = 'Light' AND IRS.AreSetOptionsChanging = 1)
+									AND IRS.TableHasColumnStoreIndex = 0) --online rebuilds only work if the table doesn't have a columnstore index.
+								THEN 'AlterRebuild-Online'	
+								WHEN (IRS.IsIndexMissingFromSQLServer = 0
+									AND IRS.NeedsPartitionLevelOperations = 0 
+									AND IRS.AreDropRecreateOptionsChanging = 0 )
+										AND ((IRS.FragmentationType = 'Heavy' OR IRS.AreRebuildOnlyOptionsChanging = 1)
+											OR (IRS.FragmentationType = 'Light' AND IRS.AreSetOptionsChanging = 1))
+									AND IRS.TableHasColumnStoreIndex = 1 --so if it has a columnstore index, do the table swap instead.
+								THEN 'ExchangeTableNonPartitioned'	
+								WHEN (IRS.IsIndexMissingFromSQLServer = 0
+										AND IRS.NeedsPartitionLevelOperations = 1 
+										AND IRS.AreDropRecreateOptionsChanging = 0)
+									AND (IRS.FragmentationType = 'Heavy' OR IRS.IsDataCompressionChanging = 1)
+								THEN 'AlterRebuild-PartitionLevel-Online'
+							END
+					WHEN IRS.OnlineOperations = 0
+					THEN	CASE 
+								WHEN IRS.IsIndexMissingFromSQLServer = 0
+									AND IRS.AreDropRecreateOptionsChanging = 1
+								THEN 'DropRecreate'
+								WHEN (IRS.IsIndexMissingFromSQLServer = 0
+										AND IRS.NeedsPartitionLevelOperations = 0 
+										AND IRS.AreDropRecreateOptionsChanging = 0 )
+									AND ((IRS.FragmentationType = 'Heavy' OR IRS.AreRebuildOnlyOptionsChanging = 1)
+										OR (IRS.FragmentationType = 'Light' AND IRS.AreSetOptionsChanging = 1))
+								THEN 'AlterRebuild-Offline'	
+								WHEN (IRS.IsIndexMissingFromSQLServer = 0
+									AND IRS.NeedsPartitionLevelOperations = 1 
+									AND IRS.AreDropRecreateOptionsChanging = 0)
+										AND (IRS.FragmentationType = 'Heavy' OR IRS.IsDataCompressionChanging = 1)
+								THEN 'AlterRebuild-PartitionLevel-Offline'
+							END
 					WHEN IRS.IsIndexMissingFromSQLServer = 0
 						AND IRS.FragmentationType = 'None'
 						AND IRS.AreSetOptionsChanging = 1

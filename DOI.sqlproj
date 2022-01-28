@@ -568,7 +568,7 @@
     <None Include="Programmable Objects\Functions\DOI.fnActualIndexSizing.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_PrepTable.sql" />
+    <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_NewTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_PrepTable_Constraints.sql" />
@@ -626,5 +626,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spRun_Partitioning_ReRevertRename.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_ExchangeTableNonPartitioning_RevertRename.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_ExchangeTableNonPartitioning_ReRevertRename.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_NewPartitionedTable_Triggers.sql" />
   </ItemGroup>
 </Project>

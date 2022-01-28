@@ -1,8 +1,4 @@
-﻿using System.Data.SqlClient;
-using DOI.Tests.Integration;
-using DOI.Tests.TestHelpers;
-using TestHelper = DOI.Tests.TestHelpers.Metadata.SysPartitionFunctionsHelper;
-using TablePartitioning = DOI.Tests.IntegrationTests.RunTests.TablePartitioning;
+﻿using TestHelper = DOI.Tests.TestHelpers.Metadata.SysPartitionFunctionsHelper;
 using NUnit.Framework;
 
 

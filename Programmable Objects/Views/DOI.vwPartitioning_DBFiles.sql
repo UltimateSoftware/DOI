@@ -43,9 +43,9 @@ BEGIN
 		(
     		NAME = ' + DBFilePath.DatabaseName + '_' + PFI.Suffix + ', 
     		FILENAME = ''' + DBFilePath.DBFilePath + '' + DBFilePath.DatabaseName + '_' +  PFI.Suffix + '.ndf'', 
-			SIZE = ' + CAST(DBFilePath.InitialSizeMB AS NVARCHAR(20)) + ' MB, 
+			SIZE = ' + CAST(DSIS.InitialSizeMB AS NVARCHAR(20)) + ' MB, 
 			MAXSIZE = UNLIMITED, 
-			FILEGROWTH = ' + CAST(DBFilePath.FileGrowth AS NVARCHAR(20)) + '
+			FILEGROWTH = ' + CAST(DSFG.FileGrowth AS NVARCHAR(20)) + '
 		) 
 			TO FILEGROUP ' + DBFilePath.DatabaseName + '_' + PFI.Suffix + '
 END' AS AddFileSQL,
@@ -93,14 +93,10 @@ END;' AS DropFileSQL
                                     FROM DOI.PartitionFunctions PFM2 
                                     WHERE PFM2.PartitionFunctionName = PFM.PartitionFunctionName) MinInterval)V
                 ORDER BY PartitionFunctionName, BoundaryValue)PFI
+			CROSS APPLY (SELECT DS.SettingValue AS InitialSizeMB FROM DOI.DOISettings DS WHERE DS.DatabaseName = PFI.DatabaseName AND SettingName = 'DBFileInitialSizeMB') DSIS
+			CROSS APPLY (SELECT DS.SettingValue + ' MB' AS FileGrowth FROM DOI.DOISettings DS WHERE DS.DatabaseName = PFI.DatabaseName AND SettingName = 'DBFileGrowthMB') DSFG
 	        CROSS APPLY (	SELECT	d.database_id, 
-                                    d.name AS DatabaseName, 
-                                    (df.size*8)/1024 AS InitialSizeMB, 
-                                    CASE 
-                                        WHEN df.is_percent_growth = 1
-                                        THEN CAST(df.growth AS VARCHAR(50)) + ' PERCENT'
-                                        ELSE CAST((df.growth*8)/1024 AS VARCHAR(50)) + ' MB'
-                                    END AS FileGrowth,
+                                    d.name AS DatabaseName,
                                     SUBSTRING(df.physical_name, 1, LEN(df.physical_name) + 1 - CHARINDEX('\', REVERSE(df.physical_name))) AS DBFilePath
 					        FROM DOI.SysDatabaseFiles df
                                 INNER JOIN DOI.SysDatabases d ON d.database_id = df.database_id

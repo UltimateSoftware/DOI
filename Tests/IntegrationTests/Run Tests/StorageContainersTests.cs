@@ -222,6 +222,11 @@ namespace DOI.Tests.IntegrationTests.RunTests
         //    AssertBoundariesAndFileGroups(PartitionFunctionName);
         //}
 
+        public void DbFilesAreCreatedUsingSpecifiedInitialSize()
+        {
+
+        }
+
         [Test]
         [TestCase(2, true, TestName = "YearlyAdd_2_FuturePartitions_WithNextUsedFilegroup")]
         [TestCase(2, false, TestName = "YearlyAdd_2_FuturePartitions_NoNextUsedFilegroup")]

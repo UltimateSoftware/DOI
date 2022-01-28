@@ -105,8 +105,10 @@ RETURN(
                     ,ICS.IsIndexLarge
                     ,ICS.DriveLetter
 					,TTP.TableHasColumnStoreIndex
+					,D.OnlineOperations
 			FROM DOI.Tables TTP
-                INNER JOIN DOI.SysDatabases d on d.name = TTP.DatabaseName
+                INNER JOIN DOI.SysDatabases sd on sd.name = TTP.DatabaseName
+				INNER JOIN DOI.Databases D ON D.DatabaseName = sd.name
 				INNER JOIN DOI.IndexesColumnStore ICS ON TTP.DatabaseName = ICS.DatabaseName
 					AND TTP.SchemaName = ICS.SchemaName
 					AND TTP.TableName = ICS.TableName

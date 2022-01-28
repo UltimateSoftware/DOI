@@ -60,9 +60,9 @@ IF EXISTS ( SELECT ''True''
 BEGIN
     EXEC sys.sp_rename 
         @objname = N''' + S.SchemaName + '.' + S.TableName + '.' + S.StatisticsName + ''', 
-        @newname = N''' + REPLACE(S.StatisticsName, S.TableName, S.TableName + '_OLD') + ''', 
+        @newname = N''ST_' + S.TableName + '_OLD_' + S.StatisticsColumnList_Actual + ''', 
         @objtype = N''STATISTICS''
-END' AS RenameStatisticsSQL,
+END' AS RenameStatisticsSQL,  --only the ST_ statistics are being renamed here...the stats belonging to indexes are renamed along with the index.
         '
 IF EXISTS ( SELECT ''True''
             FROM ' + S.DatabaseName + '.SYS.stats st 

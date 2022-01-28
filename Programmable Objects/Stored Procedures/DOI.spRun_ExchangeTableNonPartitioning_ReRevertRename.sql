@@ -4,8 +4,8 @@ GO
 
 GO
 
-IF OBJECT_ID('[DOI].[spRun_ExchangeTableNonPartitioning_ReRevertRename]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spRun_ExchangeTableNonPartitioning_ReRevertRename];
+IF OBJECT_ID('[DOI].[spRun_Partitioning_ReRevertRename]') IS NOT NULL
+	DROP PROCEDURE [DOI].[spRun_Partitioning_ReRevertRename];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -13,7 +13,7 @@ GO
 SET ANSI_NULLS ON
 GO
 
-CREATE   PROCEDURE [DOI].[spRun_ExchangeTableNonPartitioning_ReRevertRename]
+CREATE   PROCEDURE [DOI].[spRun_Partitioning_ReRevertRename]
     @DatabaseName SYSNAME,
 	@SchemaName SYSNAME,
 	@TableName SYSNAME,
@@ -22,7 +22,8 @@ CREATE   PROCEDURE [DOI].[spRun_ExchangeTableNonPartitioning_ReRevertRename]
 AS
 
 /*
-	EXEC DOI.spRun_ExchangeTableNonPartitioning_ReRevertRename
+	EXEC DOI.spRun_Partitioning_ReRevertRename
+		@DatabaseName = 'PaymentReporting',
 		@SchemaName = 'dbo',
 		@TableName = 'Pays',
 		@Debug = 1
@@ -41,7 +42,7 @@ DECLARE @BatchId UNIQUEIDENTIFIER = NEWID(),
 
 BEGIN TRY
     EXEC ('
-	IF NOT EXISTS(SELECT ''True'' FROM ' + @DatabaseName + '.sys.tables WHERE name = ''' + @TableName + '_NewTableFromPrep'')
+	IF NOT EXISTS(SELECT ''True'' FROM ' + @DatabaseName + '.sys.tables WHERE name = ''' + @TableName + '_NewPartitionedTableFromPrep'')
 	BEGIN
 		RAISERROR(''There is nothing to Re-Revert.  Either the Re-Revert has already run, or nothing has been partitioned.'', 16, 1)
 	END')
@@ -54,31 +55,29 @@ BEGIN TRY
 				ROW_NUMBER() OVER (ORDER BY X.SortId) AS RowNum
 		FROM (
 				SELECT	DatabaseName,
-                        PrepTableIndexName AS ObjectName,
+                        NewTableIndexName AS ObjectName,
 						RenameExistingTableIndexSQL AS SQLStatement,
 						'Index' AS ObjectType,
 						1 AS SortId
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Indexes
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_Indexes
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
-					AND IsNewTable = 1
 				UNION ALL
 				SELECT	DatabaseName,
                         ConstraintName,
 						RenameExistingTableConstraintSQL,
 						'Constraint',
 						2
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Constraints
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_Constraints
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
-					AND IsNewTable = 1
 				UNION ALL 
 				SELECT	DatabaseName,
                         StatisticsName,
 						RenameExistingTableStatisticsSQL,
 						'Statistics',
 						3
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Statistics
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_Statistics
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 				UNION ALL
@@ -87,7 +86,7 @@ BEGIN TRY
 						RenameExistingTableSQL,
 						'Table',
 						4
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable
+				FROM DOI.vwPartitioning_Tables_NewPartitionedTable
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
 				UNION ALL 
@@ -96,45 +95,43 @@ BEGIN TRY
 						DropTriggerSQL,
 						'Drop Trigger',
 						5
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Triggers
+				FROM DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
 				UNION ALL
 				SELECT	DatabaseName,
-                        PrepTableIndexName,
-						RenameNewPrepTableIndexSQL,
+                        NewTableIndexName,
+						RenameNewPartitionedNewTableIndexSQL,
 						'Index',
 						6
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Indexes
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_Indexes
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
-					AND IsNewTable = 1
 				UNION ALL
 				SELECT	DatabaseName,
                         ConstraintName,
-						RenameNewPrepTableConstraintSQL,
+						RenameNewPartitionedNewTableConstraintSQL,
 						'Constraint',
 						7
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Constraints
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_Constraints
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
-					AND IsNewTable = 1
 				UNION ALL
 				SELECT	DatabaseName,
                         StatisticsName,
-						RenameNewPrepTableStatisticsSQL,
+						RenameNewPartitionedNewTableStatisticsSQL,
 						'Statistics',
 						8
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_PrepTables_Statistics
+				FROM DOI.vwExchangeTableNonPartitioned_Tables_Statistics
 				WHERE SchemaName = @SchemaName
 					AND ParentTableName = @TableName
 				UNION ALL
 				SELECT	DatabaseName,
                         TableName,
-						RenameNewPrepTableSQL, 
+						RenameNewPartitionedNewTableSQL, 
 						'Table',
 						9
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable
+				FROM DOI.vwPartitioning_Tables_NewPartitionedTable
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName
 				UNION ALL
@@ -143,7 +140,7 @@ BEGIN TRY
 						CreateTriggerSQL,
 						'Create Trigger',
 						10
-				FROM DOI.vwExchangeTableNonPartitioned_Tables_NewTable_Triggers
+				FROM DOI.vwPartitioning_Tables_NewPartitionedTable_Triggers
 				WHERE SchemaName = @SchemaName
 					AND TableName = @TableName)x
 		ORDER BY x.SortId ASC

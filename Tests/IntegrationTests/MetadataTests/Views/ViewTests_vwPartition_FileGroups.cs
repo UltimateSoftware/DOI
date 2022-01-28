@@ -1,10 +1,5 @@
-﻿using System;
-using System.Data.SqlClient;
-using DOI.Tests.Integration;
-using DOI.Tests.TestHelpers;
-using TestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_FileGroupsHelper;
+﻿using TestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitioning_FileGroupsHelper;
 using PfTestHelper = DOI.Tests.TestHelpers.Metadata.vwPartitionFunctionsHelper;
-using TablePartitioning = DOI.Tests.IntegrationTests.RunTests.TablePartitioning;
 using NUnit.Framework;
 
 namespace DOI.Tests.IntegrationTests.MetadataTests.Views

@@ -519,11 +519,16 @@
     <Compile Include="IntegrationTests\Run Tests\StatisticsTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\StorageContainersTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\SystemSettingsTableTest.cs" />
-    <Compile Include="IntegrationTests\Run Tests\TablePartitioningTests\ApplicationLockTests.cs" />
-    <Compile Include="IntegrationTests\Run Tests\TablePartitioningTests\TablePartitioningTest.cs" />
+    <Compile Include="IntegrationTests\Run Tests\ApplicationLockTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\ExchangeTableNonPartitioning Tests\ExchangeTableNonPartitioningTest.cs" />
+    <Compile Include="IntegrationTests\Run Tests\ExchangeTablePartitioningTests\ExchangeTablePartitioningTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\ApplicationLockTestsHelper.cs" />
     <Compile Include="TestHelpers\DataDrivenIndexTestHelper.cs" />
+    <Compile Include="TestHelpers\ExchangeTable\ExchangeTableHelpers.cs" />
+    <Compile Include="TestHelpers\ExchangeTable\NonPartitioning\ExchangeTableNonPartitioningHelpers.cs" />
+    <Compile Include="TestHelpers\ExchangeTable\Partitioning\ExchangeTablePartitioningHelpers.cs" />
+    <Compile Include="TestHelpers\ExchangeTable\SetupSqlStatements.cs" />
     <Compile Include="TestHelpers\GenericDictionaryExtensions.cs" />
     <Compile Include="TestHelpers\Guid2Base64.cs" />
     <Compile Include="TestHelpers\Metadata\IndexPartitionsHelper.cs" />
@@ -570,11 +575,11 @@
     <Compile Include="TestHelpers\Metadata\vwPartitionSchemesHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwStatisticsHelper.cs" />
     <Compile Include="TestHelpers\Metadata\vwTablesHelper.cs" />
-    <Compile Include="TestHelpers\SetupSqlStatements_NonPartitioned.cs" />
+    <Compile Include="TestHelpers\ExchangeTable\NonPartitioning\SetupSqlStatements_NonPartitioned.cs" />
     <Compile Include="TestHelpers\ObjectExtensions.cs" />
     <Compile Include="TestHelpers\ResourceLoader.cs" />
     <Compile Include="TestHelpers\SqlHelper.cs" />
-    <Compile Include="TestHelpers\SetupSqlStatements_Partitioned.cs" />
+    <Compile Include="TestHelpers\ExchangeTable\Partitioning\SetupSqlStatements_Partitioned.cs" />
     <Compile Include="TestHelpers\Metadata\StorageContainers\StorageContainerHelper.cs" />
     <Compile Include="TestHelpers\TempARepository.cs" />
     <Compile Include="TestHelpers\TestConfiguration.cs" />
@@ -597,7 +602,7 @@
     <None Include="Resources\dbo.TempA_format.fmt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="IntegrationTests\Run Tests\TablePartitioningTests\utebcp.exe" />
+    <Content Include="IntegrationTests\Run Tests\ExchangeTablePartitioningTests\utebcp.exe" />
     <Content Include="Resources\Create TempA BCP File.sql" />
     <EmbeddedResource Include="Resources\Create Test Database.sql" />
     <EmbeddedResource Include="Resources\IndexesViewTests_Setup.sql" />
