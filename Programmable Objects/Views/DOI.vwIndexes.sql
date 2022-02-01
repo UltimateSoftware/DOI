@@ -329,7 +329,112 @@ CASE
 	    @DatabaseName = ''' + IRS.DatabaseName + ''',
 	    @ReferencedSchemaName = ''' + IRS.SchemaName + ''' , 
 	    @ReferencedTableName = ''' + IRS.TableName + ''''
-END AS CreateReferencingFKs
+END AS CreateReferencingFKs,
+'
+EXEC DOI.spRun_GetApplicationLock
+    @DatabaseName = ''' + IRS.DatabaseName + ''',
+    @BatchId = ''00000000-0000-0000-0000-000000000000''
+' AS GetApplicationLockSQL,
+'
+EXEC DOI.spRun_ReleaseApplicationLock
+    @DatabaseName = ''' + IRS.DatabaseName + ''',
+    @BatchId = ''00000000-0000-0000-0000-000000000000''
+' AS ReleaseApplicationLockSQL,
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @DataSpaceNeeded BIGINT,
+        @DataSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
+
+SELECT @DataSpaceAvailable = available_MB, 
+        @DataSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + IRS.DatabaseName + ''', ''' + IRS.SchemaName + ''', ''' + IRS.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''' + IRS.DatabaseName + '''
+    AND FS.FileType = ''DATA''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.DatabaseName = FSI.DatabaseName
+					AND Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @DataSpaceAvailable <= @DataSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON DATA DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@DataSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@DataSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON DATA DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@DataSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@DataSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END' AS FreeDataSpaceCheckSQL,
+
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @LogSpaceNeeded BIGINT,
+        @LogSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
+
+SELECT @LogSpaceAvailable = available_MB, 
+        @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + IRS.DatabaseName + ''', ''' + IRS.SchemaName + ''', ''' + IRS.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''' + IRS.DatabaseName + '''
+    AND FS.FileType = ''LOG''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @LogSpaceAvailable <= @LogSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON LOG DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@LogSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@LogSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON LOG DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@LogSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@LogSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END
+' AS FreeLogSpaceCheckSQL,
+
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @TempDBSpaceNeeded BIGINT,
+        @TempDBSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
+
+SELECT @TempDBSpaceAvailable = available_MB, 
+        @TempDBSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + IRS.DatabaseName + ''', ''' + IRS.SchemaName + ''', ''' + IRS.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''TempDB''
+    AND FS.FileType = ''DATA''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @TempDBSpaceAvailable <= @TempDBSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@TempDBSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@TempDBSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@TempDBSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@TempDBSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END
+' AS FreeTempDBSpaceCheckSQL
 		--select count(*)
 		FROM DOI.fnIndexesRowStore() IRS
 		UNION ALL
@@ -451,7 +556,112 @@ EXEC ' + ICS.DatabaseName + '.sys.sp_rename
 '' AS CreatePKAsUniqueIndexSQL,
 '' AS DropPKAsUniqueIndexSQL,
 '' AS DropReferencingFKs,
-'' AS CreateReferencingFKs
+'' AS CreateReferencingFKs,
+'
+EXEC DOI.spRun_GetApplicationLock
+    @DatabaseName = ''' + ICS.DatabaseName + ''',
+    @BatchId = ''00000000-0000-0000-0000-000000000000''
+' AS GetApplicationLockSQL,
+'
+EXEC DOI.spRun_ReleaseApplicationLock
+    @DatabaseName = ''' + ICS.DatabaseName + ''',
+    @BatchId = ''00000000-0000-0000-0000-000000000000''
+' AS ReleaseApplicationLockSQL,
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @DataSpaceNeeded BIGINT,
+        @DataSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
+
+SELECT @DataSpaceAvailable = available_MB, 
+        @DataSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + ICS.DatabaseName + ''', ''' + ICS.SchemaName + ''', ''' + ICS.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''' + ICS.DatabaseName + '''
+    AND FS.FileType = ''DATA''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.DatabaseName = FSI.DatabaseName
+					AND Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @DataSpaceAvailable <= @DataSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON DATA DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@DataSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@DataSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON DATA DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@DataSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@DataSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END' AS FreeDataSpaceCheckSQL,
+
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @LogSpaceNeeded BIGINT,
+        @LogSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
+
+SELECT @LogSpaceAvailable = available_MB, 
+        @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + ICS.DatabaseName + ''', ''' + ICS.SchemaName + ''', ''' + ICS.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''' + ICS.DatabaseName + '''
+    AND FS.FileType = ''LOG''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @LogSpaceAvailable <= @LogSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON LOG DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@LogSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@LogSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON LOG DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@LogSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@LogSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END
+' AS FreeLogSpaceCheckSQL,
+
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @TempDBSpaceNeeded BIGINT,
+        @TempDBSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
+
+SELECT @TempDBSpaceAvailable = available_MB, 
+        @TempDBSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + ICS.DatabaseName + ''', ''' + ICS.SchemaName + ''', ''' + ICS.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''TempDB''
+    AND FS.FileType = ''DATA''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @TempDBSpaceAvailable <= @TempDBSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@TempDBSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@TempDBSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@TempDBSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@TempDBSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END
+' AS FreeTempDBSpaceCheckSQL
 		--select count(*)
 		FROM DOI.fnIndexesColumnStore() AS ICS ) AS AllIdx
 

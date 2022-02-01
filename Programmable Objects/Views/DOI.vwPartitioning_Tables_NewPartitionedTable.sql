@@ -623,7 +623,17 @@ EXEC DOI.DOI.spForeignKeysAdd
 EXEC DOI.DOI.spForeignKeysAdd
 	@DatabaseName = ''' + T.DatabaseName + ''',
 	@ReferencedSchemaName = ''' + T.SchemaName + ''',
-	@ReferencedTableName = ''' + T.TableName + '''' AS AddBackRefTableFKSQL
+	@ReferencedTableName = ''' + T.TableName + '''' AS AddBackRefTableFKSQL,
+'
+EXEC DOI.spRun_GetApplicationLock
+    @DatabaseName = ''' + T.DatabaseName + ''',
+    @BatchId = ''00000000-0000-0000-0000-000000000000''
+' AS GetApplicationLockSQL,
+'
+EXEC DOI.spRun_ReleaseApplicationLock
+    @DatabaseName = ''' + T.DatabaseName + ''',
+    @BatchId = ''00000000-0000-0000-0000-000000000000''
+' AS ReleaseApplicationLockSQL
 FROM (	SELECT DatabaseName
                 ,SchemaName
 				,TableName

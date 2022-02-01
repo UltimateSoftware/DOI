@@ -217,7 +217,7 @@
     <None Include="Programmable Objects\Stored Procedures\DOI.spPrintOutLongSQL.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_BCPTables.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_IndexesNotInMetadata.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_NotInMetadata_Indexes.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_4_Tables_IndexAggColumns.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Run_All.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysAllocationUnits.sql" />
@@ -309,8 +309,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Post-Deployment\04_Create Sql Agent Job - Refresh Metadata.sql" />
-    <None Include="Post-Deployment\05_Create Sql Agent Job - Refresh Indexes.sql" />
-    <None Include="Post-Deployment\06_Create Sql Agent Job - Refresh Storage Containers.sql" />
+    <None Include="Post-Deployment\05_Create Sql Agent Job - Refresh Indexes-Online.sql" />
+    <None Include="Post-Deployment\07_Create Sql Agent Job - Refresh Storage Containers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\005_NotInMetadata_Tables.sql" />
@@ -342,7 +342,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Migrations\008_Table_Types.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_ConstraintsNotInMetadata.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_NotInMetadata_Constraints.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysCheckConstraints.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysDefaultConstraints.sql" />
     <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_System_SysMasterFiles.sql" />
@@ -387,7 +387,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_RenameStatistics.sql" />
-    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_StatisticsNotInMetadata.sql" />
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_NotInMetadata_Statistics.sql" />
     <None Include="Programmable Objects\Views\DOI.vwPartitioning_Tables_PrepTables_Statistics.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -635,5 +635,26 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Programmable Objects\Views\DOI.vwExchangeTableNonPartitioned_Tables_NewPartitionedTable_Triggers.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_DisableResourceGovernor.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRun_ReEnableResourceGovernor.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Post-Deployment\06_Create Sql Agent Job - Refresh Indexes-Offline.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\009_BusinessHoursSchedule_Table.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spRefreshMetadata_Setup_BusinessHoursSchedule.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Views\DOI.vwBusinessHoursSchedule.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Migrations\091_IndexOperations_Tables.sql" />
   </ItemGroup>
 </Project>

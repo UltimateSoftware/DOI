@@ -262,6 +262,17 @@ BEGIN TRY
             @DatabaseName = @DatabaseName
     END
 
+    IF @ShowProgress = 1 PRINT 'Starting NotInMetadata-Constraints'
+    EXEC DOI.spRefreshMetadata_NotInMetadata_Constraints
+        @DatabaseName = @DatabaseName
+
+    IF @ShowProgress = 1 PRINT 'Starting NotInMetadata-Indexes'
+    EXEC DOI.spRefreshMetadata_NotInMetadata_Indexes
+        @DatabaseName = @DatabaseName
+
+    IF @ShowProgress = 1 PRINT 'Starting NotInMetadata-Statistics'
+    EXEC DOI.spRefreshMetadata_NotInMetadata_Statistics
+        @DatabaseName = @DatabaseName
 END TRY
 BEGIN CATCH
     IF @@TRANCOUNT > 0 ROLLBACK TRAN;

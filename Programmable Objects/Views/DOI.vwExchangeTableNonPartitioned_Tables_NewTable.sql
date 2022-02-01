@@ -53,13 +53,6 @@ FROM deleted T
 WHERE NOT EXISTS(SELECT ''True'' FROM inserted PT WHERE ' + AllTables.PKColumnListJoinClause_Desired + ')'
 AS CreateDataSynchTriggerSQL,
 '
-UPDATE DOI.DOI.Run_PartitionState
-SET DataSynchState = 1
-WHERE DatabaseName = ''' + AllTables.DatabaseName + '''
-	AND SchemaName = ''' + AllTables.SchemaName + '''
-	AND PrepTableName = ''' + AllTables.NewTableName + ''''
-AS TurnOnDataSynchSQL, --with a single partition and data coming in all the time, this will never finish
-'
 USE ' + AllTables.DatabaseName + '
 IF EXISTS(SELECT * FROM sys.triggers tr WHERE tr.name = ''tr' + AllTables.TableName + '_DataSynch'' AND OBJECT_NAME(parent_id) = ''' + AllTables.TableName + '_OLD'')
 BEGIN
@@ -612,8 +605,128 @@ FROM (
 		SELECT *
 		FROM dbo.fnActualConstraintsForTable(@DatabaseName,@SchemaName2,@TableName2, @DiffBetTableNames))x) AS Counts
 )
-' AS FinalValidation_CreateCompareTableStructuresFunctionSQL
+' AS FinalValidation_CreateCompareTableStructuresFunctionSQL,
+'
+EXEC sp_configure ''allow updates'', 0
+RECONFIGURE
+EXEC sp_configure ''show advanced options'', 1
+RECONFIGURE
+EXEC sp_configure ''xp_cmdshell'', 1
+RECONFIGURE
+' AS EnableCmdShellSQL,
+'
+EXEC sp_configure ''allow updates'', 0
+RECONFIGURE
+EXEC sp_configure ''show advanced options'', 1
+RECONFIGURE
+EXEC sp_configure ''xp_cmdshell'', 0
+RECONFIGURE
+' AS DisableCmdShellSQL,
+'
+EXEC DOI.spRun_GetApplicationLock
+    @DatabaseName = ''' + AllTables.DatabaseName + ''',
+    @BatchId = ''00000000-0000-0000-0000-000000000000''
+' AS GetApplicationLockSQL,
+'
+EXEC DOI.spRun_ReleaseApplicationLock
+    @DatabaseName = ''' + AllTables.DatabaseName + ''',
+    @BatchId = ''00000000-0000-0000-0000-000000000000''
+' AS ReleaseApplicationLockSQL,
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @DataSpaceNeeded BIGINT,
+        @DataSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
 
+SELECT @DataSpaceAvailable = available_MB, 
+        @DataSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + AllTables.DatabaseName + ''', ''' + AllTables.SchemaName + ''', ''' + AllTables.TableName + ''', ''data'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''' + AllTables.DatabaseName + '''
+    AND FS.FileType = ''DATA''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.DatabaseName = FSI.DatabaseName
+					AND Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @DataSpaceAvailable <= @DataSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON DATA DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@DataSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@DataSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON DATA DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@DataSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@DataSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END' AS FreeDataSpaceCheckSQL,
+
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @LogSpaceNeeded BIGINT,
+        @LogSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
+
+SELECT @LogSpaceAvailable = available_MB, 
+        @LogSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + AllTables.DatabaseName + ''', ''' + AllTables.SchemaName + ''', ''' + AllTables.TableName + ''', ''log'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''' + AllTables.DatabaseName + '''
+    AND FS.FileType = ''LOG''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @LogSpaceAvailable <= @LogSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON LOG DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@LogSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@LogSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON LOG DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@LogSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@LogSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END
+' AS FreeLogSpaceCheckSQL,
+
+        '
+DECLARE @ErrorMessage NVARCHAR(500),
+        @TempDBSpaceNeeded BIGINT,
+        @TempDBSpaceAvailable BIGINT,
+        @DriveLetter CHAR(1)  
+
+SELECT @TempDBSpaceAvailable = available_MB, 
+        @TempDBSpaceNeeded = FSI.SpaceNeededOnDrive,
+        @DriveLetter = FS.DriveLetter
+FROM DOI.vwFreeSpaceOnDisk FS
+    INNER JOIN DOI.fnFreeSpaceNeededForTableIndexOperations(''' + AllTables.DatabaseName + ''', ''' + AllTables.SchemaName + ''', ''' + AllTables.TableName + ''', ''TempDB'') FSI ON FSI.DriveLetter = FS.DriveLetter
+WHERE DBName = ''TempDB''
+    AND FS.FileType = ''DATA''
+    AND EXISTS(	SELECT ''True''
+				FROM DOI.Queue Q 
+				WHERE Q.ParentSchemaName = FSI.SchemaName
+					AND Q.ParentTableName = FSI.TableName)
+
+IF @TempDBSpaceAvailable <= @TempDBSpaceNeeded
+BEGIN
+    SET @ErrorMessage = ''NOT ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@TempDBSpaceNeeded AS NVARCHAR(50)) + ''MB AND ONLY HAVE '' + CAST(@TempDBSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 16, 1)
+END
+ELSE 
+BEGIN
+    SET @ErrorMessage = ''THERE IS ENOUGH FREE SPACE ON TEMPDB DRIVE '' + @DriveLetter + '':  TO REFRESH INDEX STRUCTURES.  NEED '' + CAST(@TempDBSpaceNeeded AS NVARCHAR(50)) + ''MB AND HAVE '' + CAST(@TempDBSpaceAvailable AS NVARCHAR(50)) + ''MB AVAILABLE.''
+    
+	RAISERROR(@ErrorMessage, 10, 1)
+END
+' AS FreeTempDBSpaceCheckSQL
 FROM (  SELECT	T.DatabaseName
                 ,T.SchemaName
 				,T.TableName

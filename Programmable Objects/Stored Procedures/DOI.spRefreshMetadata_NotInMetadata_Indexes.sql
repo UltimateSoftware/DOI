@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[spQueue_IndexesNotInMetadata]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spQueue_IndexesNotInMetadata];
+IF OBJECT_ID('[DOI].[spRefreshMetadata_NotInMetadata_Indexes]') IS NOT NULL
+	DROP PROCEDURE [DOI].[spRefreshMetadata_NotInMetadata_Indexes];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,14 +10,14 @@ GO
 SET ANSI_NULLS ON
 GO
 
-CREATE   PROCEDURE [DOI].[spQueue_IndexesNotInMetadata]
+CREATE   PROCEDURE [DOI].[spRefreshMetadata_NotInMetadata_Indexes]
 	@DatabaseName NVARCHAR(128) = NULL
 
 
 AS
 
 /*
-	EXEC DOI.spRun_IndexesNotInMetadata
+	EXEC DOI.spRefreshMetadata_NotInMetadata_Indexes
 */
 
 	DELETE INIM

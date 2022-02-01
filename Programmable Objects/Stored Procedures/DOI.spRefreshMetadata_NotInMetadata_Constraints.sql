@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[spQueue_ConstraintsNotInMetadata]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spQueue_ConstraintsNotInMetadata];
+IF OBJECT_ID('[DOI].[spRefreshMetadata_NotInMetadata_Constraints]') IS NOT NULL
+	DROP PROCEDURE [DOI].[spRefreshMetadata_NotInMetadata_Constraints];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11,13 +11,13 @@ SET ANSI_NULLS ON
 GO
 
 
-CREATE   PROCEDURE [DOI].[spQueue_ConstraintsNotInMetadata]
+CREATE   PROCEDURE [DOI].[spRefreshMetadata_NotInMetadata_Constraints]
 	@DatabaseName NVARCHAR(128) = NULL
 
 AS
 
 /*
-	EXEC DOI.spQueue_ConstraintsNotInMetadata
+	EXEC DOI.spRefreshMetadata_NotInMetadata_Constraints
 
 	SELECT * FROM DOI.DefaultConstraints
 */

@@ -29,13 +29,6 @@ BEGIN TRY
 		@DatabaseName = @DatabaseName,
 		@IncludeMaintenance = @IncludeMaintenance
 
-	--TRACK INDEXES NOT IN METADATA...DO THIS LATER
-	EXEC DOI.spQueue_IndexesNotInMetadata
-		@DatabaseName = @DatabaseName
-
-	EXEC DOI.spQueue_ConstraintsNotInMetadata
-		@DatabaseName = @DatabaseName
-
 	DECLARE @CRLF CHAR(2) = CHAR(13) + CHAR(10)
 
 	DECLARE @CurrentDatabaseName					NVARCHAR(128),

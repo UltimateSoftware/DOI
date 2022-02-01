@@ -13,6 +13,7 @@ CREATE   PROCEDURE [DOI].[spRefreshMetadata_Setup_DOISettings]
 AS
 
 DELETE DOI.DOISettings
+WHERE DatabaseName = @DatabaseName
 
 INSERT INTO DOI.DOISettings 
          ( DatabaseName     , SettingName                                      , SettingValue )
@@ -26,6 +27,41 @@ VALUES   ( @DatabaseName    , 'LargeTableCutoffValue'                          ,
         ,( @DatabaseName    , 'FreeSpaceCheckerTestMultiplierForLogFiles'      , '1') 
         ,( @DatabaseName    , 'FreeSpaceCheckerTestMultiplierForTempDBFiles'   , '1') 
         ,( @DatabaseName    , 'MinNumPagesForIndexDefrag'                      , '500') 
-        ,( @DatabaseName    , 'FreeSpaceCheckerPercentBuffer'                  , '10') 
+
+IF NOT EXISTS (SELECT 'True' FROM DOI.DOI.DOISettings WHERE DatabaseName = @DatabaseName AND SettingName = 'OKToRunOfflineOperations')
+BEGIN
+	INSERT INTO DOI.DOISettings 
+	VALUES   ( 'ALL'             , 'OKToRunOfflineOperations'                  , '0') 
+END
+
+IF NOT EXISTS (SELECT 'True' FROM DOI.DOI.DOISettings WHERE DatabaseName = 'ALL' AND SettingName = 'ResourceGovernorMinIopsPerVolume')
+BEGIN
+	INSERT INTO DOI.DOISettings 
+	VALUES   ( 'ALL'             , 'ResourceGovernorMinIopsPerVolume'               , '1') 
+END
+
+IF NOT EXISTS (SELECT 'True' FROM DOI.DOI.DOISettings WHERE DatabaseName = 'ALL' AND SettingName = 'ResourceGovernorMaxIopsPerVolume')
+BEGIN
+	INSERT INTO DOI.DOISettings 
+	VALUES   ( 'ALL'            , 'ResourceGovernorMaxIopsPerVolume'               , '500') 
+END
+
+IF NOT EXISTS (SELECT 'True' FROM DOI.DOI.DOISettings WHERE DatabaseName = 'ALL' AND SettingName = 'ResourceGovernorMaxMemoryPercent')
+BEGIN
+	INSERT INTO DOI.DOISettings 
+	VALUES   ( 'ALL'            , 'ResourceGovernorMaxMemoryPercent'               , '20') 
+END
+
+IF NOT EXISTS (SELECT 'True' FROM DOI.DOI.DOISettings WHERE DatabaseName = 'ALL' AND SettingName = 'ResourceGovernorMaxCpuPercent')
+BEGIN
+	INSERT INTO DOI.DOISettings 
+	VALUES   ( 'ALL'             , 'ResourceGovernorMaxCpuPercent'                  , '20') 
+END
+
+IF NOT EXISTS (SELECT 'True' FROM DOI.DOI.DOISettings WHERE DatabaseName = 'ALL' AND SettingName = 'ResourceGovernorCapCpuPercent')
+BEGIN
+	INSERT INTO DOI.DOISettings 
+	VALUES   ( 'ALL'             , 'ResourceGovernorCapCpuPercent'                  , '20') 
+END
 
 GO

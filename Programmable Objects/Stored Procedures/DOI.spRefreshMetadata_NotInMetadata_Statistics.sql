@@ -1,8 +1,8 @@
 
 GO
 
-IF OBJECT_ID('[DOI].[spQueue_StatisticsNotInMetadata]') IS NOT NULL
-	DROP PROCEDURE [DOI].[spQueue_StatisticsNotInMetadata];
+IF OBJECT_ID('[DOI].[spRefreshMetadata_NotInMetadata_Statistics]') IS NOT NULL
+	DROP PROCEDURE [DOI].[spRefreshMetadata_NotInMetadata_Statistics];
 
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,14 +10,14 @@ GO
 SET ANSI_NULLS ON
 GO
 
-CREATE   PROCEDURE [DOI].[spQueue_StatisticsNotInMetadata]
+CREATE   PROCEDURE [DOI].[spRefreshMetadata_NotInMetadata_Statistics]
         @DatabaseName SYSNAME = NULL,
         @SchemaName SYSNAME = NULL,
         @TableName SYSNAME = NULL
 AS
 
 /*
-    EXEC DOI.spQueue_StatisticsNotInMetadata
+    EXEC DOI.spRefreshMetadata_NotInMetadata_Statistics
         @DatabaseName = 'PaymentReporting',
         @SchemaName = 'dbo',
         @TableName = 'Bai2BankTransactions'

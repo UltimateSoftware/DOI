@@ -14,7 +14,6 @@ BEGIN
 	PRINT 'Created table dbo.JobsToGovern.'
 END
 
-
 IF '$(IsShadowDeployment)' = 0
 BEGIN
 	IF EXISTS(SELECT 'True' FROM sys.resource_governor_configuration rgc WHERE rgc.is_enabled = 0)
