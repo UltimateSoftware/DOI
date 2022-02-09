@@ -17,7 +17,7 @@ BEGIN
                     FILEGROWTH = 65536KB )
 END
 
-INSERT INTO DOI.DOI.Databases(DatabaseName)
-VALUES(N'DOIUnitTests')
+INSERT INTO DOI.DOI.Databases(DatabaseName, OnlineOperations)
+VALUES(N'DOIUnitTests', 1)
 
 EXEC DOI.DOI.spRefreshMetadata_System_SysDatabases @DatabaseName = 'DOIUnitTests'

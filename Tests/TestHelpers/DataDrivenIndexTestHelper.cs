@@ -63,6 +63,19 @@ namespace DOI.Tests.TestHelpers
             this.sqlHelper.Execute(sql, 0);
         }
 
+        public async Task ExecuteSPRunAsync(string databaseName, string schemaName = null, string tableName = null)
+        {
+            var sql = $@"
+                EXEC DOI.DOI.[spRun]
+                    @DatabaseName = '{databaseName}'
+                    ,@SchemaName = '{schemaName}' 
+                    ,@TableName = '{tableName}'";
+            sql += schemaName != null ? $",@SchemaName = '{schemaName}' " : string.Empty;
+            sql += tableName != null ? $",@TableName = '{tableName}' " : string.Empty;
+
+            await this.sqlHelper.ExecuteAsync(sql, 0, false);
+        }
+
         public List<PartitionFunctionBoundary> GetExistingPartitionFunctionBoundaries(string partitionFunctionName)
         {
             return this.sqlHelper.GetList<PartitionFunctionBoundary>($@"

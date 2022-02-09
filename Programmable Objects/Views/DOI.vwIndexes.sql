@@ -77,6 +77,23 @@ FROM (	SELECT	 IRS.*
 										AND IRS.AreDropRecreateOptionsChanging = 0)
 									AND (IRS.FragmentationType = 'Heavy' OR IRS.IsDataCompressionChanging = 1)
 								THEN 'AlterRebuild-PartitionLevel-Online'
+								WHEN IRS.IsIndexMissingFromSQLServer = 0
+									AND IRS.FragmentationType = 'None'
+									AND IRS.AreSetOptionsChanging = 1
+									AND IRS.NeedsPartitionLevelOperations = 0 
+									AND IRS.AreDropRecreateOptionsChanging = 0 
+									AND IRS.AreRebuildOnlyOptionsChanging = 0
+								THEN 'AlterSet'
+								WHEN (IRS.IsIndexMissingFromSQLServer = 0
+									AND IRS.AreDropRecreateOptionsChanging = 0 
+									AND IRS.AreRebuildOptionsChanging = 0
+									AND IRS.FragmentationType = 'Light'
+									AND IRS.AreSetOptionsChanging = 0) --we are not using AreReorgOptionsChanging column!?
+								THEN	CASE IRS.NeedsPartitionLevelOperations
+											WHEN 0 THEN 'AlterReorganize'
+											WHEN 1 THEN 'AlterReorganize-PartitionLevel'
+										END
+								ELSE 'None'
 							END
 					WHEN IRS.OnlineOperations = 0
 					THEN	CASE 
@@ -95,23 +112,6 @@ FROM (	SELECT	 IRS.*
 										AND (IRS.FragmentationType = 'Heavy' OR IRS.IsDataCompressionChanging = 1)
 								THEN 'AlterRebuild-PartitionLevel-Offline'
 							END
-					WHEN IRS.IsIndexMissingFromSQLServer = 0
-						AND IRS.FragmentationType = 'None'
-						AND IRS.AreSetOptionsChanging = 1
-						AND IRS.NeedsPartitionLevelOperations = 0 
-						AND IRS.AreDropRecreateOptionsChanging = 0 
-						AND IRS.AreRebuildOnlyOptionsChanging = 0
-					THEN 'AlterSet'
-					WHEN (IRS.IsIndexMissingFromSQLServer = 0
-						AND IRS.AreDropRecreateOptionsChanging = 0 
-						AND IRS.AreRebuildOptionsChanging = 0
-						AND IRS.FragmentationType = 'Light'
-						AND IRS.AreSetOptionsChanging = 0) --we are not using AreReorgOptionsChanging column!?
-					THEN	CASE IRS.NeedsPartitionLevelOperations
-								WHEN 0 THEN 'AlterReorganize'
-								WHEN 1 THEN 'AlterReorganize-PartitionLevel'
-							END
-					ELSE 'None'
 				END AS IndexUpdateType 
 				
 				,CASE 

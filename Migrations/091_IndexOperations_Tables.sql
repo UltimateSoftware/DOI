@@ -1,4 +1,8 @@
-﻿DROP TABLE IF EXISTS DOI.IndexUpdateTypeOperations
+﻿-- <Migration ID="0a2d9793-514c-4e0a-afcc-4b4887a15347" />
+GO
+-- </>
+
+DROP TABLE IF EXISTS DOI.IndexUpdateTypeOperations
 DROP TABLE IF EXISTS DOI.IndexOperation
 DROP TABLE IF EXISTS DOI.IndexUpdateType
 

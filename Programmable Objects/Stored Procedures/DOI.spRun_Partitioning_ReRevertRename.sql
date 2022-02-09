@@ -1,4 +1,4 @@
--- <Migration ID="3663d78d-3e60-4bc9-a623-a1452e275eeb" />
+-- <>
 GO
 -- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
 

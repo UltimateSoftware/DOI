@@ -57,8 +57,8 @@ WHERE t.name NOT LIKE '%|_OLD' ESCAPE '|'
 						AND t.Name = CH2.TableName COLLATE DATABASE_DEFAULT 
 						AND ch.NAME = CH2.CheckConstraintName COLLATE DATABASE_DEFAULT)
 																		
-INSERT INTO DOI.DefaultConstraintsNotInMetadata ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition )
-SELECT d.name, s.name, t.name, c.name, df.definition
+INSERT INTO DOI.DefaultConstraintsNotInMetadata ( DatabaseName, SchemaName ,TableName ,ColumnName ,DefaultDefinition, DefaultConstraintName )
+SELECT d.name, s.name, t.name, c.name, df.definition, df.name
 FROM DOI.SysDefaultConstraints df 
     INNER JOIN DOI.SysDatabases d ON d.database_id = df.database_id 
 	INNER JOIN DOI.SysSchemas s ON s.database_id = df.database_id

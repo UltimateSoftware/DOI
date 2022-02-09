@@ -417,7 +417,18 @@
   <ItemGroup>
     <Compile Include="IntegrationTests\ErrorHandlingTests\ErrorHandlingTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\IndexValidations\IndexValidationTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\Constraints\DefaultConstraintsNotInMetadataTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\Constraints\CheckConstraintsNotInMetadataTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\Constraints\ConstraintsNotInMetadataSqlStatement.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\Indexes\IndexesNotInMetadataTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\Indexes\IndexesNotInMetadataSqlStatement.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\Indexes\IndexPartitionsNotInMetadataTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\NotInMetadataGeneralTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\Statistics\StatisticsNotInMetadataTests.cs" />
+    <Compile Include="IntegrationTests\MetadataTests\NotInMetadata\Statistics\StatisticsNotInMetadataSqlStatement.cs" />
     <Compile Include="IntegrationTests\MetadataTests\Views\ViewTests_vwForeignKeys.cs" />
+    <Compile Include="IntegrationTests\Run Tests\Foreign Keys\ForeignKeySqlStatements.cs" />
+    <Compile Include="IntegrationTests\Run Tests\Foreign Keys\ForeignKeyTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\HighFragmentationTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexesViewTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\IndexMaintenanceTests\LowFragmentationTests.cs" />
@@ -515,8 +526,12 @@
     <Compile Include="IntegrationTests\Models\vwStatistics.cs" />
     <Compile Include="IntegrationTests\Models\vwTables.cs" />
     <Compile Include="IntegrationTests\DOIBaseTest.cs" />
-    <Compile Include="IntegrationTests\Run Tests\StatisticsRenameTests.cs" />
-    <Compile Include="IntegrationTests\Run Tests\StatisticsTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\Maintenance\CleanupOldObjectsTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\Offline\BusinessHoursScheduleTableTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\Offline\OfflineRunTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\Scripting Engine\RunManualScriptedTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\Statistics\StatisticsRenameTests.cs" />
+    <Compile Include="IntegrationTests\Run Tests\Statistics\StatisticsTests.cs" />
     <Compile Include="IntegrationTests\Run Tests\StorageContainersTests.cs" />
     <Compile Include="IntegrationTests\MetadataTests\SystemMetadata\SystemSettingsTableTest.cs" />
     <Compile Include="IntegrationTests\Run Tests\ApplicationLockTests.cs" />
@@ -524,6 +539,7 @@
     <Compile Include="IntegrationTests\Run Tests\ExchangeTablePartitioningTests\ExchangeTablePartitioningTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\ApplicationLockTestsHelper.cs" />
+    <Compile Include="TestHelpers\CleanupOldObjectsSqlStatements.cs" />
     <Compile Include="TestHelpers\DataDrivenIndexTestHelper.cs" />
     <Compile Include="TestHelpers\ExchangeTable\ExchangeTableHelpers.cs" />
     <Compile Include="TestHelpers\ExchangeTable\NonPartitioning\ExchangeTableNonPartitioningHelpers.cs" />
@@ -577,7 +593,9 @@
     <Compile Include="TestHelpers\Metadata\vwTablesHelper.cs" />
     <Compile Include="TestHelpers\ExchangeTable\NonPartitioning\SetupSqlStatements_NonPartitioned.cs" />
     <Compile Include="TestHelpers\ObjectExtensions.cs" />
+    <Compile Include="TestHelpers\OfflineRunTestsHelper.cs" />
     <Compile Include="TestHelpers\ResourceLoader.cs" />
+    <Compile Include="TestHelpers\Scripting Engine\RunManualScriptedSqlStatements.cs" />
     <Compile Include="TestHelpers\SqlHelper.cs" />
     <Compile Include="TestHelpers\ExchangeTable\Partitioning\SetupSqlStatements_Partitioned.cs" />
     <Compile Include="TestHelpers\Metadata\StorageContainers\StorageContainerHelper.cs" />

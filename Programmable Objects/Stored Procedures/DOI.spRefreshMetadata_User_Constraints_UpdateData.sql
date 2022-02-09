@@ -1,5 +1,3 @@
-USE [DOI]
-GO
 
 IF OBJECT_ID('[DOI].[spRefreshMetadata_User_Constraints_UpdateData]') IS NOT NULL
 DROP PROCEDURE [DOI].[spRefreshMetadata_User_Constraints_UpdateData]

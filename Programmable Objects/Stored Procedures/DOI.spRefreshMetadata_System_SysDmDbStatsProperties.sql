@@ -1,7 +1,4 @@
--- <Migration ID="99a496ee-f4bd-49cf-b5db-0eead8e91844" />
-GO
--- WARNING: this script could not be parsed using the Microsoft.TrasactSql.ScriptDOM parser and could not be made rerunnable. You may be able to make this change manually by editing the script by surrounding it in the following sql and applying it or marking it as applied!
-
+-- </>
 IF OBJECT_ID('[DOI].[spRefreshMetadata_System_SysDmDbStatsProperties]') IS NOT NULL
 	DROP PROCEDURE [DOI].[spRefreshMetadata_System_SysDmDbStatsProperties];
 

@@ -2,7 +2,7 @@ USE DOI
 
 IF NOT EXISTS (SELECT 'True' FROM DOI.Databases WHERE DatabaseName = 'DOIUnitTests')
 BEGIN
-	INSERT INTO DOI.Databases VALUES('DOIUnitTests')
+	INSERT INTO DOI.Databases VALUES('DOIUnitTests', 1)
 END
 
 INSERT INTO [DOI].[Tables]
@@ -15,6 +15,9 @@ VALUES								(N'DOIUnitTests',N'dbo'		,N'TempA'	,N'UpdatedUtcDt',N'(sysdatetime
 
 INSERT INTO DOI.DefaultConstraints	(DatabaseName	,SchemaName	,TableName	,ColumnName		,DefaultDefinition	,DefaultConstraintName)
 VALUES								(N'DOIUnitTests',N'dbo'		,N'TempB'	,N'UpdatedUtcDt',N'(sysdatetime())'	,N'Def_TempB_UpdatedUtcDt')
+
+INSERT INTO DOI.CheckConstraints	(DatabaseName	, SchemaName, TableName	, ColumnName			, CheckDefinition							, IsDisabled, CheckConstraintName)
+VALUES								(N'DOIUnitTests', N'dbo'	, N'TempA'	, N'TransactionUtcDt'	, N'(TransactionUtcDt = ''0001-01-01'')'	, 0			, N'Chk_TempA_TransactionUtcDt')
 
 INSERT INTO DOI.[Statistics] (DatabaseName		, SchemaName, TableName, StatisticsName		, StatisticsColumnList_Desired	, SampleSizePct_Desired	, IsFiltered_Desired, FilterPredicate_Desired	, IsIncremental_Desired	,NoRecompute_Desired,LowerSampleSizeToDesired	, ReadyToQueue)
 VALUES						 ('DOIUnitTests', 'dbo'		, 'TempA'  , 'ST_TempA_TempAId' , 'TempAId'						, 0						, 0					, NULL						, 0						,0					,0							, 1)
@@ -35,7 +38,9 @@ SET QUOTED_IDENTIFIER ON
 --Create table TempA
 CREATE TABLE dbo.TempA(
 	TempAId uniqueidentifier NOT NULL,
-	TransactionUtcDt datetime2(7) NOT NULL,
+	TransactionUtcDt datetime2(7) NOT NULL
+		CONSTRAINT Chk_TempA_TransactionUtcDt
+			CHECK (TransactionUtcDt = '0001-01-01'),
 	IncludedColumn VARCHAR(100) NULL,
 	TextCol VARCHAR(8000) NULL,
 	UpdatedUtcDt DATETIME2 NOT NULL
