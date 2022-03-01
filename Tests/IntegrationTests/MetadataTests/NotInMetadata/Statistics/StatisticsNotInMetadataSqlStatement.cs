@@ -79,7 +79,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.NotInMetadata.Constraints
 
         public static string MetadataTableStatisticsColumnList(string statisticName)
         {
-            return $@"SELECT StatisticsColumnList FROM DOI.[Statistics] WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = 'TempA'  AND StatisticsName = '{statisticName}'";
+            return $@"SELECT StatisticsColumnList_Desired FROM DOI.[Statistics] WHERE DatabaseName = '{DatabaseName}' AND SchemaName = 'dbo' AND TableName = 'TempA'  AND StatisticsName = '{statisticName}'";
         }
 
         public static string MetadataTableStatisticsCount(string statisticName)

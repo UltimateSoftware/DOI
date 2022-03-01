@@ -102,7 +102,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.NotInMetadata.Statistics
         public void GivenStatisticInSqlServerWithWAInTheNameWhenSPRunsThenItShoulBeAddedToMetadataTableAndRenamed()
         {
             //Given
-            //this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatistic("_WATest"));
+            this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatistic("_WATest"), 30, false, DatabaseName);
             int metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount(StatisticsName));
             Assert.AreEqual(0, metadataStatisticsCount);
 
@@ -120,19 +120,19 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.NotInMetadata.Statistics
         public void GivenStatisticWithMultipleColumnsInSqlServerWhenSPRunsThenItShoulBeAddedToMetadataTable()
         {
             //Given
-            //this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatisticWithMultipleColumns("StatisticTest"));
-            int metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount("StatisticTest"));
+            this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatisticWithMultipleColumns("StatisticTestMultiColumn"), 30, false, DatabaseName);
+            int metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount("StatisticTestMultiColumn"));
             Assert.AreEqual(0, metadataStatisticsCount);
 
             //When
             this.sqlHelper.Execute($"EXEC DOI.spRefreshMetadata_Run_All @DatabaseName = '{DatabaseName}'");
 
             //Then
-            metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount("StatisticTest"));
+            metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount("StatisticTestMultiColumn"));
             Assert.AreEqual(1, metadataStatisticsCount, "Statistic should has been added to metadata since it was present in sql server");
-            bool doesStatisticsExistInMetadataTable = this.sqlHelper.ExecuteScalar<bool>(StatisticNotInMetadataSqlStatements.DoesStatisticsExistInMetadataTable("StatisticTest"));
+            bool doesStatisticsExistInMetadataTable = this.sqlHelper.ExecuteScalar<bool>(StatisticNotInMetadataSqlStatements.DoesStatisticsExistInMetadataTable("StatisticTestMultiColumn"));
             Assert.AreEqual(true, doesStatisticsExistInMetadataTable, "Statistic should has been added to metadata since it was present in sql server and renamed to follow format ST_TableName_ColumnNameList");
-            string metadataTableStatisticsColumnList = this.sqlHelper.ExecuteScalar<string>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsColumnList("StatisticTest"));
+            string metadataTableStatisticsColumnList = this.sqlHelper.ExecuteScalar<string>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsColumnList("StatisticTestMultiColumn"));
             Assert.AreEqual("TransactionUtcDt,TextCol", metadataTableStatisticsColumnList, "Statistic should have a comma separated column list");
         }
 
@@ -140,7 +140,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.NotInMetadata.Statistics
         public void GivenStatisticWithWAInNameAndWithMultipleColumnsInSqlServerWhenSPRunsThenItShoulBeAddedToMetadataTableAndRanamed()
         {
             //Given
-            this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatisticWithMultipleColumns("_WATest"));
+            this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatisticWithMultipleColumns("_WATest"), 30, false, DatabaseName);
             int metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount(StatisticsName));
             Assert.AreEqual(0, metadataStatisticsCount);
 
@@ -160,7 +160,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.NotInMetadata.Statistics
         public void GivenStatisticInSqlServerWithNCCI_InTheNameWhenSPRunsThenItShoulNotBeAddedToMetadataTable()
         {
             //Given
-            //this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatistic("NCCI_StatisticTest"));
+            this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatistic("NCCI_StatisticTest"), 30, false, DatabaseName);
             int metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount("NCCI_StatisticTest"));
             Assert.AreEqual(0, metadataStatisticsCount);
 
@@ -178,7 +178,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.NotInMetadata.Statistics
         public void GivenStatisticInSqlServerWithCCI_InTheNameWhenSPRunsThenItShoulNotBeAddedToMetadataTable()
         {
             //Given
-//            this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatistic("CCI_StatisticTest"));
+            this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatistic("CCI_StatisticTest"), 30, false, DatabaseName);
             int metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount("CCI_StatisticTest"));
             Assert.AreEqual(0, metadataStatisticsCount);
 
@@ -196,7 +196,7 @@ namespace DOI.Tests.IntegrationTests.MetadataTests.NotInMetadata.Statistics
         public void GivenStatisticAlreadyInMetadataWhenSPRunsThenNothingShouldHappen()
         {
             //Given
-            //this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatistic("StatisticTest"));
+            this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.CreateSqlServerStatistic("StatisticTest"), 30, false, DatabaseName);
             //this.sqlHelper.Execute(StatisticNotInMetadataSqlStatements.InsertStatisticInMetadata("StatisticTest"));
             int metadataStatisticsCount = this.sqlHelper.ExecuteScalar<int>(StatisticNotInMetadataSqlStatements.MetadataTableStatisticsCount(StatisticsName));
             Assert.AreEqual(1, metadataStatisticsCount);

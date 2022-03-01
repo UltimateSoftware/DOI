@@ -13,18 +13,54 @@ IF OBJECT_ID('[DOI].[vwIndexesSQLToRun]') IS NOT NULL
 
 GO
 CREATE   VIEW DOI.[vwIndexesSQLToRun]
-
-AS
-
+ 
+ AS
+ 
 /*
-	replace all these unions with a PIVOT?
+	replace all these unions with a data driven system, as below?  the problem is that we need 2 levels of dynamic generation here....each indexupdatetype has to generate
+	different queries, and some have multiple queries from different areas (indexes, statistics, etc.)
+
+SELECT
+'('''    + DatabaseName + ''', ''' 
+				+ SchemaName + ''', ''' 
+				+ TableName + ''', ''' 
+				+ IndexName + ', '
+				+ '0 AS PartitionNumber, ''' 
+				+ ParentSchemaName + ''', ''' 
+				+ ParentTableName + ''', ''' 
+				+ ParentIndexName + ''', ''' 
+				+ x.IndexOperation + ''', ''' 
+				+ CAST(X.IndexOperationSeqNo AS VARCHAR(3)) + ''', '''
+				+	CASE 
+						WHEN ROW_NUMBER() OVER(PARTITION BY X.DatabaseName, X.ParentSchemaName, X.ParentTableName ORDER BY X.IndexOperationSeqNo) = 1
+						THEN '
+DECLARE @BatchId UNIQUEIDENTIFIER = NEWID()
+
+INSERT INTO DOI.Queue(DatabaseName,SchemaName,TableName,IndexName,PartitionNumber,IndexSizeInMB,ParentSchemaName,ParentTableName,ParentIndexName,IndexOperation,TableChildOperationId,SQLStatement,SeqNo,DateTimeInserted,InProgress,RunStatus,ErrorMessage,TransactionId,BatchId,ExitTableLoopOnError)
+VALUES 
+'+ '(''' + COALESCE(X.SQLLiteral, '(SELECT ' + X.SQLColumnName + ' FROM DOI.' + X.ViewName + ' WHERE DatabaseName = ''' + X.DatabaseName + ''' AND SchemaName = ''' + X.SchemaName + ''' AND TableName = ''' + X.TableName + ''' AND IndexName = ''' + X.IndexName) + ''')' 
+						ELSE + '(''' + COALESCE(X.SQLLiteral, '(SELECT ' + X.SQLColumnName + ' FROM DOI.' + X.ViewName + ' WHERE DatabaseName = ''' + X.DatabaseName + ''' AND SchemaName = ''' + X.SchemaName + ''' AND TableName = ''' + X.TableName + ''' AND IndexName = ''' + X.IndexName) + ''')' 
+					END + ', '
+                + CAST(ROW_NUMBER() OVER(PARTITION BY X.DatabaseName, X.ParentSchemaName, X.ParentTableName ORDER BY X.IndexOperationSeqNo) AS VARCHAR(20)) + ', '
+                + '''DEFAULT'', '
+                + '''DEFAULT'', ' 
+                + '''DEFAULT'', ' 
+                + 'NULL, '
+                --+ CASE WHEN X.NeedsTransaction = 1 THEN '''' + CAST(NEWID() AS VARCHAR(40)) + ''', ''' ELSE 'NULL,''' END  --CALL TO NEWID() BREAKS THE FUNCTION
+                + 'CAST(@BatchId  AS VARCHAR(40))'', '
+                + CAST(X.ExitTableLoopOnError AS CHAR(1))
+--SELECT *
+FROM (  SELECT TOP 9876543210987  I.DatabaseName, I.SchemaName, I.TableName, I.IndexName, i.IndexUpdateType, I.IndexSizeMB_Actual, 
+                                '' AS ParentSchemaName, '' AS ParentTableName, '' AS ParentIndexName, IUTO.IndexOperation, IUTO.IndexOperationSeqNo, 
+                                IUTO.ViewName, IUTO.SQLColumnName, IUTO.SQLLiteral, IUTO.NeedsTransaction, IUTO.ExitTableLoopOnError
+        FROM DOI.vwIndexes I
+            INNER JOIN DOI.IndexUpdateTypeOperations IUTO ON IUTO.IndexUpdateType = I.IndexUpdateType
+		WHERE I.IndexUpdateType <> 'None'
+            AND I.IsOnlineOperation = 1
+        ORDER BY I.DatabaseName, I.SchemaName, I.TableName, IUTO.SeqNo) X (InsertIntoQueueSQL)
+FOR XML PATH('')
 */
-
-SELECT I.DatabaseName, I.SchemaName, I.TableName, I.IndexName, IUTO.* 
-FROM DOI.vwIndexes I
-    INNER JOIN DOI.IndexUpdateTypeOperations IUTO ON IUTO.IndexUpdateType = I.IndexUpdateType
-ORDER BY I.DatabaseName, I.SchemaName, I.TableName, IUTO.SeqNo
-
+ 
 SELECT *
 FROM (	
 /*		--ExchangeTablePartitioned
@@ -603,26 +639,20 @@ FROM (
 							FROM DOI.vwIndexes I2
 							WHERE I.DatabaseName = I2.DatabaseName 
 								AND I.TableName = I2.TableName 
-								AND I2.IndexUpdateType IN ('ExchangeTableNonPartitioned'))
-		--partition-level updates
+								AND I2.IndexUpdateType IN ('ExchangeTableNonPartitioned')))v
+ 		/*--partition-level updates
+ 		UNION ALL
+		SELECT	IP.IsOnlineOperation,
+				IP.DatabaseName,
+ 				IP.SchemaName, 
+ 				IP.TableName, 
+ 				IP.IndexName, 
+ 				IP.TotalIndexPartitionSizeInMB
+ 		FROM DOI.vwIndexPartitions IP 
+ 		WHERE IP.PartitionUpdateType <> 'None') U
+
 		UNION ALL
-		SELECT	IP.DatabaseName,
-				IP.SchemaName, 
-				IP.TableName, 
-				IP.IndexName, 
-				IP.PartitionUpdateType,
-				IP.PartitionUpdateType,
-				1 AS RowNum,
-				IP.PartitionUpdateType AS IndexOperation,
-				CASE IP.PartitionUpdateType
-					WHEN 'AlterRebuild-PartitionLevel'
-					THEN IP.AlterRebuildStatement
-					WHEN 'AlterReorganize-PartitionLevel'
-					THEN IP.AlterReorganizeStatement
-					ELSE ''
-				END AS CurrentSQLToExecute,
-				IP.PartitionNumber,
-				IP.TotalIndexPartitionSizeInMB
-		FROM DOI.vwIndexPartitions IP 
-		WHERE IP.PartitionUpdateType <> 'None') U
-GO
+
+		SELECT *
+		FROM DOI.vwStatistics*/
+ GO

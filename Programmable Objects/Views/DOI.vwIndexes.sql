@@ -16,6 +16,12 @@ AS
 */
 
 SELECT	AllIdx.* 
+		,CASE
+			WHEN AllIdx.IndexUpdateType IN ('CreateMissing', 'CreateDropExisting', 'ExchangeTableNonPartitioned', 'ExchangeTablePartitioned', 'AlterRebuild-Online', 'AlterRebuild-PartitionLevel-Online', 'AlterSet', 'AlterReorganize', 'AlterReorganize-PartitionLevel') 
+			THEN 1
+			WHEN AllIdx.IndexUpdateType IN ('DropRecreate', 'AlterRebuild-Offline', 'AlterRebuild-PartitionLevel-Offline') 
+			THEN 0
+		 END AS IsOnlineOperation
         ,CASE
             WHEN AllIdx.IndexUpdateType IN ('CreateMissing', 'AlterRebuild', 'AlterRebuild-PartitionLevel')
                     OR (AllIdx.IndexUpdateType = 'CreateDropExisting' AND AllIdx.IsClustered_Desired = 1)

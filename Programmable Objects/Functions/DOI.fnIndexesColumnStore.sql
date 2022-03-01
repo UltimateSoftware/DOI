@@ -105,6 +105,7 @@ RETURN(
                     ,ICS.IsIndexLarge
                     ,ICS.DriveLetter
 					,TTP.TableHasColumnStoreIndex
+					,TTP.ReadyToQueue
 					,D.OnlineOperations
 			FROM DOI.Tables TTP
                 INNER JOIN DOI.SysDatabases sd on sd.name = TTP.DatabaseName

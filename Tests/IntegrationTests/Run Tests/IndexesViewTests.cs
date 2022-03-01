@@ -217,40 +217,93 @@ namespace DOI.Tests.IntegrationTests.RunTests
             Assert.AreEqual("CreateMissing", result.IndexUpdateType, "IndexUpdateType");
         }
 
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsUnique", "1", "IsUniquenessChanging", "CreateDropExisting", "Uniqueness", TestName = "Update IsUnique index property on CDX_TempA")]
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsPrimaryKey", "1", "IsPrimaryKeyChanging", "ExchangeTableNonPartitioned", "IsPrimaryKey, Uniqueness", TestName = "Update IsPrimaryKey index property on CDX_TempA")]
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsClustered", "0", "IsClusteredChanging", "ExchangeTableNonPartitioned", "Clustered", TestName = "Update IsClustered index property on CDX_TempA")]
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "KeyColumnList", "TempAId ASC", "IsKeyColumnListChanging", "CreateDropExisting", "KeyColumnList", TestName = "Update KeyColumnList index property on CDX_TempA")]
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "FillFactor", "50", "IsFillfactorChanging", "AlterRebuild", "FillFactor", TestName = "Update FillFactor index property on CDX_TempA")]
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionPadIndex", "0", "IsPadIndexChanging", "AlterRebuild", "PadIndex", TestName = "Update OptionPadIndex index property on CDX_TempA")]
+
+
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsUnique", "1", "IsUniquenessChanging", "CreateDropExisting", "Uniqueness", TestName = "Update IsUnique index property on CDX_TempA-Online")]
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsUnique", "1", "IsUniquenessChanging", "DropRecreate", "Uniqueness", TestName = "Update IsUnique index property on CDX_TempA-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsPrimaryKey", "1", "IsPrimaryKeyChanging", "ExchangeTableNonPartitioned", "IsPrimaryKey, Uniqueness", TestName = "Update IsPrimaryKey index property on CDX_TempA-Online")]
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsPrimaryKey", "1", "IsPrimaryKeyChanging", "DropRecreate", "IsPrimaryKey, Uniqueness", TestName = "Update IsPrimaryKey index property on CDX_TempA-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsClustered", "0", "IsClusteredChanging", "ExchangeTableNonPartitioned", "Clustered", TestName = "Update IsClustered index property on CDX_TempA-Online")]
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "IsClustered", "0", "IsClusteredChanging", "DropRecreate", "Clustered", TestName = "Update IsClustered index property on CDX_TempA-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "KeyColumnList", "TempAId ASC", "IsKeyColumnListChanging", "CreateDropExisting", "KeyColumnList", TestName = "Update KeyColumnList index property on CDX_TempA-Online")]
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "KeyColumnList", "TempAId ASC", "IsKeyColumnListChanging", "DropRecreate", "KeyColumnList", TestName = "Update KeyColumnList index property on CDX_TempA-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "FillFactor", "50", "IsFillfactorChanging", "AlterRebuild-Online", "FillFactor", TestName = "Update FillFactor index property on CDX_TempA-Online")]
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "FillFactor", "50", "IsFillfactorChanging", "AlterRebuild-Offline", "FillFactor", TestName = "Update FillFactor index property on CDX_TempA-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionPadIndex", "0", "IsPadIndexChanging", "AlterRebuild-Online", "PadIndex", TestName = "Update OptionPadIndex index property on CDX_TempA-Online")]
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionPadIndex", "0", "IsPadIndexChanging", "AlterRebuild-Offline", "PadIndex", TestName = "Update OptionPadIndex index property on CDX_TempA-Offline")]
+
         [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionStatisticsNoRecompute", "1", "IsStatisticsNoRecomputeChanging", "AlterSet", "StatisticsNoRecompute", TestName = "Update OptionStatisticsNoRecompute index property on CDX_TempA")]
         [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowRowLocks", "0", "IsAllowRowLocksChanging", "AlterSet", "AllowRowLocks", TestName = "Update OptionAllowRowLocks index property on CDX_TempA")]
         [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionAllowPageLocks", "0", "IsAllowPageLocksChanging", "AlterSet", "AllowPageLocks", TestName = "Update OptionAllowPageLocks index property on CDX_TempA")]
-        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionDataCompression", "ROW", "IsDataCompressionChanging", "AlterRebuild", "DataCompression", TestName = "Update OptionDataCompress index property on CDX_TempA")]
+
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionDataCompression", "ROW", "IsDataCompressionChanging", "AlterRebuild-Online", "DataCompression", TestName = "Update OptionDataCompress index property on CDX_TempA-Online")]
+        [TestCase("DOIUnitTests", "TempA", "CDX_TempA", "OptionDataCompression", "ROW", "IsDataCompressionChanging", "AlterRebuild-Offline", "DataCompression", TestName = "Update OptionDataCompress index property on CDX_TempA-Offline")]
+
         //nonclustered rowstore index:
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsUnique", "1", "IsUniquenessChanging", "CreateDropExisting", "Uniqueness", TestName = "Update IsUnique index property on NIDX_TempA_Report2")]
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsPrimaryKey", "1", "IsPrimaryKeyChanging", "ExchangeTableNonPartitioned", "IsPrimaryKey, Uniqueness", TestName = "Update IsPrimaryKey index property on NIDX_TempA_Report2")]
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsClustered", "1", "IsClusteredChanging", "ExchangeTableNonPartitioned", "Clustered", TestName = "Update IsClustered index property on NIDX_TempA_Report2")]
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "KeyColumnList", "TempAId ASC,TransactionUtcDt ASC", "IsKeyColumnListChanging", "CreateDropExisting", "KeyColumnList", TestName = "Update KeyColumnList index property on NIDX_TempA_Report2")]
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IncludedColumnList", "TempAId", "IsIncludedColumnListChanging", "CreateDropExisting", "IncludedColumnList", TestName = "Update IncludedColumnList index property on NIDX_TempA_Report2")]
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "FilterPredicate", "([TransactionUtcDt] IS NOT NULL)", "IsFilterChanging", "CreateDropExisting", "Filter", TestName = "Update FilterPredicate index property on NIDX_TempA_Report2")]
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "FillFactor", "50", "IsFillfactorChanging", "AlterRebuild", "FillFactor", TestName = "Update Fillfactor index property on NIDX_TempA_Report2")]
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionPadIndex", "0", "IsPadIndexChanging", "AlterRebuild", "PadIndex", TestName = "Update PadIndex index property on NIDX_TempA_Report2")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsUnique", "1", "IsUniquenessChanging", "CreateDropExisting", "Uniqueness", TestName = "Update IsUnique index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsUnique", "1", "IsUniquenessChanging", "DropRecreate", "Uniqueness", TestName = "Update IsUnique index property on NIDX_TempA_Report2-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsPrimaryKey", "1", "IsPrimaryKeyChanging", "ExchangeTableNonPartitioned", "IsPrimaryKey, Uniqueness", TestName = "Update IsPrimaryKey index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsPrimaryKey", "1", "IsPrimaryKeyChanging", "DropRecreate", "IsPrimaryKey, Uniqueness", TestName = "Update IsPrimaryKey index property on NIDX_TempA_Report2-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsClustered", "1", "IsClusteredChanging", "ExchangeTableNonPartitioned", "Clustered", TestName = "Update IsClustered index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IsClustered", "1", "IsClusteredChanging", "DropRecreate", "Clustered", TestName = "Update IsClustered index property on NIDX_TempA_Report2-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "KeyColumnList", "TempAId ASC,TransactionUtcDt ASC", "IsKeyColumnListChanging", "CreateDropExisting", "KeyColumnList", TestName = "Update KeyColumnList index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "KeyColumnList", "TempAId ASC,TransactionUtcDt ASC", "IsKeyColumnListChanging", "DropRecreate", "KeyColumnList", TestName = "Update KeyColumnList index property on NIDX_TempA_Report2-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IncludedColumnList", "TempAId", "IsIncludedColumnListChanging", "CreateDropExisting", "IncludedColumnList", TestName = "Update IncludedColumnList index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "IncludedColumnList", "TempAId", "IsIncludedColumnListChanging", "DropRecreate", "IncludedColumnList", TestName = "Update IncludedColumnList index property on NIDX_TempA_Report2-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "FilterPredicate", "([TransactionUtcDt] IS NOT NULL)", "IsFilterChanging", "CreateDropExisting", "Filter", TestName = "Update FilterPredicate index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "FilterPredicate", "([TransactionUtcDt] IS NOT NULL)", "IsFilterChanging", "DropRecreate", "Filter", TestName = "Update FilterPredicate index property on NIDX_TempA_Report2-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "FillFactor", "50", "IsFillfactorChanging", "AlterRebuild-Online", "FillFactor", TestName = "Update Fillfactor index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "FillFactor", "50", "IsFillfactorChanging", "AlterRebuild-Offline", "FillFactor", TestName = "Update Fillfactor index property on NIDX_TempA_Report2-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionPadIndex", "0", "IsPadIndexChanging", "AlterRebuild-Online", "PadIndex", TestName = "Update PadIndex index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionPadIndex", "0", "IsPadIndexChanging", "AlterRebuild-Offline", "PadIndex", TestName = "Update PadIndex index property on NIDX_TempA_Report2-Offline")]
+
         [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionStatisticsNoRecompute", "1", "IsStatisticsNoRecomputeChanging", "AlterSet", "StatisticsNoRecompute", TestName = "Update StatisticsNoRecompute index property on NIDX_TempA_Report2")]
         [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionAllowRowLocks", "0", "IsAllowRowLocksChanging", "AlterSet", "AllowRowLocks", TestName = "Update AllowRowLocks index property on NIDX_TempA_Report2")]
         [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionAllowPageLocks", "0", "IsAllowPageLocksChanging", "AlterSet", "AllowPageLocks", TestName = "Update AllowPageLocks index property on NIDX_TempA_Report2")]
-        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionDataCompression", "ROW", "IsDataCompressionChanging", "AlterRebuild", "DataCompression", TestName = "Update DataCompression index property on NIDX_TempA_Report2")]
+
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionDataCompression", "ROW", "IsDataCompressionChanging", "AlterRebuild-Online", "DataCompression", TestName = "Update DataCompression index property on NIDX_TempA_Report2-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NIDX_TempA_Report2", "OptionDataCompression", "ROW", "IsDataCompressionChanging", "AlterRebuild-Offline", "DataCompression", TestName = "Update DataCompression index property on NIDX_TempA_Report2-Offline")]
+
         //nonclustered columnstore index:
-        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "IsClustered", "1", "IsClusteredChanging", "ExchangeTableNonPartitioned", "Clustered", TestName = "Update IsClustered index property on NCCI_TempA_Report")]
-        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "ColumnList", "TransactionUtcDt,TempAId", "IsKeyColumnListChanging", "CreateDropExisting", "KeyColumnList", TestName = "Update ColumnList index property on NCCI_TempA_Report")]
-        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "FilterPredicate", "([TransactionUtcDt] IS NOT NULL)", "IsFilterChanging", "CreateDropExisting", "Filter", TestName = "Update FilterPredicate index property on NCCI_TempA_Report")]
-        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "OptionDataCompression", "COLUMNSTORE_ARCHIVE", "IsDataCompressionChanging", "ExchangeTableNonPartitioned", "DataCompression", TestName = "Update DataCompression index property on NCCI_TempA_Report")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "IsClustered", "1", "IsClusteredChanging", "ExchangeTableNonPartitioned", "Clustered", TestName = "Update IsClustered index property on NCCI_TempA_Report-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "IsClustered", "1", "IsClusteredChanging", "AlterRebuild-Offline", "Clustered", TestName = "Update IsClustered index property on NCCI_TempA_Report-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "ColumnList", "TransactionUtcDt,TempAId", "IsKeyColumnListChanging", "CreateDropExisting", "KeyColumnList", TestName = "Update ColumnList index property on NCCI_TempA_Report-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "ColumnList", "TransactionUtcDt,TempAId", "IsKeyColumnListChanging", "DropRecreate", "KeyColumnList", TestName = "Update ColumnList index property on NCCI_TempA_Report-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "FilterPredicate", "([TransactionUtcDt] IS NOT NULL)", "IsFilterChanging", "CreateDropExisting", "Filter", TestName = "Update FilterPredicate index property on NCCI_TempA_Report-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "FilterPredicate", "([TransactionUtcDt] IS NOT NULL)", "IsFilterChanging", "DropRecreate", "Filter", TestName = "Update FilterPredicate index property on NCCI_TempA_Report-Offline")]
+
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "OptionDataCompression", "COLUMNSTORE_ARCHIVE", "IsDataCompressionChanging", "ExchangeTableNonPartitioned", "DataCompression", TestName = "Update DataCompression index property on NCCI_TempA_Report-Online")]
+        [TestCase("DOIUnitTests", "TempA", "NCCI_TempA_Report", "OptionDataCompression", "COLUMNSTORE_ARCHIVE", "IsDataCompressionChanging", "AlterRebuild-Offline", "DataCompression", TestName = "Update DataCompression index property on NCCI_TempA_Report-Offline")]
+
         //clustered columnstore index:  THE TEST CASES BELOW ARE COMMENTED OUT BECAUSE WE ARE NOT YET SUPPORTING CCIs
         //[TestCase("DOIUnitTests", "TempB", "CCI_TempB_Report", "IsClustered", "0", "IsClusteredChanging", "ExchangeTableNonPartitioned", "Clustered", TestName = "Update IsClustered index property on CCI_TempB_Report")]
         //[TestCase("DOIUnitTests", "TempB", "CCI_TempB_Report", "OptionDataCompression", "COLUMNSTORE_ARCHIVE", "IsDataCompressionChanging", "AlterRebuild", "DataCompression", TestName = "Update DataCompression index property on CCI_TempB_Report")]
         public void Update_IndexSinglePropertyChangeTests(string databaseName, string tableName, string indexName, string propertyName, string propertyValue, string assertColumnName, string indexUpdateType, string listOfChanges)
         {
             this.dataDrivenIndexTestHelper.CreateIndex(indexName);
+
+            if (indexUpdateType.Contains("-Offline") || indexUpdateType == "DropRecreate")
+            {
+                sqlHelper.Execute("UPDATE DOI.Databases SET OnlineOperations = 0");
+            }
+            else
+            {
+                sqlHelper.Execute("UPDATE DOI.Databases SET OnlineOperations = 1");
+            }
 
             var indexRow = this.dataDrivenIndexTestHelper.GetIndexViews(tableName)
                 .Find(x => x.IndexName == indexName);

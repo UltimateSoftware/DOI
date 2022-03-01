@@ -657,4 +657,46 @@
   <ItemGroup>
     <None Include="Migrations\091_IndexOperations_Tables.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_CreateIndex.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_AlterRebuildIndex.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_AlterReorganizeIndex.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_AlterSetIndex.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_CreateDropExistingIndex.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_DropExistingIndex.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_ApplicationLockGet.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_ApplicationLockRelease.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_ResourceGovernorEnable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_ResourceGovernorDisable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_FreeSpaceValidationData.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_FreeSpaceValidationLog.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Stored Procedures\DOI.spQueue_GenerateSQL_FreeSpaceValidationTempDb.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Programmable Objects\Functions\DOI.fnIndexesSQLToRun.sql" />
+  </ItemGroup>
 </Project>
