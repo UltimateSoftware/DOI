@@ -151,6 +151,107 @@ VALUES
 ,('None'                                , 1);
 
 
+/*
+
+DROP TABLE IF EXISTS DOI.IndexUpdateTypeOperations
+
+CREATE TABLE DOI.IndexUpdateTypeOperations (
+    IndexUpdateType VARCHAR(50) NOT NULL  
+        CONSTRAINT FK_IndexUpdateTypeOperations_IndexUpdateType
+            FOREIGN KEY REFERENCES DOI.IndexUpdateType(IndexUpdateType),
+    IndexOperation VARCHAR(70) NOT NULL
+        CONSTRAINT FK_IndexUpdateTypeOperations_IndexOperation
+            FOREIGN KEY REFERENCES DOI.IndexOperation(IndexOperation),
+    IndexOperationSeqNo TINYINT NOT NULL,
+    SPSQLStmt NVARCHAR(MAX) NULL,
+    SQLLiteral NVARCHAR(128) NULL,
+    SeqNo INT NOT NULL,
+    NeedsTransaction BIT NOT NULL,
+    ExitTableLoopOnError BIT NOT NULL,
+    CONSTRAINT PK_IndexUpdateTypeOperations
+        PRIMARY KEY CLUSTERED (IndexUpdateType, IndexOperation, IndexOperationSeqNo),
+    CONSTRAINT Chk_IndexUpdateTypeOperations_SQLLiteralOrNot
+        CHECK ((SPSQLStmt IS NULL AND SQLLiteral IS NOT NULL)
+                    OR (SPSQLStmt IS NOT NULL AND SQLLiteral IS NULL)));
+GO
+
+CREATE UNIQUE NONCLUSTERED INDEX UDX_IndexUpdateTypeOperations
+    ON DOI.IndexUpdateTypeOperations(IndexUpdateType, SeqNo)
+
+INSERT INTO DOI.IndexUpdateTypeOperations
+( IndexUpdateType                       , IndexOperation                                                , IndexOperationSeqNo   , SPSQLStmt                                                                                                                                                                             , SQLLiteral                                , SeqNo , NeedsTransaction  , ExitTableLoopOnError)
+VALUES
+ ('Delete'                              , 'ResourceGovernorEnable'                                      , 1                     , 'DOI.spQueue_GenerateSQL_ResourceGovernorEnable'                                                                                                                                      , NULL                                      , 1     , 0                 , 1)
+,('Delete'                              , 'ApplicationLockGet'                                          , 1                     , 'DOI.spQueue_GenerateSQL_ApplicationLockGet @DatabaseName = ''<DatabaseName>'', @BatchId = ''''00000000-0000-0000-0000-000000000000'''''                                              , NULL                                      , 2     , 0                 , 1)
+,('Delete'                              , 'IndexDrop'                                                   , 1                     , 'DOI.spQueue_GenerateSQL_DropExistingIndex @DatabaseName = ''<DatabaseName>'', @SchemaName = ''<SchemaName>'', @TableName = ''<TableName>'', @IndexName = ''<IndexName>'''            , NULL                                      , 3     , 0                 , 0)
+,('Delete'                              , 'ApplicationLockRelease'                                      , 1                     , 'DOI.spQueue_GenerateSQL_ApplicationLockRelease @DatabaseName = ''<DatabaseName>'', @BatchId = ''00000000-0000-0000-0000-000000000000'''''                                            , NULL                                      , 4     , 0                 , 0)
+
+,('CreateMissing'                       , 'ResourceGovernorEnable'                                      , 1                     , 'DOI.spQueue_GenerateSQL_ResourceGovernorEnable'                                                                                                                                      , NULL                                      , 1     , 0                 , 1)
+,('CreateMissing'                       , 'ApplicationLockGet'                                          , 1                     , 'DOI.spQueue_GenerateSQL_ApplicationLockGet @DatabaseName = ''<DatabaseName>'', @BatchId = ''''00000000-0000-0000-0000-000000000000'''''                                              , NULL                                      , 2     , 0                 , 1)
+,('CreateMissing'                       , 'FreeSpaceValidationData'                                     , 1                     , 'DOI.spQueue_GenerateSQL_FreeSpaceValidationData @DatabaseName = ''<DatabaseName>'', @SchemaName = ''<SchemaName>'', @TableName = ''<TableName>'', @IndexName = ''<IndexName>'''      , NULL                                      , 3     , 0                 , 0)
+,('CreateMissing'                       , 'FreeSpaceValidationLog'                                      , 1                     , 'DOI.spQueue_GenerateSQL_FreeSpaceValidationLog @DatabaseName = ''<DatabaseName>'', @SchemaName = ''<SchemaName>'', @TableName = ''<TableName>'', @IndexName = ''<IndexName>'''       , NULL                                      , 4     , 0                 , 0)
+,('CreateMissing'                       , 'FreeSpaceValidationTempDb'                                   , 1                     , 'DOI.spQueue_GenerateSQL_FreeSpaceValidationTempDb @DatabaseName = ''<DatabaseName>'', @SchemaName = ''<SchemaName>'', @TableName = ''<TableName>'', @IndexName = ''<IndexName>'''    , NULL                                      , 5     , 0                 , 0)
+,('CreateMissing'                       , 'IndexCreate'                                                 , 1                     , 'DOI.spQueue_GenerateSQL_CreateIndex @DatabaseName = ''<DatabaseName>'', @SchemaName = ''<SchemaName>'', @TableName = ''<TableName>'', @IndexName = ''<IndexName>'''                  , NULL                                      , 6     , 0                 , 0)
+,('CreateMissing'                       , 'ApplicationLockRelease'                                      , 1                     , 'DOI.spQueue_GenerateSQL_ApplicationLockRelease @DatabaseName = ''<DatabaseName>'', @BatchId = ''''00000000-0000-0000-0000-000000000000'''''                                          , NULL                                      , 7     , 0                 , 0)
+               
+
+SELECT * FROM DOI.IndexUpdateTypeOperations ORDER BY IndexUpdateType, SeqNo
+
+
+SELECT (SELECT
+				CASE 
+						WHEN ROW_NUMBER() OVER(PARTITION BY X.DatabaseName, X.ParentSchemaName, X.ParentTableName ORDER BY X.IndexOperationSeqNo) = 1
+						THEN '
+DECLARE @BatchId UNIQUEIDENTIFIER = NEWID()
+
+INSERT INTO DOI.Queue(DatabaseName,SchemaName,TableName,IndexName,PartitionNumber,IndexSizeInMB,ParentSchemaName,ParentTableName,ParentIndexName,IndexOperation,TableChildOperationId,SQLStatement,SeqNo,DateTimeInserted,InProgress,RunStatus,ErrorMessage,TransactionId,BatchId,ExitTableLoopOnError)
+VALUES 
+ ('''
+						ELSE '
+,('''
+				END
+                + DatabaseName + ''', ''' 
+				+ SchemaName + ''', ''' 
+				+ TableName + ''', ''' 
+				+ IndexName + ''', '
+				+ '0, ' 
+                + '0, '
+				+ ParentSchemaName + ', '
+				+ ParentTableName + ', '
+				+ ParentIndexName + ', '''
+				+ x.IndexOperation + ''', '
+				+ CAST(X.IndexOperationSeqNo AS VARCHAR(3)) + ', '''
+				+ 'EXEC ' + REPLACE(REPLACE(REPLACE(REPLACE(x.SPSQLStmt, '<DatabaseName>', QUOTENAME(x.DatabaseName, '''')), '<SchemaName>', QUOTENAME(x.SchemaName, '''')), '<TableName>', QUOTENAME(x.TableName, '''')), '<IndexName>', QUOTENAME(x.IndexName, '''')) + ''', ' + --HOW DO WE DEAL WITH VARIABLE PARAMETER LISTS?  OR DIFFERENT VIEWS OTHER THAN VWINDEXES?
+				--+ COALESCE(X.SQLLiteral, '(SELECT ' + X.SQLColumnName + ' FROM DOI.' + X.ViewName + ' WHERE DatabaseName = ''' + X.DatabaseName + ''' AND SchemaName = ''' + X.SchemaName + ''' AND TableName = ''' + X.TableName + ''' AND IndexName = ''' + X.IndexName + ''')') + ''''  + ', '
+                + CAST(ROW_NUMBER() OVER(PARTITION BY X.DatabaseName, X.ParentSchemaName, X.ParentTableName ORDER BY X.IndexOperationSeqNo) AS VARCHAR(20)) + ', '
+                + 'DEFAULT, '
+                + 'DEFAULT, ' 
+                + 'DEFAULT, ' 
+                + 'NULL, '
+                + CASE WHEN X.NeedsTransaction = 1 THEN '''' + CAST(NEWID() AS VARCHAR(40)) + ''', ' ELSE 'NULL,' END
+                + 'CAST(@BatchId  AS VARCHAR(40)), '
+                + CAST(X.ExitTableLoopOnError AS CHAR(1)) + ')' AS InsertQueueSQL
+--SELECT *
+FROM (  SELECT TOP 9876543210987  I.DatabaseName, I.SchemaName, I.TableName, I.IndexName, i.IndexUpdateType, I.IndexSizeMB_Actual, 
+                                'NULL' AS ParentSchemaName, 'NULL' AS ParentTableName, 'NULL' AS ParentIndexName, IUTO.IndexOperation, IUTO.IndexOperationSeqNo, 
+                                IUTO.SPSQLStmt, IUTO.SQLLiteral, IUTO.NeedsTransaction, IUTO.ExitTableLoopOnError
+        FROM DOI.vwIndexes I
+            INNER JOIN DOI.IndexUpdateTypeOperations IUTO ON IUTO.IndexUpdateType = I.IndexUpdateType
+		WHERE I.IndexUpdateType <> 'None'
+            AND I.IsOnlineOperation = 1
+        ORDER BY I.DatabaseName, I.SchemaName, I.TableName, IUTO.SeqNo)x
+FOR XML PATH, TYPE).value('.', 'nvarchar(max)') AS InsertQueueSQL
+
+
+
+SELECT * FROM DOI.fnIndexesSQLToRun('doiunittests', 1)
+
+
+
+
+
+
+*/
 
 CREATE TABLE DOI.IndexUpdateTypeOperations (
     IndexUpdateType VARCHAR(50) NOT NULL  
